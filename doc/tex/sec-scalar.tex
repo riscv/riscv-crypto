@@ -233,7 +233,8 @@ RV32, RV64:
 \end{isa}
 
 \begin{lstlisting}[language=c]
-uint32_t lut4_v1 (uint32_t rd, uint32_t rs1, uint32_t rs2) {
+// Equivilent C code for lut4 variant 1 on RV32.
+uint32_t lut4_rv32_v1 (uint32_t rd, uint32_t rs1, uint32_t rs2) {
     uint32_t result = 0;
     uint64_t lut    = (((uint64_t)rs1) << 32) | rs2;
     for(int i = 0; i < XLEN;  i += 4) {
@@ -251,7 +252,6 @@ The lookup table is constructed by concatenating two 32-bit words.
 On RV32, two XLEN registers are concatenated to form the LUT.
 On RV64, the low 32-bits of two XLEN registers are concatenated to form
 the LUT.
-
 The instruction is extremely useful for any lightweight block-cipher
 which uses a 4-bit SBox.
 A comprehensive list and assessment of such ciphers can be found
@@ -296,7 +296,26 @@ on a micro-architectural level however
 
 \subsection{Lightweight SHA2 Acceleration}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    ssha256.s0 rd, rs1
+    ssha256.s1 rd, rs1
+    ssha256.s2 rd, rs1
+    ssha256.s3 rd, rs1
+
+RV64:
+    ssha512.s0 rd, rs1
+    ssha512.s1 rd, rs1
+    ssha512.s2 rd, rs1
+    ssha512.s3 rd, rs1
+\end{isa}
+
+\begin{lstlisting}[language=c]
+uint32_t ssha256_s0 (uint32_t rs1) {}
+uint32_t ssha256_s1 (uint32_t rs1) {}
+uint32_t ssha256_s2 (uint32_t rs1) {}
+uint32_t ssha256_s3 (uint32_t rs1) {}
+\end{lstlisting}
 
 % ============================================================================
 
