@@ -64,10 +64,21 @@ would be able to depend on the existance of these instructions.
 
 \subsubsection{Logic With Negate}
 
-\todo{}
+These instructions are useful inside hash functions, block ciphers and
+for implementing software based side-channel countermeasures like masking.
+See \cite[Section 2.1.3]{riscv:bitmanip:draft} for exact details of
+these instructions.
+
+\begin{itemize}
+\item {\tt andn rd, rs1, rs2}
+\item {\tt  orn rd, rs1, rs2}
+\item {\tt xorn rd, rs1, rs2}
+\end{itemize}
 
 
 \subsubsection{Packing}
+
+Some lightweight block ciphers
 
 \todo{}
 
