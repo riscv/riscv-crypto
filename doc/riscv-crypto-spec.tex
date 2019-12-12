@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+
+\usepackage{riscv-crypto-spec}
+
+\title{RISC-V Cryptographic Extension Proposals}
+\author{Editors: }
+\date{Version $0.1$ (\today)}
+
+\begin{document}
+
+% =============================================================================
+
+\maketitle
+
+\import{./tex/}{contributors.tex}
+
+\tableofcontents
+
+% =============================================================================
+
+\section{Introduction}
+\label{sec:intro}
+\import{./tex/}{sec-intro.tex}
+
+\section{Vector Extension}
+\label{sec:vector}
+\import{./tex/}{sec-vector.tex}
+
+\section{Scalar Extension}
+\label{sec:scalar}
+\import{./tex/}{sec-scalar.tex}
+
+\section{Random Bit Generation extension}
+\label{sec:randombit}
+\import{./tex/}{sec-randombit.tex}
+
+
+% =============================================================================
+
+\appendix
+
+%
+% Appendix items with annotations, benchmarking and experimental
+% evidence etc.
+%
+
+% =============================================================================
+
+\printbibliography
+
+\end{document}
+
