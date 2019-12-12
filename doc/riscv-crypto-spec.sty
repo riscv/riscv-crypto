@@ -1,11 +1,20 @@
 
 \usepackage[backend=biber,style=numeric]{biblatex}
 \usepackage{xcolor}
+\usepackage{fancyvrb}
 \usepackage[margin=2cm]{geometry}
 \usepackage{hyperref}
 \usepackage{import}
+\usepackage{listings}
 
 \newcommand{\todo}[1]{\textcolor{red}{{\bf TODO:}} #1}
 
 \addbibresource{riscv-crypto-spec.bib}
 
+\DefineVerbatimEnvironment{isa}{Verbatim}{%
+  samepage=true,
+  label=RISC-V Crypto ISA,
+  labelposition=topline,
+  frame=single,
+  framerule=0.8mm
+}

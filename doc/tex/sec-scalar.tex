@@ -42,52 +42,243 @@ the bitmanip extension,
 both,
 would be able to depend on the existance of these instructions.
 
+The following subsections give the assembly syntax of instructions
+proposed for inclusion in the scalar crypto extension, along with a
+set of use-cases for common algorithms or primitive operations.
+For information on the semantics of the instructions, we refer directly
+to the bitmanip draft specification.
+
 \subsubsection{Rotations}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    ror    rd, rs1, rs2
+    rol    rd, rs1, rs2
+    rori   rd, rs1, imm
+
+RV64 only:
+    rorw   rd, rs1, rs2
+    rolw   rd, rs1, rs2
+    roriw  rd, rs1, imm
+\end{isa}
+
+See \cite[Section 3.1.1]{riscv:bitmanip:draft} for exact details of
+these instructions.
+Standard bitwise rotation is a primitive operation in many block ciphers and
+hash functions.
+It particularly features in the ARX (Add,Rotate,Xor) class of
+block ciphers
+\footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}.
+
+\begin{isa}
+RV32, RV64:
+    fsl   rd, rs1, rs3, rs2
+    fsr   rd, rs1, rs3, rs2
+    fsri  rd, rs1, rs3, imm
+
+RV64 only:
+    fslw  rd, rs1, rs3, rs2
+    fsrw  rd, rs1, rs3, rs2
+    fsriw rd, rs1, rs3, imm
+\end{isa}
+
+See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
+these instructions.
+The {\em funnel shift} instructions create a $2*XLEN$ word by
+concatenating {\tt rs1} and {\tt rs3}, which is then
+left/right rotate shifted by the ammount in {\tt imm}/{\tt rs2}.
+These are useful for implementing double-width rotations.
+
+\todo{Useful for: SHA3/SHA512 on RV32. 128 bit rotations aren't common, so
+possibly only recommend the RV32 instructions?}
 
 
-\subsubsection{Other Permutations}
+\subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    grev rd, rs1, rs2
+    grevi rd, rs1, imm
 
+RV64 only:
+    grevw rd, rs1, rs2
+    greviw rd, rs1, imm
+\end{isa}
+
+The Generalized Reverse ({\tt grev*}) instructions can be used for 
+``{\em byte-order swap, bitwise reversal, short-order-swap,
+word-order-swap (RV64), nibble-order swap, bitwise reversal in a byte}".
+These operations are useful for various permutation operations
+needed either by block ciphers and hash-functions directly, or for
+endianness correction of data.
+Endianness correction is important because
+cryptography often occurs in the context of communication, which requires
+standardised endianness which may be different from the natural machine
+endinaness.
+
+\todo{Specific use-cases for grev.}
+
+\begin{isa}
+RV32, RV64:
+    shfl    rd, rs1, rs2
+    unshfl  rd, rs1, rs2
+    shfli   rd, rs1, rs2
+    unshfli rd, rs1, rs2
+
+RV64:
+    shflw   rd, rs1, rs2
+    unshflw rd, rs1, rs2
+\end{isa}
+
+The generalized shuffle instructions are useful for implementing
+generic bit permutation operations.
+Algorithms such as 
+DES \footnote{
+One might reasonably argue that given the heritage of DES, it's support
+shouldn't really be any sort of consideration for a forward looking
+ISA like RISC-V.
+}
+and
+PRESENT\cite{block:present} with
+irregular / odd permutations are most-likely to benefit from this
+instruction.
+
+\todo{More research needed on specific algorithms / use-cases for
+these instructions. They are included as ``hypothetically useful"
+at the moment.}
 
 \subsubsection{Carryless Multiply}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    clmul rd, rs1, rs2
+    clmulh rd, rs1, rs2
+    clmulr rd, rs1, rs2
 
+RV64 only:
+    clmulw rd, rs1, rs2
+    clmulhw rd, rs1, rs2
+    clmulrw rd, rs1, rs2
+\end{isa}
+
+See \cite[Section 2.6]{riscv:bitmanip:draft} for exact details of
+this instruction.
+As is mentioned there, obvious cryptographic use-cases for carryless
+multiply are for Galois Counter Mode (GCM) block cipher operations
+\footnote{\url{https://en.wikipedia.org/wiki/Galois/Counter_Mode}}.
+GCM is recommended by NIST as a block cipher mode of operation
+\cite{nist:gcm}.
 
 \subsubsection{Conditional Move}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    cmov rd, rs2, rs1, rs3
+\end{isa}
 
+See \cite[Section 2.9.2]{riscv:bitmanip:draft} for exact details of
+this instruction.
+Conditional move is useful for implementing constant-time cryptographic
+code and avoiding control flow changes.
 
 \subsubsection{Logic With Negate}
 
-These instructions are useful inside hash functions, block ciphers and
-for implementing software based side-channel countermeasures like masking.
+\begin{isa}
+RV32, RV64:
+    andn rd, rs1, rs2
+     orn rd, rs1, rs2
+    xorn rd, rs1, rs2
+\end{isa}
+
 See \cite[Section 2.1.3]{riscv:bitmanip:draft} for exact details of
 these instructions.
+These instructions are useful inside hash functions, block ciphers and
+for implementing software based side-channel countermeasures like masking.
 
-\begin{itemize}
-\item {\tt andn rd, rs1, rs2}
-\item {\tt  orn rd, rs1, rs2}
-\item {\tt xorn rd, rs1, rs2}
-\end{itemize}
-
+\todo{Useful for: SHA3 / SHA2 / Masking}
 
 \subsubsection{Packing}
 
-Some lightweight block ciphers
+\begin{isa}
+RV32, RV64: 
+    pack   rd, rs1, rs2
+    packu  rd, rs1, rs2
+    packh  rd, rs1, rs2
 
-\todo{}
+RV64: 
+    packw  rd, rs1, rs2
+    packuw rd, rs1, rs2
+\end{isa}
+
+See \cite[Section 2.1.4]{riscv:bitmanip:draft} for exact details of
+these instructions.
+Some lightweight block ciphers (e.g. PRINCE \cite{block:prince}) use
+sub-word data types in their primitives.
+The bitmanip pack instructions are useful for performing rotations on
+16-bit data elements.
+They are also useful for re-arranging halfwords within words, and
+generally getting data into the right shape prior to applying transforms.
+
+\todo{Concrete list of use-cases.}
 
 
 % ============================================================================
 
 \subsection{LUT4 Instruction}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    lut4    rd, rs1, rs2        // Variant 1
+    lut4    rd, rs1, rs2 rs3    // Variant 2
+\end{isa}
+
+\begin{lstlisting}[language=c]
+uint32_t lut4_v1 (uint32_t rd, uint32_t rs1, uint32_t rs2) {
+    uint32_t result = 0;
+    uint64_t lut    = (((uint64_t)rs1) << 32) | rs2;
+    for(int i = 0; i < XLEN;  i += 4) {
+        uint32_t in     = ((rd  >>  i) & 0xF) << 2;
+        uint64_t toadd  = ((lut >> in) & 0xF) << i;
+        result         |= toadd;
+    }
+    return result;
+}
+\end{lstlisting}
+
+The {\tt lut4} instruction implements a 4-bit lookup table operation
+on every nibble in a source word.
+The lookup table is constructed by concatenating two 32-bit words.
+On RV32, two XLEN registers are concatenated to form the LUT.
+On RV64, the low 32-bits of two XLEN registers are concatenated to form
+the LUT.
+
+The instruction is extremely useful for any lightweight block-cipher
+which uses a 4-bit SBox.
+A comprehensive list and assessment of such ciphers can be found
+in \cite{TGMGD:19}.
+
+Two variants are suggested on the assumption that only one variant is
+proposed for standardisation:
+\begin{itemize}
+\item Variant 1: Concatenate {\tt rs1} and {\tt rs2} to form the LUT.
+    Use {\tt rd} as a source/destination register.
+    The contents of {\tt rd} is chunked into nibbles, which are then
+    used as inputs to the lut. The corresponding nibble is replaced
+    with the output of the lut and written back to {\tt rd}.
+\item Variant 2: Identical to variant 1, but without the read/overwrite
+    semantics for {\tt rd}. Input to the lut is taken from {\tt rs3}
+    and the output is written to {\tt rd}.
+\end{itemize}
+Variant 1 is obviously more efficient in terms of encoding space.
+Variant 2 has the advantage from a side-channel perspective
+of not over-writing it's source register with the result.
+This is useful as it avoids implicit hamming distance leakage in
+a corrolation power analysis (CPA) context. This could be mitigated
+on a micro-architectural level however
+\footnote{
+    How best to support software side-channel countermeasures at the
+    ISA level of abstraction is a non-trivial open question/problem.
+}.
 
 % ============================================================================
 

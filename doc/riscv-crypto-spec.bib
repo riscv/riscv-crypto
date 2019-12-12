@@ -1,4 +1,7 @@
 
+%
+% RISC-V Specifications and draft specifications
+% -----------------------------------------------------------------
 
 @misc{riscv:bitmanip:repo,
   title        = {RISC-V Bit manipulation extension repository},
@@ -10,6 +13,23 @@
   url          = {https://github.com/riscv/riscv-bitmanip/blob/master/bitmanip-draft.pdf}
 }
 
+
+%
+% NIST Specifications and recommendations
+% -----------------------------------------------------------------
+
+@article{nist:gcm,
+  title={NIST Special Publication 800-38D: Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC},
+  author={Dworkin, Morris},
+  journal={US National Institute of Standards and Technology http://csrc. nist. gov/publications/nistpubs/800-38D/SP-800-38D. pdf},
+  year={2007}
+}
+
+
+%
+% Miscellaneous Technical Reports
+% -----------------------------------------------------------------
+
 @techreport{MPP:19,
   author       = {B. Marshall and D. Page and T. Pham},
   title        = {{XCrypto}: a cryptographic {ISE} for {RISC-V}},
@@ -18,6 +38,11 @@
   url          = {https://github.com/scarv/xcrypto}
 }
 
+
+%
+% Academic Papers: Misc
+% -----------------------------------------------------------------
+
 @inproceedings{TGMGD:19,
  author = {Etienne Tehrani and Tarik Graba and Abdelmalek Si Merabet and Sylvain Guilley and Jean-Luc Danger},
  title         = {Classification of Lightweight Block Ciphers for Specific Processor Accelerated Implementations},
@@ -25,4 +50,27 @@
  month         = {11},
  booktitle     = {26th IEEE International Conference on Electronics Circuits and Systems}
 }
+
+%
+% Block Cipher Specifiations
+% -----------------------------------------------------------------
+
+@inproceedings{block:prince,
+  title={PRINCE--a low-latency block cipher for pervasive computing applications},
+  author={Borghoff, Julia and Canteaut, Anne and G{\"u}neysu, Tim and Kavun, Elif Bilge and Knezevic, Miroslav and Knudsen, Lars R and Leander, Gregor and Nikov, Ventzislav and Paar, Christof and Rechberger, Christian and others},
+  booktitle={International Conference on the Theory and Application of Cryptology and Information Security},
+  pages={208--225},
+  year={2012},
+  organization={Springer}
+}
+
+@inproceedings{block:present,
+  title={PRESENT: An ultra-lightweight block cipher},
+  author={Bogdanov, Andrey and Knudsen, Lars R and Leander, Gregor and Paar, Christof and Poschmann, Axel and Robshaw, Matthew JB and Seurin, Yannick and Vikkelsoe, Charlotte},
+  booktitle={International workshop on cryptographic hardware and embedded systems},
+  pages={450--466},
+  year={2007},
+  organization={Springer}
+}
+
 
