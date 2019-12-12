@@ -1,3 +1,112 @@
 
-\todo{Scalar extension details}
+As per the RISC-V Cryptographic Extensions Task Group charter:
+``{\em The committee will also make ISA extension proposals for lightweight
+scalar instructions for 32 and 64 bit machines that improve the performance
+and reduce the code size required for software execution of common algorithms
+like AES and SHA and lightweight algorithms like PRESENT and GOST}".
+
+\bigskip
+
+For context, some these instructions have been developed based on academic
+work at the University of Bristol as part of the XCrypto project
+\cite{MPP:19},
+and work by
+Paris Telecom on acceleration of lightweight block ciphers
+\cite{TGMGD:19}.
+
+% ============================================================================
+
+\subsection{Shared Bitmanip Extension Functionality}
+
+Many of the primitive operations used in symmetric key cryptography
+and cryptographic hash functions are well supported by the
+RISC-V Bitmanip \cite{riscv:bitmanip:repo} extension
+\footnote{
+At the time of writing, the Bitmanip extension is still undergoing
+standardisation.
+Please refer to the bitmanip draft specification
+\cite{riscv:bitmanip:draft}
+directly for the
+latest information, as it may be slightly ahead of what is described
+here.
+}.
+We propose that the scalar cryptographic extension {\em reuse} a
+subset of the instructions from the Bitmanip extension directly.
+Specifically, this would mean that
+a core implementing
+{\em either}
+the scalar cryptographic extensions,
+{\em or}
+the bitmanip extension,
+{\em or}
+both,
+would be able to depend on the existance of these instructions.
+
+\subsubsection{Rotations}
+
+\todo{}
+
+
+\subsubsection{Other Permutations}
+
+\todo{}
+
+
+\subsubsection{Carryless Multiply}
+
+\todo{}
+
+
+\subsubsection{Conditional Move}
+
+\todo{}
+
+
+\subsubsection{Logic With Negate}
+
+\todo{}
+
+
+\subsubsection{Packing}
+
+\todo{}
+
+
+% ============================================================================
+
+\subsection{LUT4 Instruction}
+
+\todo{}
+
+% ============================================================================
+
+\subsection{Multi-precision Arithmetic}
+
+\todo{}
+
+% ============================================================================
+
+\subsection{Lightweight AES Acceleration}
+
+\todo{}
+
+% ============================================================================
+
+\subsection{Lightweight SHA2 Acceleration}
+
+\todo{}
+
+% ============================================================================
+
+\subsection{Lightweight SHA3 Acceleration}
+
+\todo{}
+
+% ============================================================================
+
+\subsection{Micro-architectural Recommendations}
+
+\todo{Macro-op fusion suggestions, side-channel considerations.}
+
+% ============================================================================
 
