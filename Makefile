@@ -8,4 +8,7 @@ spec:
 
 clean:
 	$(MAKE) -C $(REPO_HOME)/doc/ clean
+	$(MAKE) -C $(REPO_HOME)/benchmarks/hash/sha3 clean
 
+benchmarks:
+	$(MAKE) -C $(REPO_HOME)/benchmarks/hash/sha3 all
