@@ -290,7 +290,36 @@ on a micro-architectural level however
 
 \subsection{Lightweight AES Acceleration}
 
-\todo{}
+\begin{isa}
+RV32, RV64:
+    saes.sbox.enc rd, rs1
+    saes.sbox.dec rd, rs2
+\end{isa}
+
+These instructions implement the 
+{\tt SubBytes} \cite[Section 5.1.1]{nist:fips:197}
+and
+{\tt InvSubBytes} \cite[Section 5.3.1]{nist:fips:197}
+steps of the AES Block Cipher \cite{nist:fips:197}.
+The low 32-bits of {\tt rs1} are split into bytes.
+Each byte has the relevent transformation applied, before
+being written back to the corresponding byte position in {\tt rd}.
+On an RV64 platoform, the high 32-bits of the result are zero
+extended.
+
+\note{The AES SBox operations are very popular targets for
+power or EM based side-channel attacks.
+While an instruction like this allows for very efficient AES
+implmentations, it is very difficult to implement the operation
+in a countermeasure friendly way.}
+
+\question{What should the Task Group policy be on enabling
+software and/or hardware based side-channel countermeasure?}
+
+\question{Given that enabling and optmising side-channel countermeasures 
+is so hard, should the TG focus instead on code-density and performance?
+In this case, can implementations with much more structured
+inputs (as in \cite{TG:06}) be considered.}
 
 % ============================================================================
 
