@@ -1,4 +1,5 @@
 
+\usepackage{amssymb}
 \usepackage[backend=biber,style=numeric]{biblatex}
 \usepackage{xcolor}
 \usepackage{fancyvrb}
@@ -7,7 +8,32 @@
 \usepackage{import}
 \usepackage{listings}
 
-\newcommand{\todo}[1]{\textcolor{red}{{\bf TODO:}} #1}
+\newcommand{\todo}[1]{
+    \noindent
+    \fbox{
+        \parbox{\textwidth}{
+            \textcolor{red}{{\bf TODO:}} #1
+        }
+    }
+}
+
+\newcommand{\note}[1]{
+    \noindent
+    \fbox{
+        \parbox{\textwidth}{
+            \textcolor{blue}{{\bf Note:}} #1
+        }
+    }
+}
+
+\newcommand{\question}[1]{
+    \noindent
+    \fbox{
+        \parbox{\textwidth}{
+            \textcolor{green}{{\bf Question:}} #1
+        }
+    }
+}
 
 \addbibresource{riscv-crypto-spec.bib}
 

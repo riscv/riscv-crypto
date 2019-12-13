@@ -233,7 +233,7 @@ RV32, RV64:
 \end{isa}
 
 \begin{lstlisting}[language=c]
-// Equivilent C code for lut4 variant 1 on RV32.
+// C code for lut4 variant 1 on RV32.
 uint32_t lut4_rv32_v1 (uint32_t rd, uint32_t rs1, uint32_t rs2) {
     uint32_t result = 0;
     uint64_t lut    = (((uint64_t)rs1) << 32) | rs2;
@@ -298,24 +298,64 @@ on a micro-architectural level however
 
 \begin{isa}
 RV32, RV64:
-    ssha256.s0 rd, rs1
-    ssha256.s1 rd, rs1
-    ssha256.s2 rd, rs1
-    ssha256.s3 rd, rs1
-
-RV64:
-    ssha512.s0 rd, rs1
-    ssha512.s1 rd, rs1
-    ssha512.s2 rd, rs1
-    ssha512.s3 rd, rs1
+    ssha256.s0 rd, rs1 : rd = ror32(rs1, 7) ^ ror32(rs1, 18) ^ srl32(rs1, 3)
+    ssha256.s1 rd, rs1 : rd = ror32(rs1,17) ^ ror32(rs1, 19) ^ srl32(rs1,10)
+    ssha256.s2 rd, rs1 : rd = ror32(rs1, 2) ^ ror32(rs1, 13) ^ ror32(rs1,22)
+    ssha256.s3 rd, rs1 : rd = ror32(rs1, 6) ^ ror32(rs1, 11) ^ ror32(rs1,25)
 \end{isa}
 
-\begin{lstlisting}[language=c]
-uint32_t ssha256_s0 (uint32_t rs1) {}
-uint32_t ssha256_s1 (uint32_t rs1) {}
-uint32_t ssha256_s2 (uint32_t rs1) {}
-uint32_t ssha256_s3 (uint32_t rs1) {}
-\end{lstlisting}
+The {\tt ssha256.sX}
+instructions implement the core of the four sigma and sum functions used in
+the SHA256 hash function \cite[Section 4.1.2]{nist:fips:180:4}.
+These operations will be supported for a both RV32 and RV64 targets.
+For RV32, the entire XLEN source register is operated on.
+For RV64, the low 32-bits of the XLEN register are read and operated on,
+with the result zero extended to XLEN bits.
+Though named for SHA256, the instructions work for both the
+SHA-224 and SHA-256 parameterisations as described in
+\cite{nist:fips:180:4}.
+
+
+\begin{isa}
+RV64:
+    ssha512.s0 rd, rs1 : rd = ror64(rs1, 1) ^ ror64(rs1,  8) ^ srl64(rs1, 7)
+    ssha512.s1 rd, rs1 : rd = ror64(rs1,19) ^ ror64(rs1, 61) ^ srl64(rs1, 6)
+    ssha512.s2 rd, rs1 : rd = ror64(rs1,28) ^ ror64(rs1, 34) ^ ror64(rs1,39)
+    ssha512.s3 rd, rs1 : rd = ror64(rs1,14) ^ ror64(rs1, 18) ^ ror64(rs1,41)
+\end{isa}
+
+The {\tt ssha512.sX}
+instructions implement the core of the four sigma and sum functions used in
+the SHA512 hash function \cite[Section 4.1.3]{nist:fips:180:4}.
+These operations will be supported for RV64 targets only.
+Though named for the SHA-512 parameterisation, the instructions
+can be used for all of the SHA-384, SHA-512, SHA-512/224 and SHA-512/256
+parameterisations as dscribed in \cite{nist:fips:180:4}.
+
+\note{
+The remaining two core functions which make up the SHA256/512
+hash functions are the $Ch$ and $Maj$ functions:
+\begin{itemize}
+\item \lstinline{Ch(x,y,z)  = (x & y) ^ (~x & z)}
+\item \lstinline{Maj(x,y,z) = (x & y) ^ ( x & z) ^ ( y & z )}
+\end{itemize}
+As ternary functions, they are much too expensive in terms of
+opcode space to consider for inclusion as dedicated instructions for
+such a specialist use case.
+They are amenable however to macro-op fusion on cores which implement it.
+}
+
+\todo{
+These instructions give a
+$\approx 1.8x$ performance improvement
+and
+$\approx 0.6x$ static code size improvment
+to a vanilla SHA256 implementation on RV32.
+This is based on the work for \cite{MPP:19}, which blends results
+from other experimental instructions.
+A dedicated benchmark for investigating the effect of just these instructions
+for the standardisation process will be needed.
+}
 
 % ============================================================================
 
