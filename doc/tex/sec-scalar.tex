@@ -212,7 +212,11 @@ RV64:
 
 See \cite[Section 2.1.4]{riscv:bitmanip:draft} for exact details of
 these instructions.
-Some lightweight block ciphers (e.g. PRINCE \cite{block:prince}) use
+Some lightweight block ciphers
+(e.g.
+PRINCE \cite{block:prince}
+and
+SPARX \cite{DPUVGB:16}) use
 sub-word data types in their primitives.
 The bitmanip pack instructions are useful for performing rotations on
 16-bit data elements.
@@ -304,6 +308,13 @@ These instructions introduce the ``double width writeback" idiom to
 RISC-V.
 How acceptable is this?
 What other instructions could take advantage of this?
+How well does this overlap with what the P (DSP) extension task group
+is proposing?
+}
+
+\todo{
+Benchmarking flow for these instructions based on
+long-multiply / modular exponentiation.
 }
 
 \subsubsection{Multi-precision Multiply Accumulate Unsigned}
@@ -346,11 +357,18 @@ RV32, RV64:
 
 \begin{lstlisting}[]
 // Equivalent RV32IM / RV64IM assembly code listing. rdp = (rd2,rd1)
-// 
 add     rd1, rs2, rs3
 sltu    rs1, rd1, rs2
 add     rd2, rs2, rs1   // (rd1,rd2) = (rs1,rs2)+rs3
 \end{lstlisting}
+
+The \mnemonic{maccu} instruction concatenates source registers
+{\tt rd2} and {\tt rd1} to create a $2*$\XLEN word.
+To this, {\tt rs3} is added, and the full double-\XLEN result is written
+back to an odd/even register pair {\tt rdp}.
+
+\note{This instruction is designed to be used in conjunction with
+\mnemonic{mmulu}.}
 
 % ============================================================================
 
