@@ -84,7 +84,7 @@ RV64 only:
 
 See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
 these instructions.
-The {\em funnel shift} instructions create a $2*XLEN$ word by
+The {\em funnel shift} instructions create a $2*$\XLEN word by
 concatenating {\tt rs1} and {\tt rs3}, which is then
 left/right rotate shifted by the amount in {\tt imm}/{\tt rs2}.
 These are useful for implementing double-width rotations.
@@ -253,8 +253,8 @@ uint32_t lut4_rv32_v1 (uint32_t rd, uint32_t rs1, uint32_t rs2) {
 The {\tt lut4} instruction implements a 4-bit lookup table operation
 on every nibble in a source word.
 The lookup table is constructed by concatenating two 32-bit words.
-On RV32, two XLEN registers are concatenated to form the LUT.
-On RV64, the low 32-bits of two XLEN registers are concatenated to form
+On RV32, two \XLEN registers are concatenated to form the LUT.
+On RV64, the low 32-bits of two \XLEN registers are concatenated to form
 the LUT.
 The instruction is extremely useful for any lightweight block-cipher
 which uses a 4-bit SBox.
@@ -495,6 +495,12 @@ improvements in performance, static code size and dynamic instruction
 bandwidth.
 A longer discussion of the merits of these instructions can
 be found in Appendix \ref{sec:appendix:sha3}.
+
+\note{
+SHA3 is not yet widely used, especially with respect to SHA2.
+These instructions enable implementations with a much better
+performance/code-density ratio than is currently possible in RISC-V.
+}
 
 % ============================================================================
 
