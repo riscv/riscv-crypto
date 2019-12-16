@@ -11,6 +11,8 @@ SPEC_TEX  = $(SPEC_TOP) $(wildcard $(REPO_HOME)/doc/tex/*)
 SPEC_EXTRA= riscv-crypto-spec.sty
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
+REPO_DIRTY =$(shell git diff)
+
 .PHONY: $(SPEC_COMMIT)
 $(SPEC_COMMIT):
 	@git rev-parse --abbrev-ref HEAD > ${@}
