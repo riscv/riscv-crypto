@@ -2,6 +2,10 @@
 \section{SHA3 Instruction Discussions}
 \label{sec:appendix:sha3}
 
+This discussion follows on from the instruction specifications
+in section
+\ref{sec:scalar:sha3}.
+
 The SHA3 secure hash function \cite{nist:fips:202} is based on
 the KECCAK-P family of permutations.
 SHA3 is notably slower than SHA2 when implemented in software.
@@ -38,6 +42,30 @@ consider two broad implementation options:
     In both cases, the extra number of instructions executed is
     substantial.
 \end{itemize}
+
+\todo{
+Benchmarking flow for SHA3 and the KeccakP1600 round function:
+Code size, performance, instructions executed, instruction bandwidth,
+data bandwidth etc.
+}
+
+\begin{table}[]
+\centering
+\begin{tabular}{llllll}
+Architecture & Flags & {\tt .text} Bytes & Instructions Executed & Fetch Bandwidth & Data Bandwidth \\ \hline
+{\tt rv32imc} & -O2 &  558 &  & & \\
+{\tt rv32im } & -O2 &  688 &  & & \\
+{\tt rv64imc} & -O2 &  354 &  & & \\
+{\tt rv64im } & -O2 &  504 &  & & \\
+{\tt rv32imc} & -O3 & 2812 &  & & \\
+{\tt rv32im } & -O3 & 3328 &  & & \\
+{\tt rv64imc} & -O3 & 1034 &  & & \\
+{\tt rv64im } & -O3 & 1292 &  & & \\
+\end{tabular}
+\caption{Table of code size and performance comparisons for the SHA3
+algorithm, implemented on various RISC-V architecture variants.
+}
+\end{table}
 
 
 \begin{figure}
