@@ -299,6 +299,12 @@ RISC-V struggles with long arithmetic for two reasons:
     on RISC-V.
 \end{itemize}
 
+\question{
+These instructions introduce the "double width writeback" idiom to
+RISC-V.
+How acceptable is this?
+What other instructions could take advantage of this?
+}
 
 \subsubsection{Multi-precision Multiply Accumulate Unsigned}
 
@@ -322,6 +328,14 @@ The third \XLEN source register is then added to the $2*$\XLEN result.
 The $2*$\XLEN result is then written back to an odd-even register
 pair \rdp.
 
+\note{
+This instruction could be cracked into two pieces to avoid the
+double width writeback idiom.
+This would realise two instructions
+(\mnemonic{mmulu} and \mnemonic{mmuluh})
+which yield the high and low parts of the full $2*$\XLEN result.
+They could then be fused in fancier micro-architectures.
+}
 
 \subsubsection{Multi-precision Accumulate Unsigned}
 
