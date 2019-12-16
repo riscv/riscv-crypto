@@ -14,6 +14,36 @@ and work by
 Paris Telecom on acceleration of lightweight block ciphers
 \cite{TGMGD:19}.
 
+\question{
+Implementation Diversity.
+There are often many different ways of implementing certain
+standardised cryptographic algorithms (AES T-Table v.s. packed for example).
+Given that different implementation styles can have security implications
+as well, what should the TG policy be on enabling implementation diversity?
+By encouraging a particular style of implementation, more specific and
+light-weight instructions can be defined to accelerate specifically that
+implementation (See \cite{TG:06}).
+This may come with flexibility costs, and possibly limit implementers
+choices in terms of security and attack countermeasures.
+}
+
+\question{
+Chicken and Egg Problems. While security must always be the first design
+criteria for a new cipher, cryptographers can weight their choice of
+primitives by how well they are supported by existing micro-processors.
+If suddenly a new primitive becomes well supported by new
+architectures, how does this impact cipher design?
+Is this a motivation to include some level of generally / speculatively
+useful stuff?
+See \cite{block:salsa20, LSYRR:04}.
+Likewise, criteria for ``lightweight" ciphers might include suitability
+for hardware.
+This might mean narrow data widths (e.g. SPARX \cite{DPUVGB:16})
+which though excellent for hardware, are less than a CPU word-width,
+making operations like addition, shifts and rotate {\em more}
+awkward, not less.
+}
+
 % ============================================================================
 
 \subsection{Shared Bitmanip Extension Functionality}
