@@ -23,7 +23,7 @@ and cryptographic hash functions are well supported by the
 RISC-V Bitmanip \cite{riscv:bitmanip:repo} extension
 \footnote{
 At the time of writing, the Bitmanip extension is still undergoing
-standardisation.
+standardization.
 Please refer to the bitmanip draft specification
 \cite{riscv:bitmanip:draft}
 directly for the
@@ -40,7 +40,7 @@ the scalar cryptographic extensions,
 the bitmanip extension,
 {\em or}
 both,
-would be able to depend on the existance of these instructions.
+would be able to depend on the existence of these instructions.
 
 The following subsections give the assembly syntax of instructions
 proposed for inclusion in the scalar crypto extension, along with a
@@ -86,7 +86,7 @@ See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
 these instructions.
 The {\em funnel shift} instructions create a $2*XLEN$ word by
 concatenating {\tt rs1} and {\tt rs3}, which is then
-left/right rotate shifted by the ammount in {\tt imm}/{\tt rs2}.
+left/right rotate shifted by the amount in {\tt imm}/{\tt rs2}.
 These are useful for implementing double-width rotations.
 
 \todo{Useful for: SHA3/SHA512 on RV32. 128 bit rotations aren't common, so
@@ -113,8 +113,8 @@ needed either by block ciphers and hash-functions directly, or for
 endianness correction of data.
 Endianness correction is important because
 cryptography often occurs in the context of communication, which requires
-standardised endianness which may be different from the natural machine
-endinaness.
+standardized endianness which may be different from the natural machine
+endianness.
 
 \todo{Specific use-cases for grev.}
 
@@ -147,7 +147,7 @@ instruction.
 these instructions. They are included as ``hypothetically useful"
 at the moment.}
 
-\subsubsection{Carryless Multiply}
+\subsubsection{Carry-less Multiply}
 
 \begin{isa}
 RV32, RV64:
@@ -163,7 +163,7 @@ RV64 only:
 
 See \cite[Section 2.6]{riscv:bitmanip:draft} for exact details of
 this instruction.
-As is mentioned there, obvious cryptographic use-cases for carryless
+As is mentioned there, obvious cryptographic use-cases for carry-less
 multiply are for Galois Counter Mode (GCM) block cipher operations
 \footnote{\url{https://en.wikipedia.org/wiki/Galois/Counter_Mode}}.
 GCM is recommended by NIST as a block cipher mode of operation
@@ -258,7 +258,7 @@ A comprehensive list and assessment of such ciphers can be found
 in \cite{TGMGD:19}.
 
 Two variants are suggested on the assumption that only one variant is
-proposed for standardisation:
+proposed for standardization:
 \begin{itemize}
 \item Variant 1: Concatenate {\tt rs1} and {\tt rs2} to form the LUT.
     Use {\tt rd} as a source/destination register.
@@ -273,7 +273,7 @@ Variant 1 is obviously more efficient in terms of encoding space.
 Variant 2 has the advantage from a side-channel perspective
 of not over-writing it's source register with the result.
 This is useful as it avoids implicit hamming distance leakage in
-a corrolation power analysis (CPA) context. This could be mitigated
+a correlation power analysis (CPA) context. This could be mitigated
 on a micro-architectural level however
 \footnote{
     How best to support software side-channel countermeasures at the
@@ -284,7 +284,59 @@ on a micro-architectural level however
 
 \subsection{Multi-precision Arithmetic}
 
-\todo{}
+Multi-precision arithmetic is commonly used in public key cryptography.
+RISC-V struggles with long arithmetic for two reasons:
+
+\begin{itemize}
+\item A lack of carry / overflow detection. This hinders the arithmetic
+    side of implementing multi-precision arithmetic.
+
+\item A lack of indexed load and store instructions.
+    Multi-precision arithmetic typically involves stepping through
+    at-least three different arrays at different indices: two operands
+    and a result.
+    This results in a lot of pointer arithmetic at the end of loops
+    on RISC-V.
+\end{itemize}
+
+
+\subsubsection{Multi-precision Multiply Accumulate Unsigned}
+
+\begin{isa}
+RV32, RV64:
+    mmulu   rdp, rs1, rs2, rs3
+\end{isa}
+
+\begin{lstlisting}[]
+// Equivalent RV32IM / RV64IM assembly code listing. rdp = (rd2,rd1)
+mul     t1  , rs1, rs2  //       t1   = low(rs1 * rs2)
+mulhu   rd2 , rs1, rs2  // (rd2, t1)  =     rs1 * rs2
+add     rd1 , t1 , rs3  //      rd1   = low(rs1 * rs2) + rs3
+sltu    t1  , rd1, t1   //       t1   = rd1 < t1
+add     rd2 , rd2, rs2  //      rd2  += t1
+\end{lstlisting}
+
+The \mnemonic{umacc} instruction performs an unsigned multiply
+of two \XLEN sources, forming a $2*$\XLEN result.
+The third \XLEN source register is then added to the $2*$\XLEN result.
+The $2*$\XLEN result is then written back to an odd-even register
+pair \rdp.
+
+
+\subsubsection{Multi-precision Accumulate Unsigned}
+
+\begin{isa}
+RV32, RV64:
+    maccu   rdp, rs1, rs2, rs3
+\end{isa}
+
+\begin{lstlisting}[]
+// Equivalent RV32IM / RV64IM assembly code listing. rdp = (rd2,rd1)
+// 
+add     rd1, rs2, rs3
+sltu    rs1, rd1, rs2
+add     rd2, rs2, rs1   // (rd1,rd2) = (rs1,rs2)+rs3
+\end{lstlisting}
 
 % ============================================================================
 
@@ -302,21 +354,21 @@ and
 {\tt InvSubBytes} \cite[Section 5.3.1]{nist:fips:197}
 steps of the AES Block Cipher \cite{nist:fips:197}.
 The low 32-bits of {\tt rs1} are split into bytes.
-Each byte has the relevent transformation applied, before
+Each byte has the relevant transformation applied, before
 being written back to the corresponding byte position in {\tt rd}.
-On an RV64 platoform, the high 32-bits of the result are zero
+On an RV64 platform, the high 32-bits of the result are zero
 extended.
 
 \note{The AES SBox operations are very popular targets for
 power or EM based side-channel attacks.
 While an instruction like this allows for very efficient AES
-implmentations, it is very difficult to implement the operation
+implementations, it is very difficult to implement the operation
 in a countermeasure friendly way.}
 
 \question{What should the Task Group policy be on enabling
 software and/or hardware based side-channel countermeasure?}
 
-\question{Given that enabling and optmising side-channel countermeasures 
+\question{Given that enabling and optimizing side-channel countermeasures 
 is so hard, should the TG focus instead on code-density and performance?
 In this case, can implementations with much more structured
 inputs (as in \cite{TG:06}) be considered.}
@@ -341,7 +393,7 @@ For RV32, the entire XLEN source register is operated on.
 For RV64, the low 32-bits of the XLEN register are read and operated on,
 with the result zero extended to XLEN bits.
 Though named for SHA256, the instructions work for both the
-SHA-224 and SHA-256 parameterisations as described in
+SHA-224 and SHA-256 parameterizations as described in
 \cite{nist:fips:180:4}.
 
 
@@ -357,9 +409,9 @@ The {\tt ssha512.sX}
 instructions implement the core of the four sigma and sum functions used in
 the SHA512 hash function \cite[Section 4.1.3]{nist:fips:180:4}.
 These operations will be supported for RV64 targets only.
-Though named for the SHA-512 parameterisation, the instructions
+Though named for the SHA-512 parameterization, the instructions
 can be used for all of the SHA-384, SHA-512, SHA-512/224 and SHA-512/256
-parameterisations as dscribed in \cite{nist:fips:180:4}.
+parameterizations as described in \cite{nist:fips:180:4}.
 
 \note{
 The remaining two core functions which make up the SHA256/512
@@ -378,12 +430,12 @@ They are amenable however to macro-op fusion on cores which implement it.
 These instructions give a
 $\approx 1.8x$ performance improvement
 and
-$\approx 0.6x$ static code size improvment
+$\approx 0.6x$ static code size improvement
 to a vanilla SHA256 implementation on RV32.
 This is based on the work for \cite{MPP:19}, which blends results
 from other experimental instructions.
 A dedicated benchmark for investigating the effect of just these instructions
-for the standardisation process will be needed.
+for the standardization process will be needed.
 }
 
 % ============================================================================
@@ -402,7 +454,7 @@ RV32, RV64:
 These instructions accelerate code-dense implementations of the SHA3 secure
 hash function \cite{nist:fips:202}.
 They work on the low $3$ bits of the input {\tt rs1} and {\tt rs2} registers,
-and compute indicies into the state array of the round function.
+and compute indices into the state array of the round function.
 They are designed to replace both canonical implementations of the
 {\tt index} function and lookup table based implementations.
 In both cases, these instructions offer substantial
