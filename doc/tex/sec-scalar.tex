@@ -80,7 +80,7 @@ to the bitmanip draft specification.
 
 \subsubsection{Rotations}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     ror    rd, rs1, rs2
     rol    rd, rs1, rs2
@@ -90,7 +90,7 @@ RV64 only:
     rorw   rd, rs1, rs2
     rolw   rd, rs1, rs2
     roriw  rd, rs1, imm
-\end{isa}
+\end{cryptobitmanipisa}
 
 See \cite[Section 3.1.1]{riscv:bitmanip:draft} for exact details of
 these instructions.
@@ -100,7 +100,7 @@ It particularly features in the ARX (Add,Rotate,Xor) class of
 block ciphers
 \footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}.
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     fsl   rd, rs1, rs3, rs2
     fsr   rd, rs1, rs3, rs2
@@ -110,7 +110,7 @@ RV64 only:
     fslw  rd, rs1, rs3, rs2
     fsrw  rd, rs1, rs3, rs2
     fsriw rd, rs1, rs3, imm
-\end{isa}
+\end{cryptobitmanipisa}
 
 See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
 these instructions.
@@ -125,7 +125,7 @@ possibly only recommend the RV32 instructions?}
 
 \subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     grev rd, rs1, rs2
     grevi rd, rs1, imm
@@ -133,7 +133,7 @@ RV32, RV64:
 RV64 only:
     grevw rd, rs1, rs2
     greviw rd, rs1, imm
-\end{isa}
+\end{cryptobitmanipisa}
 
 The Generalized Reverse ({\tt grev*}) instructions can be used for 
 ``{\em byte-order swap, bitwise reversal, short-order-swap,
@@ -148,7 +148,7 @@ endianness.
 
 \todo{Specific use-cases for grev.}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     shfl    rd, rs1, rs2
     unshfl  rd, rs1, rs2
@@ -158,7 +158,7 @@ RV32, RV64:
 RV64:
     shflw   rd, rs1, rs2
     unshflw rd, rs1, rs2
-\end{isa}
+\end{cryptobitmanipisa}
 
 The generalized shuffle instructions are useful for implementing
 generic bit permutation operations.
@@ -179,7 +179,7 @@ at the moment.}
 
 \subsubsection{Carry-less Multiply}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     clmul rd, rs1, rs2
     clmulh rd, rs1, rs2
@@ -189,7 +189,7 @@ RV64 only:
     clmulw rd, rs1, rs2
     clmulhw rd, rs1, rs2
     clmulrw rd, rs1, rs2
-\end{isa}
+\end{cryptobitmanipisa}
 
 See \cite[Section 2.6]{riscv:bitmanip:draft} for exact details of
 this instruction.
@@ -201,10 +201,10 @@ GCM is recommended by NIST as a block cipher mode of operation
 
 \subsubsection{Conditional Move}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     cmov rd, rs2, rs1, rs3
-\end{isa}
+\end{cryptobitmanipisa}
 
 See \cite[Section 2.9.2]{riscv:bitmanip:draft} for exact details of
 this instruction.
@@ -213,12 +213,12 @@ code and avoiding control flow changes.
 
 \subsubsection{Logic With Negate}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64:
     andn rd, rs1, rs2
      orn rd, rs1, rs2
     xorn rd, rs1, rs2
-\end{isa}
+\end{cryptobitmanipisa}
 
 See \cite[Section 2.1.3]{riscv:bitmanip:draft} for exact details of
 these instructions.
@@ -229,7 +229,7 @@ for implementing software based side-channel countermeasures like masking.
 
 \subsubsection{Packing}
 
-\begin{isa}
+\begin{cryptobitmanipisa}
 RV32, RV64: 
     pack   rd, rs1, rs2
     packu  rd, rs1, rs2
@@ -238,7 +238,7 @@ RV32, RV64:
 RV64: 
     packw  rd, rs1, rs2
     packuw rd, rs1, rs2
-\end{isa}
+\end{cryptobitmanipisa}
 
 See \cite[Section 2.1.4]{riscv:bitmanip:draft} for exact details of
 these instructions.
@@ -260,25 +260,11 @@ generally getting data into the right shape prior to applying transforms.
 
 \subsection{LUT4 Instruction}
 
-\begin{isa}
+\begin{cryptoisa}
 RV32, RV64:
-    lut4    rd, rs1, rs2        // Variant 1
-    lut4    rd, rs1, rs2 rs3    // Variant 2
-\end{isa}
-
-\begin{lstlisting}[language=c]
-// C code for lut4 variant 1 on RV32.
-uint32_t lut4_rv32_v1 (uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    uint32_t result = 0;
-    uint64_t lut    = (((uint64_t)rs1) << 32) | rs2;
-    for(int i = 0; i < XLEN;  i += 4) {
-        uint32_t in     = ((rd  >>  i) & 0xF) << 2;
-        uint64_t toadd  = ((lut >> in) & 0xF) << i;
-        result         |= toadd;
-    }
-    return result;
-}
-\end{lstlisting}
+    lut4    rd, rs1, rs2      // Variant 1
+    lut4    rd, rs1, rs2 rs3  // Variant 2
+\end{cryptoisa}
 
 The {\tt lut4} instruction implements a 4-bit lookup table operation
 on every nibble in a source word.
@@ -337,7 +323,7 @@ RISC-V struggles with long arithmetic for two reasons:
 These instructions introduce the ``double width writeback" idiom to
 RISC-V.
 How acceptable is this?
-What other instructions could take advantage of this?
+Which other instructions could take advantage of this?
 How well does this overlap with what the P (DSP) extension task group
 is proposing?
 }
@@ -349,10 +335,10 @@ long-multiply / modular exponentiation.
 
 \subsubsection{Multi-precision Multiply Accumulate Unsigned}
 
-\begin{isa}
+\begin{cryptoisa}
 RV32, RV64:
     mmulu   rdp, rs1, rs2, rs3
-\end{isa}
+\end{cryptoisa}
 
 \begin{lstlisting}[]
 // Equivalent RV32IM / RV64IM assembly code listing. rdp = (rd2,rd1)
@@ -380,10 +366,11 @@ They could then be fused in fancier micro-architectures.
 
 \subsubsection{Multi-precision Accumulate Unsigned}
 
-\begin{isa}
+\begin{cryptoisa}
 RV32, RV64:
-    maccu   rdp, rs1, rs2, rs3
-\end{isa}
+    maccu   rdp, rs1, rs2, rs3  // Variant 1 : rdp = (rs1 || rs2) + rs3
+    maccu   rdp, rs1            // Variant 2 : rdp =  rdp         + rs3
+\end{cryptoisa}
 
 \begin{lstlisting}[]
 // Equivalent RV32IM / RV64IM assembly code listing. rdp = (rd2,rd1)
@@ -392,10 +379,19 @@ sltu    rs1, rd1, rs2
 add     rd2, rs2, rs1   // (rd1,rd2) = (rs1,rs2)+rs3
 \end{lstlisting}
 
-The \mnemonic{maccu} instruction concatenates source registers
-{\tt rd2} and {\tt rd1} to create a $2*$\XLEN word.
-To this, {\tt rs3} is added, and the full double-\XLEN result is written
-back to an odd/even register pair {\tt rdp}.
+Variant 1 of the \mnemonic{maccu} instruction
+concatenates source registers
+{\tt rd2}
+and
+{\tt rd1}
+to create a $2*$\XLEN word.
+To this,
+{\tt rs3} is added,
+and the full double-\XLEN result is written back to
+an odd/even register pair {\tt rdp}.
+
+Variant 2 does the same, but uses {\tt rdp} as an operand and is
+destructive.
 
 \note{This instruction is designed to be used in conjunction with
 \mnemonic{mmulu}.}
@@ -404,11 +400,11 @@ back to an odd/even register pair {\tt rdp}.
 
 \subsection{Lightweight AES Acceleration}
 
-\begin{isa}
+\begin{cryptoisa}
 RV32, RV64:
     saes.sbox.enc rd, rs1
     saes.sbox.dec rd, rs2
-\end{isa}
+\end{cryptoisa}
 
 These instructions implement the 
 {\tt SubBytes} \cite[Section 5.1.1]{nist:fips:197}
@@ -439,13 +435,13 @@ inputs (as in \cite{TG:06}) be considered.}
 
 \subsection{Lightweight SHA2 Acceleration}
 
-\begin{isa}
+\begin{cryptoisa}
 RV32, RV64:
     ssha256.s0 rd, rs1 : rd = ror32(rs1, 7) ^ ror32(rs1, 18) ^ srl32(rs1, 3)
     ssha256.s1 rd, rs1 : rd = ror32(rs1,17) ^ ror32(rs1, 19) ^ srl32(rs1,10)
     ssha256.s2 rd, rs1 : rd = ror32(rs1, 2) ^ ror32(rs1, 13) ^ ror32(rs1,22)
     ssha256.s3 rd, rs1 : rd = ror32(rs1, 6) ^ ror32(rs1, 11) ^ ror32(rs1,25)
-\end{isa}
+\end{cryptoisa}
 
 The {\tt ssha256.sX}
 instructions implement the core of the four sigma and sum functions used in
@@ -459,13 +455,13 @@ SHA-224 and SHA-256 parameterizations as described in
 \cite{nist:fips:180:4}.
 
 
-\begin{isa}
+\begin{cryptoisa}
 RV64:
     ssha512.s0 rd, rs1 : rd = ror64(rs1, 1) ^ ror64(rs1,  8) ^ srl64(rs1, 7)
     ssha512.s1 rd, rs1 : rd = ror64(rs1,19) ^ ror64(rs1, 61) ^ srl64(rs1, 6)
     ssha512.s2 rd, rs1 : rd = ror64(rs1,28) ^ ror64(rs1, 34) ^ ror64(rs1,39)
     ssha512.s3 rd, rs1 : rd = ror64(rs1,14) ^ ror64(rs1, 18) ^ ror64(rs1,41)
-\end{isa}
+\end{cryptoisa}
 
 The {\tt ssha512.sX}
 instructions implement the core of the four sigma and sum functions used in
@@ -505,14 +501,14 @@ for the standardization process will be needed.
 \subsection{Lightweight SHA3 Acceleration}
 \label{sec:scalar:sha3}
 
-\begin{isa}
+\begin{cryptoisa}
 RV32, RV64:
     ssha3.xy rd, rs1, rs2 : rd = (( rs1    % 5) + 5(           rs2 % 5)) << 3
     ssha3.x1 rd, rs1, rs2 : rd = (((rs1+1) % 5) + 5(           rs2 % 5)) << 3
     ssha3.x2 rd, rs1, rs2 : rd = (((rs1+2) % 5) + 5(           rs2 % 5)) << 3
     ssha3.x4 rd, rs1, rs2 : rd = (((rs1+4) % 5) + 5(           rs2 % 5)) << 3
     ssha3.yx rd, rs1, rs2 : rd = (( rs2    % 5) + 5((2*rs1 + 3*rs2)% 5)) << 3
-\end{isa}
+\end{cryptoisa}
 
 These instructions accelerate code-dense implementations of the SHA3 secure
 hash function \cite{nist:fips:202}.

@@ -52,12 +52,20 @@
 
 \addbibresource{riscv-crypto-spec.bib}
 
-\DefineVerbatimEnvironment{isa}{Verbatim}{%
+\DefineVerbatimEnvironment{cryptobitmanipisa}{Verbatim}{%
+  samepage=true,
+  label=RISC-V Bitmanip/Crypto ISA,
+  labelposition=topline,
+  frame=single,
+  framerule=0.1mm
+}
+
+\DefineVerbatimEnvironment{cryptoisa}{Verbatim}{%
   samepage=true,
   label=RISC-V Crypto ISA,
   labelposition=topline,
   frame=single,
-  framerule=0.8mm
+  framerule=0.1mm
 }
 
 \lstset{
