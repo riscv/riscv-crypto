@@ -146,7 +146,7 @@ less certain, both generally, and in the case of RISC-V specifically.
     implies much wider memory busses, deeper fetch buffers, or both.
 
 \item It is an open question how a compiler tuned to generate
-    fusion pairs will interract with a core which doesn't implement
+    fusion pairs will interact with a core which doesn't implement
     fusion. Intuitively, this may mean activating forwarding paths
     much more often. This may result in more toggling and hence
     energy consumption. We could find no empirical evidence one way
@@ -164,12 +164,17 @@ less certain, both generally, and in the case of RISC-V specifically.
     address be written back to the GPRs, even if the address is never
     used again.
 
+\item Certain bus standards (AMBA AHB, AXI) which have separate address and
+    data phases or channels, possibly removing the need for indexed stores to
+    access all three operands simultaneously.
+    This implies a possible performance penalty.
+
 \item While these instructions are very useful generally, they have
     particular usefulness in Cryptography.
     In the case of public key cryptography, one typically needs to do
-    large amounts of multi-precisiona arithmetic.
+    large amounts of multi-precision arithmetic.
     Basic schemes for this rely on iterating over at-least three
-    different arrays with different indicies, for which indexed load
+    different arrays with different indices, for which indexed load
     and store are very useful.
     More complex modular exponentiation schemes iterate less regularly
     over the input/output arrays, making the pointer arithmetic involved
