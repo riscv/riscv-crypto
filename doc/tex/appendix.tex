@@ -160,6 +160,10 @@ less certain, both generally, and in the case of RISC-V specifically.
     We would argue that an auto-aligning indexed load and store
     meets both of these.
 
+\item A fused store instruction sequence requires that the calculated
+    address be written back to the GPRs, even if the address is never
+    used again.
+
 \item While these instructions are very useful generally, they have
     particular usefulness in Cryptography.
     In the case of public key cryptography, one typically needs to do
