@@ -94,3 +94,97 @@ used by the SHA3 secure hash function.}
 \label{fig:listing:sha3}
 \end{figure}
 
+% ============================================================================
+
+
+\section{Indexed Load and Store Discussion}
+\label{sec:appendix:ildst}
+
+\note{
+The following section is included to stimulate discussion.
+There are good engineering arguments for and against
+indexed load and store in the context of RISC-V which this
+section aims to capture.
+}
+
+RISC-V very deliberately omits indexed load and store instructions
+from the base architecture \cite{CDPA:16}.
+The principle arguments for this are:
+
+\begin{itemize}
+\item That the extra register read port for the 3-operand store instructions
+    are an unacceptable burden on smaller micro-architectures.
+\item That macro-op fusion is a sufficient mitigation for the performance
+    penalty.
+    In \cite[Sections V, VI]{CDPA:16}, the authors use the example of
+    indexed load to demonstrate this.
+    Their results using the SPECInt benchmarks are very encouraging.
+\end{itemize}
+
+With the proposed inclusion of ternary instructions as part of Bitmanip, the
+first argument no longer holds as much (or any) weight for CPUs which are
+implementing many/any of the ternary instructions anyway.
+
+The second argument then requires further discussion.
+Note that we do not argue against macro-op fusion in general, it
+is still a useful technique for optimising instruction execution
+and maintaining ISA cleanliness \footnote{For some definition thereof.}.
+In the case of indexed load and store however, it's merits are
+less certain, both generally, and in the case of RISC-V specifically.
+
+\begin{itemize}
+\item For narrow memory bus widths (32-bits), one can only
+    fuse adjacent 16-bit opcodes. This can be mitigated with an
+    instruction fetch buffer and the associated costs this brings.
+
+\item In \cite{CDPA:16}, the authors focus on fusing opcodes from the
+    compressed ISA. While this makes sense, it severely limits the
+    registers available due to the limited addressing capabilities of
+    the RVC instructions.
+
+\item There is no reason 32-bit opcodes cannot be fused, but this
+    implies much wider memory busses, deeper fetch buffers, or both.
+
+\item It is an open question how a compiler tuned to generate
+    fusion pairs will interract with a core which doesn't implement
+    fusion. Intuitively, this may mean activating forwarding paths
+    much more often. This may result in more toggling and hence
+    energy consumption. We could find no empirical evidence one way
+    or the other on this.
+
+\item The recommended fusable sequence for an auto-aligning indexed load in
+    \cite[Section VI.A]{CDPA:16} is three 16-bit compressed instructions.
+    This is a criterion used by the Bitmanip extension to measure whether
+    instructions are worthy of inclusion: does it replace three
+    instructions, or two instructions and is very commonly used.
+    We would argue that an auto-aligning indexed load and store
+    meets both of these.
+
+\item While these instructions are very useful generally, they have
+    particular usefulness in Cryptography.
+    In the case of public key cryptography, one typically needs to do
+    large amounts of multi-precisiona arithmetic.
+    Basic schemes for this rely on iterating over at-least three
+    different arrays with different indicies, for which indexed load
+    and store are very useful.
+    More complex modular exponentiation schemes iterate less regularly
+    over the input/output arrays, making the pointer arithmetic involved
+    even more burdensome.
+    In block ciphers and hash functions which are not loop-unrolled,
+    non-sequential access to a state array is also a common idiom.
+
+\item Given the results in \cite{CDPA:16}, it is clear that
+    macro-op fusion is a good scheme for enhancing implementations of
+    RISC-V.
+    It does not offer a comparison of performance based on a
+    hypothetical extension to RISC-V which does include
+    auto-aligning indexed load and store.
+    This work and associated results are essential for a full discussion on
+    the matter.
+\end{itemize}
+
+\todo{
+Repeat the work of \cite{CDPA:16}, but include a version of
+RISC-V with the auto-aligning instructions described
+in section \ref{sec:ildst}.
+}
