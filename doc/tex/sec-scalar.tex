@@ -349,7 +349,7 @@ sltu    t1  , rd1, t1   //       t1   = rd1 < t1
 add     rd2 , rd2, rs2  //      rd2  += t1
 \end{lstlisting}
 
-The \mnemonic{umacc} instruction performs an unsigned multiply
+The \mnemonic{mmulu} instruction performs an unsigned multiply
 of two \XLEN sources, forming a $2*$\XLEN result.
 The third \XLEN source register is then added to the $2*$\XLEN result.
 The $2*$\XLEN result is then written back to an odd-even register
