@@ -18,8 +18,9 @@ export PATH="$RISCV/bin:$PATH"
 
 $DIR_PK/configure \
     --prefix=$INSTALL_DIR \
-    --host=$TARGET_ARCH
+    --host=$TARGET_ARCH \
+    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
 
-make -j 2
+make
 make install
 

@@ -17,7 +17,8 @@ $DIR_GCC/configure \
     --prefix=$INSTALL_DIR \
     --enable-languages=c \
     --disable-libssp \
-    --target=$TARGET_ARCH
-make -j 2
+    --target=$TARGET_ARCH \
+    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
+make
 make install
 

@@ -18,9 +18,10 @@ export PATH="$RISCV/bin:$PATH"
 
 $DIR_NEWLIB/configure \
     --prefix=$INSTALL_DIR \
-    --target=$TARGET_ARCH
+    --target=$TARGET_ARCH \
+    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
 
-make -j 2
+make
 make install
 
 

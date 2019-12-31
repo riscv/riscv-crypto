@@ -15,7 +15,8 @@ refresh_dir  $DIR_BINUTILS_BUILD
 cd           $DIR_BINUTILS_BUILD
 $DIR_BINUTILS/configure \
     --prefix=$INSTALL_DIR \
-    --target=$TARGET_ARCH
-make -j 2
+    --target=$TARGET_ARCH \
+    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
+make
 make install
 

@@ -17,7 +17,16 @@ toolchain and ISA simulator.*
     called `riscv-crypto`, where `$REPO_VERSION` is set
     by the riscv-crypto environment setup script in `bin/conf.sh`.
 
-2. Build the repositories:
+2. Apply the relevent patches to the checked out repositories:
+    ```sh
+    $> $REPO_HOME/tools/apply-patch-all.sh
+    ```
+    Or, apply them individually using the `tools/apply-patch-*.sh`
+    scripts.
+
+
+
+3. Build the repositories:
     ```sh
     $> $REPO_HOME/tools/build-all.sh
     ```
@@ -33,4 +42,9 @@ toolchain and ISA simulator.*
      $> $REPO_HOME/tools/build-pk.sh
      $> $REPO_HOME/tools/build-spike.sh
      ```
+
+4. Set your `RISCV` environment variable:
+    ```sh
+    export RISCV=$REPO_BUILD/toolchain/install
+    ```
 
