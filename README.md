@@ -16,3 +16,6 @@
     [XCrypto](https://github.com/scarv/xcrypto) project by the
     University of Bristol Cryptography Research Group
 
+- See [`tools/README.md`](tools/README.md) for information on installing
+  the experimental toolchain.
+
