@@ -264,6 +264,8 @@ generally getting data into the right shape prior to applying transforms.
 RV32, RV64:
     lut4    rd, rs1, rs2      // Variant 1
     lut4    rd, rs1, rs2 rs3  // Variant 2
+    lut4lo  rd, rs1, rs2      // Variant 3
+    lut4hi  rd, rs1, rs2      // Variant 3
 \end{cryptoisa}
 
 The {\tt lut4} instruction implements a 4-bit lookup table operation
@@ -288,6 +290,8 @@ proposed for standardisation:
 \item Variant 2: Identical to variant 1, but without the read/overwrite
     semantics for {\tt rd}. Input to the lut is taken from {\tt rs3}
     and the output is written to {\tt rd}.
+\item Variant 3: Avoid ternary operations completely by splitting it
+    into a {\tt lut4lo} and {\tt lut4hi} variant.
 \end{itemize}
 Variant 1 is obviously more efficient in terms of encoding space.
 Variant 2 has the advantage from a side-channel perspective
@@ -402,8 +406,8 @@ destructive.
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.sbox.enc rd, rs1
-    saes.sbox.dec rd, rs2
+    saes.sbenc rd, rs1
+    saes.sbdec rd, rs1
 \end{cryptoisa}
 
 These instructions implement the 
