@@ -5,13 +5,18 @@ endif
 
 BUILD_DIR = $(REPO_BUILD)/spec
 
+OPCODES   = $(BUILD_DIR)/opcodes-crypto.tex
+
 SPEC_OUT  = $(BUILD_DIR)/riscv-crypto-spec.pdf
 SPEC_TOP  = riscv-crypto-spec.tex
 SPEC_TEX  = $(SPEC_TOP) $(wildcard $(REPO_HOME)/doc/tex/*)
-SPEC_EXTRA= riscv-crypto-spec.sty
+SPEC_EXTRA= riscv-crypto-spec.sty $(OPCODES)
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
 REPO_DIRTY =$(shell git diff)
+
+$(OPCODES) : $(REPO_HOME)/tools/opcodes-crypto
+	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -tex > $@
 
 .PHONY: $(SPEC_COMMIT)
 $(SPEC_COMMIT):
