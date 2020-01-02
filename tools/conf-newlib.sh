@@ -11,10 +11,13 @@ mkdir -p $INSTALL_DIR
 
 # ------ Newlib ------------------------------------------------------------
 
+refresh_dir  $DIR_NEWLIB_BUILD
 cd           $DIR_NEWLIB_BUILD
 
 export PATH="$RISCV/bin:$PATH"
 
-make
-make install
+$DIR_NEWLIB/configure \
+    --prefix=$INSTALL_DIR \
+    --target=$TARGET_ARCH \
+    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
 
