@@ -1,0 +1,99 @@
+diff --git a/riscv/encoding.h b/riscv/encoding.h
+index 3c4bf1c..3db9c6a 100644
+--- a/riscv/encoding.h
++++ b/riscv/encoding.h
+@@ -564,6 +564,64 @@
+ #define MASK_PACKUW  0xfe00707f
+ #define MATCH_BFPW 0x4800703b
+ #define MASK_BFPW  0xfe00707f
++#define MATCH_LUT4 0x6200002b
++#define MASK_LUT4  0xfe00707f
++#define MATCH_MMULU 0x200102b
++#define MASK_MMULU  0x60070ff
++#define MATCH_MACCU 0x10102b
++#define MASK_MACCU  0xfff070ff
++#define MATCH_SAES_SBENC 0x20202b
++#define MASK_SAES_SBENC  0xfff0707f
++#define MATCH_SAES_SBDEC 0x30202b
++#define MASK_SAES_SBDEC  0xfff0707f
++#define MATCH_SSHA256_S0 0xe00702b
++#define MASK_SSHA256_S0  0xfff0707f
++#define MATCH_SSHA256_S1 0xe10702b
++#define MASK_SSHA256_S1  0xfff0707f
++#define MATCH_SSHA256_S2 0xe20702b
++#define MASK_SSHA256_S2  0xfff0707f
++#define MATCH_SSHA256_S3 0xe30702b
++#define MASK_SSHA256_S3  0xfff0707f
++#define MATCH_SSHA512_S0 0xe40702b
++#define MASK_SSHA512_S0  0xfff0707f
++#define MATCH_SSHA512_S1 0xe50702b
++#define MASK_SSHA512_S1  0xfff0707f
++#define MATCH_SSHA512_S2 0xe60702b
++#define MASK_SSHA512_S2  0xfff0707f
++#define MATCH_SSHA512_S3 0xe70702b
++#define MASK_SSHA512_S3  0xfff0707f
++#define MATCH_SSHA3_XY 0x10007003
++#define MASK_SSHA3_XY  0xfe00707f
++#define MATCH_SSHA3_X1 0x12007003
++#define MASK_SSHA3_X1  0xfe00707f
++#define MATCH_SSHA3_X2 0x14007003
++#define MASK_SSHA3_X2  0xfe00707f
++#define MATCH_SSHA3_X4 0x16007003
++#define MASK_SSHA3_X4  0xfe00707f
++#define MATCH_SSHA3_YX 0x18007003
++#define MASK_SSHA3_YX  0xfe00707f
++#define MATCH_LBX 0x702b
++#define MASK_LBX  0xfe00707f
++#define MATCH_LHX 0x200702b
++#define MASK_LHX  0xfe00707f
++#define MATCH_LWX 0x400702b
++#define MASK_LWX  0xfe00707f
++#define MATCH_LDX 0x600702b
++#define MASK_LDX  0xfe00707f
++#define MATCH_LBUX 0x800702b
++#define MASK_LBUX  0xfe00707f
++#define MATCH_LHUX 0xa00702b
++#define MASK_LHUX  0xfe00707f
++#define MATCH_LWUX 0xc00702b
++#define MASK_LWUX  0xfe00707f
++#define MATCH_SBX 0x402b
++#define MASK_SBX  0x6007fff
++#define MATCH_SHX 0x40ab
++#define MASK_SHX  0x6007fff
++#define MATCH_SWX 0x412b
++#define MASK_SWX  0x6007fff
++#define MATCH_SDX 0x41ab
++#define MASK_SDX  0x6007fff
+ #define MATCH_AMOADD_W 0x202f
+ #define MASK_AMOADD_W  0xf800707f
+ #define MATCH_AMOXOR_W 0x2000202f
+@@ -2156,6 +2214,7 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+ DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
+ DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
+ DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
++DECLARE_INSN(lut4, MATCH_LUT4, MASK_LUT4)
+ DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
+ DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
+ DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
+diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
+index 4ee64fa..1ac3d85 100644
+--- a/riscv/riscv.mk.in
++++ b/riscv/riscv.mk.in
+@@ -401,6 +401,9 @@ riscv_insn_ext_b = \
+ 	unshflw \
+ 	xnor \
+ 
++riscv_insn_ext_s_crypto = \
++    lut4
++
+ riscv_insn_ext_v_alu_int = \
+ 	vaadd_vi \
+ 	vaadd_vv \
+@@ -782,6 +785,7 @@ riscv_insn_list = \
+ 	$(riscv_insn_ext_d) \
+ 	$(riscv_insn_ext_q) \
+ 	$(riscv_insn_ext_b) \
++	$(riscv_insn_ext_s_crypto) \
+ 	$(if $(HAVE_INT128),$(riscv_insn_ext_v),) \
+ 	$(riscv_insn_priv) \
+ 
