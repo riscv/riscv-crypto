@@ -30,8 +30,12 @@ toolchain and ISA simulator.*
     ```sh
     $> $REPO_HOME/tools/build-all.sh
     ```
-    This will build `binutils`, `gcc`, `newlib`, `pk` and `spike`,
+    This will configure build `binutils`, `gcc`, `newlib`, `pk` and `spike`,
     and place the compiled results in `$REPO_HOME/build/toolchain/install`.
+
+   - The architecture the compiler will target is specified
+     in `$REPO_HOME/tools/common.sh` as
+     `TARGET_ARCH, `ARCH_STRING` and `ABI_STRING`.
 
    - Individual repositories can be re-built using the following
      commands:
@@ -42,6 +46,10 @@ toolchain and ISA simulator.*
      $> $REPO_HOME/tools/build-pk.sh
      $> $REPO_HOME/tools/build-spike.sh
      ```
+
+   - To re-build a repository from scratch, first run the relevent
+     `$REPO_HOME/tools/conf-*.sh` script before running the corresponding
+     `build` script.
 
 4. Set your `RISCV` environment variable:
     ```sh
