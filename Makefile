@@ -20,6 +20,14 @@ benchmarks:
 	$(MAKE) -C $(REPO_HOME)/benchmarks/hash/sha3 all
 
 
+opcodes:
+	cat $(REPO_HOME)/extern/riscv-opcodes/opcodes \
+        $(REPO_HOME)/tools/opcodes-crypto \
+	| python3 $(REPO_HOME)/bin/parse_opcodes.py -c > build/opcodes-all.h
+	cat $(REPO_HOME)/tools/opcodes-crypto \
+	| python3 $(REPO_HOME)/bin/parse_opcodes.py -c > build/opcodes-crypto.h
+
+
 clean:
 	$(MAKE) -C $(REPO_HOME)/doc/ clean
 	$(MAKE) -C $(REPO_HOME)/benchmarks/hash/sha3 clean
