@@ -1,0 +1,76 @@
+
+#
+# This file contains *experimental* opcode specifications for the RISC-V
+# Scalar Cryptographic instruction set extension.
+#
+# - Currently, all of the instructions occupy the "custom1" space.
+#   This is to ensure they do not collide with other instructions during
+#   development.
+#
+# - The expectation is that the scalar crypto instructions will be
+#   brownfield, fitting in alongside pre-existing encodings.
+#
+# - These encodings introduce a new field type: `rdp` which is a 4-bit
+#   destination register *pair* address. It overlaps the top 4 bits of the
+#   normal `rd` field. It is used to address adjacent odd/even register pairs.
+
+#
+# ------------------------------------------------------------
+
+#
+# The lut4 instruction is likely to be changed into a 2r1w friendly
+# hi/lo variant.
+
+lut4        rd  rs1 rs2         14..12=0 6..2=0x0A 1..0=3
+
+
+#
+# ------------------------------------------------------------
+
+mmulu       rdp rs1 rs2 rs3     14..12=0 6..2=0x0A 1..0=3
+
+#
+# Version 1 with over-write semantics for rdp
+maccu       rdp rs1             14..12=0 6..2=0x0A 1..0=3
+
+#
+# ------------------------------------------------------------
+    
+saes.sbenc  rd  rs1             14..12=0 6..2=0x0A 1..0=3
+saes.sbdec  rd  rs1             14..12=0 6..2=0x0A 1..0=3
+
+#
+# ------------------------------------------------------------
+
+ssha256.s0  rd rs1              14..12=7 31..25=7 24..20=0 6..2=0x0 1..0=3
+ssha256.s1  rd rs1              14..12=7 31..25=7 24..20=1 6..2=0x0 1..0=3
+ssha256.s2  rd rs1              14..12=7 31..25=7 24..20=2 6..2=0x0 1..0=3
+ssha256.s3  rd rs1              14..12=7 31..25=7 24..20=3 6..2=0x0 1..0=3
+                                
+ssha512.s0  rd rs1              14..12=7 31..25=7 24..20=4 6..2=0x0 1..0=3
+ssha512.s1  rd rs1              14..12=7 31..25=7 24..20=5 6..2=0x0 1..0=3
+ssha512.s2  rd rs1              14..12=7 31..25=7 24..20=6 6..2=0x0 1..0=3
+ssha512.s3  rd rs1              14..12=7 31..25=7 24..20=7 6..2=0x0 1..0=3
+
+ssha3.xy    rd rs1 rs2          14..12=7 29..25=8  6..2=0x0 1..0=3
+ssha3.x1    rd rs1 rs2          14..12=7 29..25=9  6..2=0x0 1..0=3
+ssha3.x2    rd rs1 rs2          14..12=7 29..25=10 6..2=0x0 1..0=3
+ssha3.x4    rd rs1 rs2          14..12=7 29..25=11 6..2=0x0 1..0=3
+ssha3.yx    rd rs1 rs2          14..12=7 29..25=12 6..2=0x0 1..0=3
+
+#
+# ------------------------------------------------------------
+
+lbx         rd  rs1 rs2         31..25=0 14..12=7 6..2=0x00 1..0=3
+lhx         rd  rs1 rs2         31..25=1 14..12=7 6..2=0x00 1..0=3
+lwx         rd  rs1 rs2         31..25=2 14..12=7 6..2=0x00 1..0=3
+ldx         rd  rs1 rs2         31..25=3 14..12=7 6..2=0x00 1..0=3
+lbux        rd  rs1 rs2         31..25=4 14..12=7 6..2=0x00 1..0=3
+lhux        rd  rs1 rs2         31..25=5 14..12=7 6..2=0x00 1..0=3
+lwux        rd  rs1 rs2         31..25=6 14..12=7 6..2=0x00 1..0=3
+
+sbx         rs1 rs2 rs3         26..25=0 11..7=0 14..12=4 6..2=0x08 1..0=3
+shx         rs1 rs2 rs3         26..25=0 11..7=1 14..12=4 6..2=0x08 1..0=3
+swx         rs1 rs2 rs3         26..25=0 11..7=2 14..12=4 6..2=0x08 1..0=3
+sdx         rs1 rs2 rs3         26..25=0 11..7=3 14..12=4 6..2=0x08 1..0=3
+
