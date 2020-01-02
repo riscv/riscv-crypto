@@ -15,6 +15,6 @@ cd           $DIR_NEWLIB_BUILD
 
 export PATH="$RISCV/bin:$PATH"
 
-make -j
+make -j$(nproc)
 make install
 

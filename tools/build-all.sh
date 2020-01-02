@@ -3,6 +3,10 @@
 set -e
 set -x
 
+bash $REPO_HOME/tools/conf-binutils.sh
+bash $REPO_HOME/tools/conf-gcc.sh
+bash $REPO_HOME/tools/conf-newlib.sh
+
 bash $REPO_HOME/tools/build-binutils.sh
 bash $REPO_HOME/tools/build-gcc.sh
 bash $REPO_HOME/tools/build-newlib.sh
