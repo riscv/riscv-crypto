@@ -1,0 +1,12 @@
+diff --git a/bfd/elfxx-riscv.c b/bfd/elfxx-riscv.c
+index b0d53766e2..f992cc3ca6 100644
+--- a/bfd/elfxx-riscv.c
++++ b/bfd/elfxx-riscv.c
+@@ -1375,6 +1375,7 @@ riscv_parse_prefixed_ext (riscv_parse_subset_t *rps,
+ 
+ const char * const riscv_std_z_ext_strtab[] =
+   {
++   "zscrypto",
+    "zbb", "zbc", "zbe", "zbf", "zbm", "zbp", "zbr", "zbs", "zbt", NULL
+   };
+ 
