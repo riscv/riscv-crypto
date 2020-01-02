@@ -6,6 +6,7 @@ ALL_TARGETS =
 include $(REPO_HOME)/tests/common.mk
 
 $(eval $(call add_assembler_target,test_archstr.S))
+$(eval $(call add_assembler_target,test_simple_assembly.S))
 
 all: $(ALL_TARGETS)
 
