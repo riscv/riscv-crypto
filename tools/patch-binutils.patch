@@ -10,3 +10,32 @@ index b0d53766e2..f992cc3ca6 100644
     "zbb", "zbc", "zbe", "zbf", "zbm", "zbp", "zbr", "zbs", "zbt", NULL
    };
  
+diff --git a/gas/config/tc-riscv.c b/gas/config/tc-riscv.c
+index 9ecdcab0b6..fe2a7d451b 100644
+--- a/gas/config/tc-riscv.c
++++ b/gas/config/tc-riscv.c
+@@ -173,6 +173,9 @@ riscv_multi_subset_supports (enum riscv_insn_class insn_class)
+       return riscv_subset_supports ("b") || riscv_subset_supports ("zbb")
+ 	|| riscv_subset_supports ("zbp");
+ 
++    case INSN_CLASS_ZSCRYPTO:
++      return riscv_subset_supports("zscrypto");
++
+     default:
+       as_fatal ("Unreachable");
+       return FALSE;
+diff --git a/include/opcode/riscv.h b/include/opcode/riscv.h
+index 7e67c7f9a2..c7dc4ca4e9 100644
+--- a/include/opcode/riscv.h
++++ b/include/opcode/riscv.h
+@@ -321,7 +321,9 @@ enum riscv_insn_class
+    INSN_CLASS_B_OR_ZBM,
+    INSN_CLASS_B_OR_ZBP,
+    INSN_CLASS_B_OR_ZBS,
+-   INSN_CLASS_B_OR_ZBB_OR_ZBP
++   INSN_CLASS_B_OR_ZBB_OR_ZBP,
++
++   INSN_CLASS_ZSCRYPTO
+   };
+ 
+ /* This structure holds information for a particular instruction.  */
