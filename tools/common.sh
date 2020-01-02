@@ -17,7 +17,7 @@ BRANCH_NAME=riscv-crypto
 
 INSTALL_DIR=$REPO_BUILD/toolchain/install
 TARGET_ARCH=riscv32-unknown-elf
-ARCH_STRING=rv32imac_zcrypto
+ARCH_STRING=rv32imacb_zscrypto
 ABI_STRING=ilp32
 
 #
