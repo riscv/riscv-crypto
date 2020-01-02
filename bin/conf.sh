@@ -2,6 +2,7 @@
 
 export REPO_HOME="${PWD}"
 export REPO_BUILD=$REPO_HOME/build
+export RISCV=$REPO_BUILD/toolchain/install
 
 echo "---- Setting Up Workspace ----"
 
@@ -14,6 +15,7 @@ fi
 
 echo "REPO_HOME  = $REPO_HOME"
 echo "REPO_BUILD = $REPO_BUILD"
+echo "RISCV      = $RISCV"
 
 echo "------------------------------"
 
