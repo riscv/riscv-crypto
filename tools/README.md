@@ -20,7 +20,7 @@ After first checking out the `riscv-crypto` repository:
   ```sh
   $> $REPO_HOME/tools/get-started.sh
   ```
-  This will clone the relevent toolchain repos, checkout a known-good
+  This will clone the relevant toolchain repos, checkout a known-good
   commit, apply the necessary patches and compile them.
 
 - The resulting toolchain installation will appear in
@@ -43,7 +43,7 @@ The next section explains each step in more detail:
     by the riscv-crypto environment setup script in `bin/conf.sh`.
 
 
-2. Apply the relevent patches to the checked out repositories:
+2. Apply the relevant patches to the checked out repositories:
     ```sh
     $> $REPO_HOME/tools/apply-patch-all.sh
     ```
@@ -73,7 +73,7 @@ The next section explains each step in more detail:
      $> $REPO_HOME/tools/build-spike.sh
      ```
 
-   - To re-build a repository from scratch, first run the relevent
+   - To re-build a repository from scratch, first run the relevant
      `$REPO_HOME/tools/conf-*.sh` script before running the corresponding
      `build` script.
 
@@ -108,7 +108,7 @@ This section describes the development flow for the `riscv-crypto`
 toolchain and simulator patches.
 
 **Note:** This flow is awkward and temporary until dedicated
-development branches can be setup on the relevent repositories.
+development branches can be setup on the relevant repositories.
 
 - Assuming a fresh checkout of the `riscv-crypto` repository,
   run the [quickstart](#quickstart) steps described above so that you
@@ -126,7 +126,7 @@ development branches can be setup on the relevent repositories.
 
   - `spike`: `$REPO_BUILD/toolchain/riscv-isa-sim`
 
-- Make any changes to the relevent source tree.
+- Make any changes to the relevant source tree.
 
   - The component projects can be re-built using the corresponding
     `$REPO_HOME/tools/build-*.sh` scripts.
@@ -143,7 +143,7 @@ development branches can be setup on the relevent repositories.
     You don't need to commit anything to a patched repository.
 
   - Run `git diff --cached > $REPO_HOME/tools/patch-<project>.patch`
-    to dump the diff into the relevent patch file.
+    to dump the diff into the relevant patch file.
 
   - With the patch changed in `$REPO_HOME/tools/`, commit your changes
     to the `riscv-crypto` repository, noting in the commit message that

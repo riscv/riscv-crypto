@@ -50,7 +50,7 @@
 
   - No pre-compiled version of the spec is being kept yet (as was the
     case with Bitmanip) since everything is changing too quickly to
-    make this managable.
+    make this manageable.
     This will be done in future, when things are stable enough to
     discuss usefully.
 
