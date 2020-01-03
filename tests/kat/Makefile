@@ -17,6 +17,9 @@ $(eval $(call add_spike_target,ssha256))
 #$(eval $(call add_elf_target,ssha512.c))
 #$(eval $(call add_spike_target,ssha512))
 
+$(eval $(call add_elf_target,ssha3.c))
+$(eval $(call add_spike_target,ssha3))
+
 all: $(ALL_TARGETS)
 
 clean:
