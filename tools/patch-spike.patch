@@ -1,5 +1,5 @@
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..3db9c6a 100644
+index 3c4bf1c..c5b706f 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
 @@ -564,6 +564,64 @@
@@ -67,11 +67,24 @@ index 3c4bf1c..3db9c6a 100644
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2214,7 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2156,6 +2214,20 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
 +DECLARE_INSN(lut4, MATCH_LUT4, MASK_LUT4)
++DECLARE_INSN(ssha256_s0, MATCH_SSHA256_S0, MASK_SSHA256_S0)
++DECLARE_INSN(ssha256_s1, MATCH_SSHA256_S1, MASK_SSHA256_S1)
++DECLARE_INSN(ssha256_s2, MATCH_SSHA256_S2, MASK_SSHA256_S2)
++DECLARE_INSN(ssha256_s3, MATCH_SSHA256_S3, MASK_SSHA256_S3)
++DECLARE_INSN(ssha512_s0, MATCH_SSHA512_S0, MASK_SSHA512_S0)
++DECLARE_INSN(ssha512_s1, MATCH_SSHA512_S1, MASK_SSHA512_S1)
++DECLARE_INSN(ssha512_s2, MATCH_SSHA512_S2, MASK_SSHA512_S2)
++DECLARE_INSN(ssha512_s3, MATCH_SSHA512_S3, MASK_SSHA512_S3)
++DECLARE_INSN(ssha3_xy, MATCH_SSHA3_XY, MASK_SSHA3_XY)
++DECLARE_INSN(ssha3_x1, MATCH_SSHA3_X1, MASK_SSHA3_X1)
++DECLARE_INSN(ssha3_x2, MATCH_SSHA3_X2, MASK_SSHA3_X2)
++DECLARE_INSN(ssha3_x4, MATCH_SSHA3_X4, MASK_SSHA3_X4)
++DECLARE_INSN(ssha3_yx, MATCH_SSHA3_YX, MASK_SSHA3_YX)
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
@@ -103,21 +116,254 @@ index 0000000..19ed904
 +
 +WRITE_RD(wdata);
 +
+diff --git a/riscv/insns/ssha256_s0.h b/riscv/insns/ssha256_s0.h
+new file mode 100644
+index 0000000..af3d413
+--- /dev/null
++++ b/riscv/insns/ssha256_s0.h
+@@ -0,0 +1,11 @@
++
++#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
++
++uint32_t a = RS1;
++
++WRITE_RD(
++    ROR32(a, 7) ^ ROR32(a,18) ^ (a >> 3)
++);
++
++#undef ROR32
++
+diff --git a/riscv/insns/ssha256_s1.h b/riscv/insns/ssha256_s1.h
+new file mode 100644
+index 0000000..882a3e0
+--- /dev/null
++++ b/riscv/insns/ssha256_s1.h
+@@ -0,0 +1,11 @@
++
++#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
++
++uint32_t a = RS1;
++
++WRITE_RD(
++    ROR32(a, 17) ^ ROR32(a,19) ^ (a >> 10)
++);
++
++#undef ROR32
++
+diff --git a/riscv/insns/ssha256_s2.h b/riscv/insns/ssha256_s2.h
+new file mode 100644
+index 0000000..4afbeec
+--- /dev/null
++++ b/riscv/insns/ssha256_s2.h
+@@ -0,0 +1,11 @@
++
++#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
++
++uint32_t a = RS1;
++
++WRITE_RD(
++    ROR32(a, 2) ^ ROR32(a,13) ^ ROR32(a, 22)
++);
++
++#undef ROR32
++
+diff --git a/riscv/insns/ssha256_s3.h b/riscv/insns/ssha256_s3.h
+new file mode 100644
+index 0000000..b91d3ab
+--- /dev/null
++++ b/riscv/insns/ssha256_s3.h
+@@ -0,0 +1,11 @@
++
++#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
++
++uint32_t a = RS1;
++
++WRITE_RD(
++    ROR32(a, 6) ^ ROR32(a,11) ^ ROR32(a, 25)
++);
++
++#undef ROR32
++
+diff --git a/riscv/insns/ssha3_x1.h b/riscv/insns/ssha3_x1.h
+new file mode 100644
+index 0000000..ca6ec9b
+--- /dev/null
++++ b/riscv/insns/ssha3_x1.h
+@@ -0,0 +1,10 @@
++
++uint32_t x = RS1 & 0x7;
++uint32_t y = RS2 & 0x7;
++
++uint32_t shamt = 3;
++
++uint32_t result = (((x+1)%5) + 5*((y)%5)) << shamt;
++
++WRITE_RD(result);
++
+diff --git a/riscv/insns/ssha3_x2.h b/riscv/insns/ssha3_x2.h
+new file mode 100644
+index 0000000..7023703
+--- /dev/null
++++ b/riscv/insns/ssha3_x2.h
+@@ -0,0 +1,10 @@
++
++uint32_t x = RS1 & 0x7;
++uint32_t y = RS2 & 0x7;
++
++uint32_t shamt = 3;
++
++uint32_t result = (((x+2)%5) + 5*((y)%5)) << shamt;
++
++WRITE_RD(result);
++
+diff --git a/riscv/insns/ssha3_x4.h b/riscv/insns/ssha3_x4.h
+new file mode 100644
+index 0000000..8df936e
+--- /dev/null
++++ b/riscv/insns/ssha3_x4.h
+@@ -0,0 +1,10 @@
++
++uint32_t x = RS1 & 0x7;
++uint32_t y = RS2 & 0x7;
++
++uint32_t shamt = 3;
++
++uint32_t result = (((x+4)%5) + 5*((y)%5)) << shamt;
++
++WRITE_RD(result);
++
+diff --git a/riscv/insns/ssha3_xy.h b/riscv/insns/ssha3_xy.h
+new file mode 100644
+index 0000000..958e92f
+--- /dev/null
++++ b/riscv/insns/ssha3_xy.h
+@@ -0,0 +1,10 @@
++
++uint32_t x = RS1 & 0x7;
++uint32_t y = RS2 & 0x7;
++
++uint32_t shamt = 3;
++
++uint32_t result = (((x)%5) + 5*((y)%5)) << shamt;
++
++WRITE_RD(result);
++
+diff --git a/riscv/insns/ssha3_yx.h b/riscv/insns/ssha3_yx.h
+new file mode 100644
+index 0000000..aebda26
+--- /dev/null
++++ b/riscv/insns/ssha3_yx.h
+@@ -0,0 +1,10 @@
++
++uint32_t x = RS1 & 0x7;
++uint32_t y = RS2 & 0x7;
++
++uint32_t shamt = 3;
++
++uint32_t result = (((y)%5) + 5*((2*x+3*y)%5)) << shamt;
++
++WRITE_RD(result);
++
+diff --git a/riscv/insns/ssha512_s0.h b/riscv/insns/ssha512_s0.h
+new file mode 100644
+index 0000000..0b490b0
+--- /dev/null
++++ b/riscv/insns/ssha512_s0.h
+@@ -0,0 +1,12 @@
++require_rv64;
++
++#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
++
++uint64_t a = RS1;
++
++WRITE_RD(
++    ROR64(a,  1) ^ ROR64(a, 8) ^ (a >>  7)
++);
++
++#undef ROR64
++
+diff --git a/riscv/insns/ssha512_s1.h b/riscv/insns/ssha512_s1.h
+new file mode 100644
+index 0000000..ab66c6a
+--- /dev/null
++++ b/riscv/insns/ssha512_s1.h
+@@ -0,0 +1,12 @@
++require_rv64;
++
++#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
++
++uint64_t a = RS1;
++
++WRITE_RD(
++    ROR64(a, 19) ^ ROR64(a,61) ^ (a >>  6)
++);
++
++#undef ROR64
++
+diff --git a/riscv/insns/ssha512_s2.h b/riscv/insns/ssha512_s2.h
+new file mode 100644
+index 0000000..ad2dc89
+--- /dev/null
++++ b/riscv/insns/ssha512_s2.h
+@@ -0,0 +1,12 @@
++require_rv64;
++
++#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
++
++uint64_t a = RS1;
++
++WRITE_RD(
++    ROR64(a, 28) ^ ROR64(a,34) ^ ROR64(a,39)
++);
++
++#undef ROR64
++
+diff --git a/riscv/insns/ssha512_s3.h b/riscv/insns/ssha512_s3.h
+new file mode 100644
+index 0000000..a2e555b
+--- /dev/null
++++ b/riscv/insns/ssha512_s3.h
+@@ -0,0 +1,12 @@
++require_rv64;
++
++#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
++
++uint64_t a = RS1;
++
++WRITE_RD(
++    ROR64(a, 14) ^ ROR64(a, 18) ^ ROR64(a, 41)
++);
++
++#undef ROR64
++
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..1ac3d85 100644
+index 4ee64fa..a1c039d 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,9 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,22 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
 +riscv_insn_ext_s_crypto = \
-+    lut4
++    lut4 \
++    ssha256_s0 \
++    ssha256_s1 \
++    ssha256_s2 \
++    ssha256_s3 \
++    ssha512_s0 \
++    ssha512_s1 \
++    ssha512_s2 \
++    ssha512_s3 \
++    ssha3_x1 \
++    ssha3_x2 \
++    ssha3_x4 \
++    ssha3_xy \
++    ssha3_yx
 +
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +785,7 @@ riscv_insn_list = \
+@@ -782,6 +798,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \
