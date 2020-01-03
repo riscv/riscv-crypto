@@ -3,6 +3,8 @@ AS          = $(RISCV)/bin/riscv32-unknown-elf-as
 CC          = $(RISCV)/bin/riscv32-unknown-elf-gcc
 OBJDUMP     = $(RISCV)/bin/riscv32-unknown-elf-objdump
 
+CFLAGS     +=
+
 ARCH_BASE   = rv32imacb
 ARCH        = $(ARCH_BASE)_zscrypto
 ABI         = ilp32
@@ -54,7 +56,7 @@ endef
 define add_elf_target
 $(call map_elf,${1}) : ${1}
 	mkdir -p $(dir $(call map_elf,${1}))
-	$(CC) -mabi=$(ABI) -march=$(ARCH) -o $${@} $${^}
+	$(CC) $(CFLAGS) -mabi=$(ABI) -march=$(ARCH) -o $${@} $${^}
 
 $(call add_objdump_target,${1},$(call map_elf,${1}))
 
