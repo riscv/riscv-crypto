@@ -5,6 +5,7 @@
 */
 
 #include <stdio.h>
+#include <stdint.h>
 
 
 int test_lut4() {
