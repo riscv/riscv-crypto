@@ -13,6 +13,6 @@ mkdir -p $INSTALL_DIR
 
 cd   $DIR_GCC_BUILD
 
-make -j$(nproc)
+make
 make install
 
