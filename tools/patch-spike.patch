@@ -75,6 +75,34 @@ index 3c4bf1c..3db9c6a 100644
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
+diff --git a/riscv/insns/lut4.h b/riscv/insns/lut4.h
+new file mode 100644
+index 0000000..19ed904
+--- /dev/null
++++ b/riscv/insns/lut4.h
+@@ -0,0 +1,22 @@
++
++// Concatenate RS1 || RS2
++uint64_t lut = (((uint64_t)RS1 & 0xFFFFFFFF) << 32) | (RS2&0xFFFFFFFF);
++
++uint64_t wdata = 0;
++
++uint64_t rd = RD;
++
++// For each nibble in rs1
++for(int i = 0; i < 8; i ++) {
++
++    // 0 <= to_sub < 16 - the i'th nibble
++    uint8_t  index  = (rd >> (4*i)) & 0xF;
++
++    // Index into the LUT.
++    uint32_t output = (lut >> (index*4)) & 0xF;
++
++    wdata          |= output << (4*i);
++}
++
++WRITE_RD(wdata);
++
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
 index 4ee64fa..1ac3d85 100644
 --- a/riscv/riscv.mk.in
