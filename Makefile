@@ -11,9 +11,12 @@ tests-assembler:
 	$(MAKE) -C $(REPO_HOME)/tests/assembler all
 
 tests-compiler:
-	$(MAKE) -C $(REPO_HOME)/tests/compiler all
+	$(MAKE) -C $(REPO_HOME)/tests/compiler  all
 
-tests-all: tests-assembler tests-compiler
+tests-kat:
+	$(MAKE) -C $(REPO_HOME)/tests/kat       all
+
+tests-all: tests-assembler tests-compiler tests-kat
 
 
 benchmarks:

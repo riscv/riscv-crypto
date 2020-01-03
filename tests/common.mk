@@ -66,4 +66,5 @@ endef
 define add_spike_target
 run_${1} : $(call map_elf,${1})
 	$(SPIKE) --isa=${ARCH_BASE} $(PK) $(call map_elf,${1})
+ALL_TARGETS += run_${1}
 endef

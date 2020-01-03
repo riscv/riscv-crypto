@@ -41,7 +41,7 @@ int test_lut4() {
 
 int main (int argc, char ** argv) {
 
-    printf("Running lut4 KAT...\n");
+    printf("Running lut4 KAT... ");
 
     int fail = test_lut4();
 
