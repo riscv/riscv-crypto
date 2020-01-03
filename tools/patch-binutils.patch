@@ -89,7 +89,7 @@ index 9ecdcab0b6..09b5525ff3 100644
  	    case 's':		/* Source register.  */
  	    case 't':		/* Target register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..af513020dd 100644
+index 6c750a33b1..716c797f67 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
 @@ -343,6 +343,64 @@
@@ -106,21 +106,21 @@ index 6c750a33b1..af513020dd 100644
 +#define MASK_SAES_SBENC  0xfff0707f
 +#define MATCH_SAES_SBDEC 0x30202b
 +#define MASK_SAES_SBDEC  0xfff0707f
-+#define MATCH_SSHA256_S0 0xe007003
++#define MATCH_SSHA256_S0 0xe00702b
 +#define MASK_SSHA256_S0  0xfff0707f
-+#define MATCH_SSHA256_S1 0xe107003
++#define MATCH_SSHA256_S1 0xe10702b
 +#define MASK_SSHA256_S1  0xfff0707f
-+#define MATCH_SSHA256_S2 0xe207003
++#define MATCH_SSHA256_S2 0xe20702b
 +#define MASK_SSHA256_S2  0xfff0707f
-+#define MATCH_SSHA256_S3 0xe307003
++#define MATCH_SSHA256_S3 0xe30702b
 +#define MASK_SSHA256_S3  0xfff0707f
-+#define MATCH_SSHA512_S0 0xe407003
++#define MATCH_SSHA512_S0 0xe40702b
 +#define MASK_SSHA512_S0  0xfff0707f
-+#define MATCH_SSHA512_S1 0xe507003
++#define MATCH_SSHA512_S1 0xe50702b
 +#define MASK_SSHA512_S1  0xfff0707f
-+#define MATCH_SSHA512_S2 0xe607003
++#define MATCH_SSHA512_S2 0xe60702b
 +#define MASK_SSHA512_S2  0xfff0707f
-+#define MATCH_SSHA512_S3 0xe707003
++#define MATCH_SSHA512_S3 0xe70702b
 +#define MASK_SSHA512_S3  0xfff0707f
 +#define MATCH_SSHA3_XY 0x10007003
 +#define MASK_SSHA3_XY  0xfe00707f
