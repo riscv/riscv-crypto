@@ -1,7 +1,7 @@
 
 /* Known answer tests for the ssha3 instructions. Used to check that the
-   simulator / thing operating it implements it correctly with some
-   degree of confidence.
+ * simulator / thing operating it implements it correctly with some
+ * degree of confidence.
 */
 
 #include <stdio.h>
@@ -24,7 +24,7 @@
 int test_ssha3() {
 
     for (int rs1 = 0; rs1 < 10; rs1 ++) {
-    
+
         for (int rs2 = 0; rs2 < 10; rs2 ++) {
 
             int rd_xy;
@@ -32,13 +32,13 @@ int test_ssha3() {
             int rd_x2;
             int rd_x4;
             int rd_yx;
-            
+
             int expected_xy = SHA3_XY(rs1,rs2);
             int expected_x1 = SHA3_X1(rs1,rs2);
             int expected_x2 = SHA3_X2(rs1,rs2);
             int expected_x4 = SHA3_X4(rs1,rs2);
             int expected_yx = SHA3_YX(rs1,rs2);
-            
+
             __asm__("ssha3.xy %0, %1, %2" : "=r"(rd_xy): "r"(rs1), "r"(rs2));
             __asm__("ssha3.x1 %0, %1, %2" : "=r"(rd_x1): "r"(rs1), "r"(rs2));
             __asm__("ssha3.x2 %0, %1, %2" : "=r"(rd_x2): "r"(rs1), "r"(rs2));
@@ -79,7 +79,7 @@ int main (int argc, char ** argv) {
         return 0;
 
     } else {
-        
+
         printf("Test %d Failed.\n", fail);
 
         return 1;

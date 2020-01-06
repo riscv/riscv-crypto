@@ -3,7 +3,7 @@ AS          = $(RISCV)/bin/riscv32-unknown-elf-as
 CC          = $(RISCV)/bin/riscv32-unknown-elf-gcc
 OBJDUMP     = $(RISCV)/bin/riscv32-unknown-elf-objdump
 
-CFLAGS     +=
+CFLAGS     += -O1
 
 ARCH_BASE   = rv32imacb
 ARCH        = $(ARCH_BASE)_zscrypto

@@ -1,7 +1,7 @@
 
 /* Known answer tests for the LUT4 instruction. Used to check that the
-    simulator / thing operating it implements it correctly with some
-    degree of confidence.
+ * simulator / thing operating it implements it correctly with some degree of
+ * confidence.
 */
 
 #include <stdio.h>
