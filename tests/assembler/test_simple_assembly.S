@@ -19,7 +19,7 @@ main:
 
 #
 # Version 1 with over-write semantics for a1p
-    maccu       (a1,a0), a2
+    maccu       (a1,a0), a1, a2, a3
 
 #
 # ------------------------------------------------------------
