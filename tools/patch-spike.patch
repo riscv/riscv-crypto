@@ -1,5 +1,17 @@
+diff --git a/riscv/decode.h b/riscv/decode.h
+index 9e03676..e2712e6 100644
+--- a/riscv/decode.h
++++ b/riscv/decode.h
+@@ -90,6 +90,7 @@ public:
+   int64_t u_imm() { return int64_t(b) >> 12 << 12; }
+   int64_t uj_imm() { return (x(21, 10) << 1) + (x(20, 1) << 11) + (x(12, 8) << 12) + (imm_sign() << 20); }
+   uint64_t rd() { return x(7, 5); }
++  uint64_t rdp() { return x(8, 4); }
+   uint64_t rs1() { return x(15, 5); }
+   uint64_t rs2() { return x(20, 5); }
+   uint64_t rs3() { return x(27, 5); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..eb330af 100644
+index 3c4bf1c..a1d1e6b 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
 @@ -564,6 +564,64 @@
@@ -10,8 +22,8 @@ index 3c4bf1c..eb330af 100644
 +#define MASK_LUT4  0xfe00707f
 +#define MATCH_MMULU 0x200102b
 +#define MASK_MMULU  0x60070ff
-+#define MATCH_MACCU 0x10102b
-+#define MASK_MACCU  0xfff070ff
++#define MATCH_MACCU 0x102b
++#define MASK_MACCU  0x60070ff
 +#define MATCH_SAES_SBENC 0x20202b
 +#define MASK_SAES_SBENC  0xfff0707f
 +#define MATCH_SAES_SBDEC 0x30202b
@@ -203,6 +215,88 @@ index 0000000..082cad1
 +
 +uint64_t address     = RS1 + (RS2 << 2);
 +WRITE_RD(MMU.load_int32(address));
++
+diff --git a/riscv/insns/maccu.h b/riscv/insns/maccu.h
+new file mode 100644
+index 0000000..c072127
+--- /dev/null
++++ b/riscv/insns/maccu.h
+@@ -0,0 +1,37 @@
++
++int rd1 = (insn.rdp() << 1)       ;
++int rd2 = (insn.rdp() << 1) | 0x1 ;
++
++if(xlen == 32) {
++
++    uint64_t    lhs         = ((uint64_t)(RS1 & 0xFFFFFFFF)<<32) | 
++                              (uint64_t)(RS2 & 0xFFFFFFFF) ;
++
++    uint32_t    rhs         = (uint32_t)(RS3 & 0xFFFFFFFF) ;
++
++    uint64_t    result      = lhs + rhs;
++
++    uint32_t    result_lo   = (uint32_t)(result      );
++    uint32_t    result_hi   = (uint32_t)(result >> 32);
++
++    WRITE_REG(rd1, result_lo);
++    WRITE_REG(rd2, result_hi);
++
++} else if(xlen == 64) {
++    
++    uint64_t result_lo;
++    uint64_t result_hi;
++    
++    result_lo = RS2 + RS3;
++    result_hi = RS3 + (result_lo < RS2);
++
++    WRITE_REG(rd1, result_lo);
++    WRITE_REG(rd2, result_hi);
++
++} else {
++    // TBD: How/do these instructions work on RV128?
++    assert(0);
++}
++
++
++
+diff --git a/riscv/insns/mmulu.h b/riscv/insns/mmulu.h
+new file mode 100644
+index 0000000..436e252
+--- /dev/null
++++ b/riscv/insns/mmulu.h
+@@ -0,0 +1,33 @@
++
++int rd1 = (insn.rdp() << 1)       ;
++int rd2 = (insn.rdp() << 1) | 0x1 ;
++
++if(xlen == 32) {
++
++    uint64_t result = ((RS1&0xFFFFFFFF) *
++                       (RS2&0xFFFFFFFF)) +
++                      (RS3&0xFFFFFFFF);
++    
++    
++    uint32_t result_lo       = result & 0xFFFFFFFF;
++    uint32_t result_hi       = result >> xlen     ;
++    
++    WRITE_REG(rd1, result_lo);
++    WRITE_REG(rd2, result_hi);
++
++} else if(xlen == 64) {
++
++    int128_t result = ((int128_t)RS1 * RS2) + RS3;
++
++    uint64_t result_lo = result & 0xFFFFFFFFFFFFFFFF;
++    uint64_t result_hi = (result >> xlen);
++
++    WRITE_REG(rd1, result_lo);
++    WRITE_REG(rd2, result_hi);
++
++} else {
++    // TBD: How/do these instructions work on RV128?
++    assert(0);
++}
++
 +
 diff --git a/riscv/insns/saes_sbdec.h b/riscv/insns/saes_sbdec.h
 new file mode 100644
@@ -567,15 +661,17 @@ index 0000000..c5141dc
 +MMU.store_uint32(RS1 + (RS2 << 2), RS3);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..4573304 100644
+index 4ee64fa..e20044e 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,35 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,37 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
 +riscv_insn_ext_s_crypto = \
 +    lut4 \
++    mmulu \
++    maccu \
 +    saes_sbenc \
 +    saes_sbdec \
 +    ssha256_s0 \
@@ -606,7 +702,7 @@ index 4ee64fa..4573304 100644
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +811,7 @@ riscv_insn_list = \
+@@ -782,6 +813,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \

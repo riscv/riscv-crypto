@@ -89,7 +89,7 @@ index 9ecdcab0b6..665c7b8203 100644
  	    case 's':		/* Source register.  */
  	    case 't':		/* Target register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..716c797f67 100644
+index 6c750a33b1..892cd6bdea 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
 @@ -343,6 +343,64 @@
@@ -100,8 +100,8 @@ index 6c750a33b1..716c797f67 100644
 +#define MASK_LUT4  0xfe00707f
 +#define MATCH_MMULU 0x200102b
 +#define MASK_MMULU  0x60070ff
-+#define MATCH_MACCU 0x10102b
-+#define MASK_MACCU  0xfff070ff
++#define MATCH_MACCU 0x102b
++#define MASK_MACCU  0x60070ff
 +#define MATCH_SAES_SBENC 0x20202b
 +#define MASK_SAES_SBENC  0xfff0707f
 +#define MATCH_SAES_SBDEC 0x30202b
@@ -205,7 +205,7 @@ index 19f10c0e55..d65b3c800e 100644
  	  print (info->stream, "%s", riscv_gpr_names[0]);
  	  break;
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..8b35c5d045 100644
+index e99febc823..1f1eef50c0 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -709,6 +709,37 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -215,7 +215,7 @@ index e99febc823..8b35c5d045 100644
 +/* Scalar Crypto Instructions */
 +{"lut4",       0, INSN_CLASS_ZSCRYPTO, "d,s,t",   MATCH_LUT4 ,      MASK_LUT4 ,      match_opcode, 0},
 +{"mmulu",      0, INSN_CLASS_ZSCRYPTO, "(N,M),s,t,r", MATCH_MMULU , MASK_MMULU ,     match_opcode, 0},
-+{"maccu",      0, INSN_CLASS_ZSCRYPTO, "(N,M),s",     MATCH_MACCU , MASK_MACCU ,     match_opcode, 0},
++{"maccu",      0, INSN_CLASS_ZSCRYPTO, "(N,M),s,t,r", MATCH_MACCU , MASK_MACCU ,     match_opcode, 0},
 +{"saes.sbenc", 0, INSN_CLASS_ZSCRYPTO, "d,s",     MATCH_SAES_SBENC, MASK_SAES_SBENC, match_opcode, 0},
 +{"saes.sbdec", 0, INSN_CLASS_ZSCRYPTO, "d,s",     MATCH_SAES_SBDEC, MASK_SAES_SBDEC, match_opcode, 0},
 +{"ssha256.s0", 0, INSN_CLASS_ZSCRYPTO, "d,s",     MATCH_SSHA256_S0, MASK_SSHA256_S0, match_opcode, 0},
