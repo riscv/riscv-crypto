@@ -1,5 +1,5 @@
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..c5b706f 100644
+index 3c4bf1c..eb330af 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
 @@ -564,6 +564,64 @@
@@ -67,11 +67,15 @@ index 3c4bf1c..c5b706f 100644
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2214,20 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2156,6 +2214,35 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
 +DECLARE_INSN(lut4, MATCH_LUT4, MASK_LUT4)
++DECLARE_INSN(mmulu, MATCH_MMULU, MASK_MMULU)
++DECLARE_INSN(maccu, MATCH_MACCU, MASK_MACCU)
++DECLARE_INSN(saes_sbenc, MATCH_SAES_SBENC, MASK_SAES_SBENC)
++DECLARE_INSN(saes_sbdec, MATCH_SAES_SBDEC, MASK_SAES_SBDEC)
 +DECLARE_INSN(ssha256_s0, MATCH_SSHA256_S0, MASK_SSHA256_S0)
 +DECLARE_INSN(ssha256_s1, MATCH_SSHA256_S1, MASK_SSHA256_S1)
 +DECLARE_INSN(ssha256_s2, MATCH_SSHA256_S2, MASK_SSHA256_S2)
@@ -85,9 +89,72 @@ index 3c4bf1c..c5b706f 100644
 +DECLARE_INSN(ssha3_x2, MATCH_SSHA3_X2, MASK_SSHA3_X2)
 +DECLARE_INSN(ssha3_x4, MATCH_SSHA3_X4, MASK_SSHA3_X4)
 +DECLARE_INSN(ssha3_yx, MATCH_SSHA3_YX, MASK_SSHA3_YX)
++DECLARE_INSN(lbx, MATCH_LBX, MASK_LBX)
++DECLARE_INSN(lhx, MATCH_LHX, MASK_LHX)
++DECLARE_INSN(lwx, MATCH_LWX, MASK_LWX)
++DECLARE_INSN(ldx, MATCH_LDX, MASK_LDX)
++DECLARE_INSN(lbux, MATCH_LBUX, MASK_LBUX)
++DECLARE_INSN(lhux, MATCH_LHUX, MASK_LHUX)
++DECLARE_INSN(lwux, MATCH_LWUX, MASK_LWUX)
++DECLARE_INSN(sbx, MATCH_SBX, MASK_SBX)
++DECLARE_INSN(shx, MATCH_SHX, MASK_SHX)
++DECLARE_INSN(swx, MATCH_SWX, MASK_SWX)
++DECLARE_INSN(sdx, MATCH_SDX, MASK_SDX)
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
+diff --git a/riscv/insns/lbux.h b/riscv/insns/lbux.h
+new file mode 100644
+index 0000000..e8b3881
+--- /dev/null
++++ b/riscv/insns/lbux.h
+@@ -0,0 +1,4 @@
++
++uint64_t address     = RS1 + RS2;
++WRITE_RD(MMU.load_uint8(address));
++
+diff --git a/riscv/insns/lbx.h b/riscv/insns/lbx.h
+new file mode 100644
+index 0000000..f52500d
+--- /dev/null
++++ b/riscv/insns/lbx.h
+@@ -0,0 +1,5 @@
++
++uint64_t address     = RS1 + RS2;
++WRITE_RD(MMU.load_int8(address));
++
++
+diff --git a/riscv/insns/ldx.h b/riscv/insns/ldx.h
+new file mode 100644
+index 0000000..50c5721
+--- /dev/null
++++ b/riscv/insns/ldx.h
+@@ -0,0 +1,5 @@
++require_rv64;
++
++uint64_t address     = RS1 + (RS2 << 3);
++WRITE_RD(MMU.load_int64(address));
++
+diff --git a/riscv/insns/lhux.h b/riscv/insns/lhux.h
+new file mode 100644
+index 0000000..fe590b3
+--- /dev/null
++++ b/riscv/insns/lhux.h
+@@ -0,0 +1,4 @@
++
++uint64_t address     = RS1 + (RS2 << 1);
++WRITE_RD(MMU.load_uint16(address));
++
+diff --git a/riscv/insns/lhx.h b/riscv/insns/lhx.h
+new file mode 100644
+index 0000000..9ca1a1a
+--- /dev/null
++++ b/riscv/insns/lhx.h
+@@ -0,0 +1,4 @@
++
++uint64_t address     = RS1 + (RS2 << 1);
++WRITE_RD(MMU.load_int16(address));
++
 diff --git a/riscv/insns/lut4.h b/riscv/insns/lut4.h
 new file mode 100644
 index 0000000..19ed904
@@ -115,6 +182,53 @@ index 0000000..19ed904
 +}
 +
 +WRITE_RD(wdata);
++
+diff --git a/riscv/insns/lwux.h b/riscv/insns/lwux.h
+new file mode 100644
+index 0000000..d87dbd1
+--- /dev/null
++++ b/riscv/insns/lwux.h
+@@ -0,0 +1,5 @@
++require_rv64;
++
++uint64_t address     = RS1 + (RS2 << 2);
++WRITE_RD(MMU.load_uint32(address));
++
+diff --git a/riscv/insns/lwx.h b/riscv/insns/lwx.h
+new file mode 100644
+index 0000000..082cad1
+--- /dev/null
++++ b/riscv/insns/lwx.h
+@@ -0,0 +1,4 @@
++
++uint64_t address     = RS1 + (RS2 << 2);
++WRITE_RD(MMU.load_int32(address));
++
+diff --git a/riscv/insns/sbx.h b/riscv/insns/sbx.h
+new file mode 100644
+index 0000000..b31ed78
+--- /dev/null
++++ b/riscv/insns/sbx.h
+@@ -0,0 +1,2 @@
++MMU.store_uint8(RS1 + RS2, RS3);
++
+diff --git a/riscv/insns/sdx.h b/riscv/insns/sdx.h
+new file mode 100644
+index 0000000..2905688
+--- /dev/null
++++ b/riscv/insns/sdx.h
+@@ -0,0 +1,4 @@
++require_rv64;
++
++MMU.store_uint64(RS1 + (RS2 << 3), RS3);
++
+diff --git a/riscv/insns/shx.h b/riscv/insns/shx.h
+new file mode 100644
+index 0000000..aff3490
+--- /dev/null
++++ b/riscv/insns/shx.h
+@@ -0,0 +1,2 @@
++MMU.store_uint16(RS1 + (RS2 << 1), RS3);
 +
 diff --git a/riscv/insns/ssha256_s0.h b/riscv/insns/ssha256_s0.h
 new file mode 100644
@@ -336,11 +450,19 @@ index 0000000..a2e555b
 +
 +#undef ROR64
 +
+diff --git a/riscv/insns/swx.h b/riscv/insns/swx.h
+new file mode 100644
+index 0000000..c5141dc
+--- /dev/null
++++ b/riscv/insns/swx.h
+@@ -0,0 +1,2 @@
++MMU.store_uint32(RS1 + (RS2 << 2), RS3);
++
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..a1c039d 100644
+index 4ee64fa..d6354dd 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,22 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,33 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
@@ -358,12 +480,23 @@ index 4ee64fa..a1c039d 100644
 +    ssha3_x2 \
 +    ssha3_x4 \
 +    ssha3_xy \
-+    ssha3_yx
++    ssha3_yx \
++    lbx \
++    lbux \
++    lhx \
++    lhux \
++    lwx \
++    sbx \
++    shx \
++    swx \
++    lwux \
++    ldx \
++    sdx
 +
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +798,7 @@ riscv_insn_list = \
+@@ -782,6 +809,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \
