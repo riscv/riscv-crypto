@@ -31,10 +31,10 @@ int test_load_byte (int8_t * sarry, uint8_t * uarry) {
         __asm__ ("lbux %0, %1(%2)" : "=r"(result_u) : "r"(i), "r"(uarry));
         __asm__ ("lbx  %0, %1(%2)" : "=r"(result_s) : "r"(i), "r"(sarry));
 
-        printf("lbux rd, %x(%x) - Got %x, expected %x\n",
+        printf("lbux rd, %d(%p) - Got %lx, expected %lx\n",
             i, uarry, result_u, expect_u);
 
-        printf("lbx  rd, %x(%x) - Got %x, expected %x\n",
+        printf("lbx  rd, %d(%p) - Got %lx, expected %lx\n",
             i, sarry, result_s, expect_s);
 
         if(result_u != expect_u) {
@@ -64,10 +64,10 @@ int test_load_half (int16_t * sarry, uint16_t * uarry) {
         __asm__ ("lhux %0, %1(%2)" : "=r"(result_u) : "r"(i), "r"(uarry));
         __asm__ ("lhx  %0, %1(%2)" : "=r"(result_s) : "r"(i), "r"(sarry));
 
-        printf("lhux rd, %x(%x) - Got %x, expected %x\n",
+        printf("lhux rd, %d(%p) - Got %lx, expected %lx\n",
             i, uarry, result_u, expect_u);
 
-        printf("lhx  rd, %x(%x) - Got %x, expected %x\n",
+        printf("lhx  rd, %d(%p) - Got %lx, expected %lx\n",
             i, sarry, result_s, expect_s);
 
         if(result_u != expect_u) {
@@ -94,7 +94,7 @@ int test_load_word (int32_t * sarry, uint32_t * uarry) {
 
         __asm__ ("lwx  %0, %1(%2)" : "=r"(result_s) : "r"(i), "r"(sarry));
 
-        printf("lwx  rd, %x(%x) - Got %x, expected %x\n",
+        printf("lwx  rd, %d(%p) - Got %lx, expected %lx\n",
             i, sarry, result_s, expect_s);
 
         if(result_s != expect_s) {

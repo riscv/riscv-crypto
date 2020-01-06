@@ -93,8 +93,8 @@ int test_saes() {
         __asm__("saes.sbenc %0, %1" : "=r"(post_enc) : "r"(pre_enc));
         __asm__("saes.sbdec %0, %1" : "=r"(post_dec) : "r"(post_enc));
 
-        printf("saes.sbenc %x, %x\n",post_enc, pre_enc);
-        printf("saes.sbdec %x, %x\n",post_dec, post_enc);
+        printf("saes.sbenc %lx, %lx\n",post_enc, pre_enc);
+        printf("saes.sbdec %lx, %lx\n",post_dec, post_enc);
 
         for(int j = 0; j < 4; j ++) {
             uint8_t enc_in  = pre_enc  >> (8*i);

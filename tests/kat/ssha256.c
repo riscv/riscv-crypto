@@ -30,16 +30,16 @@ int test_ssha256() {
     __asm__("ssha256.s2 %0, %1" : "=r"(rd_s2): "r"(rs1));
     __asm__("ssha256.s3 %0, %1" : "=r"(rd_s3): "r"(rs1));
 
-    printf("ssha256.s0: RS1=%X Expected %X, got %X\n",rs1,expected_s0,rd_s0);
+    printf("ssha256.s0: RS1=%lX Expect %lX, got %lX\n",rs1,expected_s0,rd_s0);
     assert(expected_s0 == rd_s0);
 
-    printf("ssha256.s1: RS1=%X Expected %X, got %X\n",rs1,expected_s1,rd_s1);
+    printf("ssha256.s1: RS1=%lX Expect %lX, got %lX\n",rs1,expected_s1,rd_s1);
     assert(expected_s1 == rd_s1);
 
-    printf("ssha256.s2: RS1=%X Expected %X, got %X\n",rs1,expected_s2,rd_s2);
+    printf("ssha256.s2: RS1=%lX Expect %lX, got %lX\n",rs1,expected_s2,rd_s2);
     assert(expected_s2 == rd_s2);
 
-    printf("ssha256.s3: RS1=%X Expected %X, got %X\n",rs1,expected_s3,rd_s3);
+    printf("ssha256.s3: RS1=%lX Expect %lX, got %lX\n",rs1,expected_s3,rd_s3);
     assert(expected_s3 == rd_s3);
 
     return 0;

@@ -22,7 +22,7 @@ int test_lut4() {
 
     uint32_t expect = 0xEFDCBA98;
         
-    printf("lut4: RS1=%X, RS2=%X, In=%X, rd=%X, expected=%X\n",
+    printf("lut4: RS1=%lX, RS2=%lX, In=%lX, rd=%lX, expected=%lX\n",
         rs1,rs2,in,rd, expect);
 
     assert(rd == expect);
@@ -36,7 +36,7 @@ int test_lut4() {
 
     __asm__("lut4 %0, %1, %2" : "+r"(rd): "r"(rs1), "r"(rs2));
     
-    printf("lut4: RS1=%X, RS2=%X, In=%X, rd=%X, expected=%X\n",
+    printf("lut4: RS1=%lX, RS2=%lX, In=%lX, rd=%lX, expected=%lX\n",
         rs1,rs2,in,rd, expect);
     
     assert(rd == expect);

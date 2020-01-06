@@ -23,6 +23,9 @@ After first checking out the `riscv-crypto` repository:
   This will clone the relevant toolchain repos, checkout a known-good
   commit, apply the necessary patches and compile them.
 
+  - Go and make some tea or coffee.
+    This script will take a while.
+
 - The resulting toolchain installation will appear in
   `$REPO_BUILD/toolchain/install`.
 
