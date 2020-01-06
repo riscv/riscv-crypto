@@ -23,8 +23,7 @@ if [ ! -d $DIR_BINUTILS ]; then
 fi
 
 cd $DIR_BINUTILS
-git checkout riscv-bitmanip
-git checkout -B $BRANCH_NAME
+git checkout -B $BRANCH_NAME $COMMIT_BINUTILS # riscv-bitmanip
 cd -
 
 # ------ GCC ---------------------------------------------------------------
@@ -34,8 +33,8 @@ if [ ! -d $DIR_GCC ]; then
 fi
 
 cd $DIR_GCC
-git checkout riscv-bitmanip
-git checkout -B $BRANCH_NAME
+git checkout -B $BRANCH_NAME $COMMIT_GCC # riscv-bitmanip
+./contrib/download_prerequisites
 cd -
 
 # ------ NewLib ------------------------------------------------------------
@@ -65,8 +64,7 @@ if [ ! -d $DIR_SPIKE ]; then
 fi
 
 cd $DIR_SPIKE
-git checkout riscv-bitmanip
-git checkout -B $BRANCH_NAME
+git checkout -B $BRANCH_NAME $COMMIT_SPIKE # riscv-bitmanip
 cd -
 
 # --------------------------------------------------------------------------

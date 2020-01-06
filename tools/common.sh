@@ -21,6 +21,12 @@ ARCH_STRING=rv32imacb_zscrypto
 ABI_STRING=ilp32
 
 #
+# Known good git commit hashes to apply patches too
+COMMIT_GCC=7aad2f362811fb07d75eea90aaebd16fca714d4c
+COMMIT_BINUTILS=c870418800cd390bb2ae531226efd8a8ce1b741d
+COMMIT_SPIKE=5b042d731458eafea538324e2bf4f1d44ce9d2a0
+
+#
 # Check that a directory exists and exit if not.
 #
 function check_dir {

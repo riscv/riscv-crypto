@@ -26,6 +26,12 @@ After first checking out the `riscv-crypto` repository:
   - Go and make some tea or coffee.
     This script will take a while.
 
+  - It has been noted that on *some* systems, the `gcc` build will
+    fail with a "*cannot compute suffix of object files*" message.
+    If this happens, re-run the `$REPO_HOME/tools/conf-gcc.sh`
+    and `$REPO_HOME/tools/build-gcc` scripts manually. A proper fix
+    for this problem would be greatly appreciated!
+
 - The resulting toolchain installation will appear in
   `$REPO_BUILD/toolchain/install`.
 
