@@ -23,6 +23,9 @@ $(eval $(call add_spike_target,ssha3))
 $(eval $(call add_elf_target,indexed_ld.c))
 $(eval $(call add_spike_target,indexed_ld))
 
+$(eval $(call add_elf_target,saes.c))
+$(eval $(call add_spike_target,saes))
+
 all: $(ALL_TARGETS)
 
 clean:
