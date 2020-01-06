@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
 
 #define ROR32(x, y) ((x >> y) | (x << (-y & 31)))
 #define LSR32(x, y)  (x >> y)
@@ -29,25 +30,17 @@ int test_ssha256() {
     __asm__("ssha256.s2 %0, %1" : "=r"(rd_s2): "r"(rs1));
     __asm__("ssha256.s3 %0, %1" : "=r"(rd_s3): "r"(rs1));
 
-    if(expected_s0 != rd_s0) {
-        printf("\nS0: RS1=%X Expected %X, got %X\n",rs1,expected_s0,rd_s0);
-        return 1;   
-    }
+    printf("ssha256.s0: RS1=%X Expected %X, got %X\n",rs1,expected_s0,rd_s0);
+    assert(expected_s0 == rd_s0);
+    
+    printf("ssha256.s1: RS1=%X Expected %X, got %X\n",rs1,expected_s1,rd_s1);
+    assert(expected_s1 == rd_s1);
+    
+    printf("ssha256.s2: RS1=%X Expected %X, got %X\n",rs1,expected_s2,rd_s2);
+    assert(expected_s2 == rd_s2);
 
-    if(expected_s1 != rd_s1) {
-        printf("\nS1: RS1=%X Expected %X, got %X\n",rs1,expected_s1,rd_s1);
-        return 1;   
-    }
-
-    if(expected_s2 != rd_s2) {
-        printf("\nS2: RS1=%X Expected %X, got %X\n",rs1,expected_s2,rd_s2);
-        return 1;   
-    }
-
-    if(expected_s3 != rd_s3) {
-        printf("\nS3: RS1=%X Expected %X, got %X\n",rs1,expected_s3,rd_s3);
-        return 1;   
-    }
+    printf("ssha256.s3: RS1=%X Expected %X, got %X\n",rs1,expected_s3,rd_s3);
+    assert(expected_s3 == rd_s3);
 
     return 0;
 
@@ -56,7 +49,7 @@ int test_ssha256() {
 
 int main (int argc, char ** argv) {
 
-    printf("Running ssha256.s* KAT... ");
+    printf("Running ssha256.s* KAT...\n");
 
     int fail = test_ssha256();
 
@@ -74,3 +67,4 @@ int main (int argc, char ** argv) {
     }
 
 }
+

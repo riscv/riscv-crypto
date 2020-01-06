@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-
+#include <assert.h>
 
 int test_lut4() {
 
@@ -14,33 +14,32 @@ int test_lut4() {
     uint32_t rs2 = 0x89ABCDEF;
 
     uint32_t in  = 0x10234567;
-    uint32_t rd  = in;
+    uint32_t rd  = 0x10234567;
 
     // TEST 1
 
+    __asm__ ("lut4 %0, %1, %2" : "+r"(rd): "r"(rs1), "r"(rs2));
+
     uint32_t expect = 0xEFDCBA98;
+        
+    printf("lut4: RS1=%X, RS2=%X, In=%X, rd=%X, expected=%X\n",
+        rs1,rs2,in,rd, expect);
 
-    __asm__ volatile("lut4 %0, %1, %2" : "+r"(rd): "r"(rs1), "r"(rs2));
-
-    if(rd != expect) {
-        printf("\nFail T1: RS1=%X, RS2=%X, In=%X, rd=%X, expected=%X\n",
-            rs1,rs2,in,rd, expect);
-        return 1;
-    }
+    assert(rd == expect);
 
 
     // TEST 2
 
-    in = 0x89ABCDEF;
-    rd = in;
+    in      = 0x89ABCDEF;
+    expect  = 0x76543210;
+    rd      = in;
 
     __asm__("lut4 %0, %1, %2" : "+r"(rd): "r"(rs1), "r"(rs2));
-
-    if(rd != 0x76543210) {
-        printf("\nFail T2: RS1=%X, RS2=%X, In=%X, out=%X\n",
-            rs1,rs2,in,rd);
-        return 2;
-    }
+    
+    printf("lut4: RS1=%X, RS2=%X, In=%X, rd=%X, expected=%X\n",
+        rs1,rs2,in,rd, expect);
+    
+    assert(rd == expect);
 
     // END of tests.
 
@@ -50,7 +49,7 @@ int test_lut4() {
 
 int main (int argc, char ** argv) {
 
-    printf("Running lut4 KAT... ");
+    printf("Running lut4 KAT...\n");
 
     int fail = test_lut4();
 
@@ -61,7 +60,7 @@ int main (int argc, char ** argv) {
         return 0;
 
     } else {
-        
+
         printf("Test %d Failed.\n", fail);
 
         return 1;
