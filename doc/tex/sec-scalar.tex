@@ -100,16 +100,17 @@ It particularly features in the ARX (Add,Rotate,Xor) class of
 block ciphers
 \footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}.
 
+Algorithms making use of 32-bit rotations:
+SHA256, AES (Shift Rows), ChaCha20
+
+Algorithms making use of 64-bit rotations:
+SHA512, SHA3
+
 \begin{cryptobitmanipisa}
-RV32, RV64:
+RV32 only:
     fsl   rd, rs1, rs3, rs2
     fsr   rd, rs1, rs3, rs2
     fsri  rd, rs1, rs3, imm
-
-RV64 only:
-    fslw  rd, rs1, rs3, rs2
-    fsrw  rd, rs1, rs3, rs2
-    fsriw rd, rs1, rs3, imm
 \end{cryptobitmanipisa}
 
 See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
@@ -118,10 +119,16 @@ The {\em funnel shift} instructions create a $2*$\XLEN word by
 concatenating {\tt rs1} and {\tt rs3}, which is then
 left/right rotate shifted by the amount in {\tt imm}/{\tt rs2}.
 These are useful for implementing double-width rotations.
+There are (currently) no examples of widely used algorithms which
+use anything larger than a 64-bit rotation, hence the funnel shift
+instructions are only recommended for inclusion on RV32, since RV64
+will support 64-bit rotations naturally.
 
-\todo{Useful for: SHA3/SHA512 on RV32. 128 bit rotations aren't common, so
-possibly only recommend the RV32 instructions?}
-
+Algorithms using 64-bit rotations:
+SHA512,
+SHA3\footnote{SHA3 can avoid awkward double-width rotations using a
+technique called "Bit Interleaving". Benchmarking will be needed to
+see if this technique is a worthy mitigation for removing the funnel shifts.}
 
 \subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
 
@@ -225,7 +232,7 @@ these instructions.
 These instructions are useful inside hash functions, block ciphers and
 for implementing software based side-channel countermeasures like masking.
 
-\todo{Useful for: SHA3 / SHA2 / Masking}
+Useful for: SHA3 / SHA2 / Masking
 
 \subsubsection{Packing}
 
@@ -243,18 +250,15 @@ RV64:
 See \cite[Section 2.1.4]{riscv:bitmanip:draft} for exact details of
 these instructions.
 Some lightweight block ciphers
-(e.g.
-PRINCE \cite{block:prince}
-and
-SPARX \cite{DPUVGB:16}) use
-sub-word data types in their primitives.
+(e.g. SPARX \cite{DPUVGB:16})
+use sub-word data types in their primitives.
 The Bitmanip pack instructions are useful for performing rotations on
 16-bit data elements.
 They are also useful for re-arranging halfwords within words, and
 generally getting data into the right shape prior to applying transforms.
 
-\todo{Concrete list of use-cases.}
-
+Algorithms with sub-word rotations/shifts:
+SPARX
 
 % ============================================================================
 
