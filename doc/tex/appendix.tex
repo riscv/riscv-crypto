@@ -21,8 +21,6 @@ and XORs, which are already well supported by the RISC-V
 base and Bitmanip architectures.
 The round function state is accessed as a $5*5$ array of
 64-bit words.
-See Figure \ref{fig:listing:sha3} for a C code implementation of
-the core KeccakP1600 round function which SHA3 depends on.
 When developing lightweight accelerator instructions for SHA3, we
 consider two broad implementation options:
 
@@ -86,13 +84,6 @@ Code size, performance, instructions executed, instruction bandwidth,
 data bandwidth etc.
 }
 
-
-\begin{figure}
-\lstinputlisting[language=c]{../benchmarks/hash/sha3/keccakp1600.c}
-\caption{A C code implementation of the KeccakP1600 permutation, as
-used by the SHA3 secure hash function.}
-\label{fig:listing:sha3}
-\end{figure}
 
 % ============================================================================
 
