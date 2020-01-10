@@ -21,10 +21,10 @@ static void store_bigendian(unsigned char *x,uint32_t u)
 
 #define Ch(x,y,z) ((x & y) ^ (~x & z))
 #define Maj(x,y,z) ((x & y) ^ (x & z) ^ (y & z))
-#define Sigma0(x) (ROTR(x, 2) ^ ROTR(x,13) ^ ROTR(x,22))
-#define Sigma1(x) (ROTR(x, 6) ^ ROTR(x,11) ^ ROTR(x,25))
-#define sigma0(x) (ROTR(x, 7) ^ ROTR(x,18) ^ SHR(x, 3))
-#define sigma1(x) (ROTR(x,17) ^ ROTR(x,19) ^ SHR(x,10))
+#define Sigma0(x) (ROTR32(x, 2) ^ ROTR32(x,13) ^ ROTR32(x,22))
+#define Sigma1(x) (ROTR32(x, 6) ^ ROTR32(x,11) ^ ROTR32(x,25))
+#define sigma0(x) (ROTR32(x, 7) ^ ROTR32(x,18) ^    SHR(x, 3))
+#define sigma1(x) (ROTR32(x,17) ^ ROTR32(x,19) ^    SHR(x,10))
 
 #define M(w0,w14,w9,w1) w0 = sigma1(w14) + w9 + sigma0(w1) + w0;
 

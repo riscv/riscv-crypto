@@ -29,10 +29,10 @@ static inline uint32_t _ssha256_s1 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha25
 static inline uint32_t _ssha256_s2 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s2  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 static inline uint32_t _ssha256_s3 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s3  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 #else 
-static inline uint32_t _ssha256_s0 (uint32_t rs1) {return (ROTR(rs1, 2) ^ ROTR(rs1,13) ^ ROTR(rs1,22));}
-static inline uint32_t _ssha256_s1 (uint32_t rs1) {return (ROTR(rs1, 6) ^ ROTR(rs1,11) ^ ROTR(rs1,25));}
-static inline uint32_t _ssha256_s2 (uint32_t rs1) {return (ROTR(rs1, 7) ^ ROTR(rs1,18) ^  SHR(rs1, 3)) ;}
-static inline uint32_t _ssha256_s3 (uint32_t rs1) {return (ROTR(rs1,17) ^ ROTR(rs1,19) ^  SHR(rs1,10)) ;}
+static inline uint32_t _ssha256_s0 (uint32_t rs1) {return (ROTR32(rs1, 2) ^ ROTR32(rs1,13) ^ ROTR32(rs1,22));}
+static inline uint32_t _ssha256_s1 (uint32_t rs1) {return (ROTR32(rs1, 6) ^ ROTR32(rs1,11) ^ ROTR32(rs1,25));}
+static inline uint32_t _ssha256_s2 (uint32_t rs1) {return (ROTR32(rs1, 7) ^ ROTR32(rs1,18) ^    SHR(rs1, 3));}
+static inline uint32_t _ssha256_s3 (uint32_t rs1) {return (ROTR32(rs1,17) ^ ROTR32(rs1,19) ^    SHR(rs1,10));}
 #endif
 
 #if defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV64)
