@@ -54,5 +54,7 @@
     This will be done in future, when things are stable enough to
     discuss usefully.
 
-
+- See [`benchmarks/README.md`](benchmarks/README.md) for how to
+  get started with the benchmarking flow and how to contribute new
+  benchmarks.
 
