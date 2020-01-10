@@ -19,13 +19,12 @@
     #1..#2
 }
 
-\newcommand{\XLEN}{
-    {\tt XLEN}
-}
-
-\newcommand{\rdp}{
-    {\tt rdp}
-}
+\newcommand{\XLEN}{{\tt XLEN}}
+\newcommand{\rdp}{{\tt rdp}}
+\newcommand{\rd}{{\tt rd}}
+\newcommand{\rsone}{{\tt rs1}}
+\newcommand{\rstwo}{{\tt rs2}}
+\newcommand{\rsthree}{{\tt rs3}}
 
 \newcommand{\todo}[1]{
     \medskip
@@ -79,9 +78,16 @@
 }
 
 \lstset{
-numbers=left,
-frame=single,
-keywordstyle=\color{blue},
-commentstyle=\color{cyan},
-morekeywords={uint32_t}
+  numbers=left,
+  frame=single,
+  keywordstyle=\color{blue},
+  commentstyle=\color{cyan}
+}
+
+\lstdefinestyle{C}{
+    language=C,
+    morekeywords={uint32_t, uint64_t}
+}
+
+\lstdefinestyle{ASM}{
 }
