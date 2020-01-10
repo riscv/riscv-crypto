@@ -98,7 +98,8 @@ $(call map_lib,${1}) : $(foreach INFILE,${2},$(call map_obj,${INFILE}))
 
 lib-${1} : $(call map_lib,${1})
 
-TARGETS += $(call map_lib,${1})
+TARGETS      += $(call map_lib,${1})
+BUILDTARGETS += lib-${1}
 endef
 
 

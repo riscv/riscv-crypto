@@ -2,8 +2,9 @@
 HEADERS_IN = $(shell find ./ -name *.h )
 HEADERS_OUT=
 
-TARGETS = 
-RUNTARGETS = 
+TARGETS     = 
+BUILDTARGETS=
+RUNTARGETS  = 
 
 include common.mk
 
@@ -21,6 +22,12 @@ headers: $(HEADERS_OUT)
 all: headers $(TARGETS)
 
 run: $(RUNTARGETS)
+
+print-build-targets:
+	@echo $(BUILDTARGETS)
+
+print-run-targets:
+	@echo $(RUNTARGETS)
 
 clean:
 	rm -f $(TARGETS)
