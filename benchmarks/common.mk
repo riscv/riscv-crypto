@@ -1,6 +1,4 @@
 
-BUILD_DIR = $(REPO_BUILD)/benchmarks
-
 CC      = $(RISCV)/bin/riscv32-unknown-elf-gcc
 AR      = $(RISCV)/bin/riscv32-unknown-elf-ar
 OBJDUMP = $(RISCV)/bin/riscv32-unknown-elf-objdump
@@ -8,13 +6,14 @@ SIZE    = $(RISCV)/bin/riscv32-unknown-elf-size
 SPIKE   = $(RISCV)/bin/spike
 PK      = $(RISCV)/riscv32-unknown-elf/bin/pk
 
-ABI     = ilp32
-ARCHBASE= rv32imacb
-ARCH    = $(ARCHBASE)_zscrypto
+CONFIG ?= baseline
 
-CFLAGS  += -Wall -mabi=${ABI} -march=${ARCH}
-CFLAGS  += -I$(BUILD_DIR)/include
-CFLAGS  += -O2
+include config/$(CONFIG).conf
+
+BUILD_DIR = $(REPO_BUILD)/benchmarks/$(CONFIG)
+
+CFLAGS  += -Wall -I$(BUILD_DIR)/include
+CFLAGS  += $(CONF_CFLAGS)
 
 #
 # 1. Relative header file path, as found by running "find"
@@ -31,7 +30,7 @@ endef
 #
 # 1. Input file name
 define map_elf
-$(BUILD_DIR)/bin/${1:%.c=%.elf}
+$(BUILD_DIR)/bin/${1:%.c=%-${2}.elf}
 endef
 
 #
@@ -108,18 +107,18 @@ endef
 # 3. Name
 define add_test_elf_target
 
-$(call map_elf,${1}) : ${1} $(foreach LIB,${2},$(call map_lib,${LIB}))
-	@mkdir -p $(dir $(call map_elf,${1}))
+$(call map_elf,${1},${3}) : ${1} $(foreach LIB,${2},$(call map_lib,${LIB}))
+	@mkdir -p $(dir $(call map_elf,${1},${3}))
 	$(CC) $(CFLAGS) -o $${@} $${^}
 
-$(call map_dis,${1}) : $(call map_elf,${1})
+$(call map_dis,${1}) : $(call map_elf,${1},${3})
 	@mkdir -p $(dir $(call map_dis,${1}))
 	$(OBJDUMP) -D $${<} > $${@}
 
-run-${3} : $(call map_elf,${1})
-	$(SPIKE) --isa=${ARCHBASE} $(PK) $(call map_elf,${1})
+run-${3} : $(call map_elf,${1},${3})
+	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3})
 
-TARGETS += $(call map_elf,${1})
+TARGETS += $(call map_elf,${1},${3})
 TARGETS += $(call map_dis,${1})
 
 endef
