@@ -10,7 +10,8 @@ main:
 #
 # ------------------------------------------------------------
 
-    lut4        a1, a1, a2
+    lut42       a1, a1, a2
+  ##lut44       a1, a1, a2 // Disabled since it is RV64
 
 #
 # ------------------------------------------------------------
@@ -35,10 +36,10 @@ main:
     ssha256.s2  a0, a1
     ssha256.s3  a0, a1
 
-    ssha512.s0  a0, a1
-    ssha512.s1  a0, a1
-    ssha512.s2  a0, a1
-    ssha512.s3  a0, a1
+  ##ssha512.s0  a0, a1
+  ##ssha512.s1  a0, a1
+  ##ssha512.s2  a0, a1
+  ##ssha512.s3  a0, a1
 
     ssha3.xy    a0, a1, a2
     ssha3.x1    a0, a1, a2

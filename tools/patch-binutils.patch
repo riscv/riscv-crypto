@@ -89,15 +89,17 @@ index 9ecdcab0b6..665c7b8203 100644
  	    case 's':		/* Source register.  */
  	    case 't':		/* Target register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..892cd6bdea 100644
+index 6c750a33b1..7b5d884263 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
-@@ -343,6 +343,64 @@
+@@ -343,6 +343,66 @@
  #define MASK_GORCIW  0xfe00707f
  #define MATCH_GREVIW 0x6800501b
  #define MASK_GREVIW  0xfe00707f
-+#define MATCH_LUT4 0x6200002b
-+#define MASK_LUT4  0xfe00707f
++#define MATCH_LUT42 0x6200002b
++#define MASK_LUT42  0xfe00707f
++#define MATCH_LUT44 0x6400002b
++#define MASK_LUT44  0xfe00707f
 +#define MATCH_MMULU 0x200102b
 +#define MASK_MMULU  0x60070ff
 +#define MATCH_MACCU 0x102b
@@ -205,15 +207,16 @@ index 19f10c0e55..d65b3c800e 100644
  	  print (info->stream, "%s", riscv_gpr_names[0]);
  	  break;
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..1f1eef50c0 100644
+index e99febc823..7b6460d235 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
-@@ -709,6 +709,37 @@ const struct riscv_opcode riscv_opcodes[] =
+@@ -709,6 +709,38 @@ const struct riscv_opcode riscv_opcodes[] =
  {"unzip2",    0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  {"unzip",     0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  
 +/* Scalar Crypto Instructions */
-+{"lut4",       0, INSN_CLASS_ZSCRYPTO, "d,s,t",   MATCH_LUT4 ,      MASK_LUT4 ,      match_opcode, 0},
++{"lut42",      0, INSN_CLASS_ZSCRYPTO, "d,s,t",   MATCH_LUT42,      MASK_LUT42,      match_opcode, 0},
++{"lut44",     64, INSN_CLASS_ZSCRYPTO, "d,s,t",   MATCH_LUT44,      MASK_LUT44,      match_opcode, 0},
 +{"mmulu",      0, INSN_CLASS_ZSCRYPTO, "(N,M),s,t,r", MATCH_MMULU , MASK_MMULU ,     match_opcode, 0},
 +{"maccu",      0, INSN_CLASS_ZSCRYPTO, "(N,M),s,t,r", MATCH_MACCU , MASK_MACCU ,     match_opcode, 0},
 +{"saes.sbenc", 0, INSN_CLASS_ZSCRYPTO, "d,s",     MATCH_SAES_SBENC, MASK_SAES_SBENC, match_opcode, 0},

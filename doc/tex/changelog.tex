@@ -1,6 +1,10 @@
 
 \begin{itemize}
 \item[17/12/19] - Initial first version shown to Crypto Task group.
-\item[10/01/20] - Don't recommend funnel shifts for RV64, 128-bit rotations
-                  are not common enough to justify.
+\item[10/01/20] \begin{itemize}
+    \item Don't recommend funnel shifts for RV64, 128-bit rotations
+          are not common enough to justify.
+    \item Change LUT4 instruction. Go for very efficient RV64 instruction
+          and split 4-to-2 32-bit instruction. Avoids ternary.
+    \end{itemize}
 \end{itemize}

@@ -11,15 +11,17 @@ index 9e03676..e2712e6 100644
    uint64_t rs2() { return x(20, 5); }
    uint64_t rs3() { return x(27, 5); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..a1d1e6b 100644
+index 3c4bf1c..e724ae1 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -564,6 +564,64 @@
+@@ -564,6 +564,66 @@
  #define MASK_PACKUW  0xfe00707f
  #define MATCH_BFPW 0x4800703b
  #define MASK_BFPW  0xfe00707f
-+#define MATCH_LUT4 0x6200002b
-+#define MASK_LUT4  0xfe00707f
++#define MATCH_LUT42 0x6200002b
++#define MASK_LUT42  0xfe00707f
++#define MATCH_LUT44 0x6400002b
++#define MASK_LUT44  0xfe00707f
 +#define MATCH_MMULU 0x200102b
 +#define MASK_MMULU  0x60070ff
 +#define MATCH_MACCU 0x102b
@@ -79,11 +81,12 @@ index 3c4bf1c..a1d1e6b 100644
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2214,35 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2156,6 +2216,36 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
-+DECLARE_INSN(lut4, MATCH_LUT4, MASK_LUT4)
++DECLARE_INSN(lut42, MATCH_LUT42, MASK_LUT42)
++DECLARE_INSN(lut44, MATCH_LUT44, MASK_LUT44)
 +DECLARE_INSN(mmulu, MATCH_MMULU, MASK_MMULU)
 +DECLARE_INSN(maccu, MATCH_MACCU, MASK_MACCU)
 +DECLARE_INSN(saes_sbenc, MATCH_SAES_SBENC, MASK_SAES_SBENC)
@@ -167,33 +170,29 @@ index 0000000..9ca1a1a
 +uint64_t address     = RS1 + (RS2 << 1);
 +WRITE_RD(MMU.load_int16(address));
 +
-diff --git a/riscv/insns/lut4.h b/riscv/insns/lut4.h
+diff --git a/riscv/insns/lut42.h b/riscv/insns/lut42.h
 new file mode 100644
-index 0000000..19ed904
+index 0000000..25b85a3
 --- /dev/null
-+++ b/riscv/insns/lut4.h
-@@ -0,0 +1,22 @@
-+
-+// Concatenate RS1 || RS2
-+uint64_t lut = (((uint64_t)RS1 & 0xFFFFFFFF) << 32) | (RS2&0xFFFFFFFF);
-+
-+uint64_t wdata = 0;
-+
-+uint64_t rd = RD;
-+
-+// For each nibble in rs1
-+for(int i = 0; i < 8; i ++) {
-+
-+    // 0 <= to_sub < 16 - the i'th nibble
-+    uint8_t  index  = (rd >> (4*i)) & 0xF;
-+
-+    // Index into the LUT.
-+    uint32_t output = (lut >> (index*4)) & 0xF;
-+
-+    wdata          |= output << (4*i);
++++ b/riscv/insns/lut42.h
+@@ -0,0 +1,5 @@
++uint32_t result = 0;
++for(int i = 0; i < 32; i += 4) {
++    result |= ((RS2 >> (4*((RS1 >> i)&0xF))) & 0x3) << i;
 +}
-+
-+WRITE_RD(wdata);
++WRITE_RD(zext_xlen(result));
+diff --git a/riscv/insns/lut44.h b/riscv/insns/lut44.h
+new file mode 100644
+index 0000000..891a2d4
+--- /dev/null
++++ b/riscv/insns/lut44.h
+@@ -0,0 +1,7 @@
++require_rv64;
++uint64_t result = 0;
++for(int i = 0; i < 64; i += 4) {
++    result |= (RS2 >> (4*((RS1 >> i)&0xF)) & 0xF) << i;
++}
++WRITE_RD(result);
 +
 diff --git a/riscv/insns/lwux.h b/riscv/insns/lwux.h
 new file mode 100644
@@ -661,15 +660,16 @@ index 0000000..c5141dc
 +MMU.store_uint32(RS1 + (RS2 << 2), RS3);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..e20044e 100644
+index 4ee64fa..d894beb 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,37 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,38 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
 +riscv_insn_ext_s_crypto = \
-+    lut4 \
++    lut42 \
++    lut44 \
 +    mmulu \
 +    maccu \
 +    saes_sbenc \
@@ -702,7 +702,7 @@ index 4ee64fa..e20044e 100644
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +813,7 @@ riscv_insn_list = \
+@@ -782,6 +814,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \

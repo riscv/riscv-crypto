@@ -17,11 +17,11 @@
 #
 # ------------------------------------------------------------
 
-#
-# The lut4 instruction is likely to be changed into a 2r1w friendly
-# hi/lo variant.
+# RV32 / RV64
+lut42       rd  rs1 rs2         31..25=49 14..12=0 6..2=0x0A 1..0=3
 
-lut4        rd  rs1 rs2         31..25=49 14..12=0 6..2=0x0A 1..0=3
+# RV64 Only
+lut44       rd  rs1 rs2         31..25=50 14..12=0 6..2=0x0A 1..0=3
 
 
 #

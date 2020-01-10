@@ -266,47 +266,53 @@ SPARX
 
 \begin{cryptoisa}
 RV32, RV64:
-    lut4    rd, rs1, rs2      // Variant 1
-    lut4    rd, rs1, rs2 rs3  // Variant 2
-    lut4lo  rd, rs1, rs2      // Variant 3
-    lut4hi  rd, rs1, rs2      // Variant 3
+    lut42   rd, rs1, rs2
+RV64:
+    lut44   rd, rs1, rs2
 \end{cryptoisa}
 
-The {\tt lut4} instruction implements a 4-bit lookup table operation
-on every nibble in a source word.
-The lookup table is constructed by concatenating two 32-bit words.
-On RV32, two \XLEN registers are concatenated to form the LUT.
-On RV64, the low 32-bits of two \XLEN registers are concatenated to form
-the LUT.
-The instruction is extremely useful for any lightweight block-cipher
-which uses a 4-bit SBox.
-A comprehensive list and assessment of such ciphers can be found
-in \cite{TGMGD:19}.
+\begin{lstlisting}[style=C]
+uint32_t lut42 (uint32_t rs1, uint32_t rs2) {
+    uint32_t result;
+    for(int i = 0; i < 32; i += 4) {
+        result |= ((rs2 >> (4*((rs1 >> i)&0xF))) & 0x3) << i;
+    }
+    return result;
+}
+uint64_t lut44 (uint64_t rs1, uint64_t rs2) {
+    uint64_t result;
+    for(int i = 0; i < 64; i += 4) {
+        result |= ((rs2 >> (4*((rs1 >> i)&0xF)) & 0xF) << i;
+    }
+    return result;
+}
+\end{lstlisting}
 
-Two variants are suggested on the assumption that only one variant is
-proposed for standardisation:
+The \mnemonic{lut4*} instructions are used to implement 4-bit lookup tables
+on every nibble in a source word.
+
 \begin{itemize}
-\item Variant 1: Concatenate {\tt rs1} and {\tt rs2} to form the LUT.
-    Use {\tt rd} as a source/destination register.
-    The contents of {\tt rd} is chunked into nibbles, which are then
-    used as inputs to the lut. The corresponding nibble is replaced
-    with the output of the lut and written back to {\tt rd}.
-\item Variant 2: Identical to variant 1, but without the read/overwrite
-    semantics for {\tt rd}. Input to the lut is taken from {\tt rs3}
-    and the output is written to {\tt rd}.
-\item Variant 3: Avoid ternary operations completely by splitting it
-    into a {\tt lut4lo} and {\tt lut4hi} variant.
+\item[\mnemonic{lut42}] 
+    On RV32, the entire LUT cannot fit into a single register.
+    Instead, we implement a 4-to-2 but LUT. To implement a 4-to-4 bit
+    LUT, we do two 4-to-2 operations, shifting and oring their results
+    together.
+
+    \begin{lstlisting}[style=ASM]
+lut42   t0, a0, a1      // a0 = indexes, a1 = lo 2 bits of results.
+lut42   t1, a0, a2      // a0 = indexes, a2 = hi 2 bits of results.
+slli    t1, t1, 2       // Shift up hi bits by two bits.
+or      t0, t0, t1      // Or results together.
+    \end{lstlisting}
+
+    Note that the result of \mnemonic{lut42} on RV64 is {\em zero extended}
+    upto \XLEN bits.
+
+\item[\mnemonic{lut44}]
+    On RV64, the entire set of LUT elements fits in a single source register.
+    The \rstwo register stores the LUT nibbles, and is indexed by the nibbles
+    in \rsone.
 \end{itemize}
-Variant 1 is obviously more efficient in terms of encoding space.
-Variant 2 has the advantage from a side-channel perspective
-of not over-writing it's source register with the result.
-This is useful as it avoids implicit hamming distance leakage in
-a correlation power analysis (CPA) context. This could be mitigated
-on a micro-architectural level however
-\footnote{
-    How best to support software side-channel countermeasures at the
-    ISA level of abstraction is a non-trivial open question/problem.
-}.
 
 % ============================================================================
 
