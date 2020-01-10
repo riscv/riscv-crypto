@@ -27,6 +27,12 @@ COMMIT_BINUTILS=c870418800cd390bb2ae531226efd8a8ce1b741d
 COMMIT_SPIKE=5b042d731458eafea538324e2bf4f1d44ce9d2a0
 
 #
+# Patch files
+PATCH_BINUTILS=$REPO_HOME/tools/patch-binutils.patch
+PATCH_GCC=$REPO_HOME/tools/patch-gcc.patch
+PATCH_SPIKE=$REPO_HOME/tools/patch-spike.patch
+
+#
 # Check that a directory exists and exit if not.
 #
 function check_dir {
