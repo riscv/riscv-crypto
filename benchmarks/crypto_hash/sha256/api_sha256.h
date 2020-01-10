@@ -1,6 +1,8 @@
 
 #include <stdint.h>
 
+#include "riscvcrypto/share/util.h"
+
 #define CRYPTO_HASH_SHA256_BYTES 32
 #define CRYPTO_HASH_SHA256_STATEBYTES 32
 #define CRYPTO_HASH_SHA256_BLOCKBYTES 64

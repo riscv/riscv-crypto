@@ -1,3 +1,4 @@
 
 $(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_ref,sha256_ref))
+$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256_zscrypto))
 

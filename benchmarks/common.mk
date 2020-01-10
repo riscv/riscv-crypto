@@ -6,7 +6,7 @@ SIZE    = $(RISCV)/bin/riscv32-unknown-elf-size
 SPIKE   = $(RISCV)/bin/spike
 PK      = $(RISCV)/riscv32-unknown-elf/bin/pk
 
-CONFIG ?= baseline
+CONFIG ?= rv32-baseline
 
 include config/$(CONFIG).conf
 
