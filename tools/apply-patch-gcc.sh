@@ -9,4 +9,4 @@ set -x
 
 cd           $DIR_GCC
 git apply    $REPO_HOME/tools/patch-gcc.patch
-
+git add      --all

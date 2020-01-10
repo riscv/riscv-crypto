@@ -9,4 +9,5 @@ set -x
 
 cd           $DIR_BINUTILS
 git apply    $REPO_HOME/tools/patch-binutils.patch
+git add      --all
 

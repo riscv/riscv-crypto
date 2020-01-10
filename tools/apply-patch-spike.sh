@@ -9,4 +9,4 @@ set -x
 
 cd           $DIR_SPIKE
 git apply    $REPO_HOME/tools/patch-spike.patch
-
+git add      --all
