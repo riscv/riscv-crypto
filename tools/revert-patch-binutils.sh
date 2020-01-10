@@ -5,15 +5,14 @@ source $REPO_HOME/tools/common.sh
 set -e
 set -x
 
-# ------ Binutils ----------------------------------------------------------
+# ------ GCC ---------------------------------------------------------------
 
 #
-# This script reverts all XCrypto related changes to binutils.
+# This script reverts all Crypto related changes to binutils.
 #
 
-cd           $DIR_BINUTILS
+cd           $DIR_GCC
 git reset HEAD
 git checkout .
 git clean -df
-
 

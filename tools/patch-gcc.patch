@@ -1,5 +1,5 @@
 diff --git a/gcc/common/config/riscv/riscv-common.c b/gcc/common/config/riscv/riscv-common.c
-index 91bc47f774c..771186a50d5 100644
+index 91bc47f774c..ee966b93630 100644
 --- a/gcc/common/config/riscv/riscv-common.c
 +++ b/gcc/common/config/riscv/riscv-common.c
 @@ -203,6 +203,30 @@ riscv_supported_std_ext (void)
@@ -22,7 +22,7 @@ index 91bc47f774c..771186a50d5 100644
 +  {
 +      if (!strcmp (ext, riscv_std_z_ext_strtab[i]))
 +      {
-+    	return true;
++         return true;
 +      }
 +  }
 +
