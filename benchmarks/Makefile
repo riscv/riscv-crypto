@@ -3,6 +3,7 @@ HEADERS_IN = $(shell find ./ -name *.h )
 HEADERS_OUT=
 
 TARGETS = 
+RUNTARGETS = 
 
 include common.mk
 
@@ -18,6 +19,8 @@ include test/Makefile.in
 headers: $(HEADERS_OUT)
 
 all: headers $(TARGETS)
+
+run: $(RUNTARGETS)
 
 clean:
 	rm -f $(TARGETS)

@@ -41,14 +41,15 @@ endef
 
 #
 # 1. Input file name
+# 2. Optional distinguisher
 define map_dis
-$(BUILD_DIR)/dis/${1:%.c=%.dis}
+$(BUILD_DIR)/dis/${1:%.c=%${2}.dis}
 endef
 
 #
 # 1. Input file name
 define map_size
-$(BUILD_DIR)/size/${1:%.c=%.size}
+$(BUILD_DIR)/dis/${1:%.c=%.size}
 endef
 
 #
@@ -111,15 +112,16 @@ $(call map_elf,${1},${3}) : ${1} $(foreach LIB,${2},$(call map_lib,${LIB}))
 	@mkdir -p $(dir $(call map_elf,${1},${3}))
 	$(CC) $(CFLAGS) -o $${@} $${^}
 
-$(call map_dis,${1}) : $(call map_elf,${1},${3})
-	@mkdir -p $(dir $(call map_dis,${1}))
+$(call map_dis,${1},-${3}) : $(call map_elf,${1},${3})
+	@mkdir -p $(dir $(call map_dis,${1},-${3}))
 	$(OBJDUMP) -D $${<} > $${@}
 
 run-${3} : $(call map_elf,${1},${3})
 	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3})
 
 TARGETS += $(call map_elf,${1},${3})
-TARGETS += $(call map_dis,${1})
+TARGETS += $(call map_dis,${1},-${3})
+RUNTARGETS += run-${3}
 
 endef
 
