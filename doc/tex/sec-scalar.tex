@@ -266,25 +266,26 @@ SPARX
 
 \begin{cryptoisa}
 RV32, RV64:
-    lut42   rd, rs1, rs2
+    lut4.lo rd, rs1, rs2
+    lut4.hi rd, rs1, rs2
 RV64:
-    lut44   rd, rs1, rs2
+    lut4    rd, rs1, rs2
 \end{cryptoisa}
 
 \begin{lstlisting}[style=C]
-uint32_t lut42 (uint32_t rs1, uint32_t rs2) {
-    uint32_t result;
+uint32_t lut4_hi_lo (uint32_t rs1, uint32_t rs2, bool hi) {
+    uint64_t result;
     for(int i = 0; i < 32; i += 4) {
-        result |= ((rs2 >> (4*((rs1 >> i)&0xF))) & 0x3) << i;
+        uint8_t idx = (rs1 >> i) & 0x7;
+        bool    hb  = (rs1 >> i) & 0x8;
+        if(hi ^ hb) { result |= ((rs2 >> (4*idx) & 0xF) << i; }
     }
-    return result;
 }
-uint64_t lut44 (uint64_t rs1, uint64_t rs2) {
+uint64_t lut4 (uint64_t rs1, uint64_t rs2) {
     uint64_t result;
     for(int i = 0; i < 64; i += 4) {
         result |= ((rs2 >> (4*((rs1 >> i)&0xF)) & 0xF) << i;
     }
-    return result;
 }
 \end{lstlisting}
 
@@ -292,26 +293,38 @@ The \mnemonic{lut4*} instructions are used to implement 4-bit lookup tables
 on every nibble in a source word.
 
 \begin{itemize}
-\item[\mnemonic{lut42}] 
-    On RV32, the entire LUT cannot fit into a single register.
-    Instead, we implement a 4-to-2 but LUT. To implement a 4-to-4 bit
-    LUT, we do two 4-to-2 operations, shifting and oring their results
-    together.
 
-    \begin{lstlisting}[style=ASM]
-lut42   t0, a0, a1      // a0 = indexes, a1 = lo 2 bits of results.
-lut42   t1, a0, a2      // a0 = indexes, a2 = hi 2 bits of results.
-slli    t1, t1, 2       // Shift up hi bits by two bits.
-or      t0, t0, t1      // Or results together.
-    \end{lstlisting}
-
-    Note that the result of \mnemonic{lut42} on RV64 is {\em zero extended}
-    upto \XLEN bits.
-
-\item[\mnemonic{lut44}]
+\item[RV64]
     On RV64, the entire set of LUT elements fits in a single source register.
     The \rstwo register stores the LUT nibbles, and is indexed by the nibbles
     in \rsone.
+    
+    \begin{lstlisting}
+lut4:
+    for i = 0..15 : rd.4[i] = {rs2.4[rs1.4[i]]}
+    \end{lstlisting}
+
+
+\item[RV32] 
+    Splits the lookup step into two stages. The {\tt lo} instruction
+    updates nibbles in the destination with the looked-up value
+    iff the index is less than eight. The {\tt hi} version does
+    the same for index values greater than/equal to eight.
+    The results can then be or'd together.
+    
+    \begin{lstlisting}
+lut4lo :
+    for i = 0..7 : rd.4[i] =  (rs1.4[i]&0x8) ? 0 : rs2.4[rs1.4[i]&0x7]
+lut4hi:
+    for i = 0..7 : rd.4[i] = !(rs1.4[i]&0x8) ? 0 : rs2.4[rs1.4[i]&0x7]
+    \end{lstlisting}
+    
+    \begin{lstlisting}[style=ASM]
+lut4lo  t0, a0, a1      // a0 = indexes, a1 = lo 2 bits of results.
+lut4hi  t1, a0, a2      // a0 = indexes, a2 = hi 2 bits of results.
+or      t0, t0, t1      // Or results together.
+    \end{lstlisting}
+
 \end{itemize}
 
 Algorithms making use of 4x4 SBoxes:
