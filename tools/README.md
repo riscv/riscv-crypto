@@ -35,21 +35,35 @@ After first checking out the `riscv-crypto` repository:
     scripts.
 
 
-- Configure each repository before building:
+- Configure and build each repository:
+
+    Binutils:
     ```sh
     $> $REPO_HOME/tools/conf-binutils.sh
-    $> $REPO_HOME/tools/conf-gcc.sh
-    $> $REPO_HOME/tools/conf-newlib.sh
-    $> $REPO_HOME/tools/conf-spike.sh
+    $> $REPO_HOME/tools/build-binutils.sh
     ```
 
-- Build the repositories:
+    GCC:
     ```sh
-    $> $REPO_HOME/tools/build-binutils.sh
+    $> $REPO_HOME/tools/conf-gcc.sh
     $> $REPO_HOME/tools/build-gcc.sh
+    ```
+
+    NewLib:
+    ```sh
+    $> $REPO_HOME/tools/conf-newlib.sh
     $> $REPO_HOME/tools/build-newlib.sh
-    $> $REPO_HOME/tools/build-pk.sh
+    ```
+
+    Spike ISA Simulator:
+    ```sh
+    $> $REPO_HOME/tools/conf-spike.sh
     $> $REPO_HOME/tools/build-spike.sh
+    ```
+
+    RISC-V Proxy Kernel:
+    ```sh
+    $> $REPO_HOME/tools/build-pk.sh
     ```
 
    - This will build `binutils`, `gcc`, `newlib`, `pk` and `spike`,
