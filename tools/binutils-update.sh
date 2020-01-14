@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $REPO_HOME/tools/common.sh
+source $REPO_HOME/tools/share.sh
 
 set -e
 set -x
@@ -9,4 +9,5 @@ set -x
 
 cd           $DIR_BINUTILS
 git diff --cached > $PATCH_BINUTILS
+
 

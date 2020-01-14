@@ -1,12 +1,13 @@
 #!/bin/bash
 
-source $REPO_HOME/tools/common.sh
+source $REPO_HOME/tools/share.sh
 
 set -e
 set -x
 
 # ------ Binutils ----------------------------------------------------------
 
-cd           $DIR_GCC
-git apply    $REPO_HOME/tools/patch-gcc.patch
+cd           $DIR_SPIKE
+git apply    $PATCH_SPIKE
 git add      --all
+

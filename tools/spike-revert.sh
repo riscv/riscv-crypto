@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $REPO_HOME/tools/common.sh
+source $REPO_HOME/tools/share.sh
 
 set -e
 set -x
@@ -11,9 +11,8 @@ set -x
 # This script reverts all XCrypto related changes to Spike.
 #
 
-cd           $DIR_GCC
+cd           $DIR_SPIKE
 git reset HEAD
 git checkout .
 git clean -df
-
 

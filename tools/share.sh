@@ -10,12 +10,13 @@ DIR_SPIKE=$DIR_BASE/riscv-isa-sim
 DIR_GCC_BUILD=$DIR_GCC-build
 DIR_BINUTILS_BUILD=$DIR_BINUTILS-build
 DIR_NEWLIB_BUILD=$DIR_NEWLIB-build
-DIR_PK_BUILD=$DIR_PK-build
+DIR_PK32_BUILD=$DIR_PK-build32
+DIR_PK64_BUILD=$DIR_PK-build64
 DIR_SPIKE_BUILD=$DIR_SPIKE-build
 
 BRANCH_NAME=riscv-crypto
 
-INSTALL_DIR=$REPO_BUILD/toolchain/install
+INSTALL_DIR=$RISCV
 TARGET_ARCH=riscv64-unknown-elf
 
 #
@@ -28,7 +29,9 @@ COMMIT_SPIKE=5b042d731458eafea538324e2bf4f1d44ce9d2a0
 # Patch files
 PATCH_BINUTILS=$REPO_HOME/tools/patch-binutils.patch
 PATCH_GCC=$REPO_HOME/tools/patch-gcc.patch
+PATCH_NEWLIB=$REPO_HOME/tools/patch-newlib.patch
 PATCH_SPIKE=$REPO_HOME/tools/patch-spike.patch
+PATCH_PK=$REPO_HOME/tools/patch-pk.patch
 
 #
 # Check that a directory exists and exit if not.

@@ -12,13 +12,13 @@ After first checking out the `riscv-crypto` repository:
 
 - From the root of the project, run:
   ```sh
-  $> source bin/conf.sh
+  source bin/conf.sh
   ```
   to setup the project workspace.
 
 - Checkout the relevant repositories:
     ```sh
-    $> $REPO_HOME/tools/clone-repos.sh
+    ${REPO_HOME}/tools/clone.sh
     ```
     This will clone GCC, Binutils, Newlib, the RISC-V Proxy kernel (PK)
     and the RISC-V ISA Simulator (Spike).
@@ -26,57 +26,67 @@ After first checking out the `riscv-crypto` repository:
     It will then checkout known good commits on a new branch
     called `riscv-crypto`.
 
+- For each component in the tool-chain, execute the associated
+  patch application, 
+  configuration, 
+  and 
+  compilation (plus installation)
+  script in turn:
 
-- Apply the relevant patches to the checked out repositories:
+  - `binutils`:
+
     ```sh
-    $> $REPO_HOME/tools/apply-patch-all.sh
-    ```
-    Or, apply them individually using the `tools/apply-patch-*.sh`
-    scripts.
-
-
-- Configure and build each repository:
-
-    Binutils:
-    ```sh
-    $> $REPO_HOME/tools/conf-binutils.sh
-    $> $REPO_HOME/tools/build-binutils.sh
+    ${REPO_HOME}/tools/binutils-apply.sh
+    ${REPO_HOME}/tools/binutils-conf.sh
+    ${REPO_HOME}/tools/binutils-build.sh
     ```
 
-    GCC:
+  - `gcc`:
+
     ```sh
-    $> $REPO_HOME/tools/conf-gcc.sh
-    $> $REPO_HOME/tools/build-gcc.sh
+    ${REPO_HOME}/tools/gcc-apply.sh
+    ${REPO_HOME}/tools/gcc-conf.sh
+    ${REPO_HOME}/tools/gcc-build.sh
     ```
 
-    NewLib:
+  - `newlib`:
+
     ```sh
-    $> $REPO_HOME/tools/conf-newlib.sh
-    $> $REPO_HOME/tools/build-newlib.sh
+    ${REPO_HOME}/tools/newlib-apply.sh
+    ${REPO_HOME}/tools/newlib-conf.sh
+    ${REPO_HOME}/tools/newlib-build.sh
     ```
 
-    Spike ISA Simulator:
-    ```sh
-    $> $REPO_HOME/tools/conf-spike.sh
-    $> $REPO_HOME/tools/build-spike.sh
-    ```
+  - `pk` (the `spike` proxy kernel):
 
-    RISC-V Proxy Kernel:
     ```sh
-    $> $REPO_HOME/tools/build-pk.sh
-    ```
+    ${REPO_HOME}/tools/pk-apply.sh
+    ${REPO_HOME}/tools/pk-conf.sh
+    ${REPO_HOME}/tools/pk-build.sh
+    ``` 
+
+  - `spike`:
+
+    ```sh
+    ${REPO_HOME}/tools/spike-apply.sh
+    ${REPO_HOME}/tools/spike-conf.sh
+    ${REPO_HOME}/tools/spike-build.sh
+    ``` 
+
+
+
 
    - This will build `binutils`, `gcc`, `newlib`, `pk` and `spike`,
-     and place the compiled results in `$REPO_HOME/build/toolchain/install`.
+     and place the compiled results in `${REPO_HOME}/build/toolchain/install`.
 
    - You can go and make some tea / coffee for this bit, it will take a while.
 
    - The architecture the compiler will target is specified
-     in `$REPO_HOME/tools/common.sh` as
+     in `${REPO_HOME}/tools/share.sh` as
      `TARGET_ARCH, `ARCH_STRING` and `ABI_STRING`.
 
 - To re-build a repository from scratch, first run the relevant
-  `$REPO_HOME/tools/conf-*.sh` script before running the corresponding
+  `${REPO_HOME}/tools/conf-*.sh` script before running the corresponding
   `build` script.
 
 
@@ -94,15 +104,15 @@ toolchain and simulator patches.
 
 - There are three classes of tool script used to manage the patches:
 
-  - The `tools/apply-patch-*.sh` scripts are used to take the patches
-    contained in the `riscv-crypto` repository and apply them to the cloned
+  - The `tools/*-apply.sh` scripts are used to take the patches
+    contained in the RISC-V Crypto repository and apply them to the cloned
     upstream repositories.
 
-  - The `tools/revert-patch-*.sh` scripts are used to put the cloned
+  - The `tools/*-revert.sh` scripts are used to put the cloned
     upstream repositories back to their known initial state.
 
-  - The `tools/update-patch-*.sh` scripts take the *staged* modifications
-    to the relevant repository and updates the `riscv-crypto` diff.
+  - The `tools/*-update.sh` scripts take the *staged* modifications
+    to the relevant repository and updates the RISC-V Crypto diff.
 
 - To modify a patch:
 
@@ -113,6 +123,5 @@ toolchain and simulator patches.
     make sure the changes are *staged* for commit.
     *Do Not* commit your changes to the cloned repository.
 
-  - Then, run the appropriate `tools/update-patch-*.sh` script and
-    commit the change to the patch to the `riscv-crypto` repository.
-
+  - Then, run the appropriate `tools/*-update.sh` script and
+    commit the change to the patch to the RISC-V Crypto repository.

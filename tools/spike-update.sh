@@ -1,12 +1,14 @@
 #!/bin/bash
 
-source $REPO_HOME/tools/common.sh
+source $REPO_HOME/tools/share.sh
 
 set -e
 set -x
 
 # ------ Spike -------------------------------------------------------------
 
-cd           $DIR_GCC
-git diff --cached > $PATCH_GCC
+cd           $DIR_SPIKE
+git diff --cached > $PATCH_SPIKE
+
+
 
