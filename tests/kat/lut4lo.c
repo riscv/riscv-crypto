@@ -10,7 +10,7 @@
 
 void putbin32(uint32_t in) {
     for(int i = 0; i < 32; i ++) {
-        printf("%lu", (in >> (31-i)) & 0x1);
+        printf("%u", (in >> (31-i)) & 0x1);
     }
 }
 
@@ -31,7 +31,7 @@ int test_lut4lo() {
     printf("rs2   : "); putbin32(rs2    ); printf("\n");
     printf("rd    : "); putbin32(rd     ); printf("\n");
     printf("expect: "); putbin32(expect ); printf("\n");
-    printf("lut4lo: RS1=%lX, RS2=%lX, rd=%lX, expected=%lX\n",
+    printf("lut4lo: RS1=%X, RS2=%X, rd=%X, expected=%X\n",
         rs1,rs2,rd, expect);
 
     assert(rd == expect);
@@ -48,7 +48,7 @@ int test_lut4lo() {
     printf("rs2   : "); putbin32(rs2    ); printf("\n");
     printf("rd    : "); putbin32(rd     ); printf("\n");
     printf("expect: "); putbin32(expect ); printf("\n");
-    printf("lut4lo:RS1=%lX, RS2=%lX, rd=%lX, expected=%lX\n",
+    printf("lut4lo:RS1=%X, RS2=%X, rd=%X, expected=%X\n",
         rs1,rs2,rd, expect);
 
     assert(rd == expect);

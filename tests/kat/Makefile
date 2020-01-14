@@ -23,11 +23,11 @@ $(eval $(call add_spike_target,indexed_ld))
 $(eval $(call add_elf_target,saes.c))
 $(eval $(call add_spike_target,saes))
 
-$(eval $(call add_elf_target,mmulu.c))
-$(eval $(call add_spike_target,mmulu))
-
-$(eval $(call add_elf_target,maccu.c))
-$(eval $(call add_spike_target,maccu))
+##$(eval $(call add_elf_target,mmulu.c))
+##$(eval $(call add_spike_target,mmulu))
+##
+##$(eval $(call add_elf_target,maccu.c))
+##$(eval $(call add_spike_target,maccu))
 
 #
 # Disable for now, since we don't build a 64-bit toolchain yet, and

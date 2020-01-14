@@ -1,16 +1,16 @@
 
-AS          = $(RISCV)/bin/riscv32-unknown-elf-as
-CC          = $(RISCV)/bin/riscv32-unknown-elf-gcc
-OBJDUMP     = $(RISCV)/bin/riscv32-unknown-elf-objdump
+AS          = $(RISCV)/bin/riscv64-unknown-elf-as
+CC          = $(RISCV)/bin/riscv64-unknown-elf-gcc
+OBJDUMP     = $(RISCV)/bin/riscv64-unknown-elf-objdump
 
 CFLAGS     += -O2 -Wall
 
-ARCH_BASE   = rv32imacb
+ARCH_BASE   = rv64imafdcb
 ARCH        = $(ARCH_BASE)_zscrypto
-ABI         = ilp32
+ABI         = lp64d
 
 SPIKE       = $(RISCV)/bin/spike
-PK          = $(RISCV)/riscv32-unknown-elf/bin/pk
+PK          = $(RISCV)/riscv64-unknown-elf/bin/pk
 
 define map_obj
 $(BUILD_DIR)/$(basename ${1}).o
