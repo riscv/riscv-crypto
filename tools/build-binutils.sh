@@ -13,6 +13,6 @@ mkdir -p $INSTALL_DIR
 
 cd   $DIR_BINUTILS_BUILD
 
-make -j$(nproc)
+make -j 4
 make install
 

@@ -18,9 +18,8 @@ export PATH="$RISCV/bin:$PATH"
 
 $DIR_PK/configure \
     --prefix=$INSTALL_DIR \
-    --host=$TARGET_ARCH \
-    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
+    --host=$TARGET_ARCH
 
-make
+make -j$(nproc)
 make install
 

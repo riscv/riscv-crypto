@@ -16,5 +16,5 @@ cd           $DIR_BINUTILS_BUILD
 $DIR_BINUTILS/configure \
     --prefix=$INSTALL_DIR \
     --target=$TARGET_ARCH \
-    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
+    --enable-multilib
 

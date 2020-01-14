@@ -19,5 +19,5 @@ export PATH="$RISCV/bin:$PATH"
 $DIR_NEWLIB/configure \
     --prefix=$INSTALL_DIR \
     --target=$TARGET_ARCH \
-    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
+    --enable-multilib
 

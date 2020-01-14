@@ -16,9 +16,7 @@ DIR_SPIKE_BUILD=$DIR_SPIKE-build
 BRANCH_NAME=riscv-crypto
 
 INSTALL_DIR=$REPO_BUILD/toolchain/install
-TARGET_ARCH=riscv32-unknown-elf
-ARCH_STRING=rv32imacb_zscrypto
-ABI_STRING=ilp32
+TARGET_ARCH=riscv64-unknown-elf
 
 #
 # Known good git commit hashes to apply patches too

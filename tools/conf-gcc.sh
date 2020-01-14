@@ -18,5 +18,5 @@ $DIR_GCC/configure \
     --enable-languages=c \
     --disable-libssp \
     --target=$TARGET_ARCH \
-    --with-arch=$ARCH_STRING --with-abi=$ABI_STRING
+    --enable-multilib
 
