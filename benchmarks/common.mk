@@ -1,14 +1,9 @@
 
-CC      = $(RISCV)/bin/riscv32-unknown-elf-gcc
-AR      = $(RISCV)/bin/riscv32-unknown-elf-ar
-OBJDUMP = $(RISCV)/bin/riscv32-unknown-elf-objdump
-SIZE    = $(RISCV)/bin/riscv32-unknown-elf-size
-SPIKE   = $(RISCV)/bin/spike
-PK      = $(RISCV)/riscv32-unknown-elf/bin/pk
-
 CONFIG ?= rv32-baseline
 
 include config/$(CONFIG).conf
+
+SPIKE   = $(RISCV)/bin/spike
 
 BUILD_DIR = $(REPO_BUILD)/benchmarks/$(CONFIG)
 
