@@ -14,24 +14,41 @@ void putbin32(uint32_t in) {
     }
 }
 
-int test_lut42() {
+int test_lut4lo() {
 
     uint32_t rs1 = 0x76543210; // indexes
     uint32_t rs2 = 0x01234567; // the lut
 
-    uint32_t rd  ;
+    uint32_t rd , expect;
 
     // TEST 1
 
-    __asm__ ("lut42 %0, %1, %2" : "=r"(rd): "r"(rs1), "r"(rs2));
+    __asm__ ("lut4lo %0, %1, %2" : "=r"(rd): "r"(rs1), "r"(rs2));
 
-    uint32_t expect = 0x01230123;
+    expect = 0x01234567;
     
     printf("rs1   : "); putbin32(rs1    ); printf("\n");
     printf("rs2   : "); putbin32(rs2    ); printf("\n");
     printf("rd    : "); putbin32(rd     ); printf("\n");
     printf("expect: "); putbin32(expect ); printf("\n");
-    printf("lut42: RS1=%lX, RS2=%lX, rd=%lX, expected=%lX\n",
+    printf("lut4lo: RS1=%lX, RS2=%lX, rd=%lX, expected=%lX\n",
+        rs1,rs2,rd, expect);
+
+    assert(rd == expect);
+    
+    // TEST 2
+
+    rs1 = 0x89ABCDEF;
+
+    __asm__ ("lut4lo %0, %1, %2" : "=r"(rd): "r"(rs1), "r"(rs2));
+
+    expect = 0x00000000;
+    
+    printf("rs1   : "); putbin32(rs1    ); printf("\n");
+    printf("rs2   : "); putbin32(rs2    ); printf("\n");
+    printf("rd    : "); putbin32(rd     ); printf("\n");
+    printf("expect: "); putbin32(expect ); printf("\n");
+    printf("lut4lo:RS1=%lX, RS2=%lX, rd=%lX, expected=%lX\n",
         rs1,rs2,rd, expect);
 
     assert(rd == expect);
@@ -42,9 +59,9 @@ int test_lut42() {
 
 int main (int argc, char ** argv) {
 
-    printf("Running lut42 KAT...\n");
+    printf("Running lut4lo KAT...\n");
 
-    int fail = test_lut42();
+    int fail = test_lut4lo();
 
     if(fail == 0)  {
 

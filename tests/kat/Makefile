@@ -5,8 +5,11 @@ ALL_TARGETS =
 
 include $(REPO_HOME)/tests/common.mk
 
-$(eval $(call add_elf_target,lut42.c))
-$(eval $(call add_spike_target,lut42))
+$(eval $(call add_elf_target,lut4lo.c))
+$(eval $(call add_spike_target,lut4lo))
+
+$(eval $(call add_elf_target,lut4hi.c))
+$(eval $(call add_spike_target,lut4hi))
 
 $(eval $(call add_elf_target,ssha256.c))
 $(eval $(call add_spike_target,ssha256))
@@ -32,8 +35,8 @@ $(eval $(call add_spike_target,maccu))
 #$(eval $(call add_elf_target,ssha512.c))
 #$(eval $(call add_spike_target,ssha512))
 #
-#$(eval $(call add_elf_target,lut42.c))
-#$(eval $(call add_spike_target,lut42))
+#$(eval $(call add_elf_target,lut4.c))
+#$(eval $(call add_spike_target,lut4))
 
 all: $(ALL_TARGETS)
 

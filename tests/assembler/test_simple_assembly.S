@@ -10,7 +10,8 @@ main:
 #
 # ------------------------------------------------------------
 
-    lut42       a1, a1, a2
+    lut4lo      a1, a1, a2
+    lut4hi      a1, a1, a2
   ##lut44       a1, a1, a2 // Disabled since it is RV64
 
 #
