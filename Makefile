@@ -18,11 +18,6 @@ tests-kat:
 
 tests-all: tests-assembler tests-compiler tests-kat
 
-
-benchmarks:
-	$(MAKE) -C $(REPO_HOME)/benchmarks/hash/sha3 all
-
-
 opcodes:
 	cat $(REPO_HOME)/extern/riscv-opcodes/opcodes \
         $(REPO_HOME)/tools/opcodes-crypto \
