@@ -23,7 +23,7 @@
 // SHA2
 //
 
-#if defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV32) || defined(RISCV_CRYPTO_RV64)
+#if (defined(__ZSCRYPTO) && (defined(RISCV_CRYPTO_RV32) || defined(RISCV_CRYPTO_RV64)))
 static inline uint32_t _ssha256_s0 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s0  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 static inline uint32_t _ssha256_s1 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s1  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 static inline uint32_t _ssha256_s2 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s2  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
