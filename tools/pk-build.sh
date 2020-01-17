@@ -11,16 +11,7 @@ mkdir -p $INSTALL_DIR
 
 # ------ Proxy Kernel (PK) 32-bit-------------------------------------------
 
-cd           $DIR_PK32_BUILD
-
-export PATH="$RISCV/bin:$PATH"
-
-make
-make install
-
-# ------ Proxy Kernel (PK) 64-bit-------------------------------------------
-
-cd           $DIR_PK64_BUILD
+cd           $DIR_PK_BUILD
 
 export PATH="$RISCV/bin:$PATH"
 
