@@ -50,7 +50,7 @@ endef
 #
 # 1. Input file name
 define map_run_log
-$(BUILD_DIR)/log/${1:%.c=%-${2}.elf}
+$(BUILD_DIR)/log/${1:%.c=%-${2}.log}
 endef
 
 #
