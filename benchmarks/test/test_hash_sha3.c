@@ -63,8 +63,5 @@ int main(int argc, char ** argv) {
     printf("PERF: "STR(TEST_NAME) " instrs: 0x");
     puthex64(final_instrs); printf("\n");
 
-    printf("PERF: "STR(TEST_NAME) " cycles: 0x");
-    puthex64(final_cycles); printf("\n");
-
     return 0;
 }

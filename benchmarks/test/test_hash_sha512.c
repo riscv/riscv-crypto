@@ -30,7 +30,6 @@ int main(int argc, char ** argv) {
     const uint64_t final_cycles   = end_cycles - start_cycles;
 
     printf("PERF: "STR(TEST_NAME) " instrs: 0x"); puthex64(final_instrs); printf("\n");
-    printf("PERF: "STR(TEST_NAME) " cycles: 0x"); puthex64(final_cycles); printf("\n");
 
     return 0;
 }
