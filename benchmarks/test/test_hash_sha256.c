@@ -5,7 +5,7 @@
 
 int main(int argc, char ** argv) {
 
-    printf("Running SHA256 benchmark...\n");
+    printf("Running SHA256 "STR(TEST_NAME)" benchmark...\n");
 
     unsigned char       hash_signature  [CRYPTO_HASH_SHA256_BYTES];
     unsigned char       hash_input      [TEST_HASH_INPUT_LENGTH  ];
@@ -29,9 +29,8 @@ int main(int argc, char ** argv) {
     const uint64_t final_instrs   = end_instrs - start_instrs;
     const uint64_t final_cycles   = end_cycles - start_cycles;
 
-    printf("SHA256:\n");
-    printf("- instrs: 0x"); puthex64(final_instrs); printf("\n");
-    printf("- cycles: 0x"); puthex64(final_cycles); printf("\n");
+    printf("PERF: "STR(TEST_NAME) " instrs: 0x"); puthex64(final_instrs); printf("\n");
+    printf("PERF: "STR(TEST_NAME) " cycles: 0x"); puthex64(final_cycles); printf("\n");
 
     return 0;
 }

@@ -48,6 +48,12 @@ $(BUILD_DIR)/dis/${1:%.c=%.size}
 endef
 
 #
+# 1. Input file name
+define map_run_log
+$(BUILD_DIR)/log/${1:%.c=%-${2}.elf}
+endef
+
+#
 # 1. Relative header file path, as found by running "find"
 define add_header_target
 $(call map_header,${1}) : ${1}
@@ -106,14 +112,18 @@ define add_test_elf_target
 
 $(call map_elf,${1},${3}) : ${1} $(foreach LIB,${2},$(call map_lib,${LIB}))
 	@mkdir -p $(dir $(call map_elf,${1},${3}))
-	$(CC) $(CFLAGS) -o $${@} $${^}
+	$(CC) $(CFLAGS) -DTEST_NAME=${3} -o $${@} $${^}
 
 $(call map_dis,${1},-${3}) : $(call map_elf,${1},${3})
 	@mkdir -p $(dir $(call map_dis,${1},-${3}))
 	$(OBJDUMP) -D $${<} > $${@}
 
-run-${3} : $(call map_elf,${1},${3})
-	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3})
+$(call map_run_log,${1},-${3}) : $(call map_elf,${1},${3})
+	@mkdir -p $(dir $(call map_run_log,${1},${3}))
+	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3}) > \
+        $${@}
+
+run-${3} : $(call map_run_log,${1},-${3})
 
 TARGETS += $(call map_elf,${1},${3})
 TARGETS += $(call map_dis,${1},-${3})
