@@ -19,6 +19,8 @@ include crypto_hash/sha512/ref/Makefile.in
 include crypto_hash/sha512/zscrypto/Makefile.in
 
 include crypto_hash/sha3/ref/Makefile.in
+include crypto_hash/sha3/opt_size_baseline/Makefile.in
+include crypto_hash/sha3/opt_size_zscrypto/Makefile.in
 
 include test/Makefile.in
 
