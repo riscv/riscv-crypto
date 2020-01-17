@@ -19,6 +19,14 @@ A readable and compact implementation of the Keccak-f[1600] permutation.
 ================================================================
 */
 
+
+#define ROL64(a, offset) ((((uint64_t)a) << offset) ^ (((uint64_t)a) >> (64-offset)))
+#define index(x, y) ((x)+5*(y))
+
+#define readLane(x, y)          (((uint64_t*)state)[index(x, y)])
+#define writeLane(x, y, lane)   (((uint64_t*)state)[index(x, y)]) = (lane)
+#define XORLane(x, y, lane)     (((uint64_t*)state)[index(x, y)]) ^= (lane)
+
 /**
   * Function that computes the linear feedback shift register (LFSR) used to
   * define the round constants (see [Keccak Reference, Section 1.2]).

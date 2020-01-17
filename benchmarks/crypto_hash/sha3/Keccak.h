@@ -17,13 +17,6 @@ http://creativecommons.org/publicdomain/zero/1.0/
 #ifndef __KECCAK_H__
 
 
-#define ROL64(a, offset) ((((uint64_t)a) << offset) ^ (((uint64_t)a) >> (64-offset)))
-#define index(x, y) ((x)+5*(y))
-
-#define readLane(x, y)          (((uint64_t*)state)[index(x, y)])
-#define writeLane(x, y, lane)   (((uint64_t*)state)[index(x, y)]) = (lane)
-#define XORLane(x, y, lane)     (((uint64_t*)state)[index(x, y)]) ^= (lane)
-
 /**
   * Function to compute the Keccak[r, c] sponge function over a given input.
   * @param  rate            The value of the rate r.
