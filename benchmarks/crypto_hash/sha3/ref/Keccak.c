@@ -56,7 +56,11 @@ static void KeccakF1600_StatePermute(void *state)
 
             /* Compute the parity of the columns */
             for(x=0; x<5; x++) {
-                C[x] = readLane(x, 0) ^ readLane(x, 1) ^ readLane(x, 2) ^ readLane(x, 3) ^ readLane(x, 4);
+                C[x] = readLane(x, 0) ^
+                       readLane(x, 1) ^
+                       readLane(x, 2) ^
+                       readLane(x, 3) ^
+                       readLane(x, 4);
             }
             for(x=0; x<5; x++) {
                 /* Compute the θ effect for a given column */
@@ -68,7 +72,8 @@ static void KeccakF1600_StatePermute(void *state)
             }
         }
 
-        {   /* === ρ and π steps (see [Keccak Reference, Sections 2.3.3 and 2.3.4]) === */
+        {   /* === ρ and π steps 
+                    see [Keccak Reference, Sections 2.3.3 and 2.3.4]) === */
             uint64_t current, temp;
             /* Start at coordinates (1 0) */
             x = 1; y = 0;
@@ -95,7 +100,11 @@ static void KeccakF1600_StatePermute(void *state)
                 }
                 /* Compute χ on the plane */
                 for(x=0; x<5; x++) {
-                    writeLane(x, y, temp[x] ^((~temp[(x+1)%5]) & temp[(x+2)%5]));
+                    writeLane(
+                        x,
+                        y, 
+                        temp[x] ^((~temp[(x+1)%5]) & temp[(x+2)%5])
+                    );
                 }
             }
         }
