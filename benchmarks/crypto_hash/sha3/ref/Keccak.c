@@ -47,14 +47,16 @@ static void KeccakF1600_StatePermute(void *state)
             uint64_t C[5], D;
 
             /* Compute the parity of the columns */
-            for(x=0; x<5; x++)
+            for(x=0; x<5; x++) {
                 C[x] = readLane(x, 0) ^ readLane(x, 1) ^ readLane(x, 2) ^ readLane(x, 3) ^ readLane(x, 4);
+            }
             for(x=0; x<5; x++) {
                 /* Compute the θ effect for a given column */
                 D = C[(x+4)%5] ^ ROL64(C[(x+1)%5], 1);
                 /* Add the θ effect to the whole column */
-                for (y=0; y<5; y++)
+                for (y=0; y<5; y++) {
                     XORLane(x, y, D);
+                }
             }
         }
 
@@ -80,19 +82,22 @@ static void KeccakF1600_StatePermute(void *state)
             uint64_t temp[5];
             for(y=0; y<5; y++) {
                 /* Take a copy of the plane */
-                for(x=0; x<5; x++)
+                for(x=0; x<5; x++) {
                     temp[x] = readLane(x, y);
+                }
                 /* Compute χ on the plane */
-                for(x=0; x<5; x++)
+                for(x=0; x<5; x++) {
                     writeLane(x, y, temp[x] ^((~temp[(x+1)%5]) & temp[(x+2)%5]));
+                }
             }
         }
 
         {   /* === ι step (see [Keccak Reference, Section 2.3.5]) === */
             for(j=0; j<7; j++) {
                 unsigned int bitPosition = (1<<j)-1; /* 2^j-1 */
-                if (LFSR86540(&LFSRstate))
+                if (LFSR86540(&LFSRstate)) {
                     XORLane(0, 0, (uint64_t)1<<bitPosition);
+                }
             }
         }
     }
