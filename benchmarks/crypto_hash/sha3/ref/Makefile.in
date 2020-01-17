@@ -1,0 +1,7 @@
+
+HASH_SHA3_REF_FILES = \
+    crypto_hash/sha3/fips202.c \
+    crypto_hash/sha3/ref/Keccak.c
+
+$(eval $(call add_lib_target,sha3_ref,$(HASH_SHA3_REF_FILES)))
+

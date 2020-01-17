@@ -18,6 +18,8 @@ include crypto_hash/sha256/zscrypto/Makefile.in
 include crypto_hash/sha512/ref/Makefile.in
 include crypto_hash/sha512/zscrypto/Makefile.in
 
+include crypto_hash/sha3/ref/Makefile.in
+
 include test/Makefile.in
 
 headers: $(HEADERS_OUT)

@@ -1,0 +1,37 @@
+
+#include "riscvcrypto/share/test.h"
+#include "riscvcrypto/share/util.h"
+
+#include "riscvcrypto/crypto_hash/sha3/fips202.h"
+
+int main(int argc, char ** argv) {
+
+    printf("Running SHA3 " STR(TEST_NAME) " benchmark...\n");
+
+    unsigned char       hash_signature  [CRYPTO_HASH_SHA3_512_OUTPUT_LENGTH];
+    unsigned char       hash_input      [TEST_HASH_INPUT_LENGTH  ];
+    unsigned long long  hash_input_len = TEST_HASH_INPUT_LENGTH   ;
+
+    printf("Reading %d random bytes as input...\n", TEST_HASH_INPUT_LENGTH);
+    test_rdrandom(hash_input, TEST_HASH_INPUT_LENGTH);
+
+    const uint64_t start_instrs   = test_rdinstret();
+    const uint64_t start_cycles   = test_rdcycle  ();
+
+    FIPS202_SHA3_512(
+        hash_input    ,
+        hash_input_len,
+        hash_signature 
+    );
+    
+    const uint64_t end_instrs     = test_rdinstret();
+    const uint64_t end_cycles     = test_rdcycle  ();
+
+    const uint64_t final_instrs   = end_instrs - start_instrs;
+    const uint64_t final_cycles   = end_cycles - start_cycles;
+
+    printf("PERF: "STR(TEST_NAME) " instrs: 0x"); puthex64(final_instrs); printf("\n");
+    printf("PERF: "STR(TEST_NAME) " cycles: 0x"); puthex64(final_cycles); printf("\n");
+
+    return 0;
+}
