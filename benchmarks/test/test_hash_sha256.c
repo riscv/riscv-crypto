@@ -15,7 +15,6 @@ int main(int argc, char ** argv) {
     test_rdrandom(hash_input, TEST_HASH_INPUT_LENGTH);
 
     const uint64_t start_instrs   = test_rdinstret();
-    const uint64_t start_cycles   = test_rdcycle  ();
 
     crypto_hash_sha256(
         hash_signature,
@@ -24,10 +23,8 @@ int main(int argc, char ** argv) {
     );
     
     const uint64_t end_instrs     = test_rdinstret();
-    const uint64_t end_cycles     = test_rdcycle  ();
 
     const uint64_t final_instrs   = end_instrs - start_instrs;
-    const uint64_t final_cycles   = end_cycles - start_cycles;
 
     printf("PERF: "STR(TEST_NAME) " instrs: 0x"); puthex64(final_instrs); printf("\n");
 
