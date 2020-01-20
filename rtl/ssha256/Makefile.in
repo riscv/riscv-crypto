@@ -1,0 +1,3 @@
+
+$(eval $(call add_synth_target,ssha256,ssha256/ssha256.v))
+

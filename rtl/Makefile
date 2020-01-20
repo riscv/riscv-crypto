@@ -76,7 +76,13 @@ TARGETS += $(call map_waves,${1})
 
 endef
 
+#
+# Import sub-makefiles
+#
+
 include lut4/Makefile.in
+include ssha256/Makefile.in
+include ssha512/Makefile.in
 
 all: $(TARGETS)
 

@@ -1,0 +1,3 @@
+
+$(eval $(call add_synth_target,ssha512,ssha512/ssha512.v))
+
