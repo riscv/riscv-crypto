@@ -2,8 +2,6 @@
 
 export REPO_HOME="${PWD}"
 export REPO_BUILD=$REPO_HOME/build
-export RISCV_ARCH=riscv32-unknown-elf
-export RISCV=$REPO_BUILD/toolchain/$RISCV_ARCH
 
 echo "---- Setting Up Workspace ----"
 
@@ -21,10 +19,16 @@ if [ -z $YOSYS_ROOT ] ; then
 fi
 
 
+if [ -z $RISCV_ARCH ] ; then
+    export RISCV_ARCH=riscv64-unknown-elf
+fi
+
+export RISCV=$REPO_BUILD/toolchain/$RISCV_ARCH
+
 echo "REPO_HOME  = $REPO_HOME"
 echo "REPO_BUILD = $REPO_BUILD"
-echo "RISCV      = $RISCV"
 echo "RISCV_ARCH = $RISCV_ARCH"
+echo "RISCV      = $RISCV"
 echo "YOSYS_ROOT = $YOSYS_ROOT"
 
 echo "------------------------------"
