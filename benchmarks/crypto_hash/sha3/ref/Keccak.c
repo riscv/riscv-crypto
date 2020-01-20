@@ -21,102 +21,118 @@ A readable and compact implementation of the Keccak-f[1600] permutation.
 
 
 #define ROL64(a, offset) ((((uint64_t)a) << offset) ^ (((uint64_t)a) >> (64-offset)))
-#define index(x, y) ((x)+5*(y))
+#define index(x, y) (((x)%5)+5*(((y)%5)))
 
 #define readLane(x, y)          (((uint64_t*)state)[index(x, y)])
 #define writeLane(x, y, lane)   (((uint64_t*)state)[index(x, y)]) = (lane)
 #define XORLane(x, y, lane)     (((uint64_t*)state)[index(x, y)]) ^= (lane)
 
-/**
-  * Function that computes the linear feedback shift register (LFSR) used to
-  * define the round constants (see [Keccak Reference, Section 1.2]).
-  */
-static int LFSR86540(uint8_t *LFSR)
+static const uint64_t KeccakP1600RoundConstants[24] =
 {
-    int result = ((*LFSR) & 0x01) != 0;
-    if (((*LFSR) & 0x80) != 0)
-        /* Primitive polynomial over GF(2): x^8+x^6+x^5+x^4+1 */
-        (*LFSR) = ((*LFSR) << 1) ^ 0x71;
-    else
-        (*LFSR) <<= 1;
-    return result;
-}
+    0x0000000000000001,
+    0x0000000000008082,
+    0x800000000000808a,
+    0x8000000080008000,
+    0x000000000000808b,
+    0x0000000080000001,
+    0x8000000080008081,
+    0x8000000000008009,
+    0x000000000000008a,
+    0x0000000000000088,
+    0x0000000080008009,
+    0x000000008000000a,
+    0x000000008000808b,
+    0x800000000000008b,
+    0x8000000000008089,
+    0x8000000000008003,
+    0x8000000000008002,
+    0x8000000000000080,
+    0x000000000000800a,
+    0x800000008000000a,
+    0x8000000080008081,
+    0x8000000000008080,
+    0x0000000080000001,
+    0x8000000080008008,
+};
+
+static const unsigned int KeccakP1600RhoOffsets[25] =
+{
+  0,  // 0   *
+  1,  // 1
+ 62,  // 2
+ 28,  // 3
+ 27,  // 4
+ 36,  // 5   *
+ 44,  // 6
+  6,  // 7
+ 55,  // 8
+ 20,  // 9
+  3,  // 10  *
+ 10,  // 11
+ 43,  // 12
+ 25,  // 13
+ 39,  // 14
+ 41,  // 15  *
+ 45,  // 16
+ 15,  // 17
+ 21,  // 18
+  8,  // 19
+ 18,  // 20  *
+  2,  // 21
+ 61,  // 22
+ 56,  // 23
+ 14   // 24
+};
 
 /**
  * Function that computes the Keccak-f[1600] permutation on the given state.
  */
 static void KeccakF1600_StatePermute(void *state)
 {
-    unsigned int round, x, y, j, t;
-    uint8_t LFSRstate = 0x01;
+    int round, x, y;
 
     for(round=0; round<24; round++) {
-        {   /* === θ step (see [Keccak Reference, Section 2.3.2]) === */
-            uint64_t C[5], D;
+        uint64_t C[5];
+        uint64_t tempA[25];
+        uint64_t D;
 
-            /* Compute the parity of the columns */
-            for(x=0; x<5; x++) {
-                C[x] = readLane(x, 0) ^
-                       readLane(x, 1) ^
-                       readLane(x, 2) ^
-                       readLane(x, 3) ^
-                       readLane(x, 4);
-            }
-            for(x=0; x<5; x++) {
-                /* Compute the θ effect for a given column */
-                D = C[(x+4)%5] ^ ROL64(C[(x+1)%5], 1);
-                /* Add the θ effect to the whole column */
-                for (y=0; y<5; y++) {
-                    XORLane(x, y, D);
-                }
-            }
+        // Theta / Rho / Pi
+
+        for(x=0; x<5; x++) {
+            C[x] = ((uint64_t*)state)[index(x, 0)] ^
+                   ((uint64_t*)state)[index(x, 1)] ^
+                   ((uint64_t*)state)[index(x, 2)] ^
+                   ((uint64_t*)state)[index(x, 3)] ^
+                   ((uint64_t*)state)[index(x, 4)] ;
         }
 
-        {   /* === ρ and π steps 
-                    see [Keccak Reference, Sections 2.3.3 and 2.3.4]) === */
-            uint64_t current, temp;
-            /* Start at coordinates (1 0) */
-            x = 1; y = 0;
-            current = readLane(x, y);
-            /* Iterate over ((0 1)(2 3))^t * (1 0) for 0 ≤ t ≤ 23 */
-            for(t=0; t<24; t++) {
-                /* Compute the rotation constant r = (t+1)(t+2)/2 */
-                unsigned int r = ((t+1)*(t+2)/2)%64;
-                /* Compute ((0 1)(2 3)) * (x y) */
-                unsigned int Y = (2*x+3*y)%5; x = y; y = Y;
-                /* Swap current and state(x,y), and rotate */
-                temp = readLane(x, y);
-                writeLane(x, y, ROL64(current, r));
-                current = temp;
-            }
-        }
+        for(x=0; x<5; x++) {
 
-        {   /* === χ step (see [Keccak Reference, Section 2.3.1]) === */
-            uint64_t temp[5];
+            D = ROL64(C[(x+1)%5], 1) ^ C[(x+4)%5];
+
             for(y=0; y<5; y++) {
-                /* Take a copy of the plane */
-                for(x=0; x<5; x++) {
-                    temp[x] = readLane(x, y);
-                }
-                /* Compute χ on the plane */
-                for(x=0; x<5; x++) {
-                    writeLane(
-                        x,
-                        y, 
-                        temp[x] ^((~temp[(x+1)%5]) & temp[(x+2)%5])
+
+                tempA[index(0*x+1*y, 2*x+3*y)] =
+                    ROL64 (
+                        ((uint64_t*)state)[index(x, y)] ^ D,
+                        KeccakP1600RhoOffsets[index(x, y)]
                     );
-                }
             }
         }
 
-        {   /* === ι step (see [Keccak Reference, Section 2.3.5]) === */
-            for(j=0; j<7; j++) {
-                unsigned int bitPosition = (1<<j)-1; /* 2^j-1 */
-                if (LFSR86540(&LFSRstate)) {
-                    XORLane(0, 0, (uint64_t)1<<bitPosition);
-                }
+        // Chi
+
+        for(y=0; y<5; y++) {
+            for(x=0; x<5; x++) {
+                ((uint64_t*)state)[index(x, y)] =
+                    tempA[index(x, y)] ^
+                        ((~tempA[index(x+1, y)]) &
+                           tempA[index(x+2, y)]);
             }
         }
+
+        // Iota
+        ((uint64_t*)state)[index(0, 0)] ^= KeccakP1600RoundConstants[round];
     }
 }
 
