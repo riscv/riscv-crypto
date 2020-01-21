@@ -7,12 +7,6 @@
 
 ## Purpose
 
-The RISC-V Crypto benchmark suite is organised similarly to other
-Crypto benchmarking efforts like
-[SUPERCOP](https://bench.cr.yp.to/supercop.html).
-However, it is somewhat *simplified* because it's aims are different.
-Specifically, the primary aims are:
-
 1. To evaluate a set of *popular* cryptographic algorithms on the *baseline*
    RISC-V architecture.
    These include:
@@ -49,114 +43,84 @@ Specifically, the primary aims are:
 
 ## Organisation
 
-```
-├── README.md                       - You're reading it.
-├── common.mk                       - Shared GNU Makefile macros / variables.
-├── Makefile                        - Top level makefile for driving things.
-├── config                          - Configs for different architcture variants.
-│   ├── rv32-baseline-b.conf
-│   ├── rv32-baseline.conf
-│   └── rv32-zscrypto.conf
-├── crypto_hash                     - The set of hash functions being analysed.
-│   └── sha256
-│       ├── api_sha256.h
-│       ├── ref                     - Reference implementation.
-│       └── zscrypto                - Scalar Proposal Evaluation.
-├── share                           - Shared code.
-│   ├── riscv-crypto-intrinsics.h   - Intrinsics for new instructions.
-│   ├── test.h
-│   └── util.h
-└── test                            - Test code wrappers.
-    ├── Makefile.in
-    └── test_*.c
-```
+- `config/` - Contains various toolchain configurations, allowing the
+    same programs to be compiled and evaluated against different target
+    architectures. Currently defined are combinations of `RV32`/`RV64`
+    with(out) the `B`itmanip extension, and with(out) the proposed
+    scalar cryptography extensions.
 
-- Each algorithm belongs to a particular top-level catagory:
-  hash functions, block ciphers etc.
+- `share/` - General useful code / macros and instruction intrinsics.
 
-- Each algorithm can have multiple implementations.
-  For example, the SHA256 algorithm under `crypto_hash/`
-  has (at the time of writing) two implementations.
-  One is the reference / baseline taken from SUPERCOP, the
-  other is optimised to use the proposed RISC-V scalar cryptography
-  extensions.
+- `test/` - Testbench programs for checking the correctness and performance
+    of different algorithms.
 
-  - Each implementation of each algorithm is compiled into it's own
-    static library, as controlled by the `Makefile` in the implementation's
-    directory.
+- `crypto_hash/` - Hash algorithm implementations.
+    Each directory under `crypto_has/` represents a single hash
+    algorithm (SHA256/SHA512/SHA3 etc). Each algorithm may have several
+    different implementations, optimising for different things, e.g. code size
+    and/or performance.
 
-  - All implementations of an algorithm have the same API, as defined
-    in the `api_*.h` file for each algorithm.
+### Makefile Structure
 
-  - A test program can then link against different implementations of the
-    same algorithm to run a correctness test or benchmark.
+- The `common.mk` file contains useful macros for building libraries,
+    objects and test executables.
 
-## Getting Started
+- The top level `Makefile` *includes* `common.mk` and sub-makefiles in
+    `crypto_hash/`, `test/` and so on.
 
-- Make sure you have setup a toolchain correctly.
-  See [tools/README.md](../tools/README.md) for how to do this.
+- Each algorithm implementation has its own `Makefile.in`, which
+  describes how to build a static library which can be linked against by
+  a test program.
 
-- Move into the benchmarking directory:
+  - The static libraries are built with the intention of making it very
+    easy to compile against them and run the same programs on different
+    target simulators / devices.
+
+- One *must* explicitly specify a build config using the `CONFIG=X` option.
+  when invoking make:
+    ```sh
+    $> cd $REPO_HOME/benchmarks
+    $> make all CONFIG=rv32-baseline-b
+    $> make all CONFIG=rv32-baseline
+    $> make all CONFIG=rv32-zscrypto
+    $> make all CONFIG=rv64-baseline-b
+    $> make all CONFIG=rv64-baseline
+    $> make all CONFIG=rv64-zscrypto
+    ```
+
+  These configs are kept in the `$REPO_HOME/benchmarks/config/` directory,
+  and specify different compiler and architecture flag combinations.
+
+  - **Note:** Not all targets are expected to build for all configurations.
+    E.g. the SHA512 `zscrypto` benchmark will not work on an `rv32-*`
+    target, since it requires 64-bit only instructions.
+
+- Build results will be placed in `$REPO_BUILD/benchmarks/[CONFIG]/*`.
+
+- For those without tab-completion, running
   ```sh
-  $> cd $REPO_HOME/benchmarks
+  $> make CONFIG=rv64-baseline print-build-targets
+  $> make CONFIG=rv64-baseline print-all-targets
   ```
-  This isn't strictly needed, but it reduced typing later on.
+  Will tell you which build / simulation targets there are.
 
-- You *must* select a particular architecture configuration from
-  the `config/` folder before driving the benchmarking flow.
-  Each config sets various architecture and optimisaiton flags.
+### Running tests:
 
-  - By default, the `rv32-baseline` config is selected.
+- Tests live in the `test/` directory, with one test *per algorithm*.
+  A file is then linked against each different algorithm static library.
 
-  - To pick another, add `CONFIG=[config name]` to the command line
-    when running `make`, where `config/[config name].conf` is a file
-    which exists.
-
-**Building:**
-
-- To build the various test libraries and executable for a given
-  config, run:
+- To run all of the tests for a given config:
   ```sh
-  $> make CONFIG=rv32-baseline all
+  $> make CONFIG=rv64-baseline run
   ```
 
-- For those without tab-completion, you can see which specific
-  build targets are available with:
-  ``` sh
-  $> make CONFIG=rv32-baseline print-build-targets
-  ```
-
-- Results for each build are placed in
-  `$REPO_BUILD/benchmarks/[CONFIG]/`.
-
-  - `bin/` - Contains the test executables.
-
-  - `lib/` - Contains the static libraries.
-
-  - `dis/` - Contains disassembly and size information for each object file
-             and exectuable.
-
-  - `include/` - Contains the header files for each algorithm.
-
-**Running:**
-
-Currently, all benchmarks run using the patched version of the
-Spike ISA simulator.
-
-- To run all of the test and benchmark programs for a given config:
+- Or see which run targets are available:
   ```sh
-  $> make CONFIG=rv32-baseline run
+  $> make CONFIG=rv64-baseline print-run-targets
   ```
 
-- To run a specific test or benchmark:
-  ```sh
-  $> make CONFIG=rv32-baseline run-[test program]
-  ```
-
-- For those without tab-completion, you can see which specific
-  run targets are available with:
-  ``` sh
-  $> make CONFIG=rv32-baseline print-run-targets
-  ```
-
+- The results of a run are placed in
+  `$REPO_BUILD/benchmarks/[CONFIG]/log/test/*`.
+  Each log file contains the `stdout` of the test, including instruction
+  execution counts.
 

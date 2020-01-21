@@ -5,28 +5,28 @@
 
 ---
 
+**Note:** This repository is in the very early stages of development.
+
 ## About
 
 - This repository is used to develop standardisation proposals for
   scalar cryptographic instruction set extensions for the RISC-V
   architecture.
 
-  - The proposals in this repository are based on work done as part of the
-    [XCrypto](https://github.com/scarv/xcrypto) project by the
-    University of Bristol Cryptography Research Group on
-    scalar cryptography extensions to RISC-V.
-
   - The Scalar Cryptography extension proposals overlap significantly
-    with the **B**itmanip extension.
+    with the [Bitmanip extension](https://github.com/riscv/riscv-bitmanip).
     Hence, we are experimenting with *sharing* opcodes between extensions.
 
-- **Note:** These instructions are a work in progress. Their specifications
-  are likely to change before being accepted as part of the RISC-V standard.
+  - Some of the proposals in this repository are based on work done as part of
+    the [XCrypto](https://github.com/scarv/xcrypto) project by the University
+    of Bristol Cryptography Group on scalar cryptography extensions
+    to RISC-V.
 
-  - While there are *experimental* encodings assigned to the proposed
-    instructions, they *should not* be depended upon.
-    They only exist to enable a toolchain and simulator flow.
-    They *will* change.
+- **Note:** These instructions are a work in progress. Their specifications
+  will to change before being accepted as part of the RISC-V standard.  While
+  there are *experimental* encodings assigned to the proposed instructions,
+  they *should not* be depended upon.  They only exist to enable a toolchain
+  and simulator flow.  They *will* change.
 
 ## Getting Started
 
@@ -48,11 +48,9 @@
   This will write the compiled document to
   `$REPO_BUILD/spec/riscv-crypto-spec.pdf`
 
-  - No pre-compiled version of the spec is being kept yet (as was the
-    case with Bitmanip) since everything is changing too quickly to
-    make this manageable.
-    This will be done in future, when things are stable enough to
-    discuss usefully.
+  - A draft version will eventually be kept inside this repository
+    (as the [riscv-bitmanip](https://github/riscv/riscv-bitmanip) repo did)
+    once it has stablised enough.
 
 - See [`benchmarks/README.md`](benchmarks/README.md) for how to
   get started with the benchmarking flow and how to contribute new
