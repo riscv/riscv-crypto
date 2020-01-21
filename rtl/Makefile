@@ -2,7 +2,9 @@
 BUILD_DIR = $(REPO_BUILD)/rtl
 YOSYS     = $(YOSYS_ROOT)/yosys
 
-TARGETS   =
+SYNTH_TARGETS   =
+SIM_TARGETS     =
+TARGETS         =
 
 define map_build_dir
 $(BUILD_DIR)/${1}
@@ -50,9 +52,10 @@ $(call map_synth_rpt,${1}) : ${2}
         -p "write_verilog $(call map_cmos_verilog,${1})" \
         -p "tee -a $(call map_synth_rpt,${1}) stat" \
 
-${1} : $(call map_synth_rpt,${1})
+synth-${1} : $(call map_synth_rpt,${1})
 
 TARGETS += ${1}
+SYNTH_TARGETS += synth-${1}
 endef
 
 #
@@ -71,6 +74,8 @@ $(call map_sim_log,${1}) : $(call map_sim_exe,${1})
 
 sim-${1} : $(call map_waves,${1})
 
+SIM_TARGETS += sim-${1}
+
 TARGETS += $(call map_sim_log,${1})
 TARGETS += $(call map_waves,${1})
 
@@ -86,4 +91,14 @@ include ssha512/Makefile.in
 include ssha3/Makefile.in
 
 all: $(TARGETS)
+
+synth-all: $(SYNTH_TARGETS)
+
+sim-all: $(SIM_TARGETS)
+
+print-synth-targets:
+	@echo $(SYNTH_TARGETS) | sed "s/ /\n/g"
+
+print-sim-targets:
+	@echo $(SIM_TARGETS) | sed "s/ /\n/g"
 

@@ -56,3 +56,6 @@
   get started with the benchmarking flow and how to contribute new
   benchmarks.
 
+- See [`rtl/README.md`](rtl/README.md) for information on experimental
+  RTL implementations of the proposed instructions.
+
