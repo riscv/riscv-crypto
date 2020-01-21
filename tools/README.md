@@ -115,7 +115,7 @@ After first checking out the `riscv-crypto` repository:
     ${REPO_HOME}/tools/newlib-build.sh
     ```
 
-  - `pk` (the `spike` proxy kernel):
+  - `pk` (the RISC-V proxy kernel):
 
     ```sh
     ${REPO_HOME}/tools/pk-apply.sh
