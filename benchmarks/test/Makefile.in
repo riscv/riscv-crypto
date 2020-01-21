@@ -1,10 +1,10 @@
 
-$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_ref,sha256_ref))
+$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_reference,sha256_reference))
 $(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256_zscrypto))
 
-$(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_ref,sha512_ref))
+$(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_reference,sha512_reference))
 $(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto,sha512_zscrypto))
 
-$(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_ref,sha3_ref))
+$(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_reference,sha3_reference))
 $(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_opt_size_baseline,sha3_opt_size_baseline))
 $(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_opt_size_zscrypto,sha3_opt_size_zscrypto))

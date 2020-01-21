@@ -1,7 +1,0 @@
-
-HASH_SHA256_REF_FILES = \
-    crypto_hash/sha256/ref/blocks_sha256.c \
-    crypto_hash/sha256/ref/hash_sha256.c
-
-$(eval $(call add_lib_target,sha256_ref,$(HASH_SHA256_REF_FILES)))
-

@@ -1,0 +1,4 @@
+
+include crypto_hash/sha256/reference/Makefile.in
+include crypto_hash/sha256/zscrypto/Makefile.in
+

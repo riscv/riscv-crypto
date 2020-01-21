@@ -2,8 +2,13 @@
 HEADERS_IN = $(shell find ./ -name *.h )
 HEADERS_OUT=
 
-TARGETS     = 
+# All possible targets
+TARGETS     =
+
+# Compilation targets
 BUILDTARGETS=
+
+# Simulation targets
 RUNTARGETS  = 
 
 include common.mk
@@ -12,23 +17,21 @@ include common.mk
 # Make sure the header files are coppied over.
 $(foreach HEADER,$(HEADERS_IN),$(eval $(call add_header_target,$(HEADER))))
 
-include crypto_hash/sha256/ref/Makefile.in
-include crypto_hash/sha256/zscrypto/Makefile.in
+headers: $(HEADERS_OUT)
 
-include crypto_hash/sha512/ref/Makefile.in
-include crypto_hash/sha512/zscrypto/Makefile.in
+$(TARGETS) : $(HEADERS_OUT)
 
-include crypto_hash/sha3/ref/Makefile.in
-include crypto_hash/sha3/opt_size_baseline/Makefile.in
-include crypto_hash/sha3/opt_size_zscrypto/Makefile.in
+include crypto_hash/Makefile.in
 
 include test/Makefile.in
-
-headers: $(HEADERS_OUT)
 
 all: headers $(TARGETS)
 
 run: $(RUNTARGETS)
+
+print-all-targets:
+	@echo "---"
+	@echo $(TARGETS)
 
 print-build-targets:
 	@echo $(BUILDTARGETS)

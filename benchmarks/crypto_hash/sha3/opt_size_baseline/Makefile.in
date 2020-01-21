@@ -1,6 +1,6 @@
 
 HASH_SHA3_SIZE_BASELINE_FILES = \
-    crypto_hash/sha3/fips202.c \
+    $(SHA3_COMMON_OBJ) \
     crypto_hash/sha3/opt_size_baseline/Keccak.c
 
 $(eval $(call add_lib_target,sha3_opt_size_baseline,$(HASH_SHA3_SIZE_BASELINE_FILES)))
