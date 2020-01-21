@@ -33,6 +33,9 @@
 - Checkout the repository:
   ```sh
   $> git clone git@github.com:scarv/riscv-crypto.git
+  $> cd riscv-crypto
+  $> git submodule update --init
+  $> source bin/conf.sh
   ```
 
 - See [`tools/README.md`](tools/README.md) for information on installing
