@@ -16,6 +16,7 @@ SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 REPO_DIRTY =$(shell git diff)
 
 $(OPCODES) : $(REPO_HOME)/tools/opcodes-crypto
+	@mkdir -p $(dir $(OPCODES))
 	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -tex > $@
 
 .PHONY: $(SPEC_COMMIT)
