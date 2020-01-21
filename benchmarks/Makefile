@@ -30,14 +30,13 @@ all: headers $(TARGETS)
 run: $(RUNTARGETS)
 
 print-all-targets:
-	@echo "---"
-	@echo $(TARGETS)
+	@echo $(TARGETS) | sed "s/ /\n/g"
 
 print-build-targets:
-	@echo $(BUILDTARGETS)
+	@echo $(BUILDTARGETS) | sed "s/ /\n/g"
 
 print-run-targets:
-	@echo $(RUNTARGETS)
+	@echo $(RUNTARGETS) | sed "s/ /\n/g"
 
 clean:
 	rm -f $(TARGETS)

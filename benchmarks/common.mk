@@ -103,10 +103,11 @@ $(call map_lib,${1}) : $(filter %.o,${2}) $(foreach INFILE,$(filter %.c %.S,${2}
 	@mkdir -p $(dir $(call map_lib,${1}))
 	$(AR) rcs $${@} $${^}
 
-lib-${1} : $(call map_lib,${1})
-
 TARGETS      += $(call map_lib,${1})
-BUILDTARGETS += lib-${1}
+
+build-lib-${1} : $(call map_lib,${1})
+
+BUILDTARGETS += build-lib-${1}
 
 endef
 
@@ -127,14 +128,19 @@ $(call map_dis,${1},${3}) : $(call map_elf,${1},${3})
 
 $(call map_run_log,${1},-${3}) : $(call map_elf,${1},${3})
 	@mkdir -p $(dir $(call map_run_log,${1},${3}))
-	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3}) > \
-        $${@}
-
-run-${3} : $(call map_run_log,${1},-${3})
+	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3}) \
+        | tee $${@}
 
 TARGETS += $(call map_elf,${1},${3})
 TARGETS += $(call map_dis,${1},${3})
-RUNTARGETS += run-${3}
+
+run-test-${3}   : $(call map_run_log,${1},-${3})
+
+RUNTARGETS += run-test-${3}
+
+build-test-${3} : $(call map_dis,${1},${3}) $(call map_elf,${1},${3})
+
+BUILDTARGETS += build-test-${3}
 
 endef
 
