@@ -2,6 +2,13 @@
 20080913 - D. J. Bernstein - Public domain.
 */
 
+/*!
+@addtogroup crypto_hash_sha256_zscrypto SHA256 Zscrypto
+@brief RV32/64 implementation of SHA256 using the Zscrypto instructions.
+@ingroup crypto_hash_sha256
+@{
+*/
+
 #include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
 
 static const char iv[32] = {
@@ -63,3 +70,6 @@ int crypto_hash_sha256(
 
   return 0;
 }
+
+/*!@}*/
+

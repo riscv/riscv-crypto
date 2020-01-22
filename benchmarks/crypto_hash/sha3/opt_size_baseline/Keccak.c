@@ -14,6 +14,13 @@ http://creativecommons.org/publicdomain/zero/1.0/
 #include "riscvcrypto/crypto_hash/sha3/Keccak.h"
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
 
+/*!
+@addtogroup crypto_hash_sha3_opt_size SHA3 Reference (Size)
+@brief Reference implementation of SHA3. Optimised for Static Code Size.
+@ingroup crypto_hash_sha3
+@{
+*/
+
 /*
 ================================================================
 A readable and compact implementation of the Keccak-f[1600] permutation.
@@ -197,3 +204,4 @@ void Keccak(unsigned int rate, unsigned int capacity, const unsigned char *input
     }
 }
 
+/*! @} */

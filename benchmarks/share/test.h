@@ -1,12 +1,23 @@
 
+/*!
+@defgroup test_utils Test Utils
+@{
+*/
+
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef __SHARE_TEST_H__
+
 //! Length of test input for a hash function.
 #define TEST_HASH_INPUT_LENGTH 1024
 
-//! Prints a 64-bit input as hex
+/*!
+@brief Prints a 64-bit input as hex to stdout.
+@details Prints in LITTLE ENDIAN mode.
+@param in - The thing to print.
+*/
 void puthex64(uint64_t in) {
     for(int i = 0; i < 16; i += 1) {
         unsigned char x = (in >> (60-4*i)) & 0xF;
@@ -140,3 +151,6 @@ size_t test_rdrandom(unsigned char * dest, size_t len) {
 
 }
 
+#endif
+
+//! @}

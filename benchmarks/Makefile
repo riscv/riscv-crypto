@@ -44,3 +44,5 @@ clean:
 spotless:
 	rm -rf $(BUILD_DIR)
 
+doxygen:
+	doxygen doxygen.conf

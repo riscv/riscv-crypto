@@ -1,4 +1,11 @@
 
+/*!
+@addtogroup crypto_hash_sha512_zscrypto SHA512 Zscrypto
+@brief RV64 implementation of SHA512 using the Zscrypto instructions.
+@ingroup crypto_hash_sha512
+@{
+*/
+
 #include "riscvcrypto/crypto_hash/sha512/api_sha512.h"
 
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
@@ -238,3 +245,6 @@ int crypto_hashblocks_sha512(unsigned char *statebytes,const unsigned char *in,u
 
   return inlen;
 }
+
+/*!@}*/
+

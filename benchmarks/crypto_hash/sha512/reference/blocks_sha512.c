@@ -1,4 +1,11 @@
 
+/*!
+@addtogroup crypto_hash_sha512_reference SHA512 Reference
+@brief Reference implementation of SHA512.
+@ingroup crypto_hash_sha512
+@{
+*/
+
 #include "riscvcrypto/crypto_hash/sha512/api_sha512.h"
 
 typedef unsigned long long uint64;
@@ -236,3 +243,6 @@ int crypto_hashblocks_sha512(unsigned char *statebytes,const unsigned char *in,u
 
   return inlen;
 }
+
+/*!@}*/
+

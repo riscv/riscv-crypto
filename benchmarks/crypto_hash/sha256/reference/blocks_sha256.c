@@ -1,5 +1,12 @@
 
+/*!
+@addtogroup crypto_hash_sha256_reference
+@ingroup crypto_hash_sha256
+@{
+*/
+
 #include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
+
 
 static uint32_t load_bigendian(const unsigned char *x)
 {
@@ -209,3 +216,6 @@ int crypto_hashblocks_sha256(
 
   return inlen;
 }
+
+/*!@}*/
+

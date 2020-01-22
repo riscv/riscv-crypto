@@ -4,6 +4,12 @@ D. J. Bernstein
 Public domain.
 */
 
+/*!
+@addtogroup crypto_hash_sha512_reference
+@ingroup crypto_hash_sha512
+@{
+*/
+
 #include "riscvcrypto/crypto_hash/sha512/api_sha512.h"
 
 static const unsigned char iv[64] = {
@@ -66,3 +72,6 @@ int crypto_hash_sha512(unsigned char *out,const unsigned char *in,unsigned long 
 
   return 0;
 }
+
+/*!@}*/
+

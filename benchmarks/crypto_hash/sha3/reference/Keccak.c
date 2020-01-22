@@ -13,6 +13,13 @@ http://creativecommons.org/publicdomain/zero/1.0/
 
 #include "riscvcrypto/crypto_hash/sha3/Keccak.h"
 
+/*!
+@addtogroup crypto_hash_sha3_reference SHA3 Reference
+@brief Reference implementation of SHA3.
+@ingroup crypto_hash_sha3
+@{
+*/
+
 /*
 ================================================================
 A readable and compact implementation of the Keccak-f[1600] permutation.
@@ -195,3 +202,4 @@ void Keccak(unsigned int rate, unsigned int capacity, const unsigned char *input
     }
 }
 
+/*! @} */

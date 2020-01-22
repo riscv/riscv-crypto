@@ -1,4 +1,10 @@
 
+/*!
+@addtogroup crypto_hash_sha256_zscrypto
+@ingroup crypto_hash_sha256
+@{
+*/
+
 #include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
 
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
@@ -215,3 +221,6 @@ int crypto_hashblocks_sha256(
 
   return inlen;
 }
+
+/*!@}*/
+

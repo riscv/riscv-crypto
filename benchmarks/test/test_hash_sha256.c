@@ -26,7 +26,8 @@ int main(int argc, char ** argv) {
 
     const uint64_t final_instrs   = end_instrs - start_instrs;
 
-    printf("PERF: "STR(TEST_NAME) " instrs: 0x"); puthex64(final_instrs); printf("\n");
+    printf("PERF: "STR(TEST_NAME) " instrs: 0x");
+    puthex64(final_instrs); printf("\n");
 
     return 0;
 }

@@ -60,6 +60,13 @@
     different implementations, optimising for different things, e.g. code size
     and/or performance.
 
+- Code is documented using [Doxygen](http://www.doxygen.nl/index.html).
+  You can build the doxygen documentation using:
+  ```sh
+  make doxygen CONFIG=rv64-baseline
+  ```
+  which will place the output in `$REPO_BUILD/benchmarks/doxygen`.
+
 ### Makefile Structure
 
 - The `common.mk` file contains useful macros for building libraries,
