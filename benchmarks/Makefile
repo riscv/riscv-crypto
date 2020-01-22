@@ -19,11 +19,11 @@ $(foreach HEADER,$(HEADERS_IN),$(eval $(call add_header_target,$(HEADER))))
 
 headers: $(HEADERS_OUT)
 
-$(TARGETS) : $(HEADERS_OUT)
-
 include crypto_hash/Makefile.in
 
 include test/Makefile.in
+
+$(TARGETS) : $(HEADERS_OUT)
 
 all: headers $(TARGETS)
 

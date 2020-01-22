@@ -14,6 +14,8 @@ BUILD_DIR = $(REPO_BUILD)/benchmarks/$(CONFIG)
 CFLAGS  += -Wall -I$(BUILD_DIR)/include
 CFLAGS  += $(CONF_CFLAGS)
 
+TEST_SRC = $(REPO_HOME)/benchmarks/share/test.c
+
 #
 # 1. Relative header file path, as found by running "find"
 define map_header
@@ -118,9 +120,12 @@ endef
 # 3. Test executable name.
 define add_test_elf_target
 
-$(call map_elf,${1},${3}) : ${1} $(foreach LIB,${2},$(call map_lib,${LIB}))
+$(call map_elf,${1},${3}) : ${1} $(TEST_SRC) $(foreach LIB,${2},$(call map_lib,${LIB}))
 	@mkdir -p $(dir $(call map_elf,${1},${3}))
-	$(CC) $(CFLAGS) -DTEST_NAME=${3} -o $${@} $${^}
+	$(CC) $(CFLAGS) -DTEST_NAME=${3} -o $${@} \
+        ${1} \
+        $(TEST_SRC) \
+        $(foreach LIB,${2},$(call map_lib,${LIB}))
 
 $(call map_dis,${1},${3}) : $(call map_elf,${1},${3})
 	@mkdir -p $(dir $(call map_dis,${1},${3}))

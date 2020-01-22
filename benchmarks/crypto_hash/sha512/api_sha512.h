@@ -8,6 +8,9 @@
 
 #include "riscvcrypto/share/util.h"
 
+#ifndef __API_SHA512__
+#define __API_SHA512__
+
 //! Length of the SHA512 signature array in bytes.
 #define CRYPTO_HASH_SHA512_BYTES 64
 
@@ -45,3 +48,4 @@ int crypto_hashblocks_sha512(
 
 //! @}
 
+#endif // __API_SHA512__

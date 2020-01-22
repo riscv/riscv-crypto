@@ -8,6 +8,9 @@
 
 #include "riscvcrypto/share/util.h"
 
+#ifndef __API_SHA256__
+#define __API_SHA256__
+
 //! The length of a SHA256 signature in bytes
 #define CRYPTO_HASH_SHA256_BYTES 32
 
@@ -45,3 +48,4 @@ int crypto_hashblocks_sha256(
 
 /*! @} */
 
+#endif // __API_SHA256__

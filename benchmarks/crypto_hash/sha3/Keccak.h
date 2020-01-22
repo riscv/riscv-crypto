@@ -15,7 +15,7 @@ http://creativecommons.org/publicdomain/zero/1.0/
 #include <string.h>
 
 #ifndef __KECCAK_H__
-
+#define __KECCAK_H__
 
 /*!
 @brief Function to compute the Keccak[r, c] sponge function over a given input.
@@ -49,4 +49,4 @@ void Keccak(
     unsigned long long int outputByteLen
 );
 
-#endif
+#endif // __KECCAK_H__

@@ -5,6 +5,7 @@
 #include "riscvcrypto/crypto_hash/sha3/Keccak.h"
 
 #ifndef __FIPS202_H__
+#define __FIPS202_H__
 
 /*!
 @defgroup crypto_hash_sha3 Crypto Hash SHA3
@@ -77,6 +78,6 @@ void FIPS202_SHA3_512(
     unsigned char *output
 );
 
-#endif
+#endif // __FIPS202_H__
 
 /*! @} */
