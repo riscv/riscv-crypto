@@ -20,8 +20,8 @@ inputs (as in \cite{TG:06}) be considered.}
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.sbenc rd, rs1
-    saes.sbdec rd, rs1
+    saes.v1.sbenc rd, rs1
+    saes.v1.sbdec rd, rs1
 \end{cryptoisa}
 
 These instructions implement the 
@@ -38,25 +38,29 @@ Psueudo code is found in figure
 \ref{fig:pseudo:aes:v1}.
 
 \begin{figure}
-\begin{subfigure}[b]{1.0\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \begin{lstlisting}
-saes.sbenc(rs1):
-    rd.8[0] =    AESSBox[rs1.8[0]], rd.8[1] =    AESSBox[rs1.8[1]]
-    rd.8[2] =    AESSBox[rs1.8[2]], rd.8[3] =    AESSBox[rs1.8[3]]
+saes.v1.sbenc(rs1):
+    rd.8[0] = AESSBox[rs1.8[0]]
+    rd.8[1] = AESSBox[rs1.8[1]]
+    rd.8[2] = AESSBox[rs1.8[2]]
+    rd.8[3] = AESSBox[rs1.8[3]]
 \end{lstlisting}
-\caption{SBox encrypt instruction pseudo code.}
+\caption{Forward SBox instruction pseudo code.}
 \label{fig:pseudo:aes:v1:sub:enc}
 \end{subfigure}
-\begin{subfigure}[b]{1.0\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \begin{lstlisting}
-saes.sbdec(rs1):
-    rd.8[0] = InvAESSBox[rs1.8[0]], rd.8[1] = InvAESSBox[rs1.8[1]]
-    rd.8[2] = InvAESSBox[rs1.8[2]], rd.8[3] = InvAESSBox[rs1.8[3]]
+saes.v1.sbdec(rs1):
+    rd.8[0] = InvAESSBox[rs1.8[0]]
+    rd.8[1] = InvAESSBox[rs1.8[1]]
+    rd.8[2] = InvAESSBox[rs1.8[2]]
+    rd.8[3] = InvAESSBox[rs1.8[3]]
 \end{lstlisting}
-\caption{SBox decrypt instruction pseudo code.}
 \label{fig:pseudo:aes:v1:sub:dec}
-\caption{AES Instruction variant 1: Pseudo code.}
+\caption{Inverse SBox instruction pseudo code.}
 \end{subfigure}
+\caption{AES Instructions variant 1.}
 \label{fig:pseudo:aes:v1}.
 \end{figure}
 
@@ -64,13 +68,13 @@ saes.sbdec(rs1):
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.sub.enc    rd, rs1, rs2 // mode = enc, rot = 0
-    saes.sub.encr   rd, rs1, rs2 // mode = enc, rot = 1
-    saes.sub.dec    rd, rs1, rs2 // mode = dec, rot = 0
-    saes.sub.decr   rd, rs1, rs2 // mode = dec, rot = 1
+    saes.v2.sub.enc    rd, rs1, rs2 // mode = enc, rot = 0
+    saes.v2.sub.encrot rd, rs1, rs2 // mode = enc, rot = 1
+    saes.v2.sub.dec    rd, rs1, rs2 // mode = dec, rot = 0
+    saes.v2.sub.decrot rd, rs1, rs2 // mode = dec, rot = 1
 
-    saes.mix.enc    rd, rs1, rs2 // mode = enc
-    saes.mix.dec    rd, rs1, rs2 // mode = dec
+    saes.v2.mix.enc    rd, rs1, rs2 // mode = enc
+    saes.v2.mix.dec    rd, rs1, rs2 // mode = dec
 \end{cryptoisa}
 
 These instructions are derived from \cite{MPP:19}, which in turn adapted
@@ -86,21 +90,24 @@ respectivley.
 \begin{figure}
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.sub(rs1, rs2, mode, rot):
+saes.v2.sub(rs1, rs2, mode, rot):
     if(mode == enc)
         t0 =    AESSBox[rs1.8[0]], t1 =    AESSBox[rs2.8[1]]
         t2 =    AESSBox[rs1.8[2]], t3 =    AESSBox[rs2.8[3]]
     else
         t0 = InvAESSBox[rs1.8[0]], t1 = InvAESSBox[rs2.8[1]]
         t2 = InvAESSBox[rs1.8[2]], t3 = InvAESSBox[rs2.8[3]]
-    rd.32 = {t3, t2, t1, t0} (if rot = 0) else {t2, t1, t0, t3}
+    if(rot == 0)
+        rd.32 = {t3, t2, t1, t0} 
+    else
+        rd.32 = {t2, t1, t0, t3}
 \end{lstlisting}
 \caption{AES instruction variant 2: sbox instruction pseudo code.}
 \label{fig:pesudo:aes:v2:sub}
 \end{subfigure}
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.mix(rs1, rs2, mode):
+saes.v2.mix(rs1, rs2, mode):
     t0 = rs1.8[0], t1 = rs1.8[1]
     t2 = rs2.8[2], t3 = rs2.8[3]
     if(mode == enc)
@@ -118,9 +125,9 @@ saes.mix(rs1, rs2, mode):
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.ks     rd, rs1, rs2, fa, fb    
-    saes.enc    rd, rs1, rs2, fa, fc
-    saes.dec    rd, rs1, rs2, fa, fc
+    saes.v3.ks     rd, rs1, rs2, fa, fb    
+    saes.v3.enc    rd, rs1, rs2, fa, fc
+    saes.v3.dec    rd, rs1, rs2, fa, fc
 \end{cryptoisa}
 
 These instructions are a very lightweight proposal, derived from
@@ -139,7 +146,7 @@ are $2$, $2$ and $1$ bits wide respectively.
 
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.ks(rs1, rs2, fa, fb):
+saes.v3.ks(rs1, rs2, fa, fb):
     t0.8  = rs1.8[fa]
      x.8  = AESSBox[tmp]
     u.32  = {0, 0, 0, x }
@@ -151,14 +158,14 @@ saes.ks(rs1, rs2, fa, fb):
 
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.enc(rs1, rs2, fa, fc):
+saes.v3.enc(rs1, rs2, fa, fc):
     t0.8 = rs1.8[fa]
     x.8  = AESSBox[tmp]
     x2.8 = (x << 1) ^ ((x & 0x8) ? 0x1B : 0x00)
     if(fc)
-        u.32 = {x ^ x2 , x , x , x2}
+        u.32 = {x^x2 , x, x, x2}
     else
-        u.32 = {     0 , 0 , 0 , x }
+        u.32 = {   0 , 0, 0, x }
     rd.32 = ROTL32(u.32, 8*fa) ^ rs2.32
 \end{lstlisting}
 \caption{Encrypt instruction pseudo code.}
@@ -169,14 +176,14 @@ saes.enc(rs1, rs2, fa, fc):
 \begin{lstlisting}
 mulx(x) : (x << 1) ^ ((x & 0x8) ? 0x1B : 0x00)
 
-saes.dec(rs1, rs2, fa, fc):
+saes.v3.dec(rs1, rs2, fa, fc):
     t0.8 = rs1.8[fa]
     x.8  = INVAESSBox[tmp]
     x2.8 = mulx( x.8), x4.8 = mulx(x2.8), x8.8 = mulx(x4.8)
     if(fc)
-        u.32 = {x ^ x2 ^ x4 , x ^ x4 ^ x8 , x ^ x8 , x2 ^ x4 ^ x8}
+        u.32 = {x^x2^x4 , x^x4^x8 , x^x8 , x2^x4^x8}
     else
-        u.32 = {          0 ,           0 ,      0 ,           x }
+        u.32 = {      0 ,       0 ,    0 ,       x }
     rd.32 = ROTL32(u.32, 8*fa) ^ rs2.32
 \end{lstlisting}
 \caption{Decrypt instruction pseudo code.}
