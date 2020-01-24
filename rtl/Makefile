@@ -43,9 +43,12 @@ $(call map_synth_rpt,${1}) : ${2}
 	@mkdir -p $(call map_build_dir,${1})
 	$(YOSYS) -qQT \
         -p "read_verilog ${2}" \
+        -p "proc" \
+        -p "tee -o $(call map_synth_rpt,${1}) scc" \
+        -p "flatten" \
         -p "synth" \
         -p "write_verilog $(call map_synth_verilog,${1})" \
-	    -p "tee -o $(call map_synth_rpt,${1}) stat" \
+	    -p "tee -a $(call map_synth_rpt,${1}) stat" \
 	    -p "tee -a $(call map_synth_rpt,${1}) ltp" \
         -p "dfflibmap -liberty $(YOSYS_ROOT)/techlibs/common/cells.lib" \
         -p "abc -liberty $(YOSYS_ROOT)/examples/cmos/cmos_cells.lib" \
@@ -54,7 +57,7 @@ $(call map_synth_rpt,${1}) : ${2}
 
 synth-${1} : $(call map_synth_rpt,${1})
 
-TARGETS += ${1}
+TARGETS += synth-${1}
 SYNTH_TARGETS += synth-${1}
 endef
 
@@ -89,6 +92,7 @@ include lut4/Makefile.in
 include ssha256/Makefile.in
 include ssha512/Makefile.in
 include ssha3/Makefile.in
+include aes/Makefile.in
 
 all: $(TARGETS)
 
