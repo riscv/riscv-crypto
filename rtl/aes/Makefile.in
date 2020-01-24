@@ -2,3 +2,7 @@
 $(eval $(call add_synth_target,aes_v1_size,aes/v1/aes_v1_size.v aes/share/aes_sbox_size.v))
 $(eval $(call add_synth_target,aes_v1_latency,aes/v1/aes_v1_latency.v aes/share/aes_sbox_latency.v))
 $(eval $(call add_synth_target,aes_v1_halfway,aes/v1/aes_v1_latency.v aes/share/aes_sbox_size.v))
+
+$(eval $(call add_synth_target,aes_v2_sub_size,aes/v2/aes_v2_sub_size.v aes/share/aes_sbox_size.v))
+$(eval $(call add_synth_target,aes_v2_sub_latency,aes/v2/aes_v2_sub_latency.v aes/share/aes_sbox_latency.v))
+$(eval $(call add_synth_target,aes_v2_sub_halfway,aes/v2/aes_v2_sub_latency.v aes/share/aes_sbox_size.v))
