@@ -1,0 +1,38 @@
+
+\newpage
+\subsection{Lightweight SHA3 Acceleration}
+\label{sec:scalar:sha3}
+
+\begin{cryptoisa}
+RV32, RV64:
+    ssha3.xy rd, rs1, rs2 : rd = (( rs1    % 5) + 5(           rs2 % 5)) << 3
+    ssha3.x1 rd, rs1, rs2 : rd = (((rs1+1) % 5) + 5(           rs2 % 5)) << 3
+    ssha3.x2 rd, rs1, rs2 : rd = (((rs1+2) % 5) + 5(           rs2 % 5)) << 3
+    ssha3.x4 rd, rs1, rs2 : rd = (((rs1+4) % 5) + 5(           rs2 % 5)) << 3
+    ssha3.yx rd, rs1, rs2 : rd = (( rs2    % 5) + 5((2*rs1 + 3*rs2)% 5)) << 3
+\end{cryptoisa}
+
+These instructions accelerate code-dense implementations of the SHA3 secure
+hash function \cite{nist:fips:202}.
+They work on the low $3$ bits of the input {\tt rs1} and {\tt rs2} registers,
+and compute indices into the state array of the round function.
+They are designed to replace both canonical implementations of the
+{\tt index} function and lookup table based implementations.
+In both cases, these instructions offer substantial
+improvements in performance, static code size and dynamic instruction
+bandwidth.
+A longer discussion of the merits of these instructions can
+be found in Appendix \ref{sec:appendix:sha3}.
+
+\note{
+SHA3 is not yet widely used, especially with respect to SHA2.
+These instructions enable implementations with a much better
+performance/code-density ratio than is currently possible in RISC-V.
+}
+
+\note{
+If the auto-aligning indexed load and store instructions are included,
+then the auto-aligning component of these instructions
+may not be needed.
+}
+
