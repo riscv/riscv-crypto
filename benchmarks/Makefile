@@ -20,6 +20,7 @@ $(foreach HEADER,$(HEADERS_IN),$(eval $(call add_header_target,$(HEADER))))
 headers: $(HEADERS_OUT)
 
 include crypto_hash/Makefile.in
+include crypto_block/Makefile.in
 
 include test/Makefile.in
 
