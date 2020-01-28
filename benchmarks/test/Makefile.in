@@ -6,7 +6,5 @@ $(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_reference,sha51
 $(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto,sha512_zscrypto))
 
 $(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_reference,sha3_reference))
-$(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_opt_size_baseline,sha3_opt_size_baseline))
-$(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_opt_size_zscrypto,sha3_opt_size_zscrypto))
 
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_reference,aes_reference))
