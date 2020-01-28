@@ -51,6 +51,9 @@ int main(int argc, char ** argv) {
         printf("instr_count     = 0x");
         puthex64(final_instrs);
         printf("\n");
+        
+        printf("testnum         = %d\n",i);
+        printf("ipb             = instr_count / input_len\n");
 
         printf("reference       = SHA2_256.new(input_data).digest()\n");
         printf("if( reference  != signature ):\n");
@@ -60,7 +63,9 @@ int main(int argc, char ** argv) {
         printf("    print( '          != %%s' %% ( binascii.b2a_hex( reference ) ) )" "\n"   );
         printf("    sys.exit(1)\n");
         printf("else:\n");
-        printf("    print(\""STR(TEST_NAME)" Test %d passed.\")\n", i);
+        printf("    print(\""STR(TEST_NAME)" Test %%d passed. "
+               "%%d instrs / %%d bytes. IPB=%%f\" %% "
+               "(testnum,instr_count,input_len,ipb))\n");
 
         hash_input_len += TEST_HASH_INPUT_LENGTH / 2;
 
