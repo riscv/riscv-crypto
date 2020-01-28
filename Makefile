@@ -21,7 +21,7 @@ tests-all: tests-assembler tests-compiler tests-kat
 opcodes:
 	cat $(REPO_HOME)/extern/riscv-opcodes/opcodes \
         $(REPO_HOME)/tools/opcodes-crypto \
-	| python3 $(REPO_HOME)/bin/parse_opcodes.py -c > build/opcodes-all.h
+	| python3 $(REPO_HOME)/bin/parse_opcodes.py -check
 	cat $(REPO_HOME)/tools/opcodes-crypto \
 	| python3 $(REPO_HOME)/bin/parse_opcodes.py -c > build/opcodes-crypto.h
 
