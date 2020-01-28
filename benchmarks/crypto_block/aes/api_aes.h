@@ -25,8 +25,20 @@ AES  |   Nk  | Nb   | Nr
 //! Number of bytes in the expanded AES 128 key
 #define AES_128_RK_BYTES    176
 
+//! Words in expanded AES 128 key
+#define AES_128_NK          44
+
 //! Number of rounds for AES 128
 #define AES_128_NR          10
+
+#define XT2(x) ((x << 1) ^ (x & 0x80 ? 0x1b : 0x00))
+#define XT3(x) (XT2(x) ^ x)
+#define XT4(x) XT2(XT2(x))
+#define XT8(x) XT2(XT4(x))
+#define XT9(x) (XT8(x) ^ x)
+#define XTB(x) (XT8(x) ^ XT2(x) ^ x)
+#define XTD(x) (XT8(x) ^ XT4(x) ^ x)
+#define XTE(x) (XT8(x) ^ XT4(x) ^ XT2(x))
 
 /*!
 @brief Key expansion function for the AES 128 parameterisation
@@ -34,7 +46,7 @@ AES  |   Nk  | Nb   | Nr
 @param [in]  ck - The cipher key to expand
 */
 void    aes_128_key_schedule (
-    uint8_t     rk [AES_128_RK_BYTES ],
+    uint32_t    rk [AES_128_NK       ],
     uint8_t     ck [AES_128_KEY_BYTES]
 );
 
@@ -49,7 +61,7 @@ void    aes_128_key_schedule (
 void    aes_ecb_encrypt (
     uint8_t     ct [AES_BLOCK_BYTES],
     uint8_t     pt [AES_BLOCK_BYTES],
-    uint8_t   * rk,
+    uint32_t  * rk,
     int         nr
 );
 
@@ -63,7 +75,7 @@ void    aes_ecb_encrypt (
 void    aes_ecb_decrypt (
     uint8_t     pt [AES_BLOCK_BYTES],
     uint8_t     ct [AES_BLOCK_BYTES],
-    uint8_t   * rk,
+    uint32_t  * rk,
     int         nr
 );
 
