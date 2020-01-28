@@ -131,3 +131,6 @@
   Each log file contains the `stdout` of the test, including instruction
   execution counts.
 
+- Each test *prints* python3 code to `stdout`. This python code is then
+  executed to check that the algorithm produced the correct results
+  against a completely different implementation.
