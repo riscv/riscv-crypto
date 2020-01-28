@@ -54,7 +54,7 @@ int main(int argc, char ** argv) {
         printf("\n");
         
         printf("testnum         = %d\n",i);
-        printf("ipb             = instr_count / input_len\n",i);
+        printf("ipb             = instr_count / input_len\n");
 
         printf("s3              = hashlib.sha3_512()\n");
         printf("s3.update( input_data )\n");
