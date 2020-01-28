@@ -57,8 +57,8 @@ endef
 #
 # 1. Input file name
 # 2. Optional distinguisher
-define map_run_log
-$(BUILD_DIR)/log/${1:%.c=%-${2}.log}
+define map_run_py 
+$(BUILD_DIR)/log/${1:%.c=%-${2}.py}
 endef
 
 #
@@ -131,15 +131,16 @@ $(call map_dis,${1},${3}) : $(call map_elf,${1},${3})
 	@mkdir -p $(dir $(call map_dis,${1},${3}))
 	$(OBJDUMP) -D $${<} > $${@}
 
-$(call map_run_log,${1},-${3}) : $(call map_elf,${1},${3})
-	@mkdir -p $(dir $(call map_run_log,${1},${3}))
-	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3}) \
-        | tee $${@}
+$(call map_run_py,${1},-${3}) : $(call map_elf,${1},${3})
+	@mkdir -p $(dir $(call map_run_py,${1},${3}))
+	$(SPIKE) --isa=$(CONF_ARCH_SPIKE) $(PK) $(call map_elf,${1},${3}) > $${@}
+	sed -i "s/^bbl loader/#/" $${@}
 
 TARGETS += $(call map_elf,${1},${3})
 TARGETS += $(call map_dis,${1},${3})
 
-run-test-${3}   : $(call map_run_log,${1},-${3})
+run-test-${3}   : $(call map_run_py,${1},-${3})
+	python3 $${^}
 
 RUNTARGETS += run-test-${3}
 

@@ -35,6 +35,15 @@ void puthex(unsigned char * in, size_t len);
 
 
 /*!
+@brief Prints a byte string such that it can be read by a python program as
+    a giant literal.
+@param [in] in - The byte string to print.
+@param [in] len - Length of the string to print.
+*/
+void puthex_py(unsigned char * in, size_t len);
+
+
+/*!
 @brief Read len random bytes into dest.
 */
 size_t test_rdrandom(unsigned char * dest, size_t len);

@@ -1,81 +1,72 @@
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "riscvcrypto/share/test.h"
 
 #include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
 
-/*!
-@brief KAT test function for SHA256
-@details checks that we get the correct known answer for a given input.
-*/
-int sha256_kat() {
-
-    char *     hash_input = "abc";
-    char       hash_signature  [CRYPTO_HASH_SHA256_BYTES];
-    unsigned long long  hash_input_len = strlen(hash_input);
-
-    const char expected[] = {0xba,0x78,0x16,0xbf,0x8f,0x01,0xcf,0xea,0x41,0x41,0x40,0xde,0x5d,0xae,0x22,0x23,0xb0,0x03,0x61,0xa3,0x96,0x17,0x7a,0x9c,0xb4,0x10,0xff,0x61,0xf2,0x00,0x15,0xad};
-    
-    crypto_hash_sha256(
-        (unsigned char*)hash_signature,
-        (unsigned char*)hash_input    ,
-        hash_input_len
-    );
-
-    if(strncmp(expected,hash_signature,CRYPTO_HASH_SHA256_BYTES) == 0) {
-        
-        return 0;
-
-    } else {
-        
-        return 1;
-
-    }
-
-}
 
 int main(int argc, char ** argv) {
-    
-    printf("Running SHA256 "STR(TEST_NAME)" KAT... ");
 
-    if(sha256_kat()) {
-        printf("[Fail]\n");
-        return 1;
-    } else {
-        printf("[Pass]\n");
+    printf("import sys, binascii, Crypto.Hash.SHA256 as SHA2_256\n");
+    printf("benchmark_name = \"" STR(TEST_NAME)"\"\n");
+
+    const int num_tests = 10;
+        
+    unsigned long long   hash_input_len = TEST_HASH_INPUT_LENGTH    ;
+    unsigned char      * hash_input                                 ;
+    unsigned char        hash_signature  [CRYPTO_HASH_SHA256_BYTES] ;
+
+    for(int i = 0; i < num_tests; i ++) {
+
+        hash_input  = calloc(hash_input_len, sizeof(unsigned char));
+
+        test_rdrandom(hash_input, hash_input_len);
+
+        const uint64_t start_instrs   = test_rdinstret();
+
+        crypto_hash_sha256(
+            hash_signature,
+            hash_input    ,
+            hash_input_len
+        );
+        
+        const uint64_t end_instrs     = test_rdinstret();
+
+        const uint64_t final_instrs   = end_instrs - start_instrs;
+
+        printf("#\n# test %d/%d\n",i , num_tests);
+
+        printf("input_len       = %llu\n", hash_input_len);
+        
+        printf("input_data      = ");
+        puthex_py(hash_input,hash_input_len);
+        printf("\n");
+
+        printf("signature       = ");
+        puthex_py(hash_signature, CRYPTO_HASH_SHA256_BYTES);
+        printf("\n");
+
+        printf("instr_count     = 0x");
+        puthex64(final_instrs);
+        printf("\n");
+
+        printf("reference       = SHA2_256.new(input_data).digest()\n");
+        printf("if( reference  != signature ):\n");
+        printf("    print(\"Test %d failed.\")\n", i);
+        printf("    print( 'input     == %%s' %% ( binascii.b2a_hex( input_data ) ) )" "\n"   );
+        printf("    print( 'reference == %%s' %% ( binascii.b2a_hex( signature ) ) )" "\n"   );
+        printf("    print( '          != %%s' %% ( binascii.b2a_hex( reference ) ) )" "\n"   );
+        printf("    sys.exit(1)\n");
+        printf("else:\n");
+        printf("    print(\""STR(TEST_NAME)" Test %d passed.\")\n", i);
+
+        hash_input_len += TEST_HASH_INPUT_LENGTH / 2;
+
+        free(hash_input);
+
     }
-
-    printf("Running SHA256 "STR(TEST_NAME)" benchmark...\n");
-
-    unsigned char       hash_signature  [CRYPTO_HASH_SHA256_BYTES];
-    unsigned char       hash_input      [TEST_HASH_INPUT_LENGTH  ];
-    unsigned long long  hash_input_len = TEST_HASH_INPUT_LENGTH   ;
-
-    printf("Reading %d random bytes as input...\n", TEST_HASH_INPUT_LENGTH);
-    test_rdrandom(hash_input, TEST_HASH_INPUT_LENGTH);
-
-    const uint64_t start_instrs   = test_rdinstret();
-
-    crypto_hash_sha256(
-        hash_signature,
-        hash_input    ,
-        hash_input_len
-    );
-    
-    const uint64_t end_instrs     = test_rdinstret();
-
-    const uint64_t final_instrs   = end_instrs - start_instrs;
-
-    printf("Input: ");
-    puthex(hash_input,TEST_HASH_INPUT_LENGTH);
-    printf("\n");
-    printf("Signature: ");
-    puthex(hash_signature, CRYPTO_HASH_SHA256_BYTES);
-    printf("\n");
-
-    printf("PERF: "STR(TEST_NAME) " instrs: 0x");
-    puthex64(final_instrs); printf("\n");
 
     return 0;
 }

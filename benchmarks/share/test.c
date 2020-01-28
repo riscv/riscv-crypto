@@ -29,6 +29,14 @@ void puthex(unsigned char * in, size_t len) {
     }
 }
 
+
+void puthex_py(unsigned char * in, size_t len){
+    printf("binascii.a2b_hex(\"");
+    puthex(in,len);
+    printf("\")");
+}
+
+
 size_t test_rdrandom(unsigned char * dest, size_t len) {
     
     FILE * fh       = fopen("/dev/random", "rb");
