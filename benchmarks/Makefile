@@ -24,8 +24,6 @@ include crypto_block/Makefile.in
 
 include test/Makefile.in
 
-$(TARGETS) : $(HEADERS_OUT)
-
 all: headers $(TARGETS)
 
 run: $(RUNTARGETS)

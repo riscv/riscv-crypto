@@ -3,6 +3,6 @@ BLOCK_AES_REF_FILES = \
     crypto_block/aes/reference/aes_enc.c \
     crypto_block/aes/reference/aes_dec.c
 
-$(eval $(call add_lib_target,aes_reference,$(HASH_AES_REF_FILES)))
+$(eval $(call add_lib_target,aes_reference,$(BLOCK_AES_REF_FILES)))
 
 
