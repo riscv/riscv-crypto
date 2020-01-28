@@ -26,8 +26,22 @@ main:
 #
 # ------------------------------------------------------------
         
-    saes.sbenc  a0, a1
-    saes.sbdec  a0, a1
+    saes.v1.enc         a0, a1
+    saes.v1.dec         a0, a1
+    
+    saes.v2.sub.enc     a0, a1, a2
+    saes.v2.sub.encrot  a0, a1, a2
+    saes.v2.sub.dec     a0, a1, a2
+    saes.v2.sub.decrot  a0, a1, a2
+    saes.v2.mix.enc     a0, a1, a2
+    saes.v2.mix.enc     a0, a1, a2
+    
+    saes.v3.ks          a0, a1, a2, 0, 0
+    saes.v3.enc         a0, a1, a2, 0, 0
+    saes.v3.dec         a0, a1, a2, 0, 0
+    saes.v3.ks          a0, a1, a2, 3, 0
+    saes.v3.enc         a0, a1, a2, 3, 1
+    saes.v3.dec         a0, a1, a2, 3, 1
 
 #
 # ------------------------------------------------------------

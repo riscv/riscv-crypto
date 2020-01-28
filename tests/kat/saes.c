@@ -79,7 +79,7 @@ uint8_t AES_DEC_SBOX[] = {
   0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
 };
 
-int test_saes() {
+int test_saes_v1() {
 
     // Seed with something constant for consistency.
     srand(1);
@@ -90,11 +90,11 @@ int test_saes() {
         uint32_t post_enc;
         uint32_t post_dec;
 
-        __asm__("saes.sbenc %0, %1" : "=r"(post_enc) : "r"(pre_enc));
-        __asm__("saes.sbdec %0, %1" : "=r"(post_dec) : "r"(post_enc));
+        __asm__("saes.v1.enc %0, %1" : "=r"(post_enc) : "r"(pre_enc));
+        __asm__("saes.v1.dec %0, %1" : "=r"(post_dec) : "r"(post_enc));
 
-        printf("saes.sbenc %lx, %lx\n",post_enc, pre_enc);
-        printf("saes.sbdec %lx, %lx\n",post_dec, post_enc);
+        printf("saes.v1.enc %lx, %lx\n",post_enc, pre_enc);
+        printf("saes.v1.dec %lx, %lx\n",post_dec, post_enc);
 
         for(int j = 0; j < 4; j ++) {
             uint8_t enc_in  = pre_enc  >> (8*i);
@@ -114,9 +114,9 @@ int test_saes() {
 
 int main (int argc, char ** argv) {
 
-    printf("Running saes KAT...\n");
+    printf("Running saes v1 KAT...\n");
 
-    int fail = test_saes();
+    int fail = test_saes_v1();
 
     if(fail == 0)  {
 
