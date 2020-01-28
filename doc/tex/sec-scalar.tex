@@ -407,7 +407,10 @@ long-multiply / modular exponentiation.
 
 \begin{cryptoisa}
 RV32, RV64:
-    mmulu   rdp, rs1, rs2, rs3
+    mmulu   rdp, rs1, rs2, rs3  // Variant 1 - double width writeback
+    
+    mmulu   rd,  rs1, rs2, rs3  // Variant 2
+    mmuluh  rd,  rs1, rs2, rs3  //  - Hi/LO
 \end{cryptoisa}
 
 \begin{lstlisting}[]
@@ -422,17 +425,14 @@ add     rd2 , rd2, rs2  //      rd2  += t1
 The \mnemonic{mmulu} instruction performs an unsigned multiply
 of two \XLEN sources, forming a $2*$\XLEN result.
 The third \XLEN source register is then added to the $2*$\XLEN result.
-The $2*$\XLEN result is then written back to an odd-even register
+
+For variant 1,
+the $2*$\XLEN result is then written back to an odd-even register
 pair \rdp.
 
-\note{
-This instruction could be cracked into two pieces to avoid the
-double width write-back idiom.
-This would realise two instructions
-(\mnemonic{mmulu} and \mnemonic{mmuluh})
-which yield the high and low parts of the full $2*$\XLEN result.
-They could then be fused in fancier micro-architectures.
-}
+For variant 2, the low or high \XLEN bits are written to the destination
+register for the \mnemonic{mmulu} or \mnemonic{mmuluh} instructions
+respectively.
 
 \subsubsection{Multi-precision Accumulate Unsigned}
 
