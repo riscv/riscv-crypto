@@ -355,10 +355,10 @@ index 0000000..436e252
 +
 diff --git a/riscv/insns/saes_common.h b/riscv/insns/saes_common.h
 new file mode 100644
-index 0000000..21cf845
+index 0000000..b04f8a8
 --- /dev/null
 +++ b/riscv/insns/saes_common.h
-@@ -0,0 +1,102 @@
+@@ -0,0 +1,103 @@
 +
 +uint8_t AES_ENC_SBOX[]= {
 +  0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5,
@@ -457,10 +457,11 @@ index 0000000..21cf845
 +#define AES_XTIME(a) \
 +    ((a << 1) ^ ((a&0x80) ? 0x1b : 0))
 +
-+#define AES_GFMUL(a,b) ( ( ( (b) & 0x1 ) ?                              (a)   : 0 ) ^ \
-+                         ( ( (b) & 0x2 ) ?                     AES_XTIME(a)   : 0 ) ^ \
-+                         ( ( (b) & 0x4 ) ?           AES_XTIME(AES_XTIME(a))  : 0 ) ^ \
-+                         ( ( (b) & 0x8 ) ? AES_XTIME(AES_XTIME(AES_XTIME(a))) : 0 ) )
++#define AES_GFMUL(a,b) (( \
++    ( ( (b) & 0x1 ) ?                              (a)   : 0 ) ^ \
++    ( ( (b) & 0x2 ) ?                     AES_XTIME(a)   : 0 ) ^ \
++    ( ( (b) & 0x4 ) ?           AES_XTIME(AES_XTIME(a))  : 0 ) ^ \
++    ( ( (b) & 0x8 ) ? AES_XTIME(AES_XTIME(AES_XTIME(a))) : 0 ) )&0xFF)
 diff --git a/riscv/insns/saes_v1_dec.h b/riscv/insns/saes_v1_dec.h
 new file mode 100644
 index 0000000..42b5505
@@ -630,42 +631,9 @@ index 0000000..b974d1e
 +
 diff --git a/riscv/insns/saes_v3_dec.h b/riscv/insns/saes_v3_dec.h
 new file mode 100644
-index 0000000..5cf50f7
+index 0000000..525c083
 --- /dev/null
 +++ b/riscv/insns/saes_v3_dec.h
-@@ -0,0 +1,27 @@
-+
-+#include "saes_common.h"
-+
-+uint8_t     fa = insn.fa();
-+uint8_t     fc = insn.fc();
-+
-+uint8_t     t0 = RS1 >> (8*fa);
-+uint8_t      x = AES_DEC_SBOX[t0];
-+uint8_t     x2 = AES_XTIME(AES_ENC_SBOX[t0]);
-+uint8_t     x4 = AES_XTIME(             x2 );
-+uint8_t     x8 = AES_XTIME(             x4 );
-+uint32_t     u ;
-+
-+if(fc) {
-+    u = (((uint32_t)(   x4^x2^x)) << 24) |
-+        (((uint32_t)(x8^x4   ^x)) << 16) |
-+        (((uint32_t)(x8      ^x)) <<  8) |
-+         ((uint32_t)(x8^x4^x2  ));
-+} else {
-+    u = x;
-+}
-+
-+u = (x << (8*fa)) | (x >> (32-8*fa));
-+
-+WRITE_RD(u ^ RS2);
-+
-+
-diff --git a/riscv/insns/saes_v3_enc.h b/riscv/insns/saes_v3_enc.h
-new file mode 100644
-index 0000000..49ccf85
---- /dev/null
-+++ b/riscv/insns/saes_v3_enc.h
 @@ -0,0 +1,25 @@
 +
 +#include "saes_common.h"
@@ -674,20 +642,50 @@ index 0000000..49ccf85
 +uint8_t     fc = insn.fc();
 +
 +uint8_t     t0 = RS1 >> (8*fa);
-+uint8_t      x = AES_ENC_SBOX[t0];
-+uint8_t     x2 = AES_XTIME(AES_ENC_SBOX[t0]);
++uint8_t      x = AES_DEC_SBOX[t0];
 +uint32_t     u ;
 +
++
 +if(fc) {
-+    u = (((uint32_t)x2) << 24) |
-+        (((uint32_t) x) << 16) |
-+        (((uint32_t) x) <<  8) |
-+         ((uint32_t) x);
++    u = (AES_GFMUL(x,0xb) << 24) |
++        (AES_GFMUL(x,0xd) << 16) |
++        (AES_GFMUL(x,0x9) <<  8) |
++        (AES_GFMUL(x,0xe) <<  0) ;
 +} else {
 +    u = x;
 +}
 +
-+u = (x << (8*fa)) | (x >> (32-8*fa));
++u = (u << (8*fa)) | (u >> (32-8*fa));
++
++WRITE_RD(u ^ RS2);
++
++
+diff --git a/riscv/insns/saes_v3_enc.h b/riscv/insns/saes_v3_enc.h
+new file mode 100644
+index 0000000..c8936bc
+--- /dev/null
++++ b/riscv/insns/saes_v3_enc.h
+@@ -0,0 +1,24 @@
++
++#include "saes_common.h"
++
++uint8_t     fa = insn.fa();
++uint8_t     fc = insn.fc();
++
++uint8_t     t0 = RS1 >> (8*fa);
++uint8_t      x = AES_ENC_SBOX[t0];
++uint32_t     u ;
++
++if(fc) {
++    u = (AES_GFMUL(x,3) << 24) |
++        (          x    << 16) |
++        (          x    <<  8) |
++        (AES_GFMUL(x,2) <<  0) ;
++} else {
++    u = x;
++}
++
++u = (u << (8*fa)) | (u >> (32-8*fa));
 +
 +WRITE_RD(u ^ RS2);
 +

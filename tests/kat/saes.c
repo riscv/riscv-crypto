@@ -79,6 +79,7 @@ uint8_t AES_DEC_SBOX[] = {
   0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
 };
 
+//! Random Input test for correctness of AES v1 proposal.
 int test_saes_v1() {
 
     // Seed with something constant for consistency.
@@ -112,23 +113,76 @@ int test_saes_v1() {
 
 }
 
+//! KAT test for AES v3 proposals.
+int test_saes_v3() {
+
+    uint32_t rs1 = 0x00FF0000;
+    uint32_t rs2 = 0x0000FF00;
+
+    uint32_t dut_ks_1, dut_enc_1, dut_dec_1;
+    uint32_t dut_ks_2, dut_enc_2, dut_dec_2;
+
+    //
+    // Key Schedule instruction
+
+    uint32_t grm_ks_1 = 0x00000016 ^ 0x0000FF00;
+    uint32_t grm_ks_2 = 0x63000000 ^ 0x0000FF00;
+
+    __asm__("saes.v3.ks %0, %1, %2, 2, 0":"=r"(dut_ks_1) :"r"(rs1),"r"(rs2));
+    __asm__("saes.v3.ks %0, %1, %2, 3, 3":"=r"(dut_ks_2) :"r"(rs1),"r"(rs2));
+
+    printf("saes.v3.ks  %08lX, %08lX, %08lX, 2, 0\n", dut_ks_1, rs1 ,rs2);
+    printf("saes.v3.ks  %08lX, %08lX, %08lX, 3, 3\n", dut_ks_2, rs1 ,rs2);
+    fflush(stdout);
+
+    assert(grm_ks_1 == dut_ks_1);
+    assert(grm_ks_2 == dut_ks_2);
+    
+    //
+    // Encrypt instruction
+
+    uint32_t grm_enc_1 = 0x00160000 ^ 0x0000FF00;
+    uint32_t grm_enc_2 = 0xC6a56363 ^ 0x0000FF00;
+    
+    __asm__("saes.v3.enc %0, %1, %2, 2, 0":"=r"(dut_enc_1) :"r"(rs1),"r"(rs2));
+    __asm__("saes.v3.enc %0, %1, %2, 3, 1":"=r"(dut_enc_2) :"r"(rs1),"r"(rs2));
+
+    printf("saes.v3.enc %08lX, %08lX, %08lX, 2, 0\n", dut_enc_1, rs1 ,rs2);
+    printf("saes.v3.enc %08lX, %08lX, %08lX, 3, 1\n", dut_enc_2, rs1 ,rs2);
+    fflush(stdout);
+
+    assert(grm_enc_1 == dut_enc_1);
+    assert(grm_enc_2 == dut_enc_2);
+    
+    //
+    // Decrypt instruction
+
+    uint32_t grm_dec_1 = 0x007D0000 ^ 0x0000FF00;
+    uint32_t grm_dec_2 = 0x5150a7f4 ^ 0x0000FF00;
+    
+    __asm__("saes.v3.dec %0, %1, %2, 2, 0":"=r"(dut_dec_1) :"r"(rs1),"r"(rs2));
+    __asm__("saes.v3.dec %0, %1, %2, 3, 1":"=r"(dut_dec_2) :"r"(rs1),"r"(rs2));
+
+    printf("saes.v3.dec %08lX, %08lX, %08lX, 2, 0\n", dut_dec_1, rs1 ,rs2);
+    printf("saes.v3.dec %08lX, %08lX, %08lX, 3, 1\n", dut_dec_2, rs1 ,rs2);
+    fflush(stdout);
+
+    assert(grm_dec_1 == dut_dec_1);
+    assert(grm_dec_2 == dut_dec_2);
+
+    return 0;
+
+}
+
 int main (int argc, char ** argv) {
 
-    printf("Running saes v1 KAT...\n");
+    printf("Running saes v1 KAT..\n ");
 
     int fail = test_saes_v1();
+    if(fail) printf("saes.v1 Failed\n"); else printf("saes.v1 Passed\n");
+    
+    fail = test_saes_v3();
+    if(fail) printf("saes.v3 Failed\n"); else printf("saes.v3 Passed\n");
 
-    if(fail == 0)  {
-
-        printf("Test passed.\n");
-
-        return 0;
-
-    } else {
-
-        printf("Test %d Failed.\n", fail);
-
-        return 1;
-    }
 
 }

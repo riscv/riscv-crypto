@@ -161,9 +161,8 @@ saes.v3.ks(rs1, rs2, fa, fb):
 saes.v3.enc(rs1, rs2, fa, fc):
     t0.8 = rs1.8[fa]
     x.8  = AESSBox[tmp]
-    x2.8 = (x << 1) ^ ((x & 0x8) ? 0x1B : 0x00)
     if(fc)
-        u.32 = {x^x2 , x, x, x2}
+        u.32 = {GFMUL(x,3) , x, x, GFMUL(x,2)}
     else
         u.32 = {   0 , 0, 0, x }
     rd.32 = ROTL32(u.32, 8*fa) ^ rs2.32
@@ -174,14 +173,11 @@ saes.v3.enc(rs1, rs2, fa, fc):
 
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-mulx(x) : (x << 1) ^ ((x & 0x8) ? 0x1B : 0x00)
-
 saes.v3.dec(rs1, rs2, fa, fc):
     t0.8 = rs1.8[fa]
     x.8  = INVAESSBox[tmp]
-    x2.8 = mulx( x.8), x4.8 = mulx(x2.8), x8.8 = mulx(x4.8)
     if(fc)
-        u.32 = {x^x2^x4 , x^x4^x8 , x^x8 , x2^x4^x8}
+        u.32 = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
     else
         u.32 = {      0 ,       0 ,    0 ,       x }
     rd.32 = ROTL32(u.32, 8*fa) ^ rs2.32
