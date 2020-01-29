@@ -113,6 +113,69 @@ int test_saes_v1() {
 
 }
 
+
+//! KAT test for AES v2 proposals.
+int test_saes_v2() {
+    uint32_t rs1 = 0x04030201;
+    uint32_t rs2 = 0x01020304;
+
+    //
+    // Sub-bytes encrypt instructions
+    
+    uint32_t dut_sbenc   , dut_sbencrot;
+
+    uint32_t grm_sbenc    = 0x7c7b7b7c;
+    uint32_t grm_sbencrot = 0x7b7b7c7c;
+    
+    __asm__("saes.v2.sub.enc    %0,%1,%2":"=r"(dut_sbenc   ) :"r"(rs1),"r"(rs2));
+    __asm__("saes.v2.sub.encrot %0,%1,%2":"=r"(dut_sbencrot) :"r"(rs1),"r"(rs2));
+
+    printf("saes.v2.sub.enc    %08lX, %08lX, %08lX\n", dut_sbenc   , rs1 ,rs2);
+    printf("saes.v2.sub.encrot %08lX, %08lX, %08lX\n", dut_sbencrot, rs1 ,rs2);
+    fflush(stdout);
+
+    assert(dut_sbenc    == grm_sbenc   );
+    assert(dut_sbencrot == grm_sbencrot);
+
+    //
+    // Sub-bytes decrypt instructions
+    
+    uint32_t dut_sbdec   , dut_sbdecrot;
+
+    uint32_t grm_sbdec    = 0x09D5D509;
+    uint32_t grm_sbdecrot = 0xD5D50909;
+    
+    __asm__("saes.v2.sub.dec    %0,%1,%2":"=r"(dut_sbdec   ) :"r"(rs1),"r"(rs2));
+    __asm__("saes.v2.sub.decrot %0,%1,%2":"=r"(dut_sbdecrot) :"r"(rs1),"r"(rs2));
+
+    printf("saes.v2.sub.dec    %08lX, %08lX, %08lX\n", dut_sbdec   , rs1 ,rs2);
+    printf("saes.v2.sub.decrot %08lX, %08lX, %08lX\n", dut_sbdecrot, rs1 ,rs2);
+    fflush(stdout);
+
+    assert(dut_sbdec    == grm_sbdec   );
+    assert(dut_sbdecrot == grm_sbdecrot);
+    
+    //
+    // Mix Columns instructions
+    
+    uint32_t dut_mixenc  , dut_mixdec;
+
+    uint32_t grm_mixenc  = 0x01040207;
+    uint32_t grm_mixdec  = 0x0D080E0B;
+    
+    __asm__("saes.v2.mix.enc %0,%1,%2":"=r"(dut_mixenc) :"r"(rs1),"r"(rs2));
+    __asm__("saes.v2.mix.dec %0,%1,%2":"=r"(dut_mixdec) :"r"(rs1),"r"(rs2));
+
+    printf("saes.v2.mix.enc    %08lX, %08lX, %08lX\n", dut_mixenc, rs1 ,rs2);
+    printf("saes.v2.mix.dec    %08lX, %08lX, %08lX\n", dut_mixdec, rs1 ,rs2);
+    fflush(stdout);
+
+    assert(dut_mixenc == grm_mixenc);
+    assert(dut_mixdec == grm_mixdec);
+
+}
+
+
 //! KAT test for AES v3 proposals.
 int test_saes_v3() {
 
@@ -180,6 +243,9 @@ int main (int argc, char ** argv) {
 
     int fail = test_saes_v1();
     if(fail) printf("saes.v1 Failed\n"); else printf("saes.v1 Passed\n");
+    
+    fail = test_saes_v2();
+    if(fail) printf("saes.v2 Failed\n"); else printf("saes.v2 Passed\n");
     
     fail = test_saes_v3();
     if(fail) printf("saes.v3 Failed\n"); else printf("saes.v3 Passed\n");
