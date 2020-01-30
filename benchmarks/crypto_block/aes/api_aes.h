@@ -19,17 +19,20 @@ AES  |   Nk  | Nb   | Nr
 //! Number of bytes in a single AES block
 #define AES_BLOCK_BYTES     16
 
-//! Bytes in an AES 128 Cipher key
-#define AES_128_KEY_BYTES   16
+//! Block size in 4-byte words for AES 128
+#define AES_128_NB          4
 
-//! Number of bytes in the expanded AES 128 key
-#define AES_128_RK_BYTES    176
-
-//! Words in expanded AES 128 key
-#define AES_128_NK          44
+//! Words in expanded AES 128 cipher key
+#define AES_128_NK          4 
 
 //! Number of rounds for AES 128
 #define AES_128_NR          10
+
+//! Bytes in an AES 128 Cipher key
+#define AES_128_KEY_BYTES   (4*AES_128_NK)
+
+//! Number of bytes in the expanded AES 128 key
+#define AES_128_RK_BYTES    (4*AES_128_NK*(AES_128_NR+1))
 
 #define XT2(x) ((x << 1) ^ (x & 0x80 ? 0x1b : 0x00))
 #define XT3(x) (XT2(x) ^ x)
@@ -46,8 +49,8 @@ AES  |   Nk  | Nb   | Nr
 @param [in]  ck - The cipher key to expand
 */
 void    aes_128_key_schedule (
-    uint32_t    rk [AES_128_NK       ],
-    uint8_t     ck [AES_128_KEY_BYTES]
+    uint32_t    rk [AES_128_NK*(AES_128_NR+1)   ],
+    uint8_t     ck [AES_128_KEY_BYTES           ]
 );
 
 
