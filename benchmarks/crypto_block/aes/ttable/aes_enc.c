@@ -182,7 +182,7 @@ void    aes_key_schedule (
 
 /*!
 */
-void    aes_128_key_schedule (
+void    aes_128_enc_key_schedule (
     uint32_t    rk [AES_128_RK_BYTES ],
     uint8_t     ck [AES_128_KEY_BYTES]
 ){

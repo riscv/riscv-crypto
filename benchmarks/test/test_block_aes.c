@@ -18,7 +18,8 @@ int main(int argc, char ** argv) {
     // Start with known inputs from FIPS 197, Appendix B.
     uint8_t  key [AES_128_KEY_BYTES ] = {0x2b ,0x7e ,0x15 ,0x16 ,0x28 ,0xae ,0xd2 ,0xa6 ,0xab ,0xf7 ,0x15 ,0x88 ,0x09 ,0xcf ,0x4f ,0x3c};
     uint8_t  pt  [AES_BLOCK_BYTES   ] = {0x32 ,0x43 ,0xf6 ,0xa8 ,0x88 ,0x5a ,0x30 ,0x8d ,0x31 ,0x31 ,0x98 ,0xa2 ,0xe0 ,0x37 ,0x07 ,0x34};
-    uint32_t rk  [AES_128_RK_BYTES  ];
+    uint32_t erk [AES_128_RK_BYTES  ]; //!< Roundkeys (encrypt)
+    uint32_t drk [AES_128_RK_BYTES  ]; //!< Roundkeys (decrypt)
     uint8_t  ct  [AES_BLOCK_BYTES   ];
     uint8_t  pt2 [AES_BLOCK_BYTES   ];
 
@@ -26,9 +27,11 @@ int main(int argc, char ** argv) {
 
         const uint64_t start_instrs   = test_rdinstret();
 
-        aes_128_key_schedule(rk, key    );
-        aes_128_ecb_encrypt (ct , pt, rk);
-        aes_128_ecb_decrypt (pt2, ct, rk);
+        aes_128_enc_key_schedule(erk, key    );
+        aes_128_ecb_encrypt     (ct , pt, erk);
+        
+        aes_128_dec_key_schedule(drk, key    );
+        aes_128_ecb_decrypt     (pt2, ct, drk);
         
         const uint64_t end_instrs     = test_rdinstret();
 
@@ -41,7 +44,7 @@ int main(int argc, char ** argv) {
         printf("\n");
         
         printf("rk              = ");
-        puthex_py((uint8_t*)rk , AES_128_RK_BYTES );
+        puthex_py((uint8_t*)erk , AES_128_RK_BYTES );
         printf("\n");
 
         printf("pt              = ");

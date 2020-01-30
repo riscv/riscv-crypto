@@ -44,11 +44,21 @@ AES  |   Nk  | Nb   | Nr
 #define XTE(x) (XT8(x) ^ XT4(x) ^ XT2(x))
 
 /*!
-@brief Key expansion function for the AES 128 parameterisation
+@brief Key expansion function for the AES 128 parameterisation - encrypt
 @param [out] rk - The expanded key schedule
 @param [in]  ck - The cipher key to expand
 */
-void    aes_128_key_schedule (
+void    aes_128_enc_key_schedule (
+    uint32_t    rk [AES_128_NK*(AES_128_NR+1)   ],
+    uint8_t     ck [AES_128_KEY_BYTES           ]
+);
+
+/*!
+@brief Key expansion function for the AES 128 parameterisation - decrypt
+@param [out] rk - The expanded key schedule
+@param [in]  ck - The cipher key to expand
+*/
+void    aes_128_dec_key_schedule (
     uint32_t    rk [AES_128_NK*(AES_128_NR+1)   ],
     uint8_t     ck [AES_128_KEY_BYTES           ]
 );
