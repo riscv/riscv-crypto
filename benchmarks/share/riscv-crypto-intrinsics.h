@@ -73,5 +73,14 @@ static inline int _ssha3_yx (int x, int y) { return ((y  )%5)+(5*((2*x+3*y)%5));
 static inline uint64_t * _ssha3_idx (uint64_t * base, int idx) {uint64_t * rd; __asm__("add %0, %1, %2 ;" : "=r"(rd) : "r"(base), "r"(idx)); return rd;}
 #endif
 
+//
+// AES
+//
+
+#if (defined(__ZSCRYPTO))
+static inline uint32_t _saes_v1_enc(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.enc %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint32_t _saes_v2_dec(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.dec %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+#endif
+
 #endif // __RISCV_CRYPTO_INTRINSICS__
 
