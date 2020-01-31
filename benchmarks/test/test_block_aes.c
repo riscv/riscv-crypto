@@ -22,21 +22,26 @@ int main(int argc, char ** argv) {
     uint32_t drk [AES_128_RK_BYTES  ]; //!< Roundkeys (decrypt)
     uint8_t  ct  [AES_BLOCK_BYTES   ];
     uint8_t  pt2 [AES_BLOCK_BYTES   ];
+    uint64_t start_instrs;
 
     for(int i = 0; i < num_tests; i ++) {
 
-        const uint64_t start_instrs   = test_rdinstret();
-
+        start_instrs = test_rdinstret();
         aes_128_enc_key_schedule(erk, key    );
+        uint64_t kse_icount   = test_rdinstret() - start_instrs;
+
+        start_instrs = test_rdinstret();
         aes_128_ecb_encrypt     (ct , pt, erk);
+        uint64_t enc_icount   = test_rdinstret() - start_instrs;
         
+        start_instrs = test_rdinstret();
         aes_128_dec_key_schedule(drk, key    );
+        uint64_t ksd_icount   = test_rdinstret() - start_instrs;
+
+        start_instrs = test_rdinstret();
         aes_128_ecb_decrypt     (pt2, ct, drk);
+        uint64_t dec_icount   = test_rdinstret() - start_instrs;
         
-        const uint64_t end_instrs     = test_rdinstret();
-
-        const uint64_t final_instrs   = end_instrs - start_instrs;
-
         printf("#\n# test %d/%d\n",i , num_tests);
 
         printf("key             = ");
@@ -59,9 +64,10 @@ int main(int argc, char ** argv) {
         puthex_py(ct , AES_BLOCK_BYTES  );
         printf("\n");
 
-        printf("instr_count     = 0x");
-        puthex64(final_instrs);
-        printf("\n");
+        printf("kse_icount      = 0x"); puthex64(kse_icount); printf("\n");
+        printf("ksd_icount      = 0x"); puthex64(ksd_icount); printf("\n");
+        printf("enc_icount      = 0x"); puthex64(enc_icount); printf("\n");
+        printf("dec_icount      = 0x"); puthex64(dec_icount); printf("\n");
 
         printf("testnum         = %d\n",i);
 
@@ -84,8 +90,12 @@ int main(int argc, char ** argv) {
         printf("    print( '    != %%s' %% ( binascii.b2a_hex( ref_pt )))\n");
         printf("    sys.exit(1)\n");
         printf("else:\n");
-        printf("    print(\""STR(TEST_NAME)" Test %%d passed. "
-               "          %%d instrs / %%d bytes\" %% (testnum,instr_count,16))\n");
+        printf("    sys.stdout.write(\""STR(TEST_NAME)" Test passed.\")\n");
+        printf("    sys.stdout.write(\"enc: %%d, \" %% (enc_icount))\n");
+        printf("    sys.stdout.write(\"dec: %%d, \" %% (dec_icount))\n");
+        printf("    sys.stdout.write(\"kse: %%d, \" %% (kse_icount))\n");
+        printf("    sys.stdout.write(\"ksd: %%d, \" %% (ksd_icount))\n");
+        printf("    print(\"\")\n");
         
         // New random inputs
         test_rdrandom(pt    , AES_BLOCK_BYTES   );
