@@ -1,8 +1,13 @@
 
+/*
+Code adapted from:
+- https://github.com/mjosaarinen/lwaes_isa/blob/master/aes_enc.c
+*/
+
 /*!
 @addtogroup crypto_block_aes_zscrypto_v3 AES Proposal 3
 @brief implementation of AES using the V3 proposals.
-@details Code adapted from https://github.com/mjosaarinen/lwaes_isa/blob/master/aes_enc.c
+@details 
 @ingroup crypto_block_aes
 @{
 */
@@ -21,7 +26,7 @@ static const uint8_t round_const[11] = {
 /*!
 */
 void    aes_128_enc_key_schedule (
-    uint32_t    rk [AES_128_RK_BYTES ],
+    uint32_t    rk [AES_128_RK_WORDS ],
     uint8_t     ck [AES_128_KEY_BYTES]
 ){
 
@@ -50,16 +55,6 @@ void    aes_128_enc_key_schedule (
     }
 
 }
-
-/*!
-*/
-void    aes_128_dec_key_schedule (
-    uint32_t    rk [AES_128_RK_BYTES ],
-    uint8_t     ck [AES_128_KEY_BYTES]
-){
-    aes_128_enc_key_schedule(rk, ck);
-}
-
 
 
 /*!

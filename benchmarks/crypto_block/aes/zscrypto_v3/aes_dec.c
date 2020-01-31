@@ -6,6 +6,9 @@
 @{
 */
 
+#include "riscvcrypto/share/util.h"
+#include "riscvcrypto/share/riscv-crypto-intrinsics.h"
+
 #include "riscvcrypto/crypto_block/aes/api_aes.h"
 
 //! AES Inverse SBox
@@ -32,68 +35,124 @@ static const uint8_t d_sbox[256] = {
 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
 };
 
-//! Combined inverse subbytes and shiftrows transformations.
-static void aes_subbytes_shiftrows_dec(
-    uint8_t     pt[16]       //!< Current block state
-){
-    uint8_t tmp;
-    
-    // row 0
-    pt[ 0] = d_sbox[pt[ 0]];
-    pt[ 4] = d_sbox[pt[ 4]];
-    pt[ 8] = d_sbox[pt[ 8]];
-    pt[12] = d_sbox[pt[12]];
 
-    // row 1
-    tmp    = d_sbox[pt[13]];
-    pt[13] = d_sbox[pt[ 9]];
-    pt[ 9] = d_sbox[pt[ 5]];
-    pt[ 5] = d_sbox[pt[ 1]];
-    pt[ 1] = tmp;
-    
-    // row 2
-    tmp    = d_sbox[pt[10]];
-    pt[10] = d_sbox[pt[ 2]];
-    pt[ 2] = tmp;
+//  Multiply by 0x02 in AES's GF(256) - LFSR style
 
-    tmp    = d_sbox[pt[14]];
-    pt[14] = d_sbox[pt[ 6]];
-    pt[ 6] = tmp;
-
-    // row 3
-    tmp    = d_sbox[pt[ 7]];
-    pt[ 7] = d_sbox[pt[11]];
-    pt[11] = d_sbox[pt[15]];
-    pt[15] = d_sbox[pt[ 3]];
-    pt[ 3] = tmp;
+static inline uint8_t aes_xtime(uint8_t x)
+{
+    return (x << 1) ^ ((x & 0x80) ? 0x11B : 0x00 );
 }
 
-//! Inverse mix columns transformation.
-static void aes_mix_columns_dec(
-    uint8_t     pt[16]       //!< Current block state
-){
-    // Col 0
-    for(int i = 0; i < 4; i ++) {
-        uint8_t b0,b1,b2,b3;
-        uint8_t s0,s1,s2,s3;
+//  === THIS IS THE SINGLE LIGHTWEIGHT INSTRUCTION FOR AES AND SM4  ===
+
+//  ENC1S: Instruction for a byte select, single S-box, and linear operation.
+
+#define AES_FN_FWD  (1 << 2)
+#define AES_FN_DEC  (2 << 2)
+#define AES_FN_REV  (3 << 2)
+
+uint32_t enc1s(uint32_t rs1, uint32_t rs2, int fn)
+{
+    uint32_t fa, fb, x, x2, x4, x8;
+
+    fa  = 8 * (fn & 3);                     //  [1:0]   byte select / rotate
+    fb  = (fn >> 2) & 7;                    //  [4:2]   cipher select
+
+    //  select input byte
+
+    x   = (rs1 >> fa) & 0xFF;               //  select byte
+
+    //  8->8 bit s-box
+
+    switch (fb) {
+
+        case 2:                             //  1 : AES Inverse + MC
+        case 3:                             //  2 : AES Inverse "key"
+            x = d_sbox[x];
+            break;
+
+        default:                            //  none
+            break;
+    }
+
+    //  8->32 bit linear transforms expressed as little-endian
+
+    switch (fb) {
+
+        case 0:     //  0 : AES Forward MixCol
+            x2 = aes_xtime(x);              //  double x
+            x = ((x ^ x2)   << 24) |        //  0x03    MixCol MDS Matrix
+                (x          << 16) |        //  0x01
+                (x          <<  8) |        //  0x01
+                x2;                         //  0x02
+            break;
+
+        case 2:     //  2 : AES Inverse MixCol
+//    ( case 6:     //  6 : AES Inverse MixCol *only* )
+            x2 = aes_xtime(x);              //  double x
+            x4 = aes_xtime(x2);             //  double to 4*x
+            x8 = aes_xtime(x4);             //  double to 8*x
+            x = ((x ^ x2 ^ x8)  << 24) |    //  0x0B    Inv MixCol MDS Matrix
+                ((x ^ x4 ^ x8)  << 16) |    //  0x0D
+                ((x ^ x8)       <<  8) |    //  0x09
+                (x2 ^ x4 ^ x8);             //  0x0E
+            break;
+
+        default:                            //  none
+            break;
+
+    }
+
+    //  rotate output left by fa bits
+
+    if (fa != 0) {
+        x = (x << fa) | (x >> (32 - fa));
+    }
+
+    return  x ^ rs2;                        //  XOR with rs2
+}
+
+//  ENC4S: Instruction or pseudoinstruction for four ENC1S's.
+//  We may assume that rd == rs2 and fn[1:0] == 2'b00.
+
+uint32_t enc4s(uint32_t rs1, uint32_t rs2, int fn)
+{
+    rs2 = enc1s(rs1, rs2, fn);
+    rs2 = enc1s(rs1, rs2, fn | 1);
+    rs2 = enc1s(rs1, rs2, fn | 2);
+    rs2 = enc1s(rs1, rs2, fn | 3);
+
+    return rs2;
+}
+
+//  Helper: apply inverse mixcolumns to a vector
+//  If decryption keys are computed in the fly (inverse key schedule), there's
+//  no need for the encryption instruction (but you need final subkey).
+
+static void aes_dec_invmc(uint32_t *v, size_t len)
+{
+    size_t i;
+    uint32_t x;
+
+    for (i = 0; i < len; i++) {
+        x = v[i];
         
-        s0 = pt[4*i+0];
-        s1 = pt[4*i+1];
-        s2 = pt[4*i+2];
-        s3 = pt[4*i+3];
+        x = enc4s(x,0,AES_FN_FWD);
+        x = enc4s(x,0,AES_FN_DEC);
 
-        b0 = XTE(s0) ^ XTB(s1) ^ XTD(s2) ^ XT9(s3);
-        b1 = XT9(s0) ^ XTE(s1) ^ XTB(s2) ^ XTD(s3);
-        b2 = XTD(s0) ^ XT9(s1) ^ XTE(s2) ^ XTB(s3);
-        b3 = XTB(s0) ^ XTD(s1) ^ XT9(s2) ^ XTE(s3);
-
-        pt[4*i+0] = b0;
-        pt[4*i+1] = b1;
-        pt[4*i+2] = b2;
-        pt[4*i+3] = b3;
+        v[i] = x;
     }
 }
 
+/*!
+*/
+void    aes_128_dec_key_schedule (
+    uint32_t    rk [AES_128_RK_WORDS ],
+    uint8_t     ck [AES_128_KEY_BYTES]
+){
+    aes_128_enc_key_schedule(rk,ck);
+    aes_dec_invmc(rk+4,AES_128_RK_BYTES / 8 - 8);
+}
 
 /*!
 @brief Generic single-block AES encrypt function
@@ -108,27 +167,6 @@ void    aes_ecb_decrypt (
     uint32_t  * rk,
     int         nr
 ){
-    for(int i = 0; i < 16; i ++) {
-        pt[i] = ct[i] ^ ((uint8_t*)rk)[(16*nr) + i];
-    }
-
-    for(int round = nr-1; round >= 1; round --) {
-        
-        aes_subbytes_shiftrows_dec(pt);
-    
-        for(int i = 0; i < 16; i ++) {
-            pt[i] ^= ((uint8_t*)rk)[(16*round) + i];
-        }
-
-        aes_mix_columns_dec(pt);
-
-    }
-        
-    aes_subbytes_shiftrows_dec(pt);
-
-    for(int i = 0; i < 16; i ++) {
-        pt[i] ^= ((uint8_t*)rk)[i];
-    }
 }
 
 //!@}

@@ -34,6 +34,8 @@ AES  |   Nk  | Nb   | Nr
 //! Number of bytes in the expanded AES 128 key
 #define AES_128_RK_BYTES    (4*AES_128_NK*(AES_128_NR+1))
 
+#define AES_128_RK_WORDS    (  AES_128_NK*(AES_128_NR+1))
+
 #define XT2(x) ((x << 1) ^ (x & 0x80 ? 0x1b : 0x00))
 #define XT3(x) (XT2(x) ^ x)
 #define XT4(x) XT2(XT2(x))
