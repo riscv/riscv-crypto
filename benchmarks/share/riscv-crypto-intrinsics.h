@@ -79,7 +79,11 @@ static inline uint64_t * _ssha3_idx (uint64_t * base, int idx) {uint64_t * rd; _
 
 #if (defined(__ZSCRYPTO))
 static inline uint32_t _saes_v1_enc(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.enc %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint32_t _saes_v2_dec(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.dec %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint32_t _saes_v1_dec(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.dec %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+
+static inline uint32_t _saes_v3_ks (uint32_t rs1, uint32_t rs2, int fa, int fb) {uint32_t rd; __asm__("saes.v3.ks  %0, %1, %2, %3, %4" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(fa), "i"(fb)); return rd;}
+static inline uint32_t _saes_v3_enc(uint32_t rs1, uint32_t rs2, int fa, int fc) {uint32_t rd; __asm__("saes.v3.enc %0, %1, %2, %3, %4" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(fa), "i"(fc)); return rd;}
+static inline uint32_t _saes_v3_dec(uint32_t rs1, uint32_t rs2, int fa, int fc) {uint32_t rd; __asm__("saes.v3.dec %0, %1, %2, %3, %4" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(fa), "i"(fc)); return rd;}
 #endif
 
 #endif // __RISCV_CRYPTO_INTRINSICS__

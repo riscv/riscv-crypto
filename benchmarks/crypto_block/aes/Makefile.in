@@ -2,4 +2,5 @@
 include crypto_block/aes/reference/Makefile.in
 include crypto_block/aes/ttable/Makefile.in
 include crypto_block/aes/zscrypto_v1/Makefile.in
+include crypto_block/aes/zscrypto_v3/Makefile.in
 

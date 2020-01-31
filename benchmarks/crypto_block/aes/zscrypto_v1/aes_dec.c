@@ -1,7 +1,7 @@
 
 /*!
-@addtogroup crypto_block_aes_reference AES Reference
-@brief Reference implementation of AES.
+@addtogroup crypto_block_aes_zscrypto_v3 AES Proposal 3 
+@brief Implementation of AES Using the v3 instruction proposals.
 @ingroup crypto_block_aes
 @{
 */
@@ -80,10 +80,10 @@ void    aes_ecb_decrypt (
         //
         // Inv SubBytes
 
-        t0 = _saes_v2_dec(n0);
-        t1 = _saes_v2_dec(n1);
-        t2 = _saes_v2_dec(n2);
-        t3 = _saes_v2_dec(n3);
+        t0 = _saes_v1_dec(n0);
+        t1 = _saes_v1_dec(n1);
+        t2 = _saes_v1_dec(n2);
+        t3 = _saes_v1_dec(n3);
 
         //
         // Add Round Key
@@ -121,10 +121,10 @@ void    aes_ecb_decrypt (
     //
     // Inv SubBytes
 
-    t0 = _saes_v2_dec(n0);
-    t1 = _saes_v2_dec(n1);
-    t2 = _saes_v2_dec(n2);
-    t3 = _saes_v2_dec(n3);
+    t0 = _saes_v1_dec(n0);
+    t1 = _saes_v1_dec(n1);
+    t2 = _saes_v1_dec(n2);
+    t3 = _saes_v1_dec(n3);
 
     //
     // Add Round Key

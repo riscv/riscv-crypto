@@ -7,6 +7,7 @@
 
 #define SHR(x,c) ((x) >> (c))
 #define ROTR32(x,c) (((x) >> (c)) | ((x) << (32 - (c))))
+#define ROTL32(x,c) (((x) << (c)) | ((x) >> (32 - (c))))
 #define ROTR64(x,c) (((x) >> (c)) | ((x) << (64 - (c))))
 
 #define U8_TO_U32LE(x) (((uint32_t)(x[3]) << 24) | \

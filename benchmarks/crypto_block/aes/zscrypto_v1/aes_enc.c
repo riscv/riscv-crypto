@@ -1,8 +1,7 @@
 
 /*!
-@addtogroup crypto_block_aes_reference AES Reference
-@brief Reference implementation of AES.
-@details Byte-orientated, un-optimised. Un-necessesarily spills to memory.
+@addtogroup crypto_block_aes_zscrypto_v1 AES Proposal 1 
+@brief Implementation of AES Using the v1 instruction proposals..
 @ingroup crypto_block_aes
 @{
 */
