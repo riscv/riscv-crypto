@@ -10,10 +10,10 @@
 #define ROTL32(x,c) (((x) << (c)) | ((x) >> (32 - (c))))
 #define ROTR64(x,c) (((x) >> (c)) | ((x) << (64 - (c))))
 
-#define U8_TO_U32LE(x) (((uint32_t)(x[3]) << 24) | \
-                        ((uint32_t)(x[2]) << 16) | \
-                        ((uint32_t)(x[1]) <<  8) | \
-                        ((uint32_t)(x[0]) <<  0) )
+#define U8_TO_U32LE(x) (((uint32_t)((x)[3]) << 24) | \
+                        ((uint32_t)((x)[2]) << 16) | \
+                        ((uint32_t)((x)[1]) <<  8) | \
+                        ((uint32_t)((x)[0]) <<  0) )
 
 
 #define U32_TO_U8LE(r,x,i) {                   \

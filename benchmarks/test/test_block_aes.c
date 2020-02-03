@@ -48,8 +48,12 @@ int main(int argc, char ** argv) {
         puthex_py(key, AES_128_KEY_BYTES);
         printf("\n");
         
-        printf("rk              = ");
+        printf("erk             = ");
         puthex_py((uint8_t*)erk , AES_128_RK_BYTES );
+        printf("\n");
+        
+        printf("drk             = ");
+        puthex_py((uint8_t*)drk , AES_128_RK_BYTES );
         printf("\n");
 
         printf("pt              = ");
@@ -76,7 +80,7 @@ int main(int argc, char ** argv) {
         printf("if( ref_ct     != ct        ):\n");
         printf("    print(\"Test %d encrypt failed.\")\n", i);
         printf("    print( 'key == %%s' %% ( binascii.b2a_hex( key    )))\n");
-        printf("    print( 'rk  == %%s' %% ( binascii.b2a_hex( rk     )))\n");
+        printf("    print( 'rk  == %%s' %% ( binascii.b2a_hex(erk     )))\n");
         printf("    print( 'pt  == %%s' %% ( binascii.b2a_hex( pt     )))\n");
         printf("    print( 'ct  == %%s' %% ( binascii.b2a_hex( ct     )))\n");
         printf("    print( '    != %%s' %% ( binascii.b2a_hex( ref_ct )))\n");
@@ -84,7 +88,7 @@ int main(int argc, char ** argv) {
         printf("elif( ref_pt     != pt2       ):\n");
         printf("    print(\"Test %d decrypt failed.\")\n", i);
         printf("    print( 'key == %%s' %% ( binascii.b2a_hex( key    )))\n");
-        printf("    print( 'rk  == %%s' %% ( binascii.b2a_hex( rk     )))\n");
+        printf("    print( 'rk  == %%s' %% ( binascii.b2a_hex(drk     )))\n");
         printf("    print( 'ct  == %%s' %% ( binascii.b2a_hex( ct     )))\n");
         printf("    print( 'pt  == %%s' %% ( binascii.b2a_hex( pt2    )))\n");
         printf("    print( '    != %%s' %% ( binascii.b2a_hex( ref_pt )))\n");
