@@ -1,8 +1,8 @@
 diff --git a/riscv/decode.h b/riscv/decode.h
-index 9e03676..7eee091 100644
+index 9e03676..1cf8bec 100644
 --- a/riscv/decode.h
 +++ b/riscv/decode.h
-@@ -90,12 +90,17 @@ public:
+@@ -90,12 +90,15 @@ public:
    int64_t u_imm() { return int64_t(b) >> 12 << 12; }
    int64_t uj_imm() { return (x(21, 10) << 1) + (x(20, 1) << 11) + (x(12, 8) << 12) + (imm_sign() << 20); }
    uint64_t rd() { return x(7, 5); }
@@ -13,18 +13,16 @@ index 9e03676..7eee091 100644
    uint64_t rm() { return x(12, 3); }
    uint64_t csr() { return x(20, 12); }
  
-+  uint64_t fa() {return x(30,2);}
-+  uint64_t fb() {return x(28,2);}
-+  uint64_t fc() {return x(29,1);}
++  uint64_t bs() {return x(30,2);}
 +
    int64_t rvc_imm() { return x(2, 5) + (xs(12, 1) << 5); }
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..c9dc79d 100644
+index 3c4bf1c..badbd6e 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -564,6 +564,86 @@
+@@ -564,6 +564,120 @@
  #define MASK_PACKUW  0xfe00707f
  #define MATCH_BFPW 0x4800703b
  #define MASK_BFPW  0xfe00707f
@@ -39,27 +37,61 @@ index 3c4bf1c..c9dc79d 100644
 +#define MATCH_MACCU 0x102b
 +#define MASK_MACCU  0x60070ff
 +#define MATCH_SAES_V1_ENC 0x1c00202b
++#define MASK_SAES_V1_ENC 0xfff0707f
++#define MATCH_SAES_V1_ENC 0x1c00202b
 +#define MASK_SAES_V1_ENC  0xfff0707f
 +#define MATCH_SAES_V1_DEC 0x1e10202b
++#define MASK_SAES_V1_DEC 0xfff0707f
++#define MATCH_SAES_V1_DEC 0x1e10202b
 +#define MASK_SAES_V1_DEC  0xfff0707f
-+#define MATCH_SAES_V2_SUB_ENC 0x1200202b
++#define MATCH_SAES_V2_SUB_ENC 0x1600202b
++#define MASK_SAES_V2_SUB_ENC 0xfe00707f
++#define MATCH_SAES_V2_SUB_ENC 0x1600202b
 +#define MASK_SAES_V2_SUB_ENC  0xfe00707f
-+#define MATCH_SAES_V2_SUB_ENCROT 0x1000202b
++#define MATCH_SAES_V2_SUB_ENCROT 0x1400202b
++#define MASK_SAES_V2_SUB_ENCROT 0xfe00707f
++#define MATCH_SAES_V2_SUB_ENCROT 0x1400202b
 +#define MASK_SAES_V2_SUB_ENCROT  0xfe00707f
-+#define MATCH_SAES_V2_SUB_DEC 0xe00202b
++#define MATCH_SAES_V2_SUB_DEC 0x1200202b
++#define MASK_SAES_V2_SUB_DEC 0xfe00707f
++#define MATCH_SAES_V2_SUB_DEC 0x1200202b
 +#define MASK_SAES_V2_SUB_DEC  0xfe00707f
-+#define MATCH_SAES_V2_SUB_DECROT 0xc00202b
++#define MATCH_SAES_V2_SUB_DECROT 0x1000202b
++#define MASK_SAES_V2_SUB_DECROT 0xfe00707f
++#define MATCH_SAES_V2_SUB_DECROT 0x1000202b
 +#define MASK_SAES_V2_SUB_DECROT  0xfe00707f
-+#define MATCH_SAES_V2_MIX_ENC 0xa00202b
++#define MATCH_SAES_V2_MIX_ENC 0xe00202b
++#define MASK_SAES_V2_MIX_ENC 0xfe00707f
++#define MATCH_SAES_V2_MIX_ENC 0xe00202b
 +#define MASK_SAES_V2_MIX_ENC  0xfe00707f
-+#define MATCH_SAES_V2_MIX_DEC 0x800202b
++#define MATCH_SAES_V2_MIX_DEC 0xc00202b
++#define MASK_SAES_V2_MIX_DEC 0xfe00707f
++#define MATCH_SAES_V2_MIX_DEC 0xc00202b
 +#define MASK_SAES_V2_MIX_DEC  0xfe00707f
-+#define MATCH_SAES_V3_KS 0x600202b
-+#define MASK_SAES_V3_KS  0xe00707f
-+#define MATCH_SAES_V3_ENC 0x400202b
-+#define MASK_SAES_V3_ENC  0x1e00707f
-+#define MATCH_SAES_V3_DEC 0x200202b
-+#define MASK_SAES_V3_DEC  0x1e00707f
++#define MATCH_SAES_V3_ENCS 0xa00202b
++#define MASK_SAES_V3_ENCS 0x3e00707f
++#define MATCH_SAES_V3_ENCS 0xa00202b
++#define MASK_SAES_V3_ENCS  0x3e00707f
++#define MATCH_SAES_V3_ENCM 0x800202b
++#define MASK_SAES_V3_ENCM 0x3e00707f
++#define MATCH_SAES_V3_ENCM 0x800202b
++#define MASK_SAES_V3_ENCM  0x3e00707f
++#define MATCH_SAES_V3_ENCSM 0x600202b
++#define MASK_SAES_V3_ENCSM 0x3e00707f
++#define MATCH_SAES_V3_ENCSM 0x600202b
++#define MASK_SAES_V3_ENCSM  0x3e00707f
++#define MATCH_SAES_V3_DECS 0x400202b
++#define MASK_SAES_V3_DECS 0x3e00707f
++#define MATCH_SAES_V3_DECS 0x400202b
++#define MASK_SAES_V3_DECS  0x3e00707f
++#define MATCH_SAES_V3_DECM 0x200202b
++#define MASK_SAES_V3_DECM 0x3e00707f
++#define MATCH_SAES_V3_DECM 0x200202b
++#define MASK_SAES_V3_DECM  0x3e00707f
++#define MATCH_SAES_V3_DECSM 0x202b
++#define MASK_SAES_V3_DECSM 0x3e00707f
++#define MATCH_SAES_V3_DECSM 0x202b
++#define MASK_SAES_V3_DECSM  0x3e00707f
 +#define MATCH_SSHA256_S0 0xe00702b
 +#define MASK_SSHA256_S0  0xfff0707f
 +#define MATCH_SSHA256_S1 0xe10702b
@@ -111,7 +143,7 @@ index 3c4bf1c..c9dc79d 100644
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2236,46 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2156,6 +2270,49 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
@@ -128,9 +160,12 @@ index 3c4bf1c..c9dc79d 100644
 +DECLARE_INSN(saes_v2_sub_decrot, MATCH_SAES_V2_SUB_DECROT, MASK_SAES_V2_SUB_DECROT)
 +DECLARE_INSN(saes_v2_mix_enc, MATCH_SAES_V2_MIX_ENC, MASK_SAES_V2_MIX_ENC)
 +DECLARE_INSN(saes_v2_mix_dec, MATCH_SAES_V2_MIX_DEC, MASK_SAES_V2_MIX_DEC)
-+DECLARE_INSN(saes_v3_ks, MATCH_SAES_V3_KS, MASK_SAES_V3_KS)
-+DECLARE_INSN(saes_v3_enc, MATCH_SAES_V3_ENC, MASK_SAES_V3_ENC)
-+DECLARE_INSN(saes_v3_dec, MATCH_SAES_V3_DEC, MASK_SAES_V3_DEC)
++DECLARE_INSN(saes_v3_encs, MATCH_SAES_V3_ENCS, MASK_SAES_V3_ENCS)
++DECLARE_INSN(saes_v3_encm, MATCH_SAES_V3_ENCM, MASK_SAES_V3_ENCM)
++DECLARE_INSN(saes_v3_encsm, MATCH_SAES_V3_ENCSM, MASK_SAES_V3_ENCSM)
++DECLARE_INSN(saes_v3_decs, MATCH_SAES_V3_DECS, MASK_SAES_V3_DECS)
++DECLARE_INSN(saes_v3_decm, MATCH_SAES_V3_DECM, MASK_SAES_V3_DECM)
++DECLARE_INSN(saes_v3_decsm, MATCH_SAES_V3_DECSM, MASK_SAES_V3_DECSM)
 +DECLARE_INSN(ssha256_s0, MATCH_SSHA256_S0, MASK_SSHA256_S0)
 +DECLARE_INSN(ssha256_s1, MATCH_SSHA256_S1, MASK_SSHA256_S1)
 +DECLARE_INSN(ssha256_s2, MATCH_SSHA256_S2, MASK_SSHA256_S2)
@@ -629,82 +664,144 @@ index 0000000..b974d1e
 +WRITE_RD(result);
 +
 +
-diff --git a/riscv/insns/saes_v3_dec.h b/riscv/insns/saes_v3_dec.h
+diff --git a/riscv/insns/saes_v3_decm.h b/riscv/insns/saes_v3_decm.h
 new file mode 100644
-index 0000000..525c083
+index 0000000..7b43f99
 --- /dev/null
-+++ b/riscv/insns/saes_v3_dec.h
-@@ -0,0 +1,25 @@
++++ b/riscv/insns/saes_v3_decm.h
+@@ -0,0 +1,20 @@
 +
 +#include "saes_common.h"
 +
-+uint8_t     fa = insn.fa();
-+uint8_t     fc = insn.fc();
++uint8_t     bs = insn.bs();
 +
-+uint8_t     t0 = RS1 >> (8*fa);
++uint8_t     t0 = RS1 >> (8*bs);
++uint8_t      x = t0;
++uint32_t     u ;
++
++u = (AES_GFMUL(x,0xb) << 24) |
++    (AES_GFMUL(x,0xd) << 16) |
++    (AES_GFMUL(x,0x9) <<  8) |
++    (AES_GFMUL(x,0xe) <<  0) ;
++
++u = (u << (8*bs)) | (u >> (32-8*bs));
++
++WRITE_RD(u ^ RS2);
++
++
++
+diff --git a/riscv/insns/saes_v3_decs.h b/riscv/insns/saes_v3_decs.h
+new file mode 100644
+index 0000000..99cc712
+--- /dev/null
++++ b/riscv/insns/saes_v3_decs.h
+@@ -0,0 +1,14 @@
++
++#include "saes_common.h"
++
++uint8_t     bs = insn.bs();
++
++uint8_t     t0 = RS1 >> (8*bs);
++uint8_t      x = AES_DEC_SBOX[t0];
++uint32_t     u = x;
++
++u = (u << (8*bs)) | (u >> (32-8*bs));
++
++WRITE_RD(u ^ RS2);
++
++
+diff --git a/riscv/insns/saes_v3_decsm.h b/riscv/insns/saes_v3_decsm.h
+new file mode 100644
+index 0000000..32997d6
+--- /dev/null
++++ b/riscv/insns/saes_v3_decsm.h
+@@ -0,0 +1,21 @@
++
++#include "saes_common.h"
++
++uint8_t     bs = insn.bs();
++
++uint8_t     t0 = RS1 >> (8*bs);
 +uint8_t      x = AES_DEC_SBOX[t0];
 +uint32_t     u ;
 +
++u = (AES_GFMUL(x,0xb) << 24) |
++    (AES_GFMUL(x,0xd) << 16) |
++    (AES_GFMUL(x,0x9) <<  8) |
++    (AES_GFMUL(x,0xe) <<  0) ;
 +
-+if(fc) {
-+    u = (AES_GFMUL(x,0xb) << 24) |
-+        (AES_GFMUL(x,0xd) << 16) |
-+        (AES_GFMUL(x,0x9) <<  8) |
-+        (AES_GFMUL(x,0xe) <<  0) ;
-+} else {
-+    u = x;
-+}
-+
-+u = (u << (8*fa)) | (u >> (32-8*fa));
++u = (u << (8*bs)) | (u >> (32-8*bs));
 +
 +WRITE_RD(u ^ RS2);
 +
 +
-diff --git a/riscv/insns/saes_v3_enc.h b/riscv/insns/saes_v3_enc.h
++
++
+diff --git a/riscv/insns/saes_v3_encm.h b/riscv/insns/saes_v3_encm.h
 new file mode 100644
-index 0000000..c8936bc
+index 0000000..b35ed57
 --- /dev/null
-+++ b/riscv/insns/saes_v3_enc.h
-@@ -0,0 +1,24 @@
++++ b/riscv/insns/saes_v3_encm.h
+@@ -0,0 +1,18 @@
 +
 +#include "saes_common.h"
 +
-+uint8_t     fa = insn.fa();
-+uint8_t     fc = insn.fc();
++uint8_t     bs = insn.bs();
 +
-+uint8_t     t0 = RS1 >> (8*fa);
++uint8_t     t0 = RS1 >> (8*bs);
++uint8_t      x = t0;
++uint32_t     u ;
++
++u = (AES_GFMUL(x,3) << 24) |
++    (          x    << 16) |
++    (          x    <<  8) |
++    (AES_GFMUL(x,2) <<  0) ;
++
++u = (u << (8*bs)) | (u >> (32-8*bs));
++
++WRITE_RD(u ^ RS2);
++
+diff --git a/riscv/insns/saes_v3_encs.h b/riscv/insns/saes_v3_encs.h
+new file mode 100644
+index 0000000..4f8e34f
+--- /dev/null
++++ b/riscv/insns/saes_v3_encs.h
+@@ -0,0 +1,14 @@
++
++#include "saes_common.h"
++
++uint8_t     bs = insn.bs();
++
++uint8_t     t0 = RS1 >> (8*bs);
++uint8_t      x = AES_ENC_SBOX[t0];
++uint32_t     u = x;
++
++u = (u << (8*bs)) | (u >> (32-8*bs));
++
++WRITE_RD(u ^ RS2);
++
++
+diff --git a/riscv/insns/saes_v3_encsm.h b/riscv/insns/saes_v3_encsm.h
+new file mode 100644
+index 0000000..e0cd8e4
+--- /dev/null
++++ b/riscv/insns/saes_v3_encsm.h
+@@ -0,0 +1,18 @@
++
++#include "saes_common.h"
++
++uint8_t     bs = insn.bs();
++
++uint8_t     t0 = RS1 >> (8*bs);
 +uint8_t      x = AES_ENC_SBOX[t0];
 +uint32_t     u ;
 +
-+if(fc) {
-+    u = (AES_GFMUL(x,3) << 24) |
-+        (          x    << 16) |
-+        (          x    <<  8) |
-+        (AES_GFMUL(x,2) <<  0) ;
-+} else {
-+    u = x;
-+}
++u = (AES_GFMUL(x,3) << 24) |
++    (          x    << 16) |
++    (          x    <<  8) |
++    (AES_GFMUL(x,2) <<  0) ;
 +
-+u = (u << (8*fa)) | (u >> (32-8*fa));
-+
-+WRITE_RD(u ^ RS2);
-+
-+
-diff --git a/riscv/insns/saes_v3_ks.h b/riscv/insns/saes_v3_ks.h
-new file mode 100644
-index 0000000..461032a
---- /dev/null
-+++ b/riscv/insns/saes_v3_ks.h
-@@ -0,0 +1,12 @@
-+
-+#include "saes_common.h"
-+
-+uint8_t     fa = insn.fa();
-+uint8_t     fb = insn.fb();
-+
-+uint8_t     t0 = RS1 >> (8*fa);
-+uint32_t     x = AES_ENC_SBOX[t0];
-+uint32_t     u = (x << (8*fb)) | (x >> (32-8*fb));
++u = (u << (8*bs)) | (u >> (32-8*bs));
 +
 +WRITE_RD(u ^ RS2);
 +
@@ -963,10 +1060,10 @@ index 0000000..c5141dc
 +MMU.store_uint32(RS1 + (RS2 << 2), RS3);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..9234a6a 100644
+index 4ee64fa..113232d 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,48 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,51 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
@@ -984,9 +1081,12 @@ index 4ee64fa..9234a6a 100644
 +    saes_v2_sub_decrot \
 +    saes_v2_sub_enc \
 +    saes_v2_sub_encrot \
-+    saes_v3_dec \
-+    saes_v3_enc \
-+    saes_v3_ks \
++    saes_v3_encs \
++    saes_v3_encm\
++    saes_v3_encsm\
++    saes_v3_decs \
++    saes_v3_decm\
++    saes_v3_decsm\
 +    ssha256_s0 \
 +    ssha256_s1 \
 +    ssha256_s2 \
@@ -1015,7 +1115,7 @@ index 4ee64fa..9234a6a 100644
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +824,7 @@ riscv_insn_list = \
+@@ -782,6 +827,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \

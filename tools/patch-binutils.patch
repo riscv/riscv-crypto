@@ -11,7 +11,7 @@ index b0d53766e2..f992cc3ca6 100644
    };
  
 diff --git a/gas/config/tc-riscv.c b/gas/config/tc-riscv.c
-index 9ecdcab0b6..c96eabb08d 100644
+index 9ecdcab0b6..f1615c328d 100644
 --- a/gas/config/tc-riscv.c
 +++ b/gas/config/tc-riscv.c
 @@ -173,6 +173,9 @@ riscv_multi_subset_supports (enum riscv_insn_class insn_class)
@@ -33,17 +33,15 @@ index 9ecdcab0b6..c96eabb08d 100644
        case 'd':	USE_BITS (OP_MASK_RD,		OP_SH_RD);	break;
        case 'm':	USE_BITS (OP_MASK_RM,		OP_SH_RM);	break;
        case 's':	USE_BITS (OP_MASK_RS1,		OP_SH_RS1);	break;
-@@ -688,6 +693,9 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
+@@ -688,6 +693,7 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
        case 'r':	USE_BITS (OP_MASK_RS3,          OP_SH_RS3);     break;
        case 'P':	USE_BITS (OP_MASK_PRED,		OP_SH_PRED); break;
        case 'Q':	USE_BITS (OP_MASK_SUCC,		OP_SH_SUCC); break;
-+      case 'w':	USE_BITS (OP_MASK_FA  ,		OP_SH_FA  ); break;
-+      case 'e':	USE_BITS (OP_MASK_FB  ,		OP_SH_FB  ); break;
-+      case 'g':	USE_BITS (OP_MASK_FC  ,		OP_SH_FC  ); break;
++      case 'w':	USE_BITS (OP_MASK_BS  ,		OP_SH_BS  ); break;
        case 'o':
        case 'j': used_bits |= ENCODE_ITYPE_IMM (-1U); break;
        case 'a':	used_bits |= ENCODE_UJTYPE_IMM (-1U); break;
-@@ -1557,6 +1565,7 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
+@@ -1557,6 +1563,7 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
    unsigned int regno;
    char save_c = 0;
    int argnum;
@@ -51,7 +49,7 @@ index 9ecdcab0b6..c96eabb08d 100644
    const struct percent_op_match *p;
    const char *error = "unrecognized opcode";
  
-@@ -2001,6 +2010,73 @@ rvc_lui:
+@@ -2001,6 +2008,55 @@ rvc_lui:
  		}
  	      break;
  
@@ -95,41 +93,23 @@ index 9ecdcab0b6..c96eabb08d 100644
 +	      }
 +	      break;
 +        
-+        case 'w': /* FA */
++        case 'w': /* BS */
 +	        my_getExpression (imm_expr, s);
 +	        check_absolute_expr (ip, imm_expr, FALSE);
-+            if(imm_expr->X_add_number > 3){as_bad(_("Crypto ISE: 0 <= FA <= 3"));}
-+            INSERT_OPERAND(FA,*ip,imm_expr->X_add_number & 0x3);
++            if(imm_expr->X_add_number > 3){as_bad(_("Crypto ISE: 0 <= Byte Select <= 3"));}
++            INSERT_OPERAND(BS,*ip,imm_expr->X_add_number & 0x3);
 +            imm_expr->X_op = O_absent;
 +            s = expr_end;
 +            continue;
 +        
-+        case 'e': /* FB */
-+	        my_getExpression (imm_expr, s);
-+	        check_absolute_expr (ip, imm_expr, FALSE);
-+            if(imm_expr->X_add_number > 3){as_bad(_("Crypto ISE: 0 <= FB <= 3"));}
-+            INSERT_OPERAND(FB,*ip,imm_expr->X_add_number & 0x3);
-+            imm_expr->X_op = O_absent;
-+            s = expr_end;
-+            continue;
-+        
-+        case 'g': /* FC */
-+	        my_getExpression (imm_expr, s);
-+	        check_absolute_expr (ip, imm_expr, FALSE);
-+            if(imm_expr->X_add_number > 1){as_bad(_("Crypto ISE: 0 <= FC <= 1"));}
-+            INSERT_OPERAND(FC,*ip,imm_expr->X_add_number & 0x1);
-+            imm_expr->X_op = O_absent;
-+            s = expr_end;
-+            continue;
-+
  	    case 'd':		/* Destination register.  */
  	    case 's':		/* Source register.  */
  	    case 't':		/* Target register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..07761a2f12 100644
+index 6c750a33b1..e5577382b4 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
-@@ -343,6 +343,86 @@
+@@ -343,6 +343,120 @@
  #define MASK_GORCIW  0xfe00707f
  #define MATCH_GREVIW 0x6800501b
  #define MASK_GREVIW  0xfe00707f
@@ -144,27 +124,61 @@ index 6c750a33b1..07761a2f12 100644
 +#define MATCH_MACCU 0x102b
 +#define MASK_MACCU  0x60070ff
 +#define MATCH_SAES_V1_ENC 0x1c00202b
++#define MASK_SAES_V1_ENC 0xfff0707f
++#define MATCH_SAES_V1_ENC 0x1c00202b
 +#define MASK_SAES_V1_ENC  0xfff0707f
 +#define MATCH_SAES_V1_DEC 0x1e10202b
++#define MASK_SAES_V1_DEC 0xfff0707f
++#define MATCH_SAES_V1_DEC 0x1e10202b
 +#define MASK_SAES_V1_DEC  0xfff0707f
-+#define MATCH_SAES_V2_SUB_ENC 0x1200202b
++#define MATCH_SAES_V2_SUB_ENC 0x1600202b
++#define MASK_SAES_V2_SUB_ENC 0xfe00707f
++#define MATCH_SAES_V2_SUB_ENC 0x1600202b
 +#define MASK_SAES_V2_SUB_ENC  0xfe00707f
-+#define MATCH_SAES_V2_SUB_ENCROT 0x1000202b
++#define MATCH_SAES_V2_SUB_ENCROT 0x1400202b
++#define MASK_SAES_V2_SUB_ENCROT 0xfe00707f
++#define MATCH_SAES_V2_SUB_ENCROT 0x1400202b
 +#define MASK_SAES_V2_SUB_ENCROT  0xfe00707f
-+#define MATCH_SAES_V2_SUB_DEC 0xe00202b
++#define MATCH_SAES_V2_SUB_DEC 0x1200202b
++#define MASK_SAES_V2_SUB_DEC 0xfe00707f
++#define MATCH_SAES_V2_SUB_DEC 0x1200202b
 +#define MASK_SAES_V2_SUB_DEC  0xfe00707f
-+#define MATCH_SAES_V2_SUB_DECROT 0xc00202b
++#define MATCH_SAES_V2_SUB_DECROT 0x1000202b
++#define MASK_SAES_V2_SUB_DECROT 0xfe00707f
++#define MATCH_SAES_V2_SUB_DECROT 0x1000202b
 +#define MASK_SAES_V2_SUB_DECROT  0xfe00707f
-+#define MATCH_SAES_V2_MIX_ENC 0xa00202b
++#define MATCH_SAES_V2_MIX_ENC 0xe00202b
++#define MASK_SAES_V2_MIX_ENC 0xfe00707f
++#define MATCH_SAES_V2_MIX_ENC 0xe00202b
 +#define MASK_SAES_V2_MIX_ENC  0xfe00707f
-+#define MATCH_SAES_V2_MIX_DEC 0x800202b
++#define MATCH_SAES_V2_MIX_DEC 0xc00202b
++#define MASK_SAES_V2_MIX_DEC 0xfe00707f
++#define MATCH_SAES_V2_MIX_DEC 0xc00202b
 +#define MASK_SAES_V2_MIX_DEC  0xfe00707f
-+#define MATCH_SAES_V3_KS 0x600202b
-+#define MASK_SAES_V3_KS  0xe00707f
-+#define MATCH_SAES_V3_ENC 0x400202b
-+#define MASK_SAES_V3_ENC  0x1e00707f
-+#define MATCH_SAES_V3_DEC 0x200202b
-+#define MASK_SAES_V3_DEC  0x1e00707f
++#define MATCH_SAES_V3_ENCS 0xa00202b
++#define MASK_SAES_V3_ENCS 0x3e00707f
++#define MATCH_SAES_V3_ENCS 0xa00202b
++#define MASK_SAES_V3_ENCS  0x3e00707f
++#define MATCH_SAES_V3_ENCM 0x800202b
++#define MASK_SAES_V3_ENCM 0x3e00707f
++#define MATCH_SAES_V3_ENCM 0x800202b
++#define MASK_SAES_V3_ENCM  0x3e00707f
++#define MATCH_SAES_V3_ENCSM 0x600202b
++#define MASK_SAES_V3_ENCSM 0x3e00707f
++#define MATCH_SAES_V3_ENCSM 0x600202b
++#define MASK_SAES_V3_ENCSM  0x3e00707f
++#define MATCH_SAES_V3_DECS 0x400202b
++#define MASK_SAES_V3_DECS 0x3e00707f
++#define MATCH_SAES_V3_DECS 0x400202b
++#define MASK_SAES_V3_DECS  0x3e00707f
++#define MATCH_SAES_V3_DECM 0x200202b
++#define MASK_SAES_V3_DECM 0x3e00707f
++#define MATCH_SAES_V3_DECM 0x200202b
++#define MASK_SAES_V3_DECM  0x3e00707f
++#define MATCH_SAES_V3_DECSM 0x202b
++#define MASK_SAES_V3_DECSM 0x3e00707f
++#define MATCH_SAES_V3_DECSM 0x202b
++#define MASK_SAES_V3_DECSM  0x3e00707f
 +#define MATCH_SSHA256_S0 0xe00702b
 +#define MASK_SSHA256_S0  0xfff0707f
 +#define MATCH_SSHA256_S1 0xe10702b
@@ -217,7 +231,7 @@ index 6c750a33b1..07761a2f12 100644
  #define MASK_FSLW  0x600707f
  #define MATCH_FSRW 0x400503b
 diff --git a/include/opcode/riscv.h b/include/opcode/riscv.h
-index 7e67c7f9a2..8f601cb31c 100644
+index 7e67c7f9a2..a437a37718 100644
 --- a/include/opcode/riscv.h
 +++ b/include/opcode/riscv.h
 @@ -208,6 +208,8 @@ static const char * const riscv_pred_succ[16] =
@@ -229,21 +243,17 @@ index 7e67c7f9a2..8f601cb31c 100644
  #define OP_MASK_SHAMT		0x3f
  #define OP_SH_SHAMT		20
  #define OP_MASK_SHAMTW		0x1f
-@@ -223,6 +225,13 @@ static const char * const riscv_pred_succ[16] =
+@@ -223,6 +225,9 @@ static const char * const riscv_pred_succ[16] =
  #define OP_MASK_RL		0x1
  #define OP_SH_RL		25
  
-+#define OP_SH_FA        30
-+#define OP_MASK_FA      3 
-+#define OP_SH_FB        28
-+#define OP_MASK_FB      3 
-+#define OP_SH_FC        29
-+#define OP_MASK_FC      1 
++#define OP_SH_BS        30
++#define OP_MASK_BS      3 
 +
  #define OP_MASK_CUSTOM_IMM	0x7f
  #define OP_SH_CUSTOM_IMM	25
  #define OP_MASK_CSR		0xfff
-@@ -321,7 +330,9 @@ enum riscv_insn_class
+@@ -321,7 +326,9 @@ enum riscv_insn_class
     INSN_CLASS_B_OR_ZBM,
     INSN_CLASS_B_OR_ZBP,
     INSN_CLASS_B_OR_ZBS,
@@ -255,10 +265,10 @@ index 7e67c7f9a2..8f601cb31c 100644
  
  /* This structure holds information for a particular instruction.  */
 diff --git a/opcodes/riscv-dis.c b/opcodes/riscv-dis.c
-index 19f10c0e55..6a2b521315 100644
+index 19f10c0e55..db7754b21e 100644
 --- a/opcodes/riscv-dis.c
 +++ b/opcodes/riscv-dis.c
-@@ -297,6 +297,30 @@ print_insn_args (const char *d, insn_t l, bfd_vma pc, disassemble_info *info)
+@@ -297,6 +297,22 @@ print_insn_args (const char *d, insn_t l, bfd_vma pc, disassemble_info *info)
  	  print (info->stream, "%s", riscv_gpr_names[rd]);
  	  break;
  
@@ -274,26 +284,18 @@ index 19f10c0e55..6a2b521315 100644
 +      );
 +      break;
 +	
-+    case 'w': /*FA*/
-+	  print (info->stream, "0x%x", (int)EXTRACT_OPERAND (FA, l));
-+	  break;
-+    
-+    case 'e': /*FB*/
-+	  print (info->stream, "0x%x", (int)EXTRACT_OPERAND (FB, l));
-+	  break;
-+    
-+    case 'g': /*FC*/
-+	  print (info->stream, "0x%x", (int)EXTRACT_OPERAND (FC, l));
++    case 'w': /*BS*/
++	  print (info->stream, "0x%x", (int)EXTRACT_OPERAND (BS, l));
 +	  break;
 +
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
  	  break;
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..f8cd9a7b5e 100644
+index e99febc823..3bb5ec6c51 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
-@@ -709,6 +709,48 @@ const struct riscv_opcode riscv_opcodes[] =
+@@ -709,6 +709,51 @@ const struct riscv_opcode riscv_opcodes[] =
  {"unzip2",    0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  {"unzip",     0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  
@@ -311,9 +313,12 @@ index e99febc823..f8cd9a7b5e 100644
 +{"saes.v2.sub.decrot"  , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_SUB_DECROT, MASK_SAES_V2_SUB_DECROT, match_opcode, 0},
 +{"saes.v2.mix.enc"     , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_MIX_ENC, MASK_SAES_V2_MIX_ENC, match_opcode, 0},
 +{"saes.v2.mix.dec"     , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_MIX_DEC, MASK_SAES_V2_MIX_DEC, match_opcode, 0},
-+{"saes.v3.ks"          , 0, INSN_CLASS_ZSCRYPTO, "d,s,t,w,e", MATCH_SAES_V3_KS, MASK_SAES_V3_KS, match_opcode, 0},
-+{"saes.v3.enc"         , 0, INSN_CLASS_ZSCRYPTO, "d,s,t,w,g", MATCH_SAES_V3_ENC, MASK_SAES_V3_ENC, match_opcode, 0},
-+{"saes.v3.dec"         , 0, INSN_CLASS_ZSCRYPTO, "d,s,t,w,g", MATCH_SAES_V3_DEC, MASK_SAES_V3_DEC, match_opcode, 0},
++{"saes.v3.encs"        , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_ENCS, MASK_SAES_V3_ENCS, match_opcode, 0},
++{"saes.v3.encm"        , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_ENCM, MASK_SAES_V3_ENCM, match_opcode, 0},
++{"saes.v3.encsm"       , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_ENCSM, MASK_SAES_V3_ENCSM, match_opcode, 0},
++{"saes.v3.decs"        , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_DECS, MASK_SAES_V3_DECS, match_opcode, 0},
++{"saes.v3.decm"        , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_DECM, MASK_SAES_V3_DECM, match_opcode, 0},
++{"saes.v3.decsm"       , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_DECSM, MASK_SAES_V3_DECSM, match_opcode, 0},
 +{"ssha256.s0"          , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SSHA256_S0, MASK_SSHA256_S0, match_opcode, 0},
 +{"ssha256.s1"          , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SSHA256_S1, MASK_SSHA256_S1, match_opcode, 0},
 +{"ssha256.s2"          , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SSHA256_S2, MASK_SSHA256_S2, match_opcode, 0},

@@ -81,9 +81,12 @@ static inline uint64_t * _ssha3_idx (uint64_t * base, int idx) {uint64_t * rd; _
 static inline uint32_t _saes_v1_enc(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.enc %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 static inline uint32_t _saes_v1_dec(uint32_t rs1) {uint32_t rd; __asm__("saes.v1.dec %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 
-static inline uint32_t _saes_v3_ks (uint32_t rs1, uint32_t rs2, int fa, int fb) {uint32_t rd; __asm__("saes.v3.ks  %0, %1, %2, %3, %4" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(fa), "i"(fb)); return rd;}
-static inline uint32_t _saes_v3_enc(uint32_t rs1, uint32_t rs2, int fa, int fc) {uint32_t rd; __asm__("saes.v3.enc %0, %1, %2, %3, %4" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(fa), "i"(fc)); return rd;}
-static inline uint32_t _saes_v3_dec(uint32_t rs1, uint32_t rs2, int fa, int fc) {uint32_t rd; __asm__("saes.v3.dec %0, %1, %2, %3, %4" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(fa), "i"(fc)); return rd;}
+static inline uint32_t _saes_v3_encs (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.encs  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+static inline uint32_t _saes_v3_encm (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.encm  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+static inline uint32_t _saes_v3_encsm(uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.encsm %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+static inline uint32_t _saes_v3_decs (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.decs  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+static inline uint32_t _saes_v3_decm (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.decm  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+static inline uint32_t _saes_v3_decsm(uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.decsm %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 #endif
 
 #endif // __RISCV_CRYPTO_INTRINSICS__

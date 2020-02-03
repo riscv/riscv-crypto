@@ -36,12 +36,15 @@ main:
     saes.v2.mix.enc     a0, a1, a2
     saes.v2.mix.enc     a0, a1, a2
     
-    saes.v3.ks          a0, a1, a2, 0, 0
-    saes.v3.enc         a0, a1, a2, 0, 0
-    saes.v3.dec         a0, a1, a2, 0, 0
-    saes.v3.ks          a0, a1, a2, 3, 0
-    saes.v3.enc         a0, a1, a2, 3, 1
-    saes.v3.dec         a0, a1, a2, 3, 1
+    saes.v3.encs        a0, a1, a2, 0
+    saes.v3.encm        a0, a1, a2, 1
+    saes.v3.encs        a0, a1, a2, 2
+    saes.v3.encm        a0, a1, a2, 3
+
+    saes.v3.decs        a0, a1, a2, 0
+    saes.v3.decm        a0, a1, a2, 1
+    saes.v3.decs        a0, a1, a2, 2
+    saes.v3.decm        a0, a1, a2, 3
 
 #
 # ------------------------------------------------------------

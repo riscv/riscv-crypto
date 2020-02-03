@@ -125,47 +125,63 @@ saes.v2.mix(rs1, rs2, mode):
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.v3.ks     rd, rs1, rs2, fa, fb    
-    saes.v3.enc    rd, rs1, rs2, fa, fc
-    saes.v3.dec    rd, rs1, rs2, fa, fc
+    saes.v3.encs      rd, rs1, rs2, bs // Encrypt: SubBytes
+    saes.v3.encm      rd, rs1, rs2, bs // Encrypt: MixColumns
+    saes.v3.encsm     rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
+    saes.v3.decs      rd, rs1, rs2, bs // Decrypt: SubBytes
+    saes.v3.decm      rd, rs1, rs2, bs // Decrypt: MixColumns
+    saes.v3.decsm     rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
 \end{cryptoisa}
 
 These instructions are a very lightweight proposal, derived from
 \cite{MJS:20}.
+They are designed to enable a partial T-Table based implementation
+of AES in hardware, where the SubBytes, ShiftRows and MixColumns
+transformations are all rolled into a single instruction, with the
+per-byte results then accumulated.
 In contrast to variants 1 and 2, they perform only a single (Inverse) SBox
 lookup per instruction.
-Pseudo code is available in figures
-\ref{fig:pesudo:aes:v3:ks},
-\ref{fig:pesudo:aes:v3:enc} and
-\ref{fig:pesudo:aes:v3:dec}.
 
-Note that the input immediate values {\tt fa},{\tt fb} and {\tt fc}
-are $2$, $2$ and $1$ bits wide respectively.
+Only $4$ of the $6$ instructions are strictly needed: one of the following two
+subsets would suffice:
+\begin{enumerate}
+\item \mnemonic{saes.v3.encs},
+      \mnemonic{saes.v3.encsm},
+      \mnemonic{saes.v3.decs} and
+      \mnemonic{saes.v3.decsm}.
+\item \mnemonic{saes.v3.encs},
+      \mnemonic{saes.v3.encm},
+      \mnemonic{saes.v3.decs} and
+      \mnemonic{saes.v3.decm}.
+\end{enumerate}
+
+The first set is more performant in terms of instructions executed per
+AES round.
+However, it places the (Inv)SubBytes and (Inv)MixColumns operations
+sequentially and so has a longer timing path.
+The second set requires $2$x more instructions per round, but has a
+shorter timing path.
 
 \begin{figure}
 
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.v3.ks(rs1, rs2, fa, fb):
-    t0.8  = rs1.8[fa]
-     x.8  = AESSBox[tmp]
-    u.32  = {0, 0, 0, x }
-    rd.32 = ROTL32(u.32, 8*fb) ^ rs2.32
-\end{lstlisting}
-\caption{Key schedule instruction pseudo code.}
-\label{fig:pesudo:aes:v3:ks}
-\end{subfigure}
+saes.v3.encs(rs1, rs2, bs):                 // SubBytes Only
+    t0.8  = rs1.8[bs]
+    x.8   = AESSBox[t0]
+    u.32  = {0, 0, 0, x}
+    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 
-\begin{subfigure}[b]{1.0\textwidth}
-\begin{lstlisting}
-saes.v3.enc(rs1, rs2, fa, fc):
-    t0.8 = rs1.8[fa]
-    x.8  = AESSBox[tmp]
-    if(fc)
-        u.32 = {GFMUL(x,3) , x, x, GFMUL(x,2)}
-    else
-        u.32 = {   0 , 0, 0, x }
-    rd.32 = ROTL32(u.32, 8*fa) ^ rs2.32
+saes.v3.encm(rs1, rs2, bs):                 // MixColumns only
+    x.8   = rs1.8[bs]
+    u.32  = {GFMUL(x,3) , x, x, GFMUL(x,2)}
+    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+
+saes.v3.encsm(rs1, rs2, bs):                // SubBytes & MixColumns
+    t0.8  = rs1.8[bs]
+    x.8   = AESSBox[t0]
+    u.32  = {GFMUL(x,3) , x, x, GFMUL(x,2)}
+    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 \end{lstlisting}
 \caption{Encrypt instruction pseudo code.}
 \label{fig:pesudo:aes:v3:enc}
@@ -173,14 +189,22 @@ saes.v3.enc(rs1, rs2, fa, fc):
 
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.v3.dec(rs1, rs2, fa, fc):
-    t0.8 = rs1.8[fa]
-    x.8  = INVAESSBox[tmp]
-    if(fc)
-        u.32 = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
-    else
-        u.32 = {      0 ,       0 ,    0 ,       x }
-    rd.32 = ROTL32(u.32, 8*fa) ^ rs2.32
+saes.v3.decs(rs1, rs2, bs):                 // InvSubBytes Only
+    t0.8  = rs1.8[bs]
+    x.8   = INVAESSBox[t0]
+    u.32  = {0, 0, 0, x}
+    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+
+saes.v3.decm(rs1, rs2, bs):                 // InvMixColumns Only
+    x.8   = rs1.8[bs]
+    u.32  = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
+    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+
+saes.v3.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
+    t0.8  = rs1.8[bs]
+    x.8   = INVAESSBox[t0]
+    u.32  = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
+    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 \end{lstlisting}
 \caption{Decrypt instruction pseudo code.}
 \label{fig:pesudo:aes:v3:dec}

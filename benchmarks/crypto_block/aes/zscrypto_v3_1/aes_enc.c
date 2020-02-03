@@ -15,8 +15,6 @@
 
 #include "riscvcrypto/crypto_block/aes/api_aes.h"
 
-#include "aes_enc1s.h"
-
 //  round constants -- just iterations of the xtime() LFSR
 static const uint8_t aes_rcon[] = {
     0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
@@ -50,26 +48,28 @@ void aes_ecb_encrypt (
         u1 = rk[5];
         u2 = rk[6];
         u3 = rk[7];
+        
+        uint32_t tx;
 
-        u0 = enc1s(t0, u0, AES_FN_ENC , 0); //  AES round, 16 instructions
-        u0 = enc1s(t1, u0, AES_FN_ENC , 1);
-        u0 = enc1s(t2, u0, AES_FN_ENC , 2);
-        u0 = enc1s(t3, u0, AES_FN_ENC , 3);
+        u0 = _saes_v3_encsm(t0, u0, 0); //  AES round, 16 instructions
+        u0 = _saes_v3_encsm(t1, u0, 1);
+        u0 = _saes_v3_encsm(t2, u0, 2);
+        u0 = _saes_v3_encsm(t3, u0, 3);
 
-        u1 = enc1s(t1, u1, AES_FN_ENC , 0);
-        u1 = enc1s(t2, u1, AES_FN_ENC , 1);
-        u1 = enc1s(t3, u1, AES_FN_ENC , 2);
-        u1 = enc1s(t0, u1, AES_FN_ENC , 3);
+        u1 = _saes_v3_encsm(t1, u1, 0);
+        u1 = _saes_v3_encsm(t2, u1, 1);
+        u1 = _saes_v3_encsm(t3, u1, 2);
+        u1 = _saes_v3_encsm(t0, u1, 3);
 
-        u2 = enc1s(t2, u2, AES_FN_ENC , 0);
-        u2 = enc1s(t3, u2, AES_FN_ENC , 1);
-        u2 = enc1s(t0, u2, AES_FN_ENC , 2);
-        u2 = enc1s(t1, u2, AES_FN_ENC , 3);
+        u2 = _saes_v3_encsm(t2, u2, 0);
+        u2 = _saes_v3_encsm(t3, u2, 1);
+        u2 = _saes_v3_encsm(t0, u2, 2);
+        u2 = _saes_v3_encsm(t1, u2, 3);
 
-        u3 = enc1s(t3, u3, AES_FN_ENC , 0);
-        u3 = enc1s(t0, u3, AES_FN_ENC , 1);
-        u3 = enc1s(t1, u3, AES_FN_ENC , 2);
-        u3 = enc1s(t2, u3, AES_FN_ENC , 3);
+        u3 = _saes_v3_encsm(t3, u3, 0);
+        u3 = _saes_v3_encsm(t0, u3, 1);
+        u3 = _saes_v3_encsm(t1, u3, 2);
+        u3 = _saes_v3_encsm(t2, u3, 3);
 
         t0 = rk[8];                         //  fetch even subkey
         t1 = rk[9];
@@ -80,46 +80,46 @@ void aes_ecb_encrypt (
         if (rk == kp)                       //  final round ?
             break;
 
-        t0 = enc1s(u0, t0, AES_FN_ENC , 0); //  final encrypt round, 16 ins.
-        t0 = enc1s(u1, t0, AES_FN_ENC , 1);
-        t0 = enc1s(u2, t0, AES_FN_ENC , 2);
-        t0 = enc1s(u3, t0, AES_FN_ENC , 3);
+        t0 = _saes_v3_encsm(u0, t0, 0); //  final encrypt round, 16 ins.
+        t0 = _saes_v3_encsm(u1, t0, 1);
+        t0 = _saes_v3_encsm(u2, t0, 2);
+        t0 = _saes_v3_encsm(u3, t0, 3);
 
-        t1 = enc1s(u1, t1, AES_FN_ENC , 0);
-        t1 = enc1s(u2, t1, AES_FN_ENC , 1);
-        t1 = enc1s(u3, t1, AES_FN_ENC , 2);
-        t1 = enc1s(u0, t1, AES_FN_ENC , 3);
+        t1 = _saes_v3_encsm(u1, t1, 0);
+        t1 = _saes_v3_encsm(u2, t1, 1);
+        t1 = _saes_v3_encsm(u3, t1, 2);
+        t1 = _saes_v3_encsm(u0, t1, 3);
 
-        t2 = enc1s(u2, t2, AES_FN_ENC , 0);
-        t2 = enc1s(u3, t2, AES_FN_ENC , 1);
-        t2 = enc1s(u0, t2, AES_FN_ENC , 2);
-        t2 = enc1s(u1, t2, AES_FN_ENC , 3);
+        t2 = _saes_v3_encsm(u2, t2, 0);
+        t2 = _saes_v3_encsm(u3, t2, 1);
+        t2 = _saes_v3_encsm(u0, t2, 2);
+        t2 = _saes_v3_encsm(u1, t2, 3);
 
-        t3 = enc1s(u3, t3, AES_FN_ENC , 0);
-        t3 = enc1s(u0, t3, AES_FN_ENC , 1);
-        t3 = enc1s(u1, t3, AES_FN_ENC , 2);
-        t3 = enc1s(u2, t3, AES_FN_ENC , 3);
+        t3 = _saes_v3_encsm(u3, t3, 0);
+        t3 = _saes_v3_encsm(u0, t3, 1);
+        t3 = _saes_v3_encsm(u1, t3, 2);
+        t3 = _saes_v3_encsm(u2, t3, 3);
     }
 
-    t0 = enc1s(u0, t0, AES_FN_FWD , 0);     //  final round is different
-    t0 = enc1s(u1, t0, AES_FN_FWD , 1);
-    t0 = enc1s(u2, t0, AES_FN_FWD , 2);
-    t0 = enc1s(u3, t0, AES_FN_FWD , 3);
+    t0 = _saes_v3_encs(u0, t0, 0);     //  final round is different
+    t0 = _saes_v3_encs(u1, t0, 1);
+    t0 = _saes_v3_encs(u2, t0, 2);
+    t0 = _saes_v3_encs(u3, t0, 3);
 
-    t1 = enc1s(u1, t1, AES_FN_FWD , 0);
-    t1 = enc1s(u2, t1, AES_FN_FWD , 1);
-    t1 = enc1s(u3, t1, AES_FN_FWD , 2);
-    t1 = enc1s(u0, t1, AES_FN_FWD , 3);
+    t1 = _saes_v3_encs(u1, t1, 0);
+    t1 = _saes_v3_encs(u2, t1, 1);
+    t1 = _saes_v3_encs(u3, t1, 2);
+    t1 = _saes_v3_encs(u0, t1, 3);
 
-    t2 = enc1s(u2, t2, AES_FN_FWD , 0);
-    t2 = enc1s(u3, t2, AES_FN_FWD , 1);
-    t2 = enc1s(u0, t2, AES_FN_FWD , 2);
-    t2 = enc1s(u1, t2, AES_FN_FWD , 3);
+    t2 = _saes_v3_encs(u2, t2, 0);
+    t2 = _saes_v3_encs(u3, t2, 1);
+    t2 = _saes_v3_encs(u0, t2, 2);
+    t2 = _saes_v3_encs(u1, t2, 3);
 
-    t3 = enc1s(u3, t3, AES_FN_FWD , 0);
-    t3 = enc1s(u0, t3, AES_FN_FWD , 1);
-    t3 = enc1s(u1, t3, AES_FN_FWD , 2);
-    t3 = enc1s(u2, t3, AES_FN_FWD , 3);
+    t3 = _saes_v3_encs(u3, t3, 0);
+    t3 = _saes_v3_encs(u0, t3, 1);
+    t3 = _saes_v3_encs(u1, t3, 2);
+    t3 = _saes_v3_encs(u2, t3, 3);
 
     U32_TO_U8LE(ct , t0,  0);                 //  write ciphertext block
     U32_TO_U8LE(ct , t1,  4);
@@ -155,10 +155,12 @@ void aes_128_enc_key_schedule(
 
         t0 ^= (uint32_t) *rc++;             //  round constant
         tr = ROTL32(t3, 24);                //  rotate 8 bits (little endian!)
-        t0 = enc1s(tr, t0, AES_FN_FWD,0);   //  SubWord()
-        t0 = enc1s(tr, t0, AES_FN_FWD,1);   //
-        t0 = enc1s(tr, t0, AES_FN_FWD,2);   //
-        t0 = enc1s(tr, t0, AES_FN_FWD,3);   //
+
+        t0 = _saes_v3_encs(tr, t0, 0);   //  SubWord()
+        t0 = _saes_v3_encs(tr, t0, 1);   //
+        t0 = _saes_v3_encs(tr, t0, 2);   //
+        t0 = _saes_v3_encs(tr, t0, 3);   //
+
         t1 ^= t0;
         t2 ^= t1;
         t3 ^= t2;

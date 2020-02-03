@@ -15,9 +15,7 @@ arguments = {}
 opcodebits ={}
 
 acodes = {}
-acodes['fa'     ] = "w"
-acodes['fb'     ] = "e"
-acodes['fc'     ] = "g"
+acodes['bs'     ] = "w"
 acodes['rd'     ] = "d"
 acodes['rdp'    ] = "(N,M)"
 acodes['rs1'    ] = "s"
@@ -25,9 +23,7 @@ acodes['rs2'    ] = "t"
 acodes['rs3'    ] = "r"
 
 arglut = {}
-arglut['fa'] = (31,30)
-arglut['fb'] = (29,28)
-arglut['fc'] = (29,29)
+arglut['bs'] = (31,30)
 
 arglut['rd'] = (11,7)
 arglut['rdp'] = (11,8)
