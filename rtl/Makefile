@@ -37,6 +37,7 @@ endef
 #
 # 1. Target Name
 # 2. Source Files
+# 3. Top Module
 define add_synth_target
 
 $(call map_synth_rpt,${1}) : ${2}
@@ -44,16 +45,17 @@ $(call map_synth_rpt,${1}) : ${2}
 	$(YOSYS) -qQT \
         -p "read_verilog ${2}" \
         -p "proc" \
-        -p "tee -o $(call map_synth_rpt,${1}) scc" \
         -p "flatten" \
-        -p "synth" \
+	    -p "tee -o $(call map_synth_rpt,${1}).ltp ltp" \
+        -p "synth -top ${3} -flatten" \
+        -p "tee -o $(call map_synth_rpt,${1}) scc" \
         -p "write_verilog $(call map_synth_verilog,${1})" \
 	    -p "tee -a $(call map_synth_rpt,${1}) stat" \
 	    -p "tee -a $(call map_synth_rpt,${1}) ltp" \
-        -p "dfflibmap -liberty $(YOSYS_ROOT)/techlibs/common/cells.lib" \
-        -p "abc -liberty $(YOSYS_ROOT)/examples/cmos/cmos_cells.lib" \
-        -p "write_verilog $(call map_cmos_verilog,${1})" \
-        -p "tee -a $(call map_synth_rpt,${1}) stat" \
+        #-p "dfflibmap -liberty $(YOSYS_ROOT)/techlibs/common/cells.lib" \
+        #-p "abc -liberty $(YOSYS_ROOT)/examples/cmos/cmos_cells.lib" \
+        #-p "write_verilog $(call map_cmos_verilog,${1})" \
+        #-p "tee -a $(call map_synth_rpt,${1}) stat" \
 
 synth-${1} : $(call map_synth_rpt,${1})
 
