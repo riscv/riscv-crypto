@@ -10,5 +10,6 @@ $(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_reference,sha3_refe
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_reference,aes_reference))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_ttable,aes_ttable))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v1,aes_zscrypto_v1))
+$(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v2,aes_zscrypto_v2))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v3_1,aes_zscrypto_v3_1))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v3_2,aes_zscrypto_v3_2))

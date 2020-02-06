@@ -100,7 +100,7 @@ saes.v2.sub(rs1, rs2, mode, rot):
     if(rot == 0)
         rd.32 = {t3, t2, t1, t0} 
     else
-        rd.32 = {t2, t1, t0, t3}
+        rd.32 = {t0, t3, t2, t1}
 \end{lstlisting}
 \caption{AES instruction variant 2: sbox instruction pseudo code.}
 \label{fig:pesudo:aes:v2:sub}
