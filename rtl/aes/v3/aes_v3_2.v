@@ -32,9 +32,9 @@ assign     bytes_in [  1]   =  rs1[15: 8]               ;
 assign     bytes_in [  2]   =  rs1[23:16]               ;
 assign     bytes_in [  3]   =  rs1[31:24]               ;
 
-wire [7:0] sel_byte         = bytes_in[bs] & {8{valid}} ;
+wire [7:0] sel_byte         = bytes_in[bs]              ;
 
-wire       sbox_inv         = dec          &&   valid   ;
+wire       sbox_inv         = dec                       ;
 wire [7:0] sbox_out         ;
 
 //
