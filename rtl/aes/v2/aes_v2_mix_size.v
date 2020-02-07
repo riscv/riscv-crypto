@@ -6,18 +6,15 @@
 //
 module aes_v2_mix_size (
 
-input  wire        clock ,
-input  wire        reset ,
-
-input  wire        flush , // Flush state ready for next set of inputs.
-input  wire [31:0] flush_data, // Data flushed into the design.
+input  wire        g_clk ,
+input  wire        g_resetn ,
 
 input  wire        valid , // Are the inputs valid?
 input  wire [31:0] rs1   , // Input source register 1
 input  wire [31:0] rs2   , // Input source register 2
 input  wire        enc   , // Perform encrypt (set) or decrypt (clear).
 output wire        ready , // Is the instruction complete?
-output wire [31:0] result  // 
+output wire [31:0] rd      // 
 
 );
 
@@ -55,17 +52,17 @@ endfunction
 
 //
 // Encrypt inputs
-wire [7:0] e0 = rs1[ 7: 0] & {8{valid && enc}};
-wire [7:0] e1 = rs1[15: 8] & {8{valid && enc}};
-wire [7:0] e2 = rs2[23:16] & {8{valid && enc}};
-wire [7:0] e3 = rs2[31:24] & {8{valid && enc}};
+wire [7:0] e0 = rs1[ 7: 0];
+wire [7:0] e1 = rs1[15: 8];
+wire [7:0] e2 = rs2[23:16];
+wire [7:0] e3 = rs2[31:24];
 
 //
 // Decrypt inputs
-wire [7:0] d0 = rs1[ 7: 0] & {8{valid && !enc}};
-wire [7:0] d1 = rs1[15: 8] & {8{valid && !enc}};
-wire [7:0] d2 = rs2[23:16] & {8{valid && !enc}};
-wire [7:0] d3 = rs2[31:24] & {8{valid && !enc}};
+wire [7:0] d0 = rs1[ 7: 0];
+wire [7:0] d1 = rs1[15: 8];
+wire [7:0] d2 = rs2[23:16];
+wire [7:0] d3 = rs2[31:24];
 
 wire [31:0] result_enc;
 wire [31:0] result_dec;
@@ -153,32 +150,32 @@ wire [7:0] step_out     = enc ? enc_byte : dec_byte;
 assign     result_enc       = {b_3, b_2, b_1, b_0};
 assign     result_dec       = {b_3, b_2, b_1, b_0};
 
-always @(posedge clock) begin
-    if(reset || flush) begin
-        b_0 <= flush_data[7:0];
+always @(posedge g_clk) begin
+    if(!g_resetn) begin
+        b_0 <= 8'b0;
     end else if(fsm_0 && valid) begin
         b_0 <= step_out;
     end
 end
 
-always @(posedge clock) begin
-    if(reset || flush) begin
-        b_1 <= flush_data[15:8];
+always @(posedge g_clk) begin
+    if(!g_resetn) begin
+        b_1 <= 8'b0;
     end else if(fsm_1 && valid) begin
         b_1 <= step_out;
     end
 end
 
-always @(posedge clock) begin
-    if(reset || flush) begin
-        b_2 <= flush_data[23:16];
+always @(posedge g_clk) begin
+    if(!g_resetn) begin
+        b_2 <= 8'b0;
     end else if(fsm_2 && valid) begin
         b_2 <= step_out;
     end
 end
 
-always @(posedge clock) begin
-    if(reset || flush) begin
+always @(posedge g_clk) begin
+    if(!g_resetn) begin
         fsm <= 0;
     end else if(valid && !ready) begin
         fsm <= n_fsm;
@@ -187,7 +184,7 @@ end
 
 //
 // Create the final result.
-assign     result = result_enc | result_dec;
+assign     rd = enc ? result_enc : result_dec;
 
 endmodule
 

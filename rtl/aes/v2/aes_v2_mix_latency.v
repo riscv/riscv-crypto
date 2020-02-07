@@ -6,18 +6,15 @@
 //
 module aes_v2_mix_latency (
 
-input  wire        clock ,
-input  wire        reset ,
-
-input  wire        flush , // Flush state ready for next set of inputs.
-input  wire [31:0] flush_data, // Data flushed into the design.
+input  wire        g_clk ,
+input  wire        g_resetn,
 
 input  wire        valid , // Are the inputs valid?
 input  wire [31:0] rs1   , // Input source register 1
 input  wire [31:0] rs2   , // Input source register 2
 input  wire        enc   , // Perform encrypt (set) or decrypt (clear).
 output wire        ready , // Is the instruction complete?
-output wire [31:0] result  // 
+output wire [31:0] rd  // 
 
 );
 
@@ -55,17 +52,17 @@ endfunction
 
 //
 // Encrypt inputs
-wire [7:0] e0 = rs1[ 7: 0] & {8{valid && enc}};
-wire [7:0] e1 = rs1[15: 8] & {8{valid && enc}};
-wire [7:0] e2 = rs2[23:16] & {8{valid && enc}};
-wire [7:0] e3 = rs2[31:24] & {8{valid && enc}};
+wire [7:0] e0 = rs1[ 7: 0];
+wire [7:0] e1 = rs1[15: 8];
+wire [7:0] e2 = rs2[23:16];
+wire [7:0] e3 = rs2[31:24];
 
 //
 // Decrypt inputs
-wire [7:0] d0 = rs1[ 7: 0] & {8{valid && !enc}};
-wire [7:0] d1 = rs1[15: 8] & {8{valid && !enc}};
-wire [7:0] d2 = rs2[23:16] & {8{valid && !enc}};
-wire [7:0] d3 = rs2[31:24] & {8{valid && !enc}};
+wire [7:0] d0 = rs1[ 7: 0];
+wire [7:0] d1 = rs1[15: 8];
+wire [7:0] d2 = rs2[23:16];
+wire [7:0] d3 = rs2[31:24];
 
 wire [31:0] result_enc;
 wire [31:0] result_dec;
@@ -99,7 +96,7 @@ assign result_dec = {mix_dec_3, mix_dec_2, mix_dec_1, mix_dec_0};
 
 //
 // Create the final result.
-assign     result = result_enc | result_dec;
+assign     rd = enc ? result_enc : result_dec;
 
 endmodule
 

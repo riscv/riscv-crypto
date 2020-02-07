@@ -23,10 +23,10 @@ output wire [31:0] rd         //
 // Single cycle implementation.
 assign ready = valid;
 
-wire [7:0] sb_in_0 = rs1[ 7: 0] & {8{valid}};
-wire [7:0] sb_in_1 = rs2[15: 8] & {8{valid}};
-wire [7:0] sb_in_2 = rs1[23:16] & {8{valid}};
-wire [7:0] sb_in_3 = rs2[31:24] & {8{valid}};
+wire [7:0] sb_in_0 = rs1[ 7: 0];
+wire [7:0] sb_in_1 = rs2[15: 8];
+wire [7:0] sb_in_2 = rs1[23:16];
+wire [7:0] sb_in_3 = rs2[31:24];
 
 wire [7:0] sb_out_0;
 wire [7:0] sb_out_1;

@@ -42,7 +42,7 @@ wire [7:0] sbox_out         ;
 function [7:0] xtime2;
     input [7:0] a;
 
-    xtime2  = (a << 1) ^ (a[7] ? 8'h1b : 8'b0 );
+    xtime2  = {a[6:0],1'b0} ^ (a[7] ? 8'h1b : 8'b0 );
 
 endfunction
 

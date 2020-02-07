@@ -30,10 +30,10 @@ wire       fsm_2   = fsm == 2;
 wire       fsm_3   = fsm == 3;
 
 wire [7:0] sbox_in = 
-    {8{valid && fsm_0}} & rs1[ 7: 0] |
-    {8{valid && fsm_1}} & rs2[15: 8] |
-    {8{valid && fsm_2}} & rs1[23:16] |
-    {8{valid && fsm_3}} & rs2[31:24] ;
+    {8{fsm_0}} & rs1[ 7: 0] |
+    {8{fsm_1}} & rs2[15: 8] |
+    {8{fsm_2}} & rs1[23:16] |
+    {8{fsm_3}} & rs2[31:24] ;
 
 wire [7:0] sbox_out;
 
