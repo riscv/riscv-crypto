@@ -72,7 +72,7 @@ end
 
 always @(posedge g_clk ) begin
     if(g_resetn) begin
-        fsm <= 8'b0;
+        fsm <= 2'b0;
     end else if(valid && !ready) begin
         fsm <= n_fsm;
     end

@@ -20,6 +20,7 @@ input  wire        f_yx     , // ssha3.yx instruction function
 output wire [31:0] result     //
 
 );
+/* verilator lint_off WIDTH */
 
 wire [2:0] in_x         = rs1[2:0];
 wire [2:0] in_y         = rs2[2:0];
@@ -70,5 +71,6 @@ wire [4:0] result_sum   = (f_yx ? in_y : lut_out_lhs) + sum_rhs;
 
 assign result           = {24'b0,result_sum,2'b00};
 
+/* verilator lint_on WIDTH */
 
 endmodule

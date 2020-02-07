@@ -80,7 +80,7 @@ assign      rd          =
 aes_sbox i_aes_sbox (
 .inv(sbox_inv),
 .in (sel_byte),
-.out(sbox_out),
+.out(sbox_out)
 );
 
 endmodule

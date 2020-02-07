@@ -3,6 +3,7 @@ BUILD_DIR = $(REPO_BUILD)/rtl
 YOSYS     = $(YOSYS_ROOT)/yosys
 
 SYNTH_TARGETS   =
+LINT_TARGETS    =
 SIM_TARGETS     =
 TARGETS         =
 
@@ -20,6 +21,10 @@ endef
 
 define map_synth_rpt
 $(call map_build_dir,${1})/${1}.rpt
+endef
+
+define map_lint_rpt
+$(call map_build_dir,${1})/${1}.lint
 endef
 
 define map_waves
@@ -48,7 +53,6 @@ $(call map_synth_rpt,${1}) : ${2}
         -p "flatten" \
 	    -p "tee -o $(call map_synth_rpt,${1}).ltp ltp" \
         -p "synth -top ${3} -flatten" \
-        -p "tee -o $(call map_synth_rpt,${1}) scc" \
         -p "write_verilog $(call map_synth_verilog,${1})" \
 	    -p "tee -a $(call map_synth_rpt,${1}) stat" \
 	    -p "tee -a $(call map_synth_rpt,${1}) ltp" \
@@ -57,10 +61,16 @@ $(call map_synth_rpt,${1}) : ${2}
         #-p "write_verilog $(call map_cmos_verilog,${1})" \
         #-p "tee -a $(call map_synth_rpt,${1}) stat" \
 
-synth-${1} : $(call map_synth_rpt,${1})
+synth-${1} : $(call map_synth_rpt,${1}) $(call map_lint_rpt,${1})
 
-TARGETS += synth-${1}
+$(call map_lint_rpt,${1}) : ${2}
+	verilator --lint-only $${^} | tee $${@}
+
+lint-${1} : $(call map_lint_rpt,${1})
+
+TARGETS += synth-${1}  lint-${1}
 SYNTH_TARGETS += synth-${1}
+LINT_TARGETS +=  lint-${1}
 endef
 
 #
@@ -101,6 +111,8 @@ all: $(TARGETS)
 synth-all: $(SYNTH_TARGETS)
 
 sim-all: $(SIM_TARGETS)
+
+lint-all: $(LINT_TARGETS)
 
 print-synth-targets:
 	@echo $(SYNTH_TARGETS) | sed "s/ /\n/g"
