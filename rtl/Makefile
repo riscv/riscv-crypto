@@ -50,20 +50,19 @@ $(call map_synth_rpt,${1}) : ${2}
 	$(YOSYS) -qQT \
         -p "read_verilog ${2}" \
         -p "proc" \
-        -p "flatten" \
-	    -p "tee -o $(call map_synth_rpt,${1}).ltp ltp" \
         -p "synth -top ${3} -flatten" \
-        -p "write_verilog $(call map_synth_verilog,${1})" \
-	    -p "tee -a $(call map_synth_rpt,${1}) stat" \
-	    -p "tee -a $(call map_synth_rpt,${1}) ltp" \
-        #-p "dfflibmap -liberty $(YOSYS_ROOT)/techlibs/common/cells.lib" \
-        #-p "abc -liberty $(YOSYS_ROOT)/examples/cmos/cmos_cells.lib" \
-        #-p "write_verilog $(call map_cmos_verilog,${1})" \
-        #-p "tee -a $(call map_synth_rpt,${1}) stat" \
+        -p "abc -g cmos" \
+        -p "opt fast" \
+        -p "write_verilog $(call map_cmos_verilog,${1})" \
+        -p "flatten" \
+        -p "tee -o $(call map_synth_rpt,${1}) stat -tech cmos" \
+        -p "tee -a $(call map_synth_rpt,${1}) ltp -noff" \
 
 synth-${1} : $(call map_synth_rpt,${1}) $(call map_lint_rpt,${1})
 
 $(call map_lint_rpt,${1}) : ${2}
+	@mkdir -p $(dir $(call map_lint_rpt,${1}))
+	@rm -f $${@}
 	verilator --lint-only $${^} | tee $${@}
 
 lint-${1} : $(call map_lint_rpt,${1})
