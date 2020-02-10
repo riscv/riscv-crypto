@@ -256,9 +256,45 @@ The Bitmanip pack instructions are useful for performing rotations on
 16-bit data elements.
 They are also useful for re-arranging halfwords within words, and
 generally getting data into the right shape prior to applying transforms.
+This is particularly useful for cryptographic algorithms which pass inputs
+around as byte strings, but can operate on words made out of those byte
+strings.
+This occurs for AES when loading blocks and keys (which may not be
+word aligned) into registers to perform the round functions.
+See Figure \ref{fig:example:pack} for an example.
+
+\begin{figure}
+\begin{subfigure}[t]{0.5\textwidth}
+\begin{lstlisting}
+packh   a0, a0, a1
+packh   a1, a2, a3
+pack    a0, a0, a1
+.
+.
+.
+\end{lstlisting}
+\end{subfigure}
+\begin{subfigure}[t]{0.5\textwidth}
+\begin{lstlisting}
+slli    a1, a1,  8
+slli    a2, a2, 16
+slli    a3, a3, 24
+or      a2, a2, a3
+or      a0, a0, a1
+or      a0, a0, a2
+\end{lstlisting}
+\end{subfigure}
+\caption{Comparison of packing four bytes loaded into GPRs $a0..a3$ into
+a single 32-bit word in $a0$ using the Bitmanip \mnemonic[pack*] instructions
+v.s. the standard RV32 instructions.}
+\label{fig:example:pack}
+\end{figure}
 
 Algorithms with sub-word rotations/shifts:
 SPARX
+
+Algorithms benefiting from packing bytes into words:
+AES, SHA2, SHA3
 
 % ============================================================================
 
