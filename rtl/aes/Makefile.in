@@ -1,14 +1,7 @@
 
 include aes/v1/Makefile.in
+include aes/v2/Makefile.in
 
-$(eval $(call add_synth_target,aes_v2_sub_size,aes/v2/aes_v2_sub_size.v aes/share/aes_sbox_latency.v,aes_v2_sub_size))
-$(eval $(call add_synth_target,aes_v2_sub_latency,aes/v2/aes_v2_sub_latency.v aes/share/aes_sbox_latency.v,aes_v2_sub_latency))
-
-$(eval $(call add_synth_target,aes_v2_mix_size,aes/v2/aes_v2_mix_size.v,aes_v2_mix_size))
-$(eval $(call add_synth_target,aes_v2_mix_latency,aes/v2/aes_v2_mix_latency.v,aes_v2_mix_latency))
-
-$(eval $(call add_synth_target,aes_v2_size,aes/v2/aes_v2_size.v aes/v2/aes_v2_sub_size.v aes/share/aes_sbox_latency.v aes/v2/aes_v2_mix_size.v,aes_v2_size))
-$(eval $(call add_synth_target,aes_v2_latency,aes/v2/aes_v2_latency.v aes/v2/aes_v2_sub_latency.v aes/share/aes_sbox_latency.v aes/v2/aes_v2_mix_latency.v,aes_v2_latency))
 
 $(eval $(call add_synth_target,aes_v3_1_size,aes/v3/aes_v3_1.v aes/share/aes_sbox_latency.v, aes_v3_1))
 $(eval $(call add_synth_target,aes_v3_1_latency,aes/v3/aes_v3_1.v aes/share/aes_sbox_latency.v, aes_v3_1))

@@ -1,8 +1,10 @@
 
 //
-// module: aes_v2_size
+// module: aes_v2
 //
-module aes_v2_size(
+//  Size optimised
+//
+module aes_v2(
 
 input  wire        g_clk    ,
 input  wire        g_resetn ,
