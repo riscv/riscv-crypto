@@ -83,7 +83,7 @@ synth-${1} : $(call map_synth_rpt,${1}) $(call map_lint_rpt,${1})
 $(call map_lint_rpt,${1}) : ${2}
 	@mkdir -p $(dir $(call map_lint_rpt,${1}))
 	@rm -f $${@}
-	verilator --lint-only $${^} | tee $${@}
+	verilator --top-module ${3} --lint-only $${^} | tee $${@}
 
 lint-${1} : $(call map_lint_rpt,${1})
 

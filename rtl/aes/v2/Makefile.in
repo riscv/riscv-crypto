@@ -1,7 +1,7 @@
 
-AES_V2_SIZE_FILES = aes/v2/aes_v2_size.v aes/v2/aes_v2_sub_size.v aes/share/aes_sbox_latency.v aes/v2/aes_v2_mix_size.v
+AES_V2_SIZE_FILES = aes/v2/aes_v2_size.v aes/share/aes_sbox_latency.v 
 
-AES_V2_LATENCY_FILES = aes/v2/aes_v2_latency.v aes/v2/aes_v2_sub_latency.v aes/share/aes_sbox_latency.v aes/v2/aes_v2_mix_latency.v
+AES_V2_LATENCY_FILES = aes/v2/aes_v2_latency.v aes/share/aes_sbox_latency.v
 
 $(eval $(call add_synth_target,aes_v2_size,$(AES_V2_SIZE_FILES),aes_v2))
 $(eval $(call add_synth_target,aes_v2_latency,$(AES_V2_LATENCY_FILES),aes_v2))
