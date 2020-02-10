@@ -81,11 +81,16 @@ void    aes_ecb_decrypt (
     t5 = _saes_v2_sub_dec(t3, t2);
     t6 = _saes_v2_sub_dec(t0, t3);
     t7 = _saes_v2_sub_dec(t1, t0);
+    
+    uint32_t t4h = t4 >> 16;
+    uint32_t t5h = t5 >> 16;
+    uint32_t t6h = t6 >> 16;
+    uint32_t t7h = t7 >> 16;
 
-    t0 = (t6 & 0x0000FFFF) | (t4 & 0xFFFF0000); // Finish shift rows
-    t1 = (t7 & 0x0000FFFF) | (t5 & 0xFFFF0000);
-    t2 = (t4 & 0x0000FFFF) | (t6 & 0xFFFF0000);
-    t3 = (t5 & 0x0000FFFF) | (t7 & 0xFFFF0000);
+    t0 = _pack(t6, t4h);                    // Finish shift rows
+    t1 = _pack(t7, t5h);
+    t2 = _pack(t4, t6h);
+    t3 = _pack(t5, t7h);
 
     t0 ^= kp[0];                            // AddRoundKey
     t1 ^= kp[1];

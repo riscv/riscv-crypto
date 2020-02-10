@@ -12,11 +12,11 @@
 #endif
 
 #if __riscv_xlen == 32
-#  define RISCV_CRYPTO_RV32
+#define RISCV_CRYPTO_RV32
 #endif
 
 #if __riscv_xlen == 64
-#  define RISCV_CRYPTO_RV64
+#define RISCV_CRYPTO_RV64
 #endif
 
 //
@@ -94,6 +94,16 @@ static inline uint32_t _saes_v3_encsm(uint32_t rs1, uint32_t rs2, int bs) {uint3
 static inline uint32_t _saes_v3_decs (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.decs  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 static inline uint32_t _saes_v3_decm (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.decm  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 static inline uint32_t _saes_v3_decsm(uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes.v3.decsm %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+#endif
+
+//
+// Bitmanip Instruction Intrinsics
+//
+
+#if (defined(__ZSCRYPTO))
+static inline uint32_t _pack  (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("pack  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _packu (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("packu %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _packh (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("packh %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
 #endif
 
 #endif // __RISCV_CRYPTO_INTRINSICS__

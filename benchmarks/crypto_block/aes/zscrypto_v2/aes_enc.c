@@ -95,11 +95,15 @@ void    aes_ecb_encrypt (
     u2 = _saes_v2_sub_enc(t1, t2);
     u3 = _saes_v2_sub_enc(t3, t0);
 
-
-    t0 = (u0 & 0x0000FFFF) | (u1 & 0xFFFF0000); // Finish shift rows
-    t1 = (u2 & 0x0000FFFF) | (u3 & 0xFFFF0000);
-    t2 = (u1 & 0x0000FFFF) | (u0 & 0xFFFF0000);
-    t3 = (u3 & 0x0000FFFF) | (u2 & 0xFFFF0000);
+    uint32_t u0h = u0 >> 16;
+    uint32_t u1h = u1 >> 16;
+    uint32_t u2h = u2 >> 16;
+    uint32_t u3h = u3 >> 16;
+                                            // Finish shift rows
+    t0 = _pack(u0, u1h); // u0l, u1h
+    t1 = _pack(u2, u3h); // u2l, u3h
+    t2 = _pack(u1, u0h); // u1l, u0h
+    t3 = _pack(u3, u2h); // u3l, u2h
 
     t0 ^= kp[0];                            // AddRoundKey
     t1 ^= kp[1];
