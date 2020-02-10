@@ -1,9 +1,9 @@
 
 [tasks]
-prove_latency prove latency
-cover_latency cover latency
 prove_size    prove size
 cover_size    cover size
+prove_latency prove latency
+cover_latency cover latency
 
 [options]
 depth   10
