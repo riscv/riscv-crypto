@@ -6,6 +6,7 @@ SYNTH_TARGETS   =
 LINT_TARGETS    =
 SIM_TARGETS     =
 TARGETS         =
+PROVE_TARGETS   =
 
 define map_build_dir
 $(BUILD_DIR)/${1}
@@ -37,6 +38,25 @@ endef
 
 define map_sim_log
 $(call map_build_dir,${1})/${1}.simlog
+endef
+
+define map_sby_file
+$(call map_build_dir,${1})/${1}.sby
+endef
+
+#
+# 1. Name
+# 2. SBY file
+# 3. RTL/TB source files
+define add_prove_target
+
+${1} : ${3}
+	mkdir -p $(dir $(call map_sby_file,${1}))
+	cp ${2} $(call map_sby_file,${1})
+	sby -f  $(call map_sby_file,${1})
+
+PROVE_TARGETS += ${1}
+
 endef
 
 #
@@ -112,6 +132,8 @@ synth-all: $(SYNTH_TARGETS)
 sim-all: $(SIM_TARGETS)
 
 lint-all: $(LINT_TARGETS)
+
+prove-all: $(PROVE_TARGETS)
 
 print-synth-targets:
 	@echo $(SYNTH_TARGETS) | sed "s/ /\n/g"

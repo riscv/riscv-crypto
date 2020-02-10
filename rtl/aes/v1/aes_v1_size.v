@@ -5,10 +5,10 @@
 //  Optimised to be as small as possible.
 //  Instances 1 SBox, takes 4 cycles.
 //
-module aes_v1_size(
+module aes_v1 (
 input   wire        g_clk   ,
 input   wire        g_resetn,
-input   wire        valid   , // Output enable (logic gating SBox inputs).
+input   wire        valid   , // Input data valid
 input   wire        dec     , // Encrypt (0) or decrypt (1)
 input   wire [31:0] rs1     , // Input source register
 
@@ -35,7 +35,7 @@ assign      rd          = {r3, r2, r1, r0};
 
 // Shift down RS1 per byte to get input to SBOX.
 /* verilator lint_off WIDTH */
-assign      sb_in       =  rs1 >> {fsm,2'b00}       ;
+assign      sb_in       =  rs1 >> {fsm,3'b000}       ;
 /* verilator lint_on WIDTH */
 
 // Have we finished computing every SBOX?
