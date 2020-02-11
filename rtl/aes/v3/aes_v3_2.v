@@ -27,7 +27,7 @@ output wire         ready     // Is compute finished?
 );
 
 // Always complete in a single cycle.
-assign valid = ready;
+assign ready = valid;
 
 wire [7:0] bytes_in [3:0]   ;
 
