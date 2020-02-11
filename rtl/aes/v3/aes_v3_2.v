@@ -21,9 +21,13 @@ input  wire [ 31:0] rs1     , // Source register 1
 input  wire [ 31:0] rs2     , // Source register 2
 input  wire [  1:0] bs      , // Byte select immediate
 
-output wire [ 31:0] rd        // output destination register value.
+output wire [ 31:0] rd      , // output destination register value.
+output wire         ready     // Is compute finished?
 
 );
+
+// Always complete in a single cycle.
+assign valid = ready;
 
 wire [7:0] bytes_in [3:0]   ;
 
@@ -61,19 +65,21 @@ function [7:0] xtimeN;
 endfunction
 
 wire [ 7:0] mix_b3 =       xtimeN(sel_byte, (dec ? 11  : 3))            ;
-wire [ 7:0] mix_b2 = dec ? xtimeN(sel_byte, (           14)) : sel_byte ;
+wire [ 7:0] mix_b2 = dec ? xtimeN(sel_byte, (           13)) : sel_byte ;
 wire [ 7:0] mix_b1 = dec ? xtimeN(sel_byte, (            9)) : sel_byte ;
 wire [ 7:0] mix_b0 =       xtimeN(sel_byte, (dec ? 14  : 2))            ;
 
 wire [31:0] result_mix  = {mix_b3, mix_b2, mix_b1, mix_b0};
 
 wire [31:0] result      = mix ? result_mix : {24'b0, sbox_out};
-
-assign      rd          = 
+    
+wire [31:0] rotated     =
     {32{bs == 2'b00}} & {result                      } |
     {32{bs == 2'b01}} & {result[23:0], result[31:24] } |
     {32{bs == 2'b10}} & {result[15:0], result[31:16] } |
     {32{bs == 2'b11}} & {result[ 7:0], result[31: 8] } ;
+
+assign      rd          = rotated ^ rs2;
 
 //
 // Single SBOX instance

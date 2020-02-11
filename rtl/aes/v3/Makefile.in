@@ -7,6 +7,7 @@ $(eval $(call add_synth_target,aes_v3_2_size,aes/v3/aes_v3_2.v aes/share/aes_sbo
 $(eval $(call add_synth_target,aes_v3_2_latency,aes/v3/aes_v3_2.v aes/share/aes_sbox_latency.v, aes_v3_2))
 
 AES_V3_1_PROVE_FILES = aes/v3/tb_aes_v3_1.v aes/v3/aes_v3_1.v aes/share/aes_sbox_latency.v
+AES_V3_2_PROVE_FILES = aes/v3/tb_aes_v3_2.v aes/v3/aes_v3_2.v aes/share/aes_sbox_latency.v
 
 $(eval $(call add_prove_target,prove_aes_v3_1,aes/v3/verify_v3_1.sby,$(AES_V3_1_PROVE_FILES)))
-$(eval $(call add_prove_target,prove_aes_v3_2,aes/v3/verify.sby,$(AES_V3_2_PROVE_FILES)))
+$(eval $(call add_prove_target,prove_aes_v3_2,aes/v3/verify_v3_2.sby,$(AES_V3_2_PROVE_FILES)))
