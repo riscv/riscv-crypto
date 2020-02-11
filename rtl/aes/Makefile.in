@@ -1,13 +1,9 @@
 
 include aes/v1/Makefile.in
 include aes/v2/Makefile.in
+include aes/v3/Makefile.in
 
-
-$(eval $(call add_synth_target,aes_v3_1_size,aes/v3/aes_v3_1.v aes/share/aes_sbox_latency.v, aes_v3_1))
-$(eval $(call add_synth_target,aes_v3_1_latency,aes/v3/aes_v3_1.v aes/share/aes_sbox_latency.v, aes_v3_1))
-
-$(eval $(call add_synth_target,aes_v3_2_size,aes/v3/aes_v3_2.v aes/share/aes_sbox_latency.v, aes_v3_2))
-$(eval $(call add_synth_target,aes_v3_2_latency,aes/v3/aes_v3_2.v aes/share/aes_sbox_latency.v, aes_v3_2))
-
+#
+# Synthesise just the SBoxes to see what the overhead is
 $(eval $(call add_synth_target,aes_sbox_latency,aes/share/aes_sbox_latency.v,aes_sbox))
 $(eval $(call add_synth_target,aes_sbox_size,aes/share/aes_sbox_size.v,aes_sbox))
