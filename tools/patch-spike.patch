@@ -609,7 +609,7 @@ index 0000000..e5f4157
 +
 diff --git a/riscv/insns/saes_v2_sub_decrot.h b/riscv/insns/saes_v2_sub_decrot.h
 new file mode 100644
-index 0000000..7de1670
+index 0000000..e0a1e57
 --- /dev/null
 +++ b/riscv/insns/saes_v2_sub_decrot.h
 @@ -0,0 +1,13 @@
@@ -622,7 +622,7 @@ index 0000000..7de1670
 +AES_RSBOX(b0, b1, b2, b3);
 +
 +// Rotate output bytes
-+uint32_t result = AES_PACK_BYTES(b3, b0, b1, b2);
++uint32_t result = AES_PACK_BYTES(b1, b2, b3, b0);
 +
 +WRITE_RD(result);
 +
@@ -646,7 +646,7 @@ index 0000000..55de152
 +
 diff --git a/riscv/insns/saes_v2_sub_encrot.h b/riscv/insns/saes_v2_sub_encrot.h
 new file mode 100644
-index 0000000..b974d1e
+index 0000000..9f72d77
 --- /dev/null
 +++ b/riscv/insns/saes_v2_sub_encrot.h
 @@ -0,0 +1,14 @@
@@ -659,7 +659,7 @@ index 0000000..b974d1e
 +AES_SBOX(b0, b1, b2, b3);
 +
 +// Rotate output bytes
-+uint32_t result = AES_PACK_BYTES(b3, b0, b1, b2);
++uint32_t result = AES_PACK_BYTES(b1, b2, b3, b0);
 +
 +WRITE_RD(result);
 +
