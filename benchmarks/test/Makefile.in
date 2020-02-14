@@ -1,16 +1,20 @@
 
 $(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_reference,sha256_reference))
-$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256_zscrypto))
 
 $(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_reference,sha512_reference))
-$(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto,sha512_zscrypto))
 
 $(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_reference,sha3_reference))
 
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_reference,aes_reference))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_ttable,aes_ttable))
+
+ifeq ($(ZSCRYPTO),1)
+$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256_zscrypto))
+$(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto,sha512_zscrypto))
+
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v1,aes_zscrypto_v1))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v2,aes_zscrypto_v2))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v2_slow,aes_zscrypto_v2_slow))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v3_1,aes_zscrypto_v3_1))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_v3_2,aes_zscrypto_v3_2))
+endif
