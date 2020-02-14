@@ -4,6 +4,7 @@
 @{
 */
 
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,13 +40,15 @@ void puthex_py(unsigned char * in, size_t len){
 
 size_t test_rdrandom(unsigned char * dest, size_t len) {
     
-    FILE * fh       = fopen("/dev/random", "rb");
+    // Dumb random seed generation. Originally used to read
+    // /dev/random, but this caused hangs on some machines.
+    srand(time(NULL));
 
-    size_t result   = fread(dest, sizeof(unsigned char), len, fh);
-
-    fclose(fh)      ;
+    for(size_t i =0; i < len; i ++) {
+        dest[i] = (unsigned char)rand();
+    }
     
-    return result   ;
+    return len      ;
 
 }
 
