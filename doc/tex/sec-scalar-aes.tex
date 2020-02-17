@@ -138,8 +138,8 @@ transformations are all rolled into a single instruction, with the
 per-byte results then accumulated.
 In contrast to variants 1 and 2, they perform only a single (Inverse) SBox
 lookup per instruction.
-Pseudo-code for each instruction is found in figures
-\ref{fig:pseudo:aes:v3:enc} and \ref{fig:pseudo:aes:v3:dec}.
+Pseudo-code for each instruction is found in figure
+\ref{fig:pseudo:aes:v3}.
 
 Only $4$ of the $6$ instructions are strictly needed: one of the following two
 subsets would suffice:
@@ -210,4 +210,5 @@ saes.v3.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
 \label{fig:pesudo:aes:v3:dec}
 \end{subfigure}
 \caption{AES instruction variant 3.}
+\label{fig:pseudo:aes:v3}
 \end{figure}
