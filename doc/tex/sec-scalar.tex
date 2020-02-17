@@ -336,7 +336,7 @@ On RV64, the entire set of LUT elements fits in a single source register.
 The RV64 only \mnemonic{lut4} instruction stores the entire lut in
 \rstwo, and uses each nibble in \rsone as an index into it.
 
-Equivilent C code listings for the instructions are found in
+Equivalent C code listings for the instructions are found in
 \figref{equiv:c:lut4}.
 
 %\begin{figure}
@@ -365,7 +365,7 @@ sbox_4bit:
     the \mnemonic{lut4hi} and \mnemonic{lut4lo} instructions.
     The Inputs to the SBox are stored in \xreg{a0}.
     The high and low $8$ elements of the
-    LUT are stored in \xreg{a2} and \xreg{a1} respectivley.
+    LUT are stored in \xreg{a2} and \xreg{a1} respectively.
 }
 \label{fig:example:lut4:1}
 \end{figure}
@@ -399,7 +399,7 @@ uint64_t lut4 (uint64_t rs1, uint64_t rs2) {
 }
 \end{lstlisting}
 \caption{
-    Equivilent C code models for the
+    Equivalent C code models for the
     \mnemonic{lut4lo}, \mnemonic{lut4hi} and \mnemonic{lut4}
     instructions.
 }
@@ -443,7 +443,7 @@ long-multiply / modular exponentiation.
 
 \begin{cryptoisa}
 RV32, RV64:
-    mmulu   rdp, rs1, rs2, rs3  // Variant 1 - double width writeback
+    mmulu   rdp, rs1, rs2, rs3  // Variant 1 - double width write-back
     
     mmulu   rd,  rs1, rs2, rs3  // Variant 2
     mmuluh  rd,  rs1, rs2, rs3  //  - Hi/LO

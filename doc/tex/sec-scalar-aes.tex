@@ -16,6 +16,10 @@ is so hard, should the TG focus instead on code-density and performance?
 In this case, can implementations with much more structured
 inputs (as in \cite{TG:06}) be considered.}
 
+Performance and RTL benchmarks for these
+instruction proposals are found in Section
+\ref{sec:benchmark:aes}.
+
 \subsubsection{Variant 1}
 
 \begin{cryptoisa}
@@ -34,7 +38,7 @@ Each byte has the relevant transformation applied, before
 being written back to the corresponding byte position in {\tt rd}.
 On an RV64 platform, the high 32-bits of the result are zero
 extended.
-Psueudo code is found in figure
+Pseudo code is found in figure
 \ref{fig:pseudo:aes:v1}.
 
 \begin{figure}
@@ -85,7 +89,7 @@ figures
 \ref{fig:pesudo:aes:v2:sub}
 and
 \ref{fig:pesudo:aes:v2:mix}
-respectivley.
+respectively.
 
 \begin{figure}
 \begin{subfigure}[b]{1.0\textwidth}
