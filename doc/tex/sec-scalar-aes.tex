@@ -138,26 +138,29 @@ transformations are all rolled into a single instruction, with the
 per-byte results then accumulated.
 In contrast to variants 1 and 2, they perform only a single (Inverse) SBox
 lookup per instruction.
+Pseudo-code for each instruction is found in figures
+\ref{fig:pseudo:aes:v3:enc} and \ref{fig:pseudo:aes:v3:dec}.
 
 Only $4$ of the $6$ instructions are strictly needed: one of the following two
 subsets would suffice:
 \begin{enumerate}
-\item \mnemonic{saes.v3.encs},
-      \mnemonic{saes.v3.encsm},
-      \mnemonic{saes.v3.decs} and
-      \mnemonic{saes.v3.decsm}.
-\item \mnemonic{saes.v3.encs},
-      \mnemonic{saes.v3.encm},
-      \mnemonic{saes.v3.decs} and
-      \mnemonic{saes.v3.decm}.
+\item[{\bf v3.1:}]  \mnemonic{saes.v3.encs},
+                    \mnemonic{saes.v3.encsm},
+                    \mnemonic{saes.v3.decs} and
+                    \mnemonic{saes.v3.decsm}.
+    This set is more performant in terms of instructions executed per
+    round.
+    It also places the SubBytes and MixColumns operations
+    sequentially, and so has a longer timing path.
+\item[{\bf v3.2:}]  \mnemonic{saes.v3.encs},
+                    \mnemonic{saes.v3.encm},
+                    \mnemonic{saes.v3.decs} and
+                    \mnemonic{saes.v3.decm}.
+    This set splits the SubBytes and MixColumns operations into separate
+    instructions.
+    This means more instructions per round, but a shorter critical
+    timing path for the instruction.
 \end{enumerate}
-
-The first set is more performant in terms of instructions executed per
-AES round.
-However, it places the (Inv)SubBytes and (Inv)MixColumns operations
-sequentially and so has a longer timing path.
-The second set requires $2$x more instructions per round, but has a
-shorter timing path.
 
 \begin{figure}
 
