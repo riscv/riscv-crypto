@@ -1,4 +1,105 @@
 
+\section{Benchmarking}
+
+\subsection{AES}
+\label{sec:benchmark:aes}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lllllll}
+AES Proposal & Instrs Enc & Instrs Dec & Instrs Ks Enc & Instrs Ks Dec \\ \hline
+Reference   & 3260  & 6704  & 594  &  594    \\
+Ttable      & 1005  & 1012  & 625  &  1863   \\
+V1 Latency  & 2756  & 6537  & 462  &  462    \\
+V1 Size     & 2874  & 6681  & 510  &  510    \\
+V2 Latency  & 325   & 307   & 462  &  581    \\
+V2 Size     & 552   & 539   & 462  &  687    \\
+V3.1        & 321   & 321   & 238  &  682    \\
+V3.2        & 480   & 470   & 238  &  826    \\
+\end{tabular}
+\caption{
+AES instruction execution counts measured using Spike
+running {\tt rv32imcb\_Zscrypto}.
+Instruction counts are for a single AES 128 block encrypt/decrypt operation,
+or for a single encrypt/decrypt key schedule.
+V1 and V2 proposals include results for "latency" optimised and "size"
+optimised implementations of the underlying instructions.
+The "latency" rows assume one cycle per instruction.
+The "size" rows assume four cycles per instruction (corresponding to
+one implemented SBox), which is modelled by padding each AES instruction
+with 3 additional {\tt nop} instructions.
+}
+\label{tab:benchmarks:aes:perf}
+\end{table}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llllllll}
+AES Proposal & Longest Topological Path & NAND2 Gates   \\ \hline
+V1 Latency   & 12                       & 7460.5        \\
+V1 Size      & 16                       & 2217.5        \\
+V2 Latency   & 13                       & 8626          \\
+V2 Size      & 15                       & 2486.5        \\
+V3.1         & 24                       & 2495          \\
+V3.2         & 18                       & 2454.5        \\
+\end{tabular}
+\caption{
+AES implementation benchmarks.
+Measured using the Yosys simple CMOS flow.
+}
+\label{tab:benchmarks:aes:impl}
+\end{table}
+
+
+\subsection{SHA2}
+\label{sec:benchmark:sha2}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+Instructions   & Longest Topological Path & Area (NAND2 Equivalent) \\ \hline
+ssha256.s*     & 5                        & 787                   \\
+ssha512.s*     & 6                        & 1534                  \\
+\end{tabular}
+\caption{Static code size and instructions executed comparison for
+the \mnemonic{ssha256.sx} instructions on RV32 based architectures.
+Instruction execution counts are for hashing 1024 bytes of data.}
+\label{tab:benchmarks:sha2:rtl}
+\end{table}
+
+Area and path length estimates are calculated using a basic Yosys CMOS
+synthesis flow.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+Architecture      & Static Code Size (Bytes) & Instructions Executed \\ \hline
+rv32gc            & 14934                    & 78003                 \\
+rv32gcb           & 10086                    & 56866 (1.37x)         \\
+rv32gcb\_Zscrypto & 5938                     & 28539 (2.73x)
+\end{tabular}
+\caption{Static code size and instructions executed comparison for
+the \mnemonic{ssha256.sx} instructions on RV32 based architectures.
+Instruction execution counts are for hashing 1024 bytes of data.}
+\label{tab:benchmarks:sha256}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+Architecture      & Static Code Size (Bytes) & Instructions Executed \\ \hline
+rv64gc            & 20490                    & 73138                 \\
+rv64gcb           & 14216                    & 53153 (1.38x)         \\
+rv64gcb\_Zscrypto & 8954                     & 35881 (2.04x)
+\end{tabular}
+\caption{Static code size and instructions executed comparison for
+the \mnemonic{ssha512.sx} instructions on RV64 based architectures.
+Instruction execution counts are for hashing 1024 bytes of data.}
+\label{tab:benchmarks:sha512}
+\end{table}
+
+\newpage
 \section{SHA3 Instruction Discussions}
 \label{sec:appendix:sha3}
 

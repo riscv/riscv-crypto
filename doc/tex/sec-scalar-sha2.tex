@@ -38,32 +38,9 @@ Though named for the SHA-512 parameterisation, the instructions
 can be used for all of the SHA-384, SHA-512, SHA-512/224 and SHA-512/256
 parameterisations as described in \cite{nist:fips:180:4}.
 
-\begin{table}[]
-\centering
-\begin{tabular}{lll}
-Architecture      & Static Code Size (Bytes) & Instructions Executed \\ \hline
-rv32gc            & 14934                    & 78003                 \\
-rv32gcb           & 10086                    & 56866 (1.37x)         \\
-rv32gcb\_Zscrypto & 5938                     & 28539 (2.73x)
-\end{tabular}
-\caption{Static code size and instructions executed comparison for
-the \mnemonic{ssha256.sx} instructions on RV32 based architectures.
-Instruction execution counts are for hashing 1024 bytes of data.}
-\end{table}
-
-\begin{table}[]
-\centering
-\begin{tabular}{lll}
-Architecture      & Static Code Size (Bytes) & Instructions Executed \\ \hline
-rv64gc            & 20490                    & 73138                 \\
-rv64gcb           & 14216                    & 53153 (1.38x)         \\
-rv64gcb\_Zscrypto & 8954                     & 35881 (2.04x)
-\end{tabular}
-\caption{Static code size and instructions executed comparison for
-the \mnemonic{ssha512.sx} instructions on RV64 based architectures.
-Instruction execution counts are for hashing 1024 bytes of data.}
-\end{table}
-
+Performance, static code size and RTL benchmarks for these
+instructions are found in Section
+\ref{sec:benchmark:sha2}.
 
 \note{
 The remaining two core functions which make up the SHA256/512
