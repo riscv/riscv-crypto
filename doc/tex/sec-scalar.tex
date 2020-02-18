@@ -373,7 +373,7 @@ sbox_4bit:
 \begin{figure}
 \begin{lstlisting}[style=C]
 uint32_t lut4_lo (uint32_t rs1, uint32_t rs2) {
-    uint32_t result;
+    uint32_t result = 0;
     for(int i = 0; i < 32; i += 4) {
         uint8_t idx =  (rs1 >> i) & 0x7;
         uint8_t lo  = ((rs1 >> i) & 0xF) < 8;
@@ -382,7 +382,7 @@ uint32_t lut4_lo (uint32_t rs1, uint32_t rs2) {
     return result;
 }
 uint32_t lut4_hi (uint32_t rs1, uint32_t rs2) {
-    uint32_t result;
+    uint32_t result = 0;
     for(int i = 0; i < 32; i += 4) {
         uint8_t idx =  (rs1 >> i) & 0x7;
         uint8_t hi  = ((rs1 >> i) & 0xF) > 8;
@@ -391,7 +391,7 @@ uint32_t lut4_hi (uint32_t rs1, uint32_t rs2) {
     return result;
 }
 uint64_t lut4 (uint64_t rs1, uint64_t rs2) {
-    uint64_t result;
+    uint64_t result = 0;
     for(int i = 0; i < 64; i += 4) {
         result |= ((rs2 >> (4*((rs1 >> i)&0xF)) & 0xF) << i;
     }
