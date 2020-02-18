@@ -72,11 +72,8 @@ saes.v1.dec(rs1):
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.v2.sub.enc    rd, rs1, rs2 // mode = enc, rot = 0
-    saes.v2.sub.encrot rd, rs1, rs2 // mode = enc, rot = 1
-    saes.v2.sub.dec    rd, rs1, rs2 // mode = dec, rot = 0
-    saes.v2.sub.decrot rd, rs1, rs2 // mode = dec, rot = 1
-
+    saes.v2.sub.enc    rd, rs1, rs2 // mode = enc
+    saes.v2.sub.dec    rd, rs1, rs2 // mode = dec
     saes.v2.mix.enc    rd, rs1, rs2 // mode = enc
     saes.v2.mix.dec    rd, rs1, rs2 // mode = dec
 \end{cryptoisa}

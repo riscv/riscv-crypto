@@ -607,25 +607,6 @@ index 0000000..e5f4157
 +
 +WRITE_RD(result);
 +
-diff --git a/riscv/insns/saes_v2_sub_decrot.h b/riscv/insns/saes_v2_sub_decrot.h
-new file mode 100644
-index 0000000..e0a1e57
---- /dev/null
-+++ b/riscv/insns/saes_v2_sub_decrot.h
-@@ -0,0 +1,13 @@
-+
-+#include "saes_common.h"
-+
-+AES_UNPACK_BYTES(b0, b1, b2, b3);
-+
-+// Reverse SBOX
-+AES_RSBOX(b0, b1, b2, b3);
-+
-+// Rotate output bytes
-+uint32_t result = AES_PACK_BYTES(b1, b2, b3, b0);
-+
-+WRITE_RD(result);
-+
 diff --git a/riscv/insns/saes_v2_sub_enc.h b/riscv/insns/saes_v2_sub_enc.h
 new file mode 100644
 index 0000000..55de152
@@ -643,26 +624,6 @@ index 0000000..55de152
 +uint32_t result = AES_PACK_BYTES(b0, b1, b2, b3);
 +
 +WRITE_RD(result);
-+
-diff --git a/riscv/insns/saes_v2_sub_encrot.h b/riscv/insns/saes_v2_sub_encrot.h
-new file mode 100644
-index 0000000..9f72d77
---- /dev/null
-+++ b/riscv/insns/saes_v2_sub_encrot.h
-@@ -0,0 +1,14 @@
-+
-+#include "saes_common.h"
-+
-+AES_UNPACK_BYTES(b0, b1, b2, b3);
-+
-+// Forward SBOX
-+AES_SBOX(b0, b1, b2, b3);
-+
-+// Rotate output bytes
-+uint32_t result = AES_PACK_BYTES(b1, b2, b3, b0);
-+
-+WRITE_RD(result);
-+
 +
 diff --git a/riscv/insns/saes_v3_decm.h b/riscv/insns/saes_v3_decm.h
 new file mode 100644
@@ -1060,10 +1021,10 @@ index 0000000..c5141dc
 +MMU.store_uint32(RS1 + (RS2 << 2), RS3);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..113232d 100644
+index 4ee64fa..e8969d8 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,51 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,49 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
@@ -1078,9 +1039,7 @@ index 4ee64fa..113232d 100644
 +    saes_v2_mix_dec \
 +    saes_v2_mix_enc \
 +    saes_v2_sub_dec \
-+    saes_v2_sub_decrot \
 +    saes_v2_sub_enc \
-+    saes_v2_sub_encrot \
 +    saes_v3_encs \
 +    saes_v3_encm\
 +    saes_v3_encsm\
@@ -1115,7 +1074,7 @@ index 4ee64fa..113232d 100644
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +827,7 @@ riscv_insn_list = \
+@@ -782,6 +825,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \
