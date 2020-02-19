@@ -53,34 +53,25 @@ V3.2         & 18                       & 2455        \\
 \caption{
 AES proposal RTL implementation benchmarks.
 Measured using the Yosys simple CMOS flow.
+The V1 and V2 proposals have "Latency" and "Size" optimised versions.
+The "Latency" versions use $4$ SBox instantiations and compute their
+results in a single clock cycle.
+The "Size" versions use $1$ SBox instantiation, and compute their
+results over 4 clock cycles.
 }
 \label{tab:benchmarks:aes:impl}
 \end{table}
 
-
+\newpage
 \subsection{SHA2}
 \label{sec:benchmark:sha2}
 
-The source code for these benchmarks is available as part of the
-{\tt riscv-crypto} GitHub repository:
-\href{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_hash/sha256}{SHA256},
-\href{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_hash/sha512}{SHA512}.
-
-\begin{table}[h]
-\centering
-\begin{tabular}{lrr}
-Instructions   & Longest Topological Path & Area (NAND2 Equivalent) \\ \hline
-ssha256.s*     & 5                        & 787                   \\
-ssha512.s*     & 6                        & 1534                  \\
-\end{tabular}
-\caption{Static code size and instructions executed comparison for
-the \mnemonic{ssha256.sx} instructions on RV32 based architectures.
-Instruction execution counts are for hashing 1024 bytes of data.}
-\label{tab:benchmarks:sha2:rtl}
-\end{table}
-
-Area and path length estimates are calculated using a basic Yosys CMOS
-synthesis flow.
+The source code for the
+SHA256\footnote{\url{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_hash/sha256}}
+and
+SHA512\footnote{\url{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_hash/sha512}}
+benchmarks are available as part of the {\tt riscv-crypto}
+\href{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_block/aes}{GitHub repository}.
 
 \begin{table}[h]
 \centering
@@ -90,10 +81,12 @@ rv32gc            & 14934                    & 78003 & 1.00x          \\
 rv32gcb           & 10086                    & 56866 & 1.37x          \\
 rv32gcb\_Zscrypto & 5938                     & 28539 & 2.73x 
 \end{tabular}
-\caption{Static code size and instructions executed comparison for
+\caption{{\bf SHA256:}
+Static code size and instructions executed comparison for
 the \mnemonic{ssha256.sx} instructions on RV32 based architectures.
 Instruction execution counts are for hashing 1024 bytes of data using
-SHA256.}
+SHA256.
+}
 \label{tab:benchmarks:sha256}
 \end{table}
 
@@ -105,11 +98,27 @@ rv64gc            & 20490                    & 73138 & 1.00x          \\
 rv64gcb           & 14216                    & 53153 & 1.38x          \\
 rv64gcb\_Zscrypto & 8954                     & 35881 & 2.04x 
 \end{tabular}
-\caption{Static code size and instructions executed comparison for
+\caption{{\bf SHA512:}
+Static code size and instructions executed comparison for
 the \mnemonic{ssha512.sx} instructions on RV64 based architectures.
 Instruction execution counts are for hashing 1024 bytes of data
-using SHA512.}
+using SHA512.
+}
 \label{tab:benchmarks:sha512}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+Instructions   & Longest Topological Path & Area (NAND2 Equivalent) \\ \hline
+ssha256.s*     & 5                        & 787                   \\
+ssha512.s*     & 6                        & 1534                  \\
+\end{tabular}
+\caption{
+Area and path length estimates are calculated using a basic Yosys CMOS
+synthesis flow.
+}
+\label{tab:benchmarks:sha2:rtl}
 \end{table}
 
 \newpage
@@ -119,6 +128,12 @@ using SHA512.}
 This discussion follows on from the instruction specifications
 in section
 \ref{sec:scalar:sha3}.
+
+\note{
+These instructions may be withdrawn as proposals, since in practice
+implementations of the SHA3 round function are usually unrolled,
+which removes the use-case for these instructions.
+}
 
 The SHA3 secure hash function \cite{nist:fips:202} is based on
 the KECCAK-P family of permutations.
@@ -303,9 +318,51 @@ RISC-V with the auto-aligning instructions described
 in section \ref{sec:ildst}.
 }
 
-
 % ============================================================================
 
+\section{Equivalent C-Code Listings}
+\label{sec:ccode}
+
+\subsection{LUT4}
+\label{sec:ccode:lut4}
+
+\begin{figure}
+\begin{lstlisting}[style=C]
+uint32_t lut4_lo (uint32_t rs1, uint32_t rs2) {
+    uint32_t result = 0;
+    for(int i = 0; i < 32; i += 4) {
+        uint8_t idx =  (rs1 >> i) & 0x7;
+        uint8_t lo  = ((rs1 >> i) & 0xF) < 8;
+        if(lo) { result |= ((rs2 >> (4*idx) & 0xF) << i; }
+    }
+    return result;
+}
+uint32_t lut4_hi (uint32_t rs1, uint32_t rs2) {
+    uint32_t result = 0;
+    for(int i = 0; i < 32; i += 4) {
+        uint8_t idx =  (rs1 >> i) & 0x7;
+        uint8_t hi  = ((rs1 >> i) & 0xF) > 8;
+        if(hi) { result |= ((rs2 >> (4*idx) & 0xF) << i; }
+    }
+    return result;
+}
+uint64_t lut4 (uint64_t rs1, uint64_t rs2) {
+    uint64_t result = 0;
+    for(int i = 0; i < 64; i += 4) {
+        result |= ((rs2 >> (4*((rs1 >> i)&0xF)) & 0xF) << i;
+    }
+    return result;
+}
+\end{lstlisting}
+\caption{
+    Equivalent C code models for the
+    \mnemonic{lut4lo}, \mnemonic{lut4hi} and \mnemonic{lut4}
+    instructions.
+}
+\label{fig:equiv:c:lut4}
+\end{figure}
+
+% ============================================================================
 
 \section{Tentative Encoding Proposals}
 

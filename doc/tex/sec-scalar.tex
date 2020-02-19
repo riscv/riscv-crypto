@@ -47,10 +47,10 @@ Cryptographic standards which are settled upon concurrently with, or after
 the RISC-V cryptographic extension standardisation will be dealt with
 by future additions too, or versions of, the RISC-V cryptographic
 standard extension.
+}
 \footnote{It is anticipated that the NIST Lightweight Cryptography
 contest, and possibly the NIST Post-Quantum Cryptography contest
 may be dealt with this way, depending on timescales.}
-}
 
 \policy{
 Historically, there has been some discusion \cite{LSYRR:04} on
@@ -59,6 +59,17 @@ enable new bases for cryptographic algorithms.
 The standard will not try to anticipate new useful low level
 operations which {\em may} be useful as building blocks for
 future cryptographic constructs.
+}
+
+\policy{
+Regarding side-channel countermeasures:
+Where relevant, proposed instructions must aim to remove the
+possibility of any timing side-channels.
+For side-channels based on power or electro-magnetic (EM) measurements,
+the extension will not aim to support countermeasures which are
+implemented above the ISA abstraction layer.
+Recommendations will be given where relevent on how micro-architectures
+can implement instructions in a power/EM side-channel resistant way.
 }
 
 

@@ -3,6 +3,12 @@
 \subsection{Lightweight SHA3 Acceleration}
 \label{sec:scalar:sha3}
 
+\note{
+These instructions may be withdrawn as proposals, since in practice
+implementations of the SHA3 round function are usually unrolled,
+which removes the use-case for these instructions.
+}
+
 \begin{cryptoisa}
 RV32, RV64:
     ssha3.xy rd, rs1, rs2 : rd = (( rs1    % 5) + 5(           rs2 % 5)) << 3
@@ -26,8 +32,9 @@ be found in Appendix \ref{sec:appendix:sha3}.
 
 \note{
 SHA3 is not yet widely used, especially with respect to SHA2.
-These instructions enable implementations with a much better
-performance/code-density ratio than is currently possible in RISC-V.
+This can be expected to change over time, particularly as many
+of the NIST Post-Quantum Cryptography candidates use SHA3 as an
+underlying construct.
 }
 
 \note{

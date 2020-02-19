@@ -27,6 +27,10 @@ the Bitmanip extension,
 both,
 would be able to depend on the existence of these instructions.
 
+%
+% TODO: Venn diagram of proposed instructions.
+%
+
 The following subsections give the assembly syntax of instructions
 proposed for inclusion in the scalar crypto extension, along with a
 set of use-cases for common algorithms or primitive operations.
@@ -76,7 +80,7 @@ left/right rotate shifted by the amount in {\tt imm}/{\tt rs2}.
 These are useful for implementing double-width rotations.
 There are (currently) no examples of widely used algorithms which
 use anything larger than a 64-bit rotation, hence the funnel shift
-instructions are only recommended for inclusion on RV32, since RV64
+instructions are only proposed for inclusion on RV32, since RV64
 will support 64-bit rotations naturally.
 
 Algorithms using 64-bit rotations:
@@ -107,8 +111,8 @@ Endianness correction is important because
 cryptography often occurs in the context of communication, which requires
 standardised endianness which may be different from the natural machine
 endianness.
-
-\todo{Specific use-cases for grev.}
+This instruction is also useful for getting data into the right form
+for being posted to a dedicated accelerator.
 
 \begin{cryptobitmanipisa}
 RV32, RV64:
@@ -187,7 +191,11 @@ these instructions.
 These instructions are useful inside hash functions, block ciphers and
 for implementing software based side-channel countermeasures like masking.
 
-Useful for: SHA3 / SHA2 / Masking
+Useful for:
+SHA3 Chi step,
+SHA2 Ch step
+and
+software based power/EM side-channel countermeasures based on masking.
 
 \subsubsection{Packing}
 
