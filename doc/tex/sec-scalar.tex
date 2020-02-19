@@ -14,34 +14,51 @@ and work by
 Paris Telecom on acceleration of lightweight block ciphers
 \cite{TGMGD:19}.
 
-\question{
-Implementation Diversity.
-There are often many different ways of implementing certain
-standardised cryptographic algorithms (AES T-Table v.s. packed for example).
-Given that different implementation styles can have security implications
-as well, what should the TG policy be on enabling implementation diversity?
-By encouraging a particular style of implementation, more specific and
-light-weight instructions can be defined to accelerate specifically that
-implementation (See \cite{TG:06}).
-This may come with flexibility costs, and possibly limit implementers
-choices in terms of security and attack countermeasures.
+The scalar cryptography extension is designed with the following
+policies in mind.
+Their purpose is to help make design decisions consistent across the
+extension.
+Deviation from these policies is allowed if well justified.
+
+\note{
+These policies {\em are up for discussion}.
 }
 
-\question{
-Chicken and Egg Problems. While security must always be the first design
-criteria for a new cipher, cryptographers can weight their choice of
-primitives by how well they are supported by existing micro-processors.
-If suddenly a new primitive becomes well supported by new
-architectures, how does this impact cipher design?
-Is this a motivation to include some level of generally / speculatively
-useful stuff?
-See \cite{block:salsa20, LSYRR:04}.
-Likewise, criteria for ``lightweight" ciphers might include suitability
-for hardware.
-This might mean narrow data widths (e.g. SPARX \cite{DPUVGB:16})
-which though excellent for hardware, are less than a CPU word-width,
-making operations like addition, shifts and rotate {\em more}
-awkward, not less.
+\policy{
+Where there is a choice between:
+1) supporting diverse implementation strategies for an algorithm
+or
+2) supporting a single implementation style which is more performant /
+   less expensive;
+the scalar crypto extension will pick the more constrained but performant
+option.
+This fits a common pattern in other parts of the RISC-V specification,
+where recommended (but not required) instruction sequences for performing
+particular tasks are given as an example, such that both hardware and
+software implementers can optimise for only a single use case.
+}
+
+\policy{
+The extension will be designed to well support {\em existing} standardised
+cryptographic constructs.
+It will not try to support proposed standards, or cryptographic
+constructs which exist only in academia.
+Cryptographic standards which are settled upon concurrently with, or after
+the RISC-V cryptographic extension standardisation will be dealt with
+by future additions too, or versions of, the RISC-V cryptographic
+standard extension.
+\footnote{It is anticipated that the NIST Lightweight Cryptography
+contest, and possibly the NIST Post-Quantum Cryptography contest
+may be dealt with this way, depending on timescales.}
+}
+
+\policy{
+Historically, there has been some discusion \cite{LSYRR:04} on
+how newly supported operations in general purpose computing might
+enable new bases for cryptographic algorithms.
+The standard will not try to anticipate new useful low level
+operations which {\em may} be useful as building blocks for
+future cryptographic constructs.
 }
 
 

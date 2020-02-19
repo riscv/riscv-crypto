@@ -41,34 +41,52 @@
     Figure \ref{fig:#1}
 }
 
+\newcounter{ctrtodo}[section]
+\newcounter{ctrnote}[section]
+\newcounter{ctrquestion}[section]
+\newcounter{ctrpolicy}
+
+\newcommand{\policy}[1]{
+    \refstepcounter{ctrpolicy}
+    \medskip
+    \noindent
+    \parbox{0.97\textwidth}{
+        {\bf Policy \#\thectrpolicy:} #1
+    }
+    \smallskip
+}
+
 \newcommand{\todo}[1]{
+    \refstepcounter{ctrtodo}
     \medskip
     \noindent
     \fbox{
         \parbox{0.97\textwidth}{
-            \textcolor{red}{{\bf TODO:}} #1
+            \textcolor{red}{{\bf TODO \#\thesection.\thectrtodo:}} #1
         }
     }
     \smallskip
 }
 
 \newcommand{\note}[1]{
+    \refstepcounter{ctrnote}
     \medskip
     \noindent
     \fbox{
         \parbox{0.97\textwidth}{
-            \textcolor{blue}{{\bf Note:}} #1
+            \textcolor{blue}{{\bf Note \#\thesection.\thectrnote:}} #1
         }
     }
     \smallskip
 }
 
 \newcommand{\question}[1]{
+    \refstepcounter{ctrquestion}
     \medskip
     \noindent
     \fbox{
         \parbox{0.97\textwidth}{
-            \textcolor{green}{{\bf Question:}} #1
+            \textcolor{teal}{{\bf Question \#\thesection.\thectrquestion:}} #1
         }
     }
     \smallskip
