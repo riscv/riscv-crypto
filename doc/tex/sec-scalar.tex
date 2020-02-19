@@ -53,54 +53,7 @@ awkward, not less.
 \import{./}{sec-scalar-aes.tex}
 \import{./}{sec-scalar-sha2.tex}
 \import{./}{sec-scalar-sha3.tex}
-
-% ============================================================================
-
-\subsection{Auto-aligning Indexed Load and Store}
-\label{sec:ildst}
-
-\begin{cryptoisa}
-RV32, RV64:
-    lbx     rd,  rs1, rs2 : rd = sext(mem[rs1 + (rs2     )])
-    lbux    rd,  rs1, rs2 : rd = zext(mem[rs1 + (rs2     )])
-    lhx     rd,  rs1, rs2 : rd = sext(mem[rs1 + (rs2 << 1)])
-    lhux    rd,  rs1, rs2 : rd = zext(mem[rs1 + (rs2 << 1)])
-    lwx     rd,  rs1, rs2 : rd = sext(mem[rs1 + (rs2 << 2)])
-    sbx     rs1, rs2, rs3 : mem[rs1 + (rs3     )] = rs2
-    shx     rs1, rs2, rs3 : mem[rs1 + (rs3 << 1)] = rs2
-    swx     rs1, rs2, rs3 : mem[rs1 + (rs3 << 2)] = rs2
-
-RV64:
-    lwux    rd,  rs1, rs2 : rd = zext(mem[rs1 + (rs2 << 2)])
-    ldx     rd,  rs1, rs2 : rd = sext(mem[rs1 + (rs2 << 3)])
-    sdx     rs1, rs2, rs3 : mem[rs1 + (rs3 << 3)] = rs2
-\end{cryptoisa}
-
-\note{
-There is a longer discussion about the inclusion of indexed load
-and store in the context of RISC-V in
-Appendix \ref{sec:appendix:ildst}.
-}
-
-These instructions add indexed load and store functionality to RISC-V.
-The load instructions take a base register {\tt rs1} and an offset
-register {\tt rs2} to form an address.
-The offset is aligned to the data type of the instruction.
-Zero and sign extending variants are provided.
-The store instructions do the same to form the effective address, but
-use {\tt rs3} as the auto-aligned offset.
-This pattern of register usage keeps the functions of {\tt rs1} and
-{\tt rs2} the same as the immediate offset load and store instructions.
-
-Indexed load and store are useful for implementing many cryptographic
-algorithms.
-For public key cryptography involving modular exponentiation, iterating
-independently over several arrays without lots of pointer arithmetic
-is beneficial.
-For hash functions and symmetric key block ciphers, irregular or
-non-sequential access to a state array also benefits from
-being able to directly calculate an address based on an offset in a
-register.
+\import{./}{sec-scalar-ildst.tex}
 
 % ============================================================================
 
