@@ -2,23 +2,14 @@
 \newpage
 \subsection{Lightweight AES Acceleration}
 
-\note{The AES SBox operations are very popular targets for
-power or EM based side-channel attacks.
-While an instruction like this allows for very efficient AES
-implementations, it is very difficult to implement the operation
-in a countermeasure friendly way.}
-
-\question{What should the Task Group policy be on enabling
-software and/or hardware based side-channel countermeasure?}
-
-\question{Given that enabling and optimising side-channel countermeasures 
-is so hard, should the TG focus instead on code-density and performance?
-In this case, can implementations with much more structured
-inputs (as in \cite{TG:06}) be considered.}
+This section details $3.5$ proposals for lightweight acceleration of
+the AES block cipher \cite{nist:fips:197}.
 
 Performance and RTL benchmarks for these
 instruction proposals are found in Section
 \ref{sec:benchmark:aes}.
+
+% ------------------------------------------------------------
 
 \subsubsection{Variant 1}
 
@@ -41,14 +32,17 @@ extended.
 Pseudo code is found in figure
 \ref{fig:pseudo:aes:v1}.
 
+This proposal variant requires $2$ encoding points with only one
+source register.
+
 \begin{figure}
 \begin{subfigure}[b]{0.5\textwidth}
 \begin{lstlisting}
 saes.v1.enc(rs1):
-    rd.8[0] = AESSBox[rs1.8[0]]
-    rd.8[1] = AESSBox[rs1.8[1]]
-    rd.8[2] = AESSBox[rs1.8[2]]
-    rd.8[3] = AESSBox[rs1.8[3]]
+    rd.8[0] =    AESSBox(rs1.8[0])
+    rd.8[1] =    AESSBox(rs1.8[1])
+    rd.8[2] =    AESSBox(rs1.8[2])
+    rd.8[3] =    AESSBox(rs1.8[3])
 \end{lstlisting}
 \caption{Forward SBox instruction pseudo code.}
 \label{fig:pseudo:aes:v1:sub:enc}
@@ -56,10 +50,10 @@ saes.v1.enc(rs1):
 \begin{subfigure}[b]{0.5\textwidth}
 \begin{lstlisting}
 saes.v1.dec(rs1):
-    rd.8[0] = InvAESSBox[rs1.8[0]]
-    rd.8[1] = InvAESSBox[rs1.8[1]]
-    rd.8[2] = InvAESSBox[rs1.8[2]]
-    rd.8[3] = InvAESSBox[rs1.8[3]]
+    rd.8[0] = InvAESSBox(rs1.8[0])
+    rd.8[1] = InvAESSBox(rs1.8[1])
+    rd.8[2] = InvAESSBox(rs1.8[2])
+    rd.8[3] = InvAESSBox(rs1.8[3])
 \end{lstlisting}
 \label{fig:pseudo:aes:v1:sub:dec}
 \caption{Inverse SBox instruction pseudo code.}
@@ -68,21 +62,24 @@ saes.v1.dec(rs1):
 \label{fig:pseudo:aes:v1}.
 \end{figure}
 
+% ------------------------------------------------------------
+
 \subsubsection{Variant 2}
 
 \begin{cryptoisa}
 RV32, RV64:
-    saes.v2.sub.enc    rd, rs1, rs2 // mode = enc, rot = 0
-    saes.v2.sub.encrot rd, rs1, rs2 // mode = enc, rot = 1
-    saes.v2.sub.dec    rd, rs1, rs2 // mode = dec, rot = 0
-    saes.v2.sub.decrot rd, rs1, rs2 // mode = dec, rot = 1
-
-    saes.v2.mix.enc    rd, rs1, rs2 // mode = enc
-    saes.v2.mix.dec    rd, rs1, rs2 // mode = dec
+    saes.v2.sub.enc    rd, rs1, rs2
+    saes.v2.sub.dec    rd, rs1, rs2
+    saes.v2.mix.enc    rd, rs1, rs2
+    saes.v2.mix.dec    rd, rs1, rs2
 \end{cryptoisa}
 
 These instructions are derived from \cite{MPP:19}, which in turn adapted
 them originally from \cite{TG:06}.
+Each instruction performs either the SubBytes or MixColumns transformation
+to a single column of the AES state, along with a partial ShiftRows.
+Example usage can be found in the riscv-crypto repository
+\footnote{\url{https://github.com/scarv/riscv-crypto/blob/master/benchmarks/crypto_block/aes/zscrypto_v2/aes_enc.c\#L53}}.
 
 Pseudo-code for the sub-bytes and mix-columns instructions are found in
 figures
@@ -91,16 +88,19 @@ and
 \ref{fig:pesudo:aes:v2:mix}
 respectively.
 
+This proposal variant requires $4$ encoding points, where each point
+requires two source registers and a destination register.
+
 \begin{figure}
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
-saes.v2.sub(rs1, rs2, mode, rot):
+saes.v2.sub(rs1, rs2, mode):
     if(mode == enc)
-        t0 =    AESSBox[rs1.8[0]], t1 =    AESSBox[rs2.8[1]]
-        t2 =    AESSBox[rs1.8[2]], t3 =    AESSBox[rs2.8[3]]
+        t0 =    AESSBox(rs1.8[0]), t1 =    AESSBox(rs2.8[1])
+        t2 =    AESSBox(rs1.8[2]), t3 =    AESSBox(rs2.8[3])
     else
-        t0 = InvAESSBox[rs1.8[0]], t1 = InvAESSBox[rs2.8[1]]
-        t2 = InvAESSBox[rs1.8[2]], t3 = InvAESSBox[rs2.8[3]]
+        t0 = InvAESSBox(rs1.8[0]), t1 = InvAESSBox(rs2.8[1])
+        t2 = InvAESSBox(rs1.8[2]), t3 = InvAESSBox(rs2.8[3])
     rd.32 = {t3, t2, t1, t0} 
 \end{lstlisting}
 \caption{AES instruction variant 2: sbox instruction pseudo code.}
@@ -122,6 +122,8 @@ saes.v2.mix(rs1, rs2, mode):
 \caption{AES Instructions: Variant 2 Pseudo Code.}
 \end{figure}
 
+% ------------------------------------------------------------
+
 \subsubsection{Variant 3}
 
 \begin{cryptoisa}
@@ -140,6 +142,8 @@ They are designed to enable a partial T-Table based implementation
 of AES in hardware, where the SubBytes, ShiftRows and MixColumns
 transformations are all rolled into a single instruction, with the
 per-byte results then accumulated.
+The {\tt bs} immediate operand is a 2-bit {\em Byte Select}, and indicates
+which byte of the input word is operated on.
 In contrast to variants 1 and 2, they perform only a single (Inverse) SBox
 lookup per instruction.
 Pseudo-code for each instruction is found in figure
@@ -166,13 +170,17 @@ subsets would suffice:
     timing path for the instruction.
 \end{enumerate}
 
-\begin{figure}
+Both the v3.1 and V3.2 proposal variants require $4$ fixed encoding
+points with two source registers, one destination register and
+a single $2$-bit immediate.
+This makes for a total of $16$ encoding points.
 
+\begin{figure}
 \begin{subfigure}[b]{1.0\textwidth}
 \begin{lstlisting}
 saes.v3.encs(rs1, rs2, bs):                 // SubBytes Only
     t0.8  = rs1.8[bs]
-    x.8   = AESSBox[t0]
+    x.8   = AESSBox(t0)
     u.32  = {0, 0, 0, x}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 
@@ -183,7 +191,7 @@ saes.v3.encm(rs1, rs2, bs):                 // MixColumns only
 
 saes.v3.encsm(rs1, rs2, bs):                // SubBytes & MixColumns
     t0.8  = rs1.8[bs]
-    x.8   = AESSBox[t0]
+    x.8   = AESSBox(t0)
     u.32  = {GFMUL(x,3) , x, x, GFMUL(x,2)}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 \end{lstlisting}
@@ -195,7 +203,7 @@ saes.v3.encsm(rs1, rs2, bs):                // SubBytes & MixColumns
 \begin{lstlisting}
 saes.v3.decs(rs1, rs2, bs):                 // InvSubBytes Only
     t0.8  = rs1.8[bs]
-    x.8   = INVAESSBox[t0]
+    x.8   = InvAESSBox(t0)
     u.32  = {0, 0, 0, x}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 
@@ -206,7 +214,7 @@ saes.v3.decm(rs1, rs2, bs):                 // InvMixColumns Only
 
 saes.v3.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
     t0.8  = rs1.8[bs]
-    x.8   = INVAESSBox[t0]
+    x.8   = InvAESSBox(t0)
     u.32  = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 \end{lstlisting}
@@ -216,3 +224,4 @@ saes.v3.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
 \caption{AES instruction variant 3.}
 \label{fig:pseudo:aes:v3}
 \end{figure}
+

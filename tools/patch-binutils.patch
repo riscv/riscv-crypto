@@ -106,10 +106,10 @@ index 9ecdcab0b6..f1615c328d 100644
  	    case 's':		/* Source register.  */
  	    case 't':		/* Target register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..e5577382b4 100644
+index 6c750a33b1..2851a6933b 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
-@@ -343,6 +343,120 @@
+@@ -343,6 +343,112 @@
  #define MASK_GORCIW  0xfe00707f
  #define MATCH_GREVIW 0x6800501b
  #define MASK_GREVIW  0xfe00707f
@@ -135,18 +135,10 @@ index 6c750a33b1..e5577382b4 100644
 +#define MASK_SAES_V2_SUB_ENC 0xfe00707f
 +#define MATCH_SAES_V2_SUB_ENC 0x1600202b
 +#define MASK_SAES_V2_SUB_ENC  0xfe00707f
-+#define MATCH_SAES_V2_SUB_ENCROT 0x1400202b
-+#define MASK_SAES_V2_SUB_ENCROT 0xfe00707f
-+#define MATCH_SAES_V2_SUB_ENCROT 0x1400202b
-+#define MASK_SAES_V2_SUB_ENCROT  0xfe00707f
 +#define MATCH_SAES_V2_SUB_DEC 0x1200202b
 +#define MASK_SAES_V2_SUB_DEC 0xfe00707f
 +#define MATCH_SAES_V2_SUB_DEC 0x1200202b
 +#define MASK_SAES_V2_SUB_DEC  0xfe00707f
-+#define MATCH_SAES_V2_SUB_DECROT 0x1000202b
-+#define MASK_SAES_V2_SUB_DECROT 0xfe00707f
-+#define MATCH_SAES_V2_SUB_DECROT 0x1000202b
-+#define MASK_SAES_V2_SUB_DECROT  0xfe00707f
 +#define MATCH_SAES_V2_MIX_ENC 0xe00202b
 +#define MASK_SAES_V2_MIX_ENC 0xfe00707f
 +#define MATCH_SAES_V2_MIX_ENC 0xe00202b
@@ -292,10 +284,10 @@ index 19f10c0e55..db7754b21e 100644
  	  print (info->stream, "%s", riscv_gpr_names[0]);
  	  break;
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..3bb5ec6c51 100644
+index e99febc823..c619118fa8 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
-@@ -709,6 +709,51 @@ const struct riscv_opcode riscv_opcodes[] =
+@@ -709,6 +709,49 @@ const struct riscv_opcode riscv_opcodes[] =
  {"unzip2",    0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  {"unzip",     0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  
@@ -308,9 +300,7 @@ index e99febc823..3bb5ec6c51 100644
 +{"saes.v1.enc"         , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SAES_V1_ENC, MASK_SAES_V1_ENC, match_opcode, 0},
 +{"saes.v1.dec"         , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SAES_V1_DEC, MASK_SAES_V1_DEC, match_opcode, 0},
 +{"saes.v2.sub.enc"     , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_SUB_ENC, MASK_SAES_V2_SUB_ENC, match_opcode, 0},
-+{"saes.v2.sub.encrot"  , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_SUB_ENCROT, MASK_SAES_V2_SUB_ENCROT, match_opcode, 0},
 +{"saes.v2.sub.dec"     , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_SUB_DEC, MASK_SAES_V2_SUB_DEC, match_opcode, 0},
-+{"saes.v2.sub.decrot"  , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_SUB_DECROT, MASK_SAES_V2_SUB_DECROT, match_opcode, 0},
 +{"saes.v2.mix.enc"     , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_MIX_ENC, MASK_SAES_V2_MIX_ENC, match_opcode, 0},
 +{"saes.v2.mix.dec"     , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SAES_V2_MIX_DEC, MASK_SAES_V2_MIX_DEC, match_opcode, 0},
 +{"saes.v3.encs"        , 0, INSN_CLASS_ZSCRYPTO,  "d,s,t,w", MATCH_SAES_V3_ENCS, MASK_SAES_V3_ENCS, match_opcode, 0},

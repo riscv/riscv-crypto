@@ -7,6 +7,10 @@
 
 **Note:** This repository is in the very early stages of development.
 
+**TL;DR:** To see the latest draft release of the proposals, look at the
+[Releases](https://github.com/scarv/riscv-crypto/releases) tab of
+the [Github Repository](https://github.com/scarv/riscv-crypto).
+
 ## About
 
 - This repository is used to develop standardisation proposals for
@@ -61,4 +65,3 @@
 
 - See [`rtl/README.md`](rtl/README.md) for information on experimental
   RTL implementations of the proposed instructions.
-

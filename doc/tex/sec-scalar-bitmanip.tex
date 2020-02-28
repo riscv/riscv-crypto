@@ -1,0 +1,261 @@
+
+% ============================================================================
+
+\subsection{Shared Bitmanip Extension Functionality}
+
+Many of the primitive operations used in symmetric key cryptography
+and cryptographic hash functions are well supported by the
+RISC-V Bitmanip \cite{riscv:bitmanip:repo} extension
+\footnote{
+At the time of writing, the Bitmanip extension is still undergoing
+standardisation.
+Please refer to the Bitmanip draft specification
+\cite{riscv:bitmanip:draft}
+directly for the
+latest information, as it may be slightly ahead of what is described
+here.
+}.
+We propose that the scalar cryptographic extension {\em reuse} a
+subset of the instructions from the Bitmanip extension directly.
+Specifically, this would mean that
+a core implementing
+{\em either}
+the scalar cryptographic extensions,
+{\em or}
+the Bitmanip extension,
+{\em or}
+both,
+would be able to depend on the existence of these instructions.
+
+%
+% TODO: Venn diagram of proposed instructions.
+%
+
+The following subsections give the assembly syntax of instructions
+proposed for inclusion in the scalar crypto extension, along with a
+set of use-cases for common algorithms or primitive operations.
+For information on the semantics of the instructions, we refer directly
+to the Bitmanip draft specification.
+
+\subsubsection{Rotations}
+
+\begin{cryptobitmanipisa}
+RV32, RV64:
+    ror    rd, rs1, rs2
+    rol    rd, rs1, rs2
+    rori   rd, rs1, imm
+
+RV64 only:
+    rorw   rd, rs1, rs2
+    rolw   rd, rs1, rs2
+    roriw  rd, rs1, imm
+\end{cryptobitmanipisa}
+
+See \cite[Section 3.1.1]{riscv:bitmanip:draft} for exact details of
+these instructions.
+Standard bitwise rotation is a primitive operation in many block ciphers and
+hash functions.
+It particularly features in the ARX (Add,Rotate,Xor) class of
+block ciphers
+\footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}.
+
+Algorithms making use of 32-bit rotations:
+SHA256, AES (Shift Rows), ChaCha20
+
+Algorithms making use of 64-bit rotations:
+SHA512, SHA3
+
+\begin{cryptobitmanipisa}
+RV32 only:
+    fsl   rd, rs1, rs3, rs2
+    fsr   rd, rs1, rs3, rs2
+    fsri  rd, rs1, rs3, imm
+\end{cryptobitmanipisa}
+
+See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
+these instructions.
+The {\em funnel shift} instructions create a $2*$\XLEN word by
+concatenating {\tt rs1} and {\tt rs3}, which is then
+left/right rotate shifted by the amount in {\tt imm}/{\tt rs2}.
+These are useful for implementing double-width rotations.
+There are (currently) no examples of widely used algorithms which
+use anything larger than a 64-bit rotation, hence the funnel shift
+instructions are only proposed for inclusion on RV32, since RV64
+will support 64-bit rotations naturally.
+
+Algorithms using 64-bit rotations:
+SHA512,
+SHA3\footnote{SHA3 can avoid awkward double-width rotations using a
+technique called "Bit Interleaving". Benchmarking will be needed to
+see if this technique is a worthy mitigation for removing the funnel shifts.}
+
+\subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
+
+\begin{cryptobitmanipisa}
+RV32, RV64:
+    grev rd, rs1, rs2
+    grevi rd, rs1, imm
+
+RV64 only:
+    grevw rd, rs1, rs2
+    greviw rd, rs1, imm
+\end{cryptobitmanipisa}
+
+The Generalised Reverse ({\tt grev*}) instructions can be used for 
+``{\em byte-order swap, bitwise reversal, short-order-swap,
+word-order-swap (RV64), nibble-order swap, bitwise reversal in a byte}".
+These operations are useful for various permutation operations
+needed either by block ciphers and hash-functions directly, or for
+endianness correction of data.
+Endianness correction is important because
+cryptography often occurs in the context of communication, which requires
+standardised endianness which may be different from the natural machine
+endianness.
+This instruction is also useful for getting data into the right form
+for being posted to a dedicated accelerator.
+
+\begin{cryptobitmanipisa}
+RV32, RV64:
+    shfl    rd, rs1, rs2
+    unshfl  rd, rs1, rs2
+    shfli   rd, rs1, rs2
+    unshfli rd, rs1, rs2
+
+RV64:
+    shflw   rd, rs1, rs2
+    unshflw rd, rs1, rs2
+\end{cryptobitmanipisa}
+
+The generalised shuffle instructions are useful for implementing
+generic bit permutation operations.
+Algorithms such as 
+DES \footnote{
+One might reasonably argue that given the heritage of DES, it's support
+shouldn't really be any sort of consideration for a forward looking
+ISA like RISC-V.
+}
+and
+PRESENT\cite{block:present} with
+irregular / odd permutations are most-likely to benefit from this
+instruction.
+
+\todo{More research needed on specific algorithms / use-cases for
+these instructions. They are included as ``hypothetically useful"
+at the moment.}
+
+\subsubsection{Carry-less Multiply}
+
+\begin{cryptobitmanipisa}
+RV32, RV64:
+    clmul rd, rs1, rs2
+    clmulh rd, rs1, rs2
+    clmulr rd, rs1, rs2
+
+RV64 only:
+    clmulw rd, rs1, rs2
+    clmulhw rd, rs1, rs2
+    clmulrw rd, rs1, rs2
+\end{cryptobitmanipisa}
+
+See \cite[Section 2.6]{riscv:bitmanip:draft} for exact details of
+this instruction.
+As is mentioned there, obvious cryptographic use-cases for carry-less
+multiply are for Galois Counter Mode (GCM) block cipher operations
+\footnote{\url{https://en.wikipedia.org/wiki/Galois/Counter_Mode}}.
+GCM is recommended by NIST as a block cipher mode of operation
+\cite{nist:gcm}.
+
+\subsubsection{Conditional Move}
+
+\begin{cryptobitmanipisa}
+RV32, RV64:
+    cmov rd, rs2, rs1, rs3
+\end{cryptobitmanipisa}
+
+See \cite[Section 2.9.2]{riscv:bitmanip:draft} for exact details of
+this instruction.
+Conditional move is useful for implementing constant-time cryptographic
+code and avoiding control flow changes.
+
+\subsubsection{Logic With Negate}
+
+\begin{cryptobitmanipisa}
+RV32, RV64:
+    andn rd, rs1, rs2
+     orn rd, rs1, rs2
+    xorn rd, rs1, rs2
+\end{cryptobitmanipisa}
+
+See \cite[Section 2.1.3]{riscv:bitmanip:draft} for exact details of
+these instructions.
+These instructions are useful inside hash functions, block ciphers and
+for implementing software based side-channel countermeasures like masking.
+
+Useful for:
+SHA3 Chi step,
+SHA2 Ch step
+and
+software based power/EM side-channel countermeasures based on masking.
+
+\subsubsection{Packing}
+
+\begin{cryptobitmanipisa}
+RV32, RV64: 
+    pack   rd, rs1, rs2
+    packu  rd, rs1, rs2
+    packh  rd, rs1, rs2
+
+RV64: 
+    packw  rd, rs1, rs2
+    packuw rd, rs1, rs2
+\end{cryptobitmanipisa}
+
+See \cite[Section 2.1.4]{riscv:bitmanip:draft} for exact details of
+these instructions.
+Some lightweight block ciphers
+(e.g. SPARX \cite{DPUVGB:16})
+use sub-word data types in their primitives.
+The Bitmanip pack instructions are useful for performing rotations on
+16-bit data elements.
+They are also useful for re-arranging halfwords within words, and
+generally getting data into the right shape prior to applying transforms.
+This is particularly useful for cryptographic algorithms which pass inputs
+around as byte strings, but can operate on words made out of those byte
+strings.
+This occurs for AES when loading blocks and keys (which may not be
+word aligned) into registers to perform the round functions.
+See Figure \ref{fig:example:pack} for an example.
+
+\begin{figure}
+\begin{subfigure}[t]{0.5\textwidth}
+\begin{lstlisting}
+packh   a0, a0, a1
+packh   a1, a2, a3
+pack    a0, a0, a1
+.
+.
+.
+\end{lstlisting}
+\end{subfigure}
+\begin{subfigure}[t]{0.5\textwidth}
+\begin{lstlisting}
+slli    a1, a1,  8
+slli    a2, a2, 16
+slli    a3, a3, 24
+or      a2, a2, a3
+or      a0, a0, a1
+or      a0, a0, a2
+\end{lstlisting}
+\end{subfigure}
+\caption{Comparison of packing four bytes loaded into GPRs $a0..a3$ into
+a single 32-bit word in $a0$ using the Bitmanip \mnemonic[pack*] instructions
+v.s. the standard RV32 instructions.}
+\label{fig:example:pack}
+\end{figure}
+
+Algorithms with sub-word rotations/shifts:
+SPARX
+
+Algorithms benefiting from packing bytes into words:
+AES, SHA2, SHA3
+
