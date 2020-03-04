@@ -246,7 +246,8 @@ RV64:
 \end{cryptoisa}
 
 These instructions are for RV64 only.
-They implment an entire round of AES over two instructions.
+They implment the SubBytes, ShiftRows and MixColumns transformations of AES
+over two instructions.
 Each instruction takes two 64-bit registers as input, which represents
 the entire 128 bit state of the AES cipher.
 The instructions use the equivilent inverse cipher construction
@@ -280,11 +281,12 @@ The {\tt encsm}/{\tt decsm} instructions perform the (Inverse) SubBytes,
 ShiftRows and MixColumns Transformations.
 \item
 The {\tt encs}/{\tt decs} instructions perform the (Inverse) SubBytes and
-ShiftRows Transformations. They are uses for the last round of AES only.
+ShiftRows Transformations. They are used for the last round of AES only.
 \item
-The {\tt sub} instruction applies 8 sboxes to each of the
-8 bytes in the source register, and writes them to the corresponding
+The {\tt sub} instruction applies 4 sboxes to the low
+4 bytes in the source register, and writes them to the corresponding
 byte in the destination register.
+The high 4 bytes are left un-modified.
 It is used for the Key Schedule only.
 \item
 The \mnemonic{imix} instruction applies only the inverse MixColumns
@@ -295,18 +297,16 @@ the equivilent inverse cipher construction in
 \cite{nist:fips:197}[Page 23, Section 5.3.5].
 \end{itemize}
 
-These instructions should take approximately $6$ instructions per round:
+This proposal requires $6$ instructions per AES round:
 $2$ \mnemonic{ld} instructions to load the round key,
 $2$ \mnemonic{xor} to add the round key to the current state
 and
 $2$ of the relevent AES encrypt/decrypt instructions to perform the
     SubBytes, ShiftRows and MixColumns round functions.
-This would add up too approximately $80$ instructions per AES-128 block
+This adds up too approximately $80$ instructions per AES-128 block
 encryption, including pre/post-amble instructions.
 
-\vspace{1cm}
 \begin{figure}
-
 \begin{subfigure}[b]{1.0\textwidth}
 \centering
 \begin{bytefield}[endianness=big,bitwidth=0.014\linewidth]{64}
@@ -318,7 +318,7 @@ Input Register Values
 \end{subfigure}
 
 \begin{subfigure}[b]{1.0\textwidth}
-\vspace{0.5cm}
+\vspace{0.2cm}
 \centering
 \begin{bytefield}[endianness=big,bitwidth=0.02\linewidth]{32}
 \bitheader{0,7,8,15,16,23,24,31} \\
@@ -327,11 +327,12 @@ Input Register Values
 \bitboxes{8}{{b2=rs1.8[2]}{b6=rs1.8[6]}{b10=rs2.8[2]}{b14=rs2.8[6]}} \\
 \bitboxes{8}{{b3=rs1.8[3]}{b7=rs1.8[7]}{b11=rs2.8[3]}{b15=rs2.8[7]}} \\
 \end{bytefield} \\
+\vspace{-0.5cm}
 AES State
 \end{subfigure}
 
 \begin{subfigure}[b]{1.0\textwidth}
-\vspace{0.5cm}
+\vspace{0.2cm}
 \centering
 \begin{bytefield}[endianness=big,bitwidth=0.014\linewidth]{64}
 \bitheader{0,7,8,15,16,23,24,31,32,39,40,47,48,55,56,63} \\
@@ -349,27 +350,26 @@ AES Variant 4.
 
 \begin{figure}
 \begin{lstlisting}
-saes.v4.sub(rs1):               // SubBytes Only
-    rd.8[i]  = AESSBox(rs1.8[i]) for i=0..7
+saes.v4.sub(rs1):               // SubBytes Only for Encrypt KeySchedule
+    rd.8[i]  = AESSBox(rs1.8[i]) for i=0..3
+    rd.8[j]  =         rs1.8[j]  for j=4..7
 
 saes.v4.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
     tmp.8[i]  = AESSBox(rs1.8[i]) for i=0..7
     tmp.128   = AESShiftRows(tmp.128)
-    if(mix):
-        tmp.128   = AESMixColumns(tmp.128)
+    if(mix):    tmp.128   = AESMixColumns(tmp.128)
     if(hi):
         rd.64 = tmp.64[1]
-    else
+    else:       
         rd.64 = tmp.64[0]
 
 saes.v4.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
     tmp.8[i]  = InvAESSBox(rs1.8[i]) for i=0..7
     tmp.128   = InvAESShiftRows(tmp.128)
-    if(mix):
-        tmp.128   = InvAESMixColumns(tmp.128)
+    if(mix):    tmp.128   = InvAESMixColumns(tmp.128)
     if(hi):
         rd.64 = tmp.64[1]
-    else
+    else:
         rd.64 = tmp.64[0]
 
 saes.v4.imix(rs1):              // Inverse MixColumns
