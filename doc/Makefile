@@ -36,6 +36,14 @@ $(SPEC_OUT) : $(SPEC_TEX) $(SPEC_EXTRA) $(SPEC_COMMIT)
 	biber    --output_directory $(BUILD_DIR) $(basename $(SPEC_TOP))
 	pdflatex  -output-directory $(BUILD_DIR) $(basename $(SPEC_TOP))
 
+aes-only : $(SPEC_TEX) $(SPEC_EXTRA) aes-only.tex
+	@mkdir -p $(BUILD_DIR)
+	pdflatex  -output-directory $(BUILD_DIR) aes-only
+	biber    --output_directory $(BUILD_DIR) aes-only
+	pdflatex  -output-directory $(BUILD_DIR) aes-only
+	biber    --output_directory $(BUILD_DIR) aes-only
+	pdflatex  -output-directory $(BUILD_DIR) aes-only
+
 spec: $(SPEC_OUT)
 
 clean:
