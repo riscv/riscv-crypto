@@ -44,25 +44,25 @@ void aes_ecb_decrypt (
         u2 = kp[6];
         u3 = kp[7];
 
-        u0 = _saes_v3_decsm(t0, u0, 0); //  AES decryption round, 16 instr
-        u0 = _saes_v3_decsm(t3, u0, 1);
-        u0 = _saes_v3_decsm(t2, u0, 2);
-        u0 = _saes_v3_decsm(t1, u0, 3);
+        u0 = _saes32_decsm(t0, u0, 0); //  AES decryption round, 16 instr
+        u0 = _saes32_decsm(t3, u0, 1);
+        u0 = _saes32_decsm(t2, u0, 2);
+        u0 = _saes32_decsm(t1, u0, 3);
 
-        u1 = _saes_v3_decsm(t1, u1, 0);
-        u1 = _saes_v3_decsm(t0, u1, 1);
-        u1 = _saes_v3_decsm(t3, u1, 2);
-        u1 = _saes_v3_decsm(t2, u1, 3);
+        u1 = _saes32_decsm(t1, u1, 0);
+        u1 = _saes32_decsm(t0, u1, 1);
+        u1 = _saes32_decsm(t3, u1, 2);
+        u1 = _saes32_decsm(t2, u1, 3);
 
-        u2 = _saes_v3_decsm(t2, u2, 0);
-        u2 = _saes_v3_decsm(t1, u2, 1);
-        u2 = _saes_v3_decsm(t0, u2, 2);
-        u2 = _saes_v3_decsm(t3, u2, 3);
+        u2 = _saes32_decsm(t2, u2, 0);
+        u2 = _saes32_decsm(t1, u2, 1);
+        u2 = _saes32_decsm(t0, u2, 2);
+        u2 = _saes32_decsm(t3, u2, 3);
 
-        u3 = _saes_v3_decsm(t3, u3, 0);
-        u3 = _saes_v3_decsm(t2, u3, 1);
-        u3 = _saes_v3_decsm(t1, u3, 2);
-        u3 = _saes_v3_decsm(t0, u3, 3);
+        u3 = _saes32_decsm(t3, u3, 0);
+        u3 = _saes32_decsm(t2, u3, 1);
+        u3 = _saes32_decsm(t1, u3, 2);
+        u3 = _saes32_decsm(t0, u3, 3);
 
         t0 = kp[0];                         //  fetch even subkey
         t1 = kp[1];
@@ -73,46 +73,46 @@ void aes_ecb_decrypt (
             break;
         kp -= 8;
 
-        t0 = _saes_v3_decsm(u0, t0, 0); //  AES decryption round, 16 instr
-        t0 = _saes_v3_decsm(u3, t0, 1);
-        t0 = _saes_v3_decsm(u2, t0, 2);
-        t0 = _saes_v3_decsm(u1, t0, 3);
+        t0 = _saes32_decsm(u0, t0, 0); //  AES decryption round, 16 instr
+        t0 = _saes32_decsm(u3, t0, 1);
+        t0 = _saes32_decsm(u2, t0, 2);
+        t0 = _saes32_decsm(u1, t0, 3);
 
-        t1 = _saes_v3_decsm(u1, t1, 0);
-        t1 = _saes_v3_decsm(u0, t1, 1);
-        t1 = _saes_v3_decsm(u3, t1, 2);
-        t1 = _saes_v3_decsm(u2, t1, 3);
+        t1 = _saes32_decsm(u1, t1, 0);
+        t1 = _saes32_decsm(u0, t1, 1);
+        t1 = _saes32_decsm(u3, t1, 2);
+        t1 = _saes32_decsm(u2, t1, 3);
 
-        t2 = _saes_v3_decsm(u2, t2, 0);
-        t2 = _saes_v3_decsm(u1, t2, 1);
-        t2 = _saes_v3_decsm(u0, t2, 2);
-        t2 = _saes_v3_decsm(u3, t2, 3);
+        t2 = _saes32_decsm(u2, t2, 0);
+        t2 = _saes32_decsm(u1, t2, 1);
+        t2 = _saes32_decsm(u0, t2, 2);
+        t2 = _saes32_decsm(u3, t2, 3);
 
-        t3 = _saes_v3_decsm(u3, t3, 0);
-        t3 = _saes_v3_decsm(u2, t3, 1);
-        t3 = _saes_v3_decsm(u1, t3, 2);
-        t3 = _saes_v3_decsm(u0, t3, 3);
+        t3 = _saes32_decsm(u3, t3, 0);
+        t3 = _saes32_decsm(u2, t3, 1);
+        t3 = _saes32_decsm(u1, t3, 2);
+        t3 = _saes32_decsm(u0, t3, 3);
     }
 
-    t0 = _saes_v3_decs(u0, t0, 0);   //  final decryption round, 16 ins.
-    t0 = _saes_v3_decs(u3, t0, 1);
-    t0 = _saes_v3_decs(u2, t0, 2);
-    t0 = _saes_v3_decs(u1, t0, 3);
+    t0 = _saes32_decs(u0, t0, 0);   //  final decryption round, 16 ins.
+    t0 = _saes32_decs(u3, t0, 1);
+    t0 = _saes32_decs(u2, t0, 2);
+    t0 = _saes32_decs(u1, t0, 3);
 
-    t1 = _saes_v3_decs(u1, t1, 0);
-    t1 = _saes_v3_decs(u0, t1, 1);
-    t1 = _saes_v3_decs(u3, t1, 2);
-    t1 = _saes_v3_decs(u2, t1, 3);
+    t1 = _saes32_decs(u1, t1, 0);
+    t1 = _saes32_decs(u0, t1, 1);
+    t1 = _saes32_decs(u3, t1, 2);
+    t1 = _saes32_decs(u2, t1, 3);
 
-    t2 = _saes_v3_decs(u2, t2, 0);
-    t2 = _saes_v3_decs(u1, t2, 1);
-    t2 = _saes_v3_decs(u0, t2, 2);
-    t2 = _saes_v3_decs(u3, t2, 3);
+    t2 = _saes32_decs(u2, t2, 0);
+    t2 = _saes32_decs(u1, t2, 1);
+    t2 = _saes32_decs(u0, t2, 2);
+    t2 = _saes32_decs(u3, t2, 3);
 
-    t3 = _saes_v3_decs(u3, t3, 0);
-    t3 = _saes_v3_decs(u2, t3, 1);
-    t3 = _saes_v3_decs(u1, t3, 2);
-    t3 = _saes_v3_decs(u0, t3, 3);
+    t3 = _saes32_decs(u3, t3, 0);
+    t3 = _saes32_decs(u2, t3, 1);
+    t3 = _saes32_decs(u1, t3, 2);
+    t3 = _saes32_decs(u0, t3, 3);
 
     U32_TO_U8LE(pt , t0,  0);                      //  write plaintext block
     U32_TO_U8LE(pt , t1,  4);
@@ -136,15 +136,15 @@ static void aes_dec_invmc(
     for (i = 0; i < len; i++) {
         x = v[i];
 
-        t = _saes_v3_encs(x,0,0);           // Sub Word
-        t = _saes_v3_encs(x,t,1);
-        t = _saes_v3_encs(x,t,2);
-        t = _saes_v3_encs(x,t,3);
+        t = _saes32_encs(x,0,0);           // Sub Word
+        t = _saes32_encs(x,t,1);
+        t = _saes32_encs(x,t,2);
+        t = _saes32_encs(x,t,3);
 
-        x = _saes_v3_decsm(t, 0, 0);        // Just want inv MixCol()
-        x = _saes_v3_decsm(t, x, 1);        //
-        x = _saes_v3_decsm(t, x, 2);        //
-        x = _saes_v3_decsm(t, x, 3);        //
+        x = _saes32_decsm(t, 0, 0);        // Just want inv MixCol()
+        x = _saes32_decsm(t, x, 1);        //
+        x = _saes32_decsm(t, x, 2);        //
+        x = _saes32_decsm(t, x, 3);        //
 
         v[i] = x;
     }

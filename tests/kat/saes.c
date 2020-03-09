@@ -79,159 +79,13 @@ uint8_t AES_DEC_SBOX[] = {
   0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
 };
 
-//! Random Input test for correctness of AES v1 proposal.
-int test_saes_v1() {
 
-    // Seed with something constant for consistency.
-    srand(1);
+//! KAT test for AES32 proposals.
+int test_saes32() {
 
-    for(int i = 0; i < 10; i ++) {
-
-        uint32_t pre_enc = rand();
-        uint32_t post_enc;
-        uint32_t post_dec;
-
-        __asm__("saes.v1.enc %0, %1" : "=r"(post_enc) : "r"(pre_enc));
-        __asm__("saes.v1.dec %0, %1" : "=r"(post_dec) : "r"(post_enc));
-
-        printf("saes.v1.enc %lx, %lx\n",post_enc, pre_enc);
-        printf("saes.v1.dec %lx, %lx\n",post_dec, post_enc);
-
-        for(int j = 0; j < 4; j ++) {
-            uint8_t enc_in  = pre_enc  >> (8*i);
-            uint8_t enc_out = post_enc >> (8*i);
-            uint8_t dec_out = post_dec >> (8*i);
-
-            assert(enc_out == AES_ENC_SBOX[enc_in ]);
-            assert(dec_out == AES_DEC_SBOX[enc_out]);
-            assert(dec_out == enc_in               );
-        }
-
-    }
-
-    return 0;
-
-}
-
-
-//! KAT test for AES v2 proposals.
-int test_saes_v2() {
-    uint32_t rs1 = 0x04030201;
-    uint32_t rs2 = 0x01020304;
-
-    //
-    // Sub-bytes encrypt instructions
-    
-    uint32_t dut_sbenc   , dut_sbencrot;
-
-    uint32_t grm_sbenc    = 0x7c7b7b7c;
-    uint32_t grm_sbencrot = 0x7b7b7c7c;
-    
-    __asm__("saes.v2.sub.enc    %0,%1,%2":"=r"(dut_sbenc   ) :"r"(rs1),"r"(rs2));
-    __asm__("saes.v2.sub.encrot %0,%1,%2":"=r"(dut_sbencrot) :"r"(rs1),"r"(rs2));
-
-    printf("saes.v2.sub.enc    %08lX, %08lX, %08lX\n", dut_sbenc   , rs1 ,rs2);
-    printf("saes.v2.sub.encrot %08lX, %08lX, %08lX\n", dut_sbencrot, rs1 ,rs2);
-    fflush(stdout);
-
-    assert(dut_sbenc    == grm_sbenc   );
-    assert(dut_sbencrot == grm_sbencrot);
-
-    //
-    // Sub-bytes decrypt instructions
-    
-    uint32_t dut_sbdec   , dut_sbdecrot;
-
-    uint32_t grm_sbdec    = 0x09D5D509;
-    uint32_t grm_sbdecrot = 0xD5D50909;
-    
-    __asm__("saes.v2.sub.dec    %0,%1,%2":"=r"(dut_sbdec   ) :"r"(rs1),"r"(rs2));
-    __asm__("saes.v2.sub.decrot %0,%1,%2":"=r"(dut_sbdecrot) :"r"(rs1),"r"(rs2));
-
-    printf("saes.v2.sub.dec    %08lX, %08lX, %08lX\n", dut_sbdec   , rs1 ,rs2);
-    printf("saes.v2.sub.decrot %08lX, %08lX, %08lX\n", dut_sbdecrot, rs1 ,rs2);
-    fflush(stdout);
-
-    assert(dut_sbdec    == grm_sbdec   );
-    assert(dut_sbdecrot == grm_sbdecrot);
-    
-    //
-    // Mix Columns instructions
-    
-    uint32_t dut_mixenc  , dut_mixdec;
-
-    uint32_t grm_mixenc  = 0x01040207;
-    uint32_t grm_mixdec  = 0x0D080E0B;
-    
-    __asm__("saes.v2.mix.enc %0,%1,%2":"=r"(dut_mixenc) :"r"(rs1),"r"(rs2));
-    __asm__("saes.v2.mix.dec %0,%1,%2":"=r"(dut_mixdec) :"r"(rs1),"r"(rs2));
-
-    printf("saes.v2.mix.enc    %08lX, %08lX, %08lX\n", dut_mixenc, rs1 ,rs2);
-    printf("saes.v2.mix.dec    %08lX, %08lX, %08lX\n", dut_mixdec, rs1 ,rs2);
-    fflush(stdout);
-
-    assert(dut_mixenc == grm_mixenc);
-    assert(dut_mixdec == grm_mixdec);
-
-}
-
-
-//! KAT test for AES v3 proposals.
-int test_saes_v3() {
-
-    uint32_t rs1 = 0x00FF0000;
-    uint32_t rs2 = 0x0000FF00;
-
-    uint32_t dut_ks_1, dut_enc_1, dut_dec_1;
-    uint32_t dut_ks_2, dut_enc_2, dut_dec_2;
-
-    //
-    // Key Schedule instruction
-
-    uint32_t grm_ks_1 = 0x00000016 ^ 0x0000FF00;
-    uint32_t grm_ks_2 = 0x63000000 ^ 0x0000FF00;
-
-    __asm__("saes.v3.ks %0, %1, %2, 2, 0":"=r"(dut_ks_1) :"r"(rs1),"r"(rs2));
-    __asm__("saes.v3.ks %0, %1, %2, 3, 3":"=r"(dut_ks_2) :"r"(rs1),"r"(rs2));
-
-    printf("saes.v3.ks  %08lX, %08lX, %08lX, 2, 0\n", dut_ks_1, rs1 ,rs2);
-    printf("saes.v3.ks  %08lX, %08lX, %08lX, 3, 3\n", dut_ks_2, rs1 ,rs2);
-    fflush(stdout);
-
-    assert(grm_ks_1 == dut_ks_1);
-    assert(grm_ks_2 == dut_ks_2);
-    
-    //
-    // Encrypt instruction
-
-    uint32_t grm_enc_1 = 0x00160000 ^ 0x0000FF00;
-    uint32_t grm_enc_2 = 0xC6a56363 ^ 0x0000FF00;
-    
-    __asm__("saes.v3.enc %0, %1, %2, 2, 0":"=r"(dut_enc_1) :"r"(rs1),"r"(rs2));
-    __asm__("saes.v3.enc %0, %1, %2, 3, 1":"=r"(dut_enc_2) :"r"(rs1),"r"(rs2));
-
-    printf("saes.v3.enc %08lX, %08lX, %08lX, 2, 0\n", dut_enc_1, rs1 ,rs2);
-    printf("saes.v3.enc %08lX, %08lX, %08lX, 3, 1\n", dut_enc_2, rs1 ,rs2);
-    fflush(stdout);
-
-    assert(grm_enc_1 == dut_enc_1);
-    assert(grm_enc_2 == dut_enc_2);
-    
-    //
-    // Decrypt instruction
-
-    uint32_t grm_dec_1 = 0x007D0000 ^ 0x0000FF00;
-    uint32_t grm_dec_2 = 0x5150a7f4 ^ 0x0000FF00;
-    
-    __asm__("saes.v3.dec %0, %1, %2, 2, 0":"=r"(dut_dec_1) :"r"(rs1),"r"(rs2));
-    __asm__("saes.v3.dec %0, %1, %2, 3, 1":"=r"(dut_dec_2) :"r"(rs1),"r"(rs2));
-
-    printf("saes.v3.dec %08lX, %08lX, %08lX, 2, 0\n", dut_dec_1, rs1 ,rs2);
-    printf("saes.v3.dec %08lX, %08lX, %08lX, 3, 1\n", dut_dec_2, rs1 ,rs2);
-    fflush(stdout);
-
-    assert(grm_dec_1 == dut_dec_1);
-    assert(grm_dec_2 == dut_dec_2);
+    printf("###########################\n");
+    printf("### TODO: saes32 ##########\n");
+    printf("###########################\n");
 
     return 0;
 
@@ -239,16 +93,13 @@ int test_saes_v3() {
 
 int main (int argc, char ** argv) {
 
-    printf("Running saes v1 KAT..\n ");
-
-    int fail = test_saes_v1();
-    if(fail) printf("saes.v1 Failed\n"); else printf("saes.v1 Passed\n");
+    printf("Running saes32 KAT..\n ");
     
-    fail = test_saes_v2();
-    if(fail) printf("saes.v2 Failed\n"); else printf("saes.v2 Passed\n");
-    
-    fail = test_saes_v3();
-    if(fail) printf("saes.v3 Failed\n"); else printf("saes.v3 Passed\n");
-
+    int fail = test_saes_v3();
+    if(fail) {
+        printf("saes32 Failed\n");
+    else {
+        printf("saes32 Passed\n");
+    }
 
 }

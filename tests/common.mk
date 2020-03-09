@@ -5,9 +5,17 @@ OBJDUMP     = $(RISCV)/bin/$(RISCV_ARCH)-objdump
 
 CFLAGS     += -O2 -Wall
 
+ifeq ($(RISCV_ARCH),riscv64-unknown-elf)
+ARCH_BASE   = rv64imafdcb
+ARCH        = $(ARCH_BASE)_zscrypto
+ABI         = lp64d
+else ifeq ($(RISCV_ARCH),riscv32-unknown-elf)
 ARCH_BASE   = rv32imafdcb
 ARCH        = $(ARCH_BASE)_zscrypto
 ABI         = ilp32d
+else
+$(error "Unknown $$RISCV_ARCH value: '$(RISCV_ARCH)'")
+endif
 
 SPIKE       = $(RISCV)/bin/spike
 PK          = $(RISCV)/$(RISCV_ARCH)/bin/pk

@@ -1,0 +1,10 @@
+
+ifeq ($(ZSCRYPTO),1)
+
+BLOCK_AES_ZSCRYPTO_RV32_FILES = \
+    crypto_block/aes/zscrypto_rv32/aes_enc.c \
+    crypto_block/aes/zscrypto_rv32/aes_dec.c
+
+$(eval $(call add_lib_target,aes_zscrypto_rv32,$(BLOCK_AES_ZSCRYPTO_RV32_FILES)))
+
+endif
