@@ -13,10 +13,10 @@ instruction proposals are found in Section
 \subsubsection{RV32 Instructions}
 
 \begin{cryptoisa}
-saes.v3.encs      rd, rs1, rs2, bs // Encrypt: SubBytes
-saes.v3.encsm     rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
-saes.v3.decs      rd, rs1, rs2, bs // Decrypt: SubBytes
-saes.v3.decsm     rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
+saes32.encs      rd, rs1, rs2, bs // Encrypt: SubBytes
+saes32.encsm     rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
+saes32.decs      rd, rs1, rs2, bs // Decrypt: SubBytes
+saes32.decsm     rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
 \end{cryptoisa}
 
 These instructions are a very lightweight proposal, derived from
@@ -28,29 +28,29 @@ per-byte results then accumulated.
 The {\tt bs} immediate operand is a 2-bit {\em Byte Select}, and indicates
 which byte of the input word is operated on.
 Pseudo-code for each instruction is found in figure
-\ref{fig:pseudo:aes:v3}.
+\ref{fig:pseudo:aes:rv32}.
 
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
-saes.v3.encs(rs1, rs2, bs):                 // SubBytes Only
+saes32.encs(rs1, rs2, bs):                 // SubBytes Only
     t0.8  = rs1.8[bs]
     x.8   = AESSBox(t0)
     u.32  = {0, 0, 0, x}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 
-saes.v3.encsm(rs1, rs2, bs):                // SubBytes & MixColumns
+saes32.encsm(rs1, rs2, bs):                // SubBytes & MixColumns
     t0.8  = rs1.8[bs]
     x.8   = AESSBox(t0)
     u.32  = {GFMUL(x,3) , x, x, GFMUL(x,2)}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 
-saes.v3.decs(rs1, rs2, bs):                 // InvSubBytes Only
+saes32.decs(rs1, rs2, bs):                 // InvSubBytes Only
     t0.8  = rs1.8[bs]
     x.8   = InvAESSBox(t0)
     u.32  = {0, 0, 0, x}
     rd.32 = ROTL32(u, 8*bs) ^ rs2.32
 
-saes.v3.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
+saes32.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
     t0.8  = rs1.8[bs]
     x.8   = InvAESSBox(t0)
     u.32  = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
@@ -58,7 +58,7 @@ saes.v3.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
 \end{lstlisting}
 \caption{Pseudocode for the lightweight AES instructions targeting the
 RV32 base architecture.}
-\label{fig:pseudo:aes:v3}
+\label{fig:pseudo:aes:rv32}
 \end{figure}
 
 
@@ -68,17 +68,17 @@ RV32 base architecture.}
 \subsubsection{RV64 Instructions}
 
 \begin{cryptoisa}
-saes.v4.sub      rd, rs1        // SubBytes only, for KeySchedule
-saes.v4.encsm.lo rd, rs1, rs2   // Encrypt ShiftRows, SubBytes, MixColumns
-saes.v4.encsm.hi rd, rs1, rs2   //
-saes.v4.encs.lo  rd, rs1, rs2   // Encrypt ShiftRows, SubBytes
-saes.v4.encs.hi  rd, rs1, rs2   //
+saes64.sub      rd, rs1        // SubBytes only, for KeySchedule
+saes64.encsm.lo rd, rs1, rs2   // Encrypt ShiftRows, SubBytes, MixColumns
+saes64.encsm.hi rd, rs1, rs2   //
+saes64.encs.lo  rd, rs1, rs2   // Encrypt ShiftRows, SubBytes
+saes64.encs.hi  rd, rs1, rs2   //
 
-saes.v4.imix     rd, rs1        // InvMixColumns for Decrypt KeySchedule
-saes.v4.decsm.lo rd, rs1, rs2   // Decrypt ShiftRows, SubBytes, MixColumns
-saes.v4.decsm.hi rd, rs1, rs2   //
-saes.v4.decs.lo  rd, rs1, rs2   // Decrypt ShiftRows, SubBytes
-saes.v4.decs.hi  rd, rs1, rs2   //
+saes64.imix     rd, rs1        // InvMixColumns for Decrypt KeySchedule
+saes64.decsm.lo rd, rs1, rs2   // Decrypt ShiftRows, SubBytes, MixColumns
+saes64.decsm.hi rd, rs1, rs2   //
+saes64.decs.lo  rd, rs1, rs2   // Decrypt ShiftRows, SubBytes
+saes64.decs.hi  rd, rs1, rs2   //
 \end{cryptoisa}
 
 These instructions are for RV64 only.
@@ -91,9 +91,9 @@ The instructions use the equivilent inverse cipher construction
 Hence there are additional instruction specifically for performing the
 inverse MixColumns transformation as part of the modified key schedule.
 The byte mapping of input register values to AES state and output register
-values is shown in figure \ref{fig:aes:v4:mapping}.
+values is shown in figure \ref{fig:aes:rv64:mapping}.
 Pseudo code for the instructions is found in figure
-\ref{fig:pesudo:aes:v4}.
+\ref{fig:pesudo:aes:rv64}.
 
 These instructions are designed to be implemented using macro-op fusion or
 operand memoisation.
@@ -110,7 +110,7 @@ By performing the (Inverse) ShiftRows transformation before the
 (Inverse) SubBytes transformation, no SubBytes computations need to be
 thrown away.
 In this way, the {\tt *.lo/*.hi} encoding bit acts as an input selector.
-See the pseudo code in figure \ref{fig:pesudo:aes:v4} to see how this works.
+See the pseudo code in figure \ref{fig:pesudo:aes:rv64} to see how this works.
 \item
 The {\tt encsm}/{\tt decsm} instructions perform the (Inverse) SubBytes,
 ShiftRows and MixColumns Transformations.
@@ -180,16 +180,16 @@ Output Register Values
 Mapping of AES State bytes between input and output registers for
 AES Variant 4.
 }
-\label{fig:aes:v4:mapping}
+\label{fig:aes:rv64:mapping}
 \end{figure}
 
 \begin{figure}
 \begin{lstlisting}[language=pseudo]
-saes.v4.sub(rs1):               // SubBytes Only for Encrypt KeySchedule
+saes.sub(rs1):               // SubBytes Only for Encrypt KeySchedule
     rd.8[i]  = AESSBox(rs1.8[i]) for i=0..3
     rd.8[j]  =         rs1.8[j]  for j=4..7
 
-saes.v4.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
+saes.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
     t1.128    = AESShiftRows(rs2 || rs1)
     t2.64     = t1.64[1] if hi else t1.64[0]
     t3.8[i]   = AESSBox(t2.8[i]) for i=0..7
@@ -197,7 +197,7 @@ saes.v4.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
     t4.32[1]  = AESMixColumn(t3.32[1]) if mix else t3.32[1]
     rd.64     = t4.64[1] if hi else t4.64[0]
 
-saes.v4.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
+saes.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
     t1.128    = InvAESShiftRows(rs2 || rs1)
     t2.64     = t1.64[1] if hi else t1.64[0]
     t3.8[i]   = InvAESSBox(t2.8[i]) for i=0..7
@@ -205,7 +205,7 @@ saes.v4.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
     t4.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
     rd.64     = t4.64[1] if hi else = t4.64[0]
 
-saes.v4.imix(rs1):              // Inverse MixColumns
+saes.imix(rs1):              // Inverse MixColumns
     rd.32[0] = InvAESMixColumns(rs1.32[0])
     rd.32[1] = InvAESMixColumns(rs1.32[1])
 \end{lstlisting}
@@ -214,6 +214,6 @@ RV64 AES instruction pseudo code.
 Note how the $128$-bit {\tt [Inv]AESShiftRows} result in {\tt t1} has
 either the high or low $64$ bits selected for further processing.
 }
-\label{fig:pesudo:aes:v4}
+\label{fig:pesudo:aes:rv64}
 \end{figure}
 
