@@ -33,28 +33,28 @@ Pseudo-code for each instruction is found in figure
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
 saes32.encs(rs1, rs2, bs):                 // SubBytes Only
-    t0.8  = rs1.8[bs]
+    t0.8  = rs2.8[bs]
     x.8   = AESSBox(t0)
     u.32  = {0, 0, 0, x}
-    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+    rd.32 = ROTL32(u, 8*bs) ^ rs1.32
 
 saes32.encsm(rs1, rs2, bs):                // SubBytes & MixColumns
-    t0.8  = rs1.8[bs]
+    t0.8  = rs2.8[bs]
     x.8   = AESSBox(t0)
     u.32  = {GFMUL(x,3) , x, x, GFMUL(x,2)}
-    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+    rd.32 = ROTL32(u, 8*bs) ^ rs1.32
 
 saes32.decs(rs1, rs2, bs):                 // InvSubBytes Only
-    t0.8  = rs1.8[bs]
+    t0.8  = rs2.8[bs]
     x.8   = InvAESSBox(t0)
     u.32  = {0, 0, 0, x}
-    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+    rd.32 = ROTL32(u, 8*bs) ^ rs1.32
 
 saes32.decsm(rs1, rs2, bs):                // InvSubBytes & InvMixColumns
-    t0.8  = rs1.8[bs]
+    t0.8  = rs2.8[bs]
     x.8   = InvAESSBox(t0)
     u.32  = {GFMUL(x,11),GFMUL(x,13),GFMUL(9),GFMUL(14)}
-    rd.32 = ROTL32(u, 8*bs) ^ rs2.32
+    rd.32 = ROTL32(u, 8*bs) ^ rs1.32
 \end{lstlisting}
 \caption{Pseudocode for the lightweight AES instructions targeting the
 RV32 base architecture.}
