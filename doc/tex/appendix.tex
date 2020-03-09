@@ -219,6 +219,132 @@ data bandwidth etc.
 
 % ============================================================================
 
+\section{Rejected AES Proposals}
+
+These proposals were considered and benchmarked as possible AES instruction
+candidates.
+Their details are left here for posterity.
+The proposals which have been taken forward were referred too as
+``v3.1" for the 32-bit variant, and ``v4" for the 64-bit variant.
+
+% ------------------------------------------------------------
+
+\subsection{Variant 1 (RV32,RV64)}
+
+\begin{cryptoisa}
+RV32, RV64:
+    saes.v1.enc rd, rs1
+    saes.v1.dec rd, rs1
+\end{cryptoisa}
+
+These instructions implement the 
+{\tt SubBytes} \cite[Section 5.1.1]{nist:fips:197}
+and
+{\tt InvSubBytes} \cite[Section 5.3.1]{nist:fips:197}
+steps of the AES Block Cipher \cite{nist:fips:197}.
+The low 32-bits of {\tt rs1} are split into bytes.
+Each byte has the relevant transformation applied, before
+being written back to the corresponding byte position in {\tt rd}.
+On an RV64 platform, the high 32-bits of the result are zero
+extended.
+Pseudo code is found in figure
+\ref{fig:pseudo:aes:v1}.
+
+This proposal variant requires $2$ encoding points with only one
+source register.
+
+\begin{figure}
+\begin{subfigure}[b]{0.5\textwidth}
+\begin{lstlisting}[language=pseudo]
+saes.v1.enc(rs1):
+    rd.8[0] =    AESSBox(rs1.8[0])
+    rd.8[1] =    AESSBox(rs1.8[1])
+    rd.8[2] =    AESSBox(rs1.8[2])
+    rd.8[3] =    AESSBox(rs1.8[3])
+\end{lstlisting}
+\caption{Forward SBox instruction pseudo code.}
+\label{fig:pseudo:aes:v1:sub:enc}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\begin{lstlisting}[language=pseudo]
+saes.v1.dec(rs1):
+    rd.8[0] = InvAESSBox(rs1.8[0])
+    rd.8[1] = InvAESSBox(rs1.8[1])
+    rd.8[2] = InvAESSBox(rs1.8[2])
+    rd.8[3] = InvAESSBox(rs1.8[3])
+\end{lstlisting}
+\label{fig:pseudo:aes:v1:sub:dec}
+\caption{Inverse SBox instruction pseudo code.}
+\end{subfigure}
+\caption{AES Instructions variant 1.}
+\label{fig:pseudo:aes:v1}.
+\end{figure}
+
+% ------------------------------------------------------------
+\newpage
+\subsection{Variant 2 (RV32,RV64)}
+
+\begin{cryptoisa}
+RV32, RV64:
+    saes.v2.sub.enc    rd, rs1, rs2
+    saes.v2.sub.dec    rd, rs1, rs2
+    saes.v2.mix.enc    rd, rs1, rs2
+    saes.v2.mix.dec    rd, rs1, rs2
+\end{cryptoisa}
+
+These instructions are derived from \cite{MPP:19}, which in turn adapted
+them originally from \cite{TG:06}.
+Each instruction performs either the SubBytes or MixColumns transformation
+to a single column of the AES state, along with a partial ShiftRows.
+Example usage can be found in the riscv-crypto repository
+\footnote{\url{https://github.com/scarv/riscv-crypto/blob/master/benchmarks/crypto_block/aes/zscrypto_v2/aes_enc.c\#L53}}.
+
+Pseudo-code for the sub-bytes and mix-columns instructions are found in
+figures
+\ref{fig:pesudo:aes:v2:sub}
+and
+\ref{fig:pesudo:aes:v2:mix}
+respectively.
+
+This proposal variant requires $4$ encoding points, where each point
+requires two source registers and a destination register.
+
+\begin{figure}
+\begin{subfigure}[b]{1.0\textwidth}
+\begin{lstlisting}[language=pseudo]
+saes.v2.sub(rs1, rs2, mode):
+    if(mode == enc)
+        t0 =    AESSBox(rs1.8[0]), t1 =    AESSBox(rs2.8[1])
+        t2 =    AESSBox(rs1.8[2]), t3 =    AESSBox(rs2.8[3])
+    else
+        t0 = InvAESSBox(rs1.8[0]), t1 = InvAESSBox(rs2.8[1])
+        t2 = InvAESSBox(rs1.8[2]), t3 = InvAESSBox(rs2.8[3])
+    rd.32 = {t3, t2, t1, t0} 
+\end{lstlisting}
+\caption{AES instruction variant 2: sbox instruction pseudo code.}
+\label{fig:pesudo:aes:v2:sub}
+\end{subfigure}
+\begin{subfigure}[b]{1.0\textwidth}
+\begin{lstlisting}[language=pseudo]
+saes.v2.mix(rs1, rs2, mode):
+    t0 = rs1.8[0], t1 = rs1.8[1]
+    t2 = rs2.8[2], t3 = rs2.8[3]
+    if(mode == enc)
+        rd.32 =    AESMixColumns(t3,t2,t1,t0)
+    else
+        rd.32 = InvAESMixColumns(t3,t2,t1,t0)
+\end{lstlisting}
+\caption{AES instruction variant 2: Mix columns instruction pseudo code.}
+\label{fig:pesudo:aes:v2:mix}
+\end{subfigure}
+\caption{AES Instructions: Variant 2 Pseudo Code.}
+\end{figure}
+
+% ------------------------------------------------------------
+
+
+% ============================================================================
+
 
 \section{Indexed Load and Store Discussion}
 \label{sec:appendix:ildst}
