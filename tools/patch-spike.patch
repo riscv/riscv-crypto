@@ -448,7 +448,7 @@ index 0000000..436e252
 +
 diff --git a/riscv/insns/saes32_decs.h b/riscv/insns/saes32_decs.h
 new file mode 100644
-index 0000000..99cc712
+index 0000000..9ba2e92
 --- /dev/null
 +++ b/riscv/insns/saes32_decs.h
 @@ -0,0 +1,14 @@
@@ -457,18 +457,18 @@ index 0000000..99cc712
 +
 +uint8_t     bs = insn.bs();
 +
-+uint8_t     t0 = RS1 >> (8*bs);
++uint8_t     t0 = RS2 >> (8*bs);
 +uint8_t      x = AES_DEC_SBOX[t0];
 +uint32_t     u = x;
 +
 +u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+WRITE_RD(u ^ RS2);
++WRITE_RD(u ^ RS1);
 +
 +
 diff --git a/riscv/insns/saes32_decsm.h b/riscv/insns/saes32_decsm.h
 new file mode 100644
-index 0000000..32997d6
+index 0000000..ceacf0d
 --- /dev/null
 +++ b/riscv/insns/saes32_decsm.h
 @@ -0,0 +1,21 @@
@@ -477,7 +477,7 @@ index 0000000..32997d6
 +
 +uint8_t     bs = insn.bs();
 +
-+uint8_t     t0 = RS1 >> (8*bs);
++uint8_t     t0 = RS2 >> (8*bs);
 +uint8_t      x = AES_DEC_SBOX[t0];
 +uint32_t     u ;
 +
@@ -488,14 +488,14 @@ index 0000000..32997d6
 +
 +u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+WRITE_RD(u ^ RS2);
++WRITE_RD(u ^ RS1);
 +
 +
 +
 +
 diff --git a/riscv/insns/saes32_encs.h b/riscv/insns/saes32_encs.h
 new file mode 100644
-index 0000000..4f8e34f
+index 0000000..9a3d08a
 --- /dev/null
 +++ b/riscv/insns/saes32_encs.h
 @@ -0,0 +1,14 @@
@@ -504,18 +504,18 @@ index 0000000..4f8e34f
 +
 +uint8_t     bs = insn.bs();
 +
-+uint8_t     t0 = RS1 >> (8*bs);
++uint8_t     t0 = RS2 >> (8*bs);
 +uint8_t      x = AES_ENC_SBOX[t0];
 +uint32_t     u = x;
 +
 +u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+WRITE_RD(u ^ RS2);
++WRITE_RD(u ^ RS1);
 +
 +
 diff --git a/riscv/insns/saes32_encsm.h b/riscv/insns/saes32_encsm.h
 new file mode 100644
-index 0000000..e0cd8e4
+index 0000000..a5d606e
 --- /dev/null
 +++ b/riscv/insns/saes32_encsm.h
 @@ -0,0 +1,18 @@
@@ -524,7 +524,7 @@ index 0000000..e0cd8e4
 +
 +uint8_t     bs = insn.bs();
 +
-+uint8_t     t0 = RS1 >> (8*bs);
++uint8_t     t0 = RS2 >> (8*bs);
 +uint8_t      x = AES_ENC_SBOX[t0];
 +uint32_t     u ;
 +
@@ -535,7 +535,7 @@ index 0000000..e0cd8e4
 +
 +u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+WRITE_RD(u ^ RS2);
++WRITE_RD(u ^ RS1);
 +
 diff --git a/riscv/insns/saes_common.h b/riscv/insns/saes_common.h
 new file mode 100644
