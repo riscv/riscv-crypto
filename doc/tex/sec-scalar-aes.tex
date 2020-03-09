@@ -193,17 +193,15 @@ saes.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
     t1.128    = AESShiftRows(rs2 || rs1)
     t2.64     = t1.64[1] if hi else t1.64[0]
     t3.8[i]   = AESSBox(t2.8[i]) for i=0..7
-    t4.32[0]  = AESMixColumn(t3.32[0]) if mix else t3.32[0]
-    t4.32[1]  = AESMixColumn(t3.32[1]) if mix else t3.32[1]
-    rd.64     = t4.64[1] if hi else t4.64[0]
+    rd.32[0]  = AESMixColumn(t3.32[0]) if mix else t3.32[0]
+    rd.32[1]  = AESMixColumn(t3.32[1]) if mix else t3.32[1]
 
 saes.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
     t1.128    = InvAESShiftRows(rs2 || rs1)
     t2.64     = t1.64[1] if hi else t1.64[0]
     t3.8[i]   = InvAESSBox(t2.8[i]) for i=0..7
-    t4.32[0]  = InvAESMixColumn(t3.32[0]) if mix else t3.32[0]
-    t4.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
-    rd.64     = t4.64[1] if hi else = t4.64[0]
+    rd.32[0]  = InvAESMixColumn(t3.32[0]) if mix else t3.32[0]
+    rd.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
 
 saes.imix(rs1):              // Inverse MixColumns
     rd.32[0] = InvAESMixColumns(rs1.32[0])
