@@ -1,12 +1,12 @@
 
 //
 //  Tests: 
-//      - saes.v3.encs  : dec=0, mix=0
-//      - saes.v3.encm  : dec=0, mix=1
-//      - saes.v3.decs  : dec=1, mix=0
-//      - saes.v3.decm  : dec=1, mix=1
+//      - saes32.encs  : dec=0, mix=0
+//      - saes32.encsm : dec=0, mix=1
+//      - saes32.decs  : dec=1, mix=0
+//      - saes32.decsm : dec=1, mix=1
 //
-module tb_aes_v3_2 (
+module tb_aes32(
 input   g_clk       ,
 input   g_resetn
 );
@@ -26,10 +26,10 @@ wire [31:0] dut_rd      ; // Output destination register value.
 
 //
 // SBOX signals for model
-wire [ 7:0] sb_in     = dut_bs == 2'b00 ? dut_rs1[ 7: 0] :
-                        dut_bs == 2'b01 ? dut_rs1[15: 8] :
-                        dut_bs == 2'b10 ? dut_rs1[23:16] :
-                                          dut_rs1[31:24] ;
+wire [ 7:0] sb_in     = dut_bs == 2'b00 ? dut_rs2[ 7: 0] :
+                        dut_bs == 2'b01 ? dut_rs2[15: 8] :
+                        dut_bs == 2'b10 ? dut_rs2[23:16] :
+                                          dut_rs2[31:24] ;
 wire [ 7:0] sb_out    ;
 
 //
@@ -54,10 +54,10 @@ endfunction
 // Mix columns outputs for model.
 
 wire [31:0] mix_out_dec = 
-    {xtN(sb_in,4'd11), xtN(sb_in,4'd13),xtN(sb_in,4'd9), xtN(sb_in,4'd14)};
+    {xtN(sb_out,4'd11), xtN(sb_out,4'd13),xtN(sb_out,4'd9), xtN(sb_out,4'd14)};
 
 wire [31:0] mix_out_enc = 
-    {xtN(sb_in,4'd3 ),     sb_in       ,    sb_in      , xtN(sb_in,4'd2 )};
+    {xtN(sb_out,4'd3 ),     sb_out       ,    sb_out      , xtN(sb_out,4'd2 )};
 
 wire [31:0] mix_out     = dut_dec ? mix_out_dec : mix_out_enc;
 
@@ -68,7 +68,7 @@ wire [31:0] rot_in  =  dut_mix ? mix_out : {24'b0, sb_out};
 
 wire [31:0] rot_out = (rot_in << (8*dut_bs)) | (rot_in >> (32-8*dut_bs));
 
-wire [31:0] grm_out = rot_out ^ dut_rs2;
+wire [31:0] grm_out = rot_out ^ dut_rs1;
 
 
 // Assume we start in reset...
@@ -139,7 +139,7 @@ end
 //
 // Instance the DUT
 //
-aes_v3_2 i_dut (
+aes32 i_dut (
 .valid  (dut_valid), // Are the inputs valid? Used for logic gating.
 .dec    (dut_dec  ), // Encrypt (clear) or decrypt (set)
 .mix    (dut_mix  ), // Perform MixColumn transformation (if set)

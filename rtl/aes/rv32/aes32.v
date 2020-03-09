@@ -1,17 +1,17 @@
 
 //
-// AES instruction V3 proposals, subset 2
+// AES instruction proposals: RV32
 //
 //  Implements: 
-//      - saes.v3.encs  : dec=0, mix=0
-//      - saes.v3.encm  : dec=0, mix=1
-//      - saes.v3.decs  : dec=1, mix=0
-//      - saes.v3.decm  : dec=1, mix=1
+//      - saes32.encs  : dec=0, mix=0
+//      - saes32.encsm : dec=0, mix=1
+//      - saes32.decs  : dec=1, mix=0
+//      - saes32.decsm : dec=1, mix=1
 //
-//  Less performant in terms of instructions / round, but splits
-//  MixColumns and SubBytes operations, leading to a shorter timing path.
+//  More performant in terms of instructions / round, but puts the MixColumns
+//  and SubBytes operations in sequence, leading to a longer timing path.
 //
-module aes_v3_2 (
+module aes32(
 
 input  wire         valid   , // Are the inputs valid? Used for logic gating.
 input  wire         dec     , // Encrypt (clear) or decrypt (set)
@@ -22,19 +22,19 @@ input  wire [ 31:0] rs2     , // Source register 2
 input  wire [  1:0] bs      , // Byte select immediate
 
 output wire [ 31:0] rd      , // output destination register value.
-output wire         ready     // Is compute finished?
+output wire         ready     // Compute finished?
 
 );
 
-// Always complete in a single cycle.
-assign ready = valid;
-
 wire [7:0] bytes_in [3:0]   ;
 
-assign     bytes_in [  0]   =  rs1[ 7: 0]               ;
-assign     bytes_in [  1]   =  rs1[15: 8]               ;
-assign     bytes_in [  2]   =  rs1[23:16]               ;
-assign     bytes_in [  3]   =  rs1[31:24]               ;
+// Always finish in a single cycle.
+assign     ready            = valid                     ;
+
+assign     bytes_in [  0]   =  rs2[ 7: 0]               ;
+assign     bytes_in [  1]   =  rs2[15: 8]               ;
+assign     bytes_in [  2]   =  rs2[23:16]               ;
+assign     bytes_in [  3]   =  rs2[31:24]               ;
 
 wire [7:0] sel_byte         = bytes_in[bs]              ;
 
@@ -64,22 +64,22 @@ function [7:0] xtimeN;
 
 endfunction
 
-wire [ 7:0] mix_b3 =       xtimeN(sel_byte, (dec ? 11  : 3))            ;
-wire [ 7:0] mix_b2 = dec ? xtimeN(sel_byte, (           13)) : sel_byte ;
-wire [ 7:0] mix_b1 = dec ? xtimeN(sel_byte, (            9)) : sel_byte ;
-wire [ 7:0] mix_b0 =       xtimeN(sel_byte, (dec ? 14  : 2))            ;
+wire [ 7:0] mix_b3 =       xtimeN(sbox_out, (dec ? 11  : 3))            ;
+wire [ 7:0] mix_b2 = dec ? xtimeN(sbox_out, (           13)) : sbox_out ;
+wire [ 7:0] mix_b1 = dec ? xtimeN(sbox_out, (            9)) : sbox_out ;
+wire [ 7:0] mix_b0 =       xtimeN(sbox_out, (dec ? 14  : 2))            ;
 
 wire [31:0] result_mix  = {mix_b3, mix_b2, mix_b1, mix_b0};
 
 wire [31:0] result      = mix ? result_mix : {24'b0, sbox_out};
-    
+
 wire [31:0] rotated     =
     {32{bs == 2'b00}} & {result                      } |
     {32{bs == 2'b01}} & {result[23:0], result[31:24] } |
     {32{bs == 2'b10}} & {result[15:0], result[31:16] } |
     {32{bs == 2'b11}} & {result[ 7:0], result[31: 8] } ;
 
-assign      rd          = rotated ^ rs2;
+assign      rd          = rotated ^ rs1;
 
 //
 // Single SBOX instance

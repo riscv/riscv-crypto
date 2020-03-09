@@ -1,0 +1,10 @@
+
+SBOX = aes/share/aes_sbox_shared.v
+
+$(eval $(call add_synth_target,aes32_size,aes/rv32/aes32.v $(SBOX), aes32))
+$(eval $(call add_synth_target,aes32_latency,aes/rv32/aes32.v $(SBOX), aes32))
+
+
+AES_V3_1_PROVE_FILES = aes/rv32/tb_aes32.v aes/rv32/aes32.v $(SBOX)
+
+$(eval $(call add_prove_target,prove_aes32,aes/rv32/verify.sby,$(AES_V3_1_PROVE_FILES)))

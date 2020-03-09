@@ -13,13 +13,13 @@ smtbmc boolector
 
 [script]
 read -formal aes_sbox_latency.v
-read -formal tb_aes_v3_1.v
-read -formal aes_v3_1.v
+read -formal tb_aes32.v
+read -formal aes32.v
 
-prep -top tb_aes_v3_1
+prep -top tb_aes32
 
 [files]
 aes/share/aes_sbox_latency.v
-aes/v3/aes_v3_1.v
-aes/v3/tb_aes_v3_1.v
+aes/rv32/aes32.v
+aes/rv32/tb_aes32.v
 
