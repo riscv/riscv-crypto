@@ -2,7 +2,7 @@
 \newpage
 \subsection{Scalar AES Acceleration}
 
-This section details $3.5$ proposals for acceleration of
+This section details proposals for acceleration of
 the AES block cipher \cite{nist:fips:197} within a scalar RISC-V core,
 obeying the two-read-one-write constraint on general purpose register
 file accesses.
@@ -82,24 +82,24 @@ saes64.decs.hi  rd, rs1, rs2   //
 \end{cryptoisa}
 
 These instructions are for RV64 only.
-They implment the SubBytes, ShiftRows and MixColumns transformations of AES
+They implement the SubBytes, ShiftRows and MixColumns transformations of AES
 over two instructions.
 Each instruction takes two 64-bit registers as input, which represents
 the entire 128 bit state of the AES cipher.
-The instructions use the equivilent inverse cipher construction
-\cite{nist:fips:197}[Page 23, Section 5.3.5].
+The instructions use the equivalent inverse cipher construction
+\cite[Page 23, Section 5.3.5]{nist:fips:197}.
 Hence there are additional instruction specifically for performing the
 inverse MixColumns transformation as part of the modified key schedule.
 The byte mapping of input register values to AES state and output register
-values is shown in figure \ref{fig:aes:rv64:mapping}.
-Pseudo code for the instructions is found in figure
-\ref{fig:pesudo:aes:rv64}.
+values is shown in \figref{aes:rv64:mapping}.
+Pseudocode for the instructions is illustrated in
+\figref{pesudo:aes:rv64}.
 
 These instructions are designed to be implemented using macro-op fusion or
 operand memoisation.
 This is similar to the recommended \mnemonic{mulh}, \mnemonic{mul}
 sequence in the M extension to compute a full $32*32->64$ bit
-multiplication result \cite{riscv:spec:user}[Section 7.1].
+multiplication result \cite[Section 7.1]{riscv:spec:user}.
 
 \begin{itemize}
 \item
@@ -110,7 +110,7 @@ By performing the (Inverse) ShiftRows transformation before the
 (Inverse) SubBytes transformation, no SubBytes computations need to be
 thrown away.
 In this way, the {\tt *.lo/*.hi} encoding bit acts as an input selector.
-See the pseudo code in figure \ref{fig:pesudo:aes:rv64} to see how this works.
+See the pseudocode in \figref{pesudo:aes:rv64} to see how this works.
 \item
 The {\tt encsm}/{\tt decsm} instructions perform the (Inverse) SubBytes,
 ShiftRows and MixColumns Transformations.
@@ -128,8 +128,8 @@ The \mnemonic{imix} instruction applies only the inverse MixColumns
 transformation to two columns of the state array, packed into a single
 64-bit register.
 It is used to create the inverse cipher key schedule, according to
-the equivilent inverse cipher construction in
-\cite{nist:fips:197}[Page 23, Section 5.3.5].
+the equivalent inverse cipher construction in
+\cite[Page 23, Section 5.3.5]{nist:fips:197}.
 \end{itemize}
 
 This proposal requires $6$ instructions per AES round:
@@ -138,7 +138,7 @@ $2$ \mnemonic{xor} to add the round key to the current state
 and
 $2$ of the relevent AES encrypt/decrypt instructions to perform the
     SubBytes, ShiftRows and MixColumns round functions.
-This adds up too approximately $80$ instructions per AES-128 block
+This adds up to approximately $80$ instructions per AES-128 block
 encryption, including pre/post-amble instructions.
 
 \begin{figure}
@@ -177,8 +177,8 @@ AES State
 Output Register Values
 \end{subfigure}
 \caption{
-Mapping of AES State bytes between input and output registers for
-AES Variant 4.
+Mapping of AES state bytes between input and output registers for
+the RV64 AES instructions.
 }
 \label{fig:aes:rv64:mapping}
 \end{figure}
@@ -208,7 +208,7 @@ saes.imix(rs1):              // Inverse MixColumns
     rd.32[1] = InvAESMixColumns(rs1.32[1])
 \end{lstlisting}
 \caption{
-RV64 AES instruction pseudo code.
+RV64 AES instruction pseudocode.
 Note how the $128$-bit {\tt [Inv]AESShiftRows} result in {\tt t1} has
 either the high or low $64$ bits selected for further processing.
 }

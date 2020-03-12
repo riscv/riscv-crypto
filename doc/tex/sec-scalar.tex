@@ -3,74 +3,16 @@ As per the RISC-V Cryptographic Extensions Task Group charter:
 ``{\em The committee will also make ISA extension proposals for lightweight
 scalar instructions for 32 and 64 bit machines that improve the performance
 and reduce the code size required for software execution of common algorithms
-like AES and SHA and lightweight algorithms like PRESENT and GOST}".
+like AES and SHA and lightweight algorithms like PRESENT and GOST}."
 
 \bigskip
 
-For context, some these instructions have been developed based on academic
+For context, some of these instructions have been developed based on academic
 work at the University of Bristol as part of the XCrypto project
 \cite{MPP:19},
 and work by
-Paris Telecom on acceleration of lightweight block ciphers
+Paris T\'{e}l\'{e}com on acceleration of lightweight block ciphers
 \cite{TGMGD:19}.
-
-The scalar cryptography extension is designed with the following
-policies in mind.
-Their purpose is to help make design decisions consistent across the
-extension.
-Deviation from these policies is allowed if well justified.
-
-\note{
-These policies {\em are up for discussion}.
-}
-
-\policy{
-Where there is a choice between:
-1) supporting diverse implementation strategies for an algorithm
-or
-2) supporting a single implementation style which is more performant /
-   less expensive;
-the scalar crypto extension will pick the more constrained but performant
-option.
-This fits a common pattern in other parts of the RISC-V specification,
-where recommended (but not required) instruction sequences for performing
-particular tasks are given as an example, such that both hardware and
-software implementers can optimise for only a single use case.
-}
-
-\policy{
-The extension will be designed to well support {\em existing} standardised
-cryptographic constructs.
-It will not try to support proposed standards, or cryptographic
-constructs which exist only in academia.
-Cryptographic standards which are settled upon concurrently with, or after
-the RISC-V cryptographic extension standardisation will be dealt with
-by future additions too, or versions of, the RISC-V cryptographic
-standard extension.
-}
-\footnote{It is anticipated that the NIST Lightweight Cryptography
-contest, and possibly the NIST Post-Quantum Cryptography contest
-may be dealt with this way, depending on timescales.}
-
-\policy{
-Historically, there has been some discussion \cite{LSYRR:04} on
-how newly supported operations in general purpose computing might
-enable new bases for cryptographic algorithms.
-The standard will not try to anticipate new useful low level
-operations which {\em may} be useful as building blocks for
-future cryptographic constructs.
-}
-
-\policy{
-Regarding side-channel countermeasures:
-Where relevant, proposed instructions must aim to remove the
-possibility of any timing side-channels.
-For side-channels based on power or electro-magnetic (EM) measurements,
-the extension will not aim to support countermeasures which are
-implemented above the ISA abstraction layer.
-Recommendations will be given where relevant on how micro-architectures
-can implement instructions in a power/EM side-channel resistant way.
-}
 
 
 % ============================================================================

@@ -51,19 +51,20 @@ RV64 only:
     roriw  rd, rs1, imm
 \end{cryptobitmanipisa}
 
-See \cite[Section 3.1.1]{riscv:bitmanip:draft} for exact details of
+See \cite[Section 3.1.1]{riscv:bitmanip:draft} for details of
 these instructions.
 Standard bitwise rotation is a primitive operation in many block ciphers and
 hash functions.
-It particularly features in the ARX (Add,Rotate,Xor) class of
+It particularly features in the ARX (Add, Rotate, Xor) class of
 block ciphers
-\footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}.
+\footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}
+and stream ciphers.
 
 Algorithms making use of 32-bit rotations:
-SHA256, AES (Shift Rows), ChaCha20
+SHA256, AES (Shift Rows), ChaCha20.
 
 Algorithms making use of 64-bit rotations:
-SHA512, SHA3
+SHA512, SHA3.
 
 \begin{cryptobitmanipisa}
 RV32 only:
@@ -72,7 +73,7 @@ RV32 only:
     fsri  rd, rs1, rs3, imm
 \end{cryptobitmanipisa}
 
-See \cite[Section 2.9.3]{riscv:bitmanip:draft} for exact details of
+See \cite[Section 2.9.3]{riscv:bitmanip:draft} for details of
 these instructions.
 The {\em funnel shift} instructions create a $2*$\XLEN word by
 concatenating {\tt rs1} and {\tt rs3}, which is then
@@ -87,9 +88,10 @@ Algorithms using 64-bit rotations:
 SHA512,
 SHA3\footnote{SHA3 can avoid awkward double-width rotations using a
 technique called "Bit Interleaving". Benchmarking will be needed to
-see if this technique is a worthy mitigation for removing the funnel shifts.}
+see if this technique is a worthy mitigation for removing the 
+funnel shifts.}.
 
-\subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
+\subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}.
 
 \begin{cryptobitmanipisa}
 RV32, RV64:
@@ -157,7 +159,7 @@ RV64 only:
     clmulrw rd, rs1, rs2
 \end{cryptobitmanipisa}
 
-See \cite[Section 2.6]{riscv:bitmanip:draft} for exact details of
+See \cite[Section 2.6]{riscv:bitmanip:draft} for details of
 this instruction.
 As is mentioned there, obvious cryptographic use-cases for carry-less
 multiply are for Galois Counter Mode (GCM) block cipher operations
@@ -172,7 +174,7 @@ RV32, RV64:
     cmov rd, rs2, rs1, rs3
 \end{cryptobitmanipisa}
 
-See \cite[Section 2.9.2]{riscv:bitmanip:draft} for exact details of
+See \cite[Section 2.9.2]{riscv:bitmanip:draft} for details of
 this instruction.
 Conditional move is useful for implementing constant-time cryptographic
 code and avoiding control flow changes.
@@ -186,7 +188,7 @@ RV32, RV64:
     xorn rd, rs1, rs2
 \end{cryptobitmanipisa}
 
-See \cite[Section 2.1.3]{riscv:bitmanip:draft} for exact details of
+See \cite[Section 2.1.3]{riscv:bitmanip:draft} for details of
 these instructions.
 These instructions are useful inside hash functions, block ciphers and
 for implementing software based side-channel countermeasures like masking.
@@ -210,7 +212,7 @@ RV64:
     packuw rd, rs1, rs2
 \end{cryptobitmanipisa}
 
-See \cite[Section 2.1.4]{riscv:bitmanip:draft} for exact details of
+See \cite[Section 2.1.4]{riscv:bitmanip:draft} for details of
 these instructions.
 Some lightweight block ciphers
 (e.g. SPARX \cite{DPUVGB:16})
@@ -249,13 +251,13 @@ or      a0, a0, a2
 \end{subfigure}
 \caption{Comparison of packing four bytes loaded into GPRs $a0..a3$ into
 a single 32-bit word in $a0$ using the Bitmanip \mnemonic[pack*] instructions
-v.s. the standard RV32 instructions.}
+vs. the standard RV32 instructions.}
 \label{fig:example:pack}
 \end{figure}
 
 Algorithms with sub-word rotations/shifts:
-SPARX
+SPARX.
 
 Algorithms benefiting from packing bytes into words:
-AES, SHA2, SHA3
+AES, SHA2, SHA3.
 

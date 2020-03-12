@@ -41,21 +41,21 @@ instructions are found in Section
 Together, the instructions occupy $8$ encoding points.
 
 \note{
-The remaining two core functions which make up the SHA256/512
-hash functions are the $Ch$ and $Maj$ functions:
+The remaining two core functions in the SHA256/512
+algorithms are the $Ch$ and $Maj$ functions:
 \begin{itemize}
 \item \lstinline{Ch(x,y,z)  = (x & y) ^ (~x & z)}
 \item \lstinline{Maj(x,y,z) = (x & y) ^ ( x & z) ^ ( y & z )}
 \end{itemize}
 As ternary functions, they are much too expensive in terms of
 opcode space to consider for inclusion as dedicated instructions for
-such a specialist use case.
+such a specialist use-case.
 They are amenable however to macro-op fusion on cores which implement it.
 }
 
 \note{
 The Sigma functions of SHA-256 are identical to the P0 and P1 permutations
-used in the SM3 hash function.
+used in the SM3\cite{ietf:sm3} hash function.
 Hence, the \mnemonic{ssha256.s[2,3]} instructions can be used for both
 algorithms.
 }

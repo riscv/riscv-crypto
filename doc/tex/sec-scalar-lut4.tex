@@ -31,9 +31,9 @@ updates nibbles in the destination with the looked-up value
 iff the index is less than eight.
 The \mnemonic{lut4hi} version does
 the same for index values greater than/equal to eight.
-The results can then be or'd together.
+The results are then or'd together.
 An example implementation of an $8$-nibble parallel SBox using these
-instructions is found in \figref{example:lut4:1}
+instructions is found in \figref{example:lut4:1}.
 
 On RV64, the entire set of LUT elements fits in a single source register.
 The RV64 only \mnemonic{lut4} instruction stores the entire lut in
@@ -41,7 +41,6 @@ The RV64 only \mnemonic{lut4} instruction stores the entire lut in
 
 Equivalent C code listings for the instructions are found in
 \figref{equiv:c:lut4} of Appendix \ref{sec:ccode:lut4}.
-
 Together, the instructions occupy $3$ encoding points.
 
 \begin{figure}[h]
@@ -55,7 +54,7 @@ sbox_4bit:
 \caption{
     Implement 8 parallel 4-to-4 bit SBox operations on RV32 using
     the \mnemonic{lut4hi} and \mnemonic{lut4lo} instructions.
-    The Inputs to the SBox are stored in \xreg{a0}.
+    The inputs to the SBox are stored in \xreg{a0}.
     The high and low $8$ elements of the
     LUT are stored in \xreg{a2} and \xreg{a1} respectively.
 }

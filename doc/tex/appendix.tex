@@ -247,8 +247,8 @@ Each byte has the relevant transformation applied, before
 being written back to the corresponding byte position in {\tt rd}.
 On an RV64 platform, the high 32-bits of the result are zero
 extended.
-Pseudo code is found in figure
-\ref{fig:pseudo:aes:v1}.
+Pseudo code is found in 
+\figref{pseudo:aes:v1}.
 
 This proposal variant requires $2$ encoding points with only one
 source register.
@@ -300,10 +300,9 @@ Example usage can be found in the riscv-crypto repository
 \footnote{\url{https://github.com/scarv/riscv-crypto/blob/master/benchmarks/crypto_block/aes/zscrypto_v2/aes_enc.c\#L53}}.
 
 Pseudo-code for the sub-bytes and mix-columns instructions are found in
-figures
-\ref{fig:pesudo:aes:v2:sub}
+\figref{pesudo:aes:v2:sub}
 and
-\ref{fig:pesudo:aes:v2:mix}
+\figref{pesudo:aes:v2:mix}
 respectively.
 
 This proposal variant requires $4$ encoding points, where each point
