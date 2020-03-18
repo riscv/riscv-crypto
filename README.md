@@ -34,6 +34,7 @@ the [Github Repository](https://github.com/scarv/riscv-crypto).
 
 ## Getting Started
 
+
 - Checkout the repository:
   ```sh
   $> git clone git@github.com:scarv/riscv-crypto.git
@@ -41,6 +42,11 @@ the [Github Repository](https://github.com/scarv/riscv-crypto).
   $> git submodule update --init
   $> source bin/conf.sh
   ```
+
+  - Note that the `master` branch points to the latest draft release.
+
+  - Development work for the next draft release is done on the
+    `dev/next-release` branch.
 
 - See [`tools/README.md`](tools/README.md) for information on installing
   the experimental toolchain.
