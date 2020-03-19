@@ -20,6 +20,7 @@ prep -top tb_aes32
 
 [files]
 aes/share/aes_sbox_latency.v
+aes/share/aes_functions.vh
 aes/rv32/aes32.v
 aes/rv32/tb_aes32.v
 

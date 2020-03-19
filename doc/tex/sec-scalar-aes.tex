@@ -204,8 +204,8 @@ saes.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
     rd.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
 
 saes.imix(rs1):              // Inverse MixColumns
-    rd.32[0] = InvAESMixColumns(rs1.32[0])
-    rd.32[1] = InvAESMixColumns(rs1.32[1])
+    rd.32[0]  = InvAESMixColumn(rs1.32[0])
+    rd.32[1]  = InvAESMixColumn(rs1.32[1])
 \end{lstlisting}
 \caption{
 RV64 AES instruction pseudocode.
