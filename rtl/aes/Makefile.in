@@ -7,3 +7,5 @@ include aes/rv64/Makefile.in
 $(eval $(call add_synth_target,aes_sbox_latency,aes/share/aes_sbox_latency.v,aes_sbox))
 $(eval $(call add_synth_target,aes_sbox_size,aes/share/aes_sbox_size.v,aes_sbox))
 $(eval $(call add_synth_target,aes_sbox_shared,aes/share/aes_sbox_shared.v,aes_sbox))
+
+$(eval $(call add_synth_target,aes_mixcolumn,aes/share/aes_mixcolumn.v,aes_mixcolumn))
