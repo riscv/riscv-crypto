@@ -14,9 +14,6 @@ $(eval $(call add_spike_target,lut4hi))
 $(eval $(call add_elf_target,ssha256.c))
 $(eval $(call add_spike_target,ssha256))
 
-$(eval $(call add_elf_target,ssha3.c))
-$(eval $(call add_spike_target,ssha3))
-
 $(eval $(call add_elf_target,indexed_ld.c))
 $(eval $(call add_spike_target,indexed_ld))
 

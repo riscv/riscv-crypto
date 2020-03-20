@@ -116,10 +116,10 @@ index 9ecdcab0b6..f809a2fce7 100644
  	    case 's':		/* Source register.  */
  	    case 't':		/* Target register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..97b672b4dd 100644
+index 6c750a33b1..2fa41a626a 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
-@@ -343,6 +343,94 @@
+@@ -343,6 +343,84 @@
  #define MASK_GORCIW  0xfe00707f
  #define MATCH_GREVIW 0x6800501b
  #define MASK_GREVIW  0xfe00707f
@@ -179,16 +179,6 @@ index 6c750a33b1..97b672b4dd 100644
 +#define MASK_SSHA512_S2 0xfff0707f
 +#define MATCH_SSHA512_S3 0xe70702b
 +#define MASK_SSHA512_S3 0xfff0707f
-+#define MATCH_SSHA3_XY 0x10007003
-+#define MASK_SSHA3_XY 0xfe00707f
-+#define MATCH_SSHA3_X1 0x12007003
-+#define MASK_SSHA3_X1 0xfe00707f
-+#define MATCH_SSHA3_X2 0x14007003
-+#define MASK_SSHA3_X2 0xfe00707f
-+#define MATCH_SSHA3_X4 0x16007003
-+#define MASK_SSHA3_X4 0xfe00707f
-+#define MATCH_SSHA3_YX 0x18007003
-+#define MASK_SSHA3_YX 0xfe00707f
 +#define MATCH_LBX 0x702b
 +#define MASK_LBX 0xfe00707f
 +#define MATCH_LHX 0x200702b
@@ -250,6 +240,10 @@ index 7e67c7f9a2..5b63384d2e 100644
    };
  
  /* This structure holds information for a particular instruction.  */
+diff --git a/opcodes/.riscv-opc.c.swp b/opcodes/.riscv-opc.c.swp
+new file mode 100644
+index 0000000000..304f41c6c8
+Binary files /dev/null and b/opcodes/.riscv-opc.c.swp differ
 diff --git a/opcodes/riscv-dis.c b/opcodes/riscv-dis.c
 index 19f10c0e55..24e1d28a02 100644
 --- a/opcodes/riscv-dis.c
@@ -282,10 +276,10 @@ index 19f10c0e55..24e1d28a02 100644
  	  print (info->stream, "%s", riscv_gpr_names[0]);
  	  break;
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..8f4a77e369 100644
+index e99febc823..dddee57318 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
-@@ -709,6 +709,52 @@ const struct riscv_opcode riscv_opcodes[] =
+@@ -709,6 +709,47 @@ const struct riscv_opcode riscv_opcodes[] =
  {"unzip2",    0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  {"unzip",     0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  
@@ -318,22 +312,17 @@ index e99febc823..8f4a77e369 100644
 +{"ssha512.s1"          , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SSHA512_S1, MASK_SSHA512_S1, match_opcode, 0},
 +{"ssha512.s2"          , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SSHA512_S2, MASK_SSHA512_S2, match_opcode, 0},
 +{"ssha512.s3"          , 0, INSN_CLASS_ZSCRYPTO,      "d,s", MATCH_SSHA512_S3, MASK_SSHA512_S3, match_opcode, 0},
-+{"ssha3.xy"            , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SSHA3_XY, MASK_SSHA3_XY, match_opcode, 0},
-+{"ssha3.x1"            , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SSHA3_X1, MASK_SSHA3_X1, match_opcode, 0},
-+{"ssha3.x2"            , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SSHA3_X2, MASK_SSHA3_X2, match_opcode, 0},
-+{"ssha3.x4"            , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SSHA3_X4, MASK_SSHA3_X4, match_opcode, 0},
-+{"ssha3.yx"            , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_SSHA3_YX, MASK_SSHA3_YX, match_opcode, 0},
-+{"lbx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LBX, MASK_LBX, match_opcode, 0},
-+{"lhx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LHX, MASK_LHX, match_opcode, 0},
-+{"lwx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LWX, MASK_LWX, match_opcode, 0},
-+{"ldx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LDX, MASK_LDX, match_opcode, 0},
-+{"lbux"                , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LBUX, MASK_LBUX, match_opcode, 0},
-+{"lhux"                , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LHUX, MASK_LHUX, match_opcode, 0},
-+{"lwux"                , 0, INSN_CLASS_ZSCRYPTO,    "d,s,t", MATCH_LWUX, MASK_LWUX, match_opcode, 0},
-+{"sbx"                 , 0, INSN_CLASS_ZSCRYPTO,    "s,t,r", MATCH_SBX, MASK_SBX, match_opcode, 0},
-+{"shx"                 , 0, INSN_CLASS_ZSCRYPTO,    "s,t,r", MATCH_SHX, MASK_SHX, match_opcode, 0},
-+{"swx"                 , 0, INSN_CLASS_ZSCRYPTO,    "s,t,r", MATCH_SWX, MASK_SWX, match_opcode, 0},
-+{"sdx"                 , 0, INSN_CLASS_ZSCRYPTO,    "s,t,r", MATCH_SDX, MASK_SDX, match_opcode, 0},
++{"lbx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LBX, MASK_LBX, match_opcode, 0},
++{"lhx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LHX, MASK_LHX, match_opcode, 0},
++{"lwx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LWX, MASK_LWX, match_opcode, 0},
++{"ldx"                 , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LDX, MASK_LDX, match_opcode, 0},
++{"lbux"                , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LBUX, MASK_LBUX, match_opcode, 0},
++{"lhux"                , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LHUX, MASK_LHUX, match_opcode, 0},
++{"lwux"                , 0, INSN_CLASS_ZSCRYPTO,    "d,t(s)", MATCH_LWUX, MASK_LWUX, match_opcode, 0},
++{"sbx"                 , 0, INSN_CLASS_ZSCRYPTO,    "t,r(s)", MATCH_SBX, MASK_SBX, match_opcode, 0},
++{"shx"                 , 0, INSN_CLASS_ZSCRYPTO,    "t,r(s)", MATCH_SHX, MASK_SHX, match_opcode, 0},
++{"swx"                 , 0, INSN_CLASS_ZSCRYPTO,    "t,r(s)", MATCH_SWX, MASK_SWX, match_opcode, 0},
++{"sdx"                 , 0, INSN_CLASS_ZSCRYPTO,    "t,r(s)", MATCH_SDX, MASK_SDX, match_opcode, 0},
 +
  /* Single-precision floating-point instruction subset */
  {"frcsr",     0, INSN_CLASS_F,   "d",  MATCH_FRCSR, MASK_FRCSR, match_opcode, INSN_ALIAS },

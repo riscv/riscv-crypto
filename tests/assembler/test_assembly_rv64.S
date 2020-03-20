@@ -31,7 +31,8 @@ main:
     saes32.decsm       a0, a1, a2, 0
     saes32.decs        a0, a1, a2, 0
     
-    saes64.sub         a0, a1
+    saes64.ks1         a0, a1, 0
+    saes64.ks2         a0, a1, a2
     saes64.imix        a0, a1
     
     saes64.encsm.lo    a0, a1, a2
@@ -52,16 +53,10 @@ main:
     ssha256.s2  a0, a1
     ssha256.s3  a0, a1
 
-  ##ssha512.s0  a0, a1
-  ##ssha512.s1  a0, a1
-  ##ssha512.s2  a0, a1
-  ##ssha512.s3  a0, a1
-
-    ssha3.xy    a0, a1, a2
-    ssha3.x1    a0, a1, a2
-    ssha3.x2    a0, a1, a2
-    ssha3.x4    a0, a1, a2
-    ssha3.yx    a0, a1, a2
+    ssha512.s0  a0, a1
+    ssha512.s1  a0, a1
+    ssha512.s2  a0, a1
+    ssha512.s3  a0, a1
 
 #
 # ------------------------------------------------------------
