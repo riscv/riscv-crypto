@@ -61,35 +61,10 @@ block ciphers
 and stream ciphers.
 
 Algorithms making use of 32-bit rotations:
-SHA256, AES (Shift Rows), ChaCha20.
+SHA256, AES (Shift Rows), ChaCha20, SM3.
 
 Algorithms making use of 64-bit rotations:
 SHA512, SHA3.
-
-\begin{cryptobitmanipisa}
-RV32 only:
-    fsl   rd, rs1, rs3, rs2
-    fsr   rd, rs1, rs3, rs2
-    fsri  rd, rs1, rs3, imm
-\end{cryptobitmanipisa}
-
-See \cite[Section 2.9.3]{riscv:bitmanip:draft} for details of
-these instructions.
-The {\em funnel shift} instructions create a $2*$\XLEN word by
-concatenating {\tt rs1} and {\tt rs3}, which is then
-left/right rotate shifted by the amount in {\tt imm}/{\tt rs2}.
-These are useful for implementing double-width rotations.
-There are (currently) no examples of widely used algorithms which
-use anything larger than a 64-bit rotation, hence the funnel shift
-instructions are only proposed for inclusion on RV32, since RV64
-will support 64-bit rotations naturally.
-
-Algorithms using 64-bit rotations:
-SHA512,
-SHA3\footnote{SHA3 can avoid awkward double-width rotations using a
-technique called "Bit Interleaving". Benchmarking will be needed to
-see if this technique is a worthy mitigation for removing the 
-funnel shifts.}.
 
 \subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
 
