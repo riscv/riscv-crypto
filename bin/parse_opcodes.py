@@ -16,6 +16,7 @@ opcodebits ={}
 
 acodes = {}
 acodes['bs'     ] = "w"
+acodes['rcon'   ] = "W"
 acodes['rd'     ] = "d"
 acodes['rdp'    ] = "(N,M)"
 acodes['rs1'    ] = "s"
@@ -23,7 +24,8 @@ acodes['rs2'    ] = "t"
 acodes['rs3'    ] = "r"
 
 arglut = {}
-arglut['bs'] = (31,30)
+arglut['bs']   = (31,30)
+arglut['rcon'] = (23,20)
 
 arglut['rd'] = (11,7)
 arglut['rdp'] = (11,8)
@@ -374,8 +376,6 @@ def make_c(match,mask):
     mask_vars[name]  = "MASK_%s"  % name2
     print('#define %s %s' % (match_vars[name], hex(match[name])))
     print('#define %s %s' % (mask_vars[name] , hex(mask[name])))
-    print('#define MATCH_%s %s' % (name2, hex(match[name])))
-    print('#define MASK_%s  %s' % (name2, hex(mask[name])))
   for num, name in csrs+csrs32:
     print('#define CSR_%s %s' % (name.upper(), hex(num)))
   for num, name in causes:

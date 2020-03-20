@@ -1,8 +1,8 @@
 diff --git a/riscv/decode.h b/riscv/decode.h
-index 9e03676..1cf8bec 100644
+index 9e03676..6311f0e 100644
 --- a/riscv/decode.h
 +++ b/riscv/decode.h
-@@ -90,12 +90,15 @@ public:
+@@ -90,12 +90,16 @@ public:
    int64_t u_imm() { return int64_t(b) >> 12 << 12; }
    int64_t uj_imm() { return (x(21, 10) << 1) + (x(20, 1) << 11) + (x(12, 8) << 12) + (imm_sign() << 20); }
    uint64_t rd() { return x(7, 5); }
@@ -14,194 +14,111 @@ index 9e03676..1cf8bec 100644
    uint64_t csr() { return x(20, 12); }
  
 +  uint64_t bs() {return x(30,2);}
++  uint64_t rcon() {return x(20,4);}
 +
    int64_t rvc_imm() { return x(2, 5) + (xs(12, 1) << 5); }
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..c2c3967 100644
+index 3c4bf1c..668473f 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -564,6 +564,178 @@
+@@ -564,6 +564,94 @@
  #define MASK_PACKUW  0xfe00707f
  #define MATCH_BFPW 0x4800703b
  #define MASK_BFPW  0xfe00707f
 +#define MATCH_LUT4LO 0x6000002b
 +#define MASK_LUT4LO 0xfe00707f
-+#define MATCH_LUT4LO 0x6000002b
-+#define MASK_LUT4LO  0xfe00707f
 +#define MATCH_LUT4HI 0x6200002b
 +#define MASK_LUT4HI 0xfe00707f
-+#define MATCH_LUT4HI 0x6200002b
-+#define MASK_LUT4HI  0xfe00707f
 +#define MATCH_LUT4 0x6400002b
 +#define MASK_LUT4 0xfe00707f
-+#define MATCH_LUT4 0x6400002b
-+#define MASK_LUT4  0xfe00707f
 +#define MATCH_MMULU 0x200102b
 +#define MASK_MMULU 0x60070ff
-+#define MATCH_MMULU 0x200102b
-+#define MASK_MMULU  0x60070ff
 +#define MATCH_MACCU 0x102b
 +#define MASK_MACCU 0x60070ff
-+#define MATCH_MACCU 0x102b
-+#define MASK_MACCU  0x60070ff
 +#define MATCH_SAES32_ENCSM 0x202b
 +#define MASK_SAES32_ENCSM 0x3e00707f
-+#define MATCH_SAES32_ENCSM 0x202b
-+#define MASK_SAES32_ENCSM  0x3e00707f
 +#define MATCH_SAES32_ENCS 0x200202b
 +#define MASK_SAES32_ENCS 0x3e00707f
-+#define MATCH_SAES32_ENCS 0x200202b
-+#define MASK_SAES32_ENCS  0x3e00707f
 +#define MATCH_SAES32_DECSM 0x400202b
 +#define MASK_SAES32_DECSM 0x3e00707f
-+#define MATCH_SAES32_DECSM 0x400202b
-+#define MASK_SAES32_DECSM  0x3e00707f
 +#define MATCH_SAES32_DECS 0x600202b
 +#define MASK_SAES32_DECS 0x3e00707f
-+#define MATCH_SAES32_DECS 0x600202b
-+#define MASK_SAES32_DECS  0x3e00707f
-+#define MATCH_SAES64_SUB 0x800202b
-+#define MASK_SAES64_SUB 0xfff0707f
-+#define MATCH_SAES64_SUB 0x800202b
-+#define MASK_SAES64_SUB  0xfff0707f
-+#define MATCH_SAES64_IMIX 0x810202b
++#define MATCH_SAES64_KS1 0x800202b
++#define MASK_SAES64_KS1 0xff00707f
++#define MATCH_SAES64_KS2 0xa00202b
++#define MASK_SAES64_KS2 0xfe00707f
++#define MATCH_SAES64_IMIX 0xc10202b
 +#define MASK_SAES64_IMIX 0xfff0707f
-+#define MATCH_SAES64_IMIX 0x810202b
-+#define MASK_SAES64_IMIX  0xfff0707f
 +#define MATCH_SAES64_ENCSM_LO 0x1000202b
 +#define MASK_SAES64_ENCSM_LO 0xfe00707f
-+#define MATCH_SAES64_ENCSM_LO 0x1000202b
-+#define MASK_SAES64_ENCSM_LO  0xfe00707f
 +#define MATCH_SAES64_ENCSM_HI 0x1200202b
 +#define MASK_SAES64_ENCSM_HI 0xfe00707f
-+#define MATCH_SAES64_ENCSM_HI 0x1200202b
-+#define MASK_SAES64_ENCSM_HI  0xfe00707f
 +#define MATCH_SAES64_ENCS_LO 0x1400202b
 +#define MASK_SAES64_ENCS_LO 0xfe00707f
-+#define MATCH_SAES64_ENCS_LO 0x1400202b
-+#define MASK_SAES64_ENCS_LO  0xfe00707f
 +#define MATCH_SAES64_ENCS_HI 0x1600202b
 +#define MASK_SAES64_ENCS_HI 0xfe00707f
-+#define MATCH_SAES64_ENCS_HI 0x1600202b
-+#define MASK_SAES64_ENCS_HI  0xfe00707f
 +#define MATCH_SAES64_DECSM_LO 0x1800202b
 +#define MASK_SAES64_DECSM_LO 0xfe00707f
-+#define MATCH_SAES64_DECSM_LO 0x1800202b
-+#define MASK_SAES64_DECSM_LO  0xfe00707f
 +#define MATCH_SAES64_DECSM_HI 0x1a00202b
 +#define MASK_SAES64_DECSM_HI 0xfe00707f
-+#define MATCH_SAES64_DECSM_HI 0x1a00202b
-+#define MASK_SAES64_DECSM_HI  0xfe00707f
 +#define MATCH_SAES64_DECS_LO 0x1c00202b
 +#define MASK_SAES64_DECS_LO 0xfe00707f
-+#define MATCH_SAES64_DECS_LO 0x1c00202b
-+#define MASK_SAES64_DECS_LO  0xfe00707f
 +#define MATCH_SAES64_DECS_HI 0x1e00202b
 +#define MASK_SAES64_DECS_HI 0xfe00707f
-+#define MATCH_SAES64_DECS_HI 0x1e00202b
-+#define MASK_SAES64_DECS_HI  0xfe00707f
 +#define MATCH_SSHA256_S0 0xe00702b
 +#define MASK_SSHA256_S0 0xfff0707f
-+#define MATCH_SSHA256_S0 0xe00702b
-+#define MASK_SSHA256_S0  0xfff0707f
 +#define MATCH_SSHA256_S1 0xe10702b
 +#define MASK_SSHA256_S1 0xfff0707f
-+#define MATCH_SSHA256_S1 0xe10702b
-+#define MASK_SSHA256_S1  0xfff0707f
 +#define MATCH_SSHA256_S2 0xe20702b
 +#define MASK_SSHA256_S2 0xfff0707f
-+#define MATCH_SSHA256_S2 0xe20702b
-+#define MASK_SSHA256_S2  0xfff0707f
 +#define MATCH_SSHA256_S3 0xe30702b
 +#define MASK_SSHA256_S3 0xfff0707f
-+#define MATCH_SSHA256_S3 0xe30702b
-+#define MASK_SSHA256_S3  0xfff0707f
 +#define MATCH_SSHA512_S0 0xe40702b
 +#define MASK_SSHA512_S0 0xfff0707f
-+#define MATCH_SSHA512_S0 0xe40702b
-+#define MASK_SSHA512_S0  0xfff0707f
 +#define MATCH_SSHA512_S1 0xe50702b
 +#define MASK_SSHA512_S1 0xfff0707f
-+#define MATCH_SSHA512_S1 0xe50702b
-+#define MASK_SSHA512_S1  0xfff0707f
 +#define MATCH_SSHA512_S2 0xe60702b
 +#define MASK_SSHA512_S2 0xfff0707f
-+#define MATCH_SSHA512_S2 0xe60702b
-+#define MASK_SSHA512_S2  0xfff0707f
 +#define MATCH_SSHA512_S3 0xe70702b
 +#define MASK_SSHA512_S3 0xfff0707f
-+#define MATCH_SSHA512_S3 0xe70702b
-+#define MASK_SSHA512_S3  0xfff0707f
 +#define MATCH_SSHA3_XY 0x10007003
 +#define MASK_SSHA3_XY 0xfe00707f
-+#define MATCH_SSHA3_XY 0x10007003
-+#define MASK_SSHA3_XY  0xfe00707f
 +#define MATCH_SSHA3_X1 0x12007003
 +#define MASK_SSHA3_X1 0xfe00707f
-+#define MATCH_SSHA3_X1 0x12007003
-+#define MASK_SSHA3_X1  0xfe00707f
 +#define MATCH_SSHA3_X2 0x14007003
 +#define MASK_SSHA3_X2 0xfe00707f
-+#define MATCH_SSHA3_X2 0x14007003
-+#define MASK_SSHA3_X2  0xfe00707f
 +#define MATCH_SSHA3_X4 0x16007003
 +#define MASK_SSHA3_X4 0xfe00707f
-+#define MATCH_SSHA3_X4 0x16007003
-+#define MASK_SSHA3_X4  0xfe00707f
 +#define MATCH_SSHA3_YX 0x18007003
 +#define MASK_SSHA3_YX 0xfe00707f
-+#define MATCH_SSHA3_YX 0x18007003
-+#define MASK_SSHA3_YX  0xfe00707f
 +#define MATCH_LBX 0x702b
 +#define MASK_LBX 0xfe00707f
-+#define MATCH_LBX 0x702b
-+#define MASK_LBX  0xfe00707f
 +#define MATCH_LHX 0x200702b
 +#define MASK_LHX 0xfe00707f
-+#define MATCH_LHX 0x200702b
-+#define MASK_LHX  0xfe00707f
 +#define MATCH_LWX 0x400702b
 +#define MASK_LWX 0xfe00707f
-+#define MATCH_LWX 0x400702b
-+#define MASK_LWX  0xfe00707f
 +#define MATCH_LDX 0x600702b
 +#define MASK_LDX 0xfe00707f
-+#define MATCH_LDX 0x600702b
-+#define MASK_LDX  0xfe00707f
 +#define MATCH_LBUX 0x800702b
 +#define MASK_LBUX 0xfe00707f
-+#define MATCH_LBUX 0x800702b
-+#define MASK_LBUX  0xfe00707f
 +#define MATCH_LHUX 0xa00702b
 +#define MASK_LHUX 0xfe00707f
-+#define MATCH_LHUX 0xa00702b
-+#define MASK_LHUX  0xfe00707f
 +#define MATCH_LWUX 0xc00702b
 +#define MASK_LWUX 0xfe00707f
-+#define MATCH_LWUX 0xc00702b
-+#define MASK_LWUX  0xfe00707f
 +#define MATCH_SBX 0x402b
 +#define MASK_SBX 0x6007fff
-+#define MATCH_SBX 0x402b
-+#define MASK_SBX  0x6007fff
 +#define MATCH_SHX 0x40ab
 +#define MASK_SHX 0x6007fff
-+#define MATCH_SHX 0x40ab
-+#define MASK_SHX  0x6007fff
 +#define MATCH_SWX 0x412b
 +#define MASK_SWX 0x6007fff
-+#define MATCH_SWX 0x412b
-+#define MASK_SWX  0x6007fff
 +#define MATCH_SDX 0x41ab
 +#define MASK_SDX 0x6007fff
-+#define MATCH_SDX 0x41ab
-+#define MASK_SDX  0x6007fff
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2328,49 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2156,6 +2244,50 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
@@ -214,7 +131,8 @@ index 3c4bf1c..c2c3967 100644
 +DECLARE_INSN(saes32_encs, MATCH_SAES32_ENCS, MASK_SAES32_ENCS)
 +DECLARE_INSN(saes32_decsm, MATCH_SAES32_DECSM, MASK_SAES32_DECSM)
 +DECLARE_INSN(saes32_decs, MATCH_SAES32_DECS, MASK_SAES32_DECS)
-+DECLARE_INSN(saes64_sub, MATCH_SAES64_SUB, MASK_SAES64_SUB)
++DECLARE_INSN(saes64_ks1, MATCH_SAES64_KS1, MASK_SAES64_KS1)
++DECLARE_INSN(saes64_ks2, MATCH_SAES64_KS2, MASK_SAES64_KS2)
 +DECLARE_INSN(saes64_imix, MATCH_SAES64_IMIX, MASK_SAES64_IMIX)
 +DECLARE_INSN(saes64_encsm_lo, MATCH_SAES64_ENCSM_LO, MASK_SAES64_ENCSM_LO)
 +DECLARE_INSN(saes64_encsm_hi, MATCH_SAES64_ENCSM_HI, MASK_SAES64_ENCSM_HI)
@@ -537,6 +455,39 @@ index 0000000..a5d606e
 +
 +WRITE_RD(u ^ RS1);
 +
+diff --git a/riscv/insns/saes64_decs_hi.h b/riscv/insns/saes64_decs_hi.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_decs_lo.h b/riscv/insns/saes64_decs_lo.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_decsm_hi.h b/riscv/insns/saes64_decsm_hi.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_decsm_lo.h b/riscv/insns/saes64_decsm_lo.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_encs_hi.h b/riscv/insns/saes64_encs_hi.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_encs_lo.h b/riscv/insns/saes64_encs_lo.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_encsm_hi.h b/riscv/insns/saes64_encsm_hi.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_encsm_lo.h b/riscv/insns/saes64_encsm_lo.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_imix.h b/riscv/insns/saes64_imix.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_ks1.h b/riscv/insns/saes64_ks1.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/saes64_ks2.h b/riscv/insns/saes64_ks2.h
+new file mode 100644
+index 0000000..e69de29
 diff --git a/riscv/insns/saes_common.h b/riscv/insns/saes_common.h
 new file mode 100644
 index 0000000..b04f8a8
@@ -901,10 +852,10 @@ index 0000000..c5141dc
 +MMU.store_uint32(RS1 + (RS2 << 2), RS3);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..666eaa1 100644
+index 4ee64fa..5609a5a 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -401,6 +401,41 @@ riscv_insn_ext_b = \
+@@ -401,6 +401,52 @@ riscv_insn_ext_b = \
  	unshflw \
  	xnor \
  
@@ -914,10 +865,21 @@ index 4ee64fa..666eaa1 100644
 +    lut4 \
 +    mmulu \
 +    maccu \
++    saes32_encsm \
 +    saes32_encs \
-+    saes32_encsm\
++    saes32_decsm \
 +    saes32_decs \
-+    saes32_decsm\
++    saes64_ks1 \
++    saes64_ks2 \
++    saes64_imix \
++    saes64_encsm_lo \
++    saes64_encsm_hi \
++    saes64_encs_lo \
++    saes64_encs_hi \
++    saes64_decsm_lo \
++    saes64_decsm_hi \
++    saes64_decs_lo \
++    saes64_decs_hi \
 +    ssha256_s0 \
 +    ssha256_s1 \
 +    ssha256_s2 \
@@ -946,7 +908,7 @@ index 4ee64fa..666eaa1 100644
  riscv_insn_ext_v_alu_int = \
  	vaadd_vi \
  	vaadd_vv \
-@@ -782,6 +817,7 @@ riscv_insn_list = \
+@@ -782,6 +828,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_d) \
  	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \

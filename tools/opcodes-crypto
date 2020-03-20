@@ -37,26 +37,27 @@ maccu       rdp rs1 rs2 rs3     26..25=0 14..12=1 7=0 6..2=0x0A 1..0=3
 #
 # ------------------------------------------------------------
     
-saes32.encsm       rd rs1 rs2 bs   29..25=0  14..12=2 6..2=0x0A 1..0=3
-saes32.encs        rd rs1 rs2 bs   29..25=1  14..12=2 6..2=0x0A 1..0=3
-saes32.decsm       rd rs1 rs2 bs   29..25=2  14..12=2 6..2=0x0A 1..0=3
-saes32.decs        rd rs1 rs2 bs   29..25=3  14..12=2 6..2=0x0A 1..0=3
+saes32.encsm      rd rs1 rs2 bs    29..25=0  14..12=2 6..2=0x0A 1..0=3
+saes32.encs       rd rs1 rs2 bs    29..25=1  14..12=2 6..2=0x0A 1..0=3
+saes32.decsm      rd rs1 rs2 bs    29..25=2  14..12=2 6..2=0x0A 1..0=3
+saes32.decs       rd rs1 rs2 bs    29..25=3  14..12=2 6..2=0x0A 1..0=3
 
-# sm4 placeholder  rd rs1 rs2 bs   29..25=4  14..12=2 6..2=0x0A 1..0=3
-# sm4 placeholder  rd rs1 rs2 bs   29..25=5  14..12=2 6..2=0x0A 1..0=3
+# sm4 placeholder rd rs1 rs2 bs    29..25=4  14..12=2 6..2=0x0A 1..0=3
+# sm4 placeholder rd rs1 rs2 bs    29..25=5  14..12=2 6..2=0x0A 1..0=3
 
-saes64.sub         rd rs1 24..20=0 31..25=4  14..12=2 6..2=0x0A 1..0=3
-saes64.imix        rd rs1 24..20=1 31..25=4  14..12=2 6..2=0x0A 1..0=3
+saes64.ks1        rd rs1 rcon 24=0 31..25=4  14..12=2 6..2=0x0A 1..0=3
+saes64.ks2        rd rs1 rs2       31..25=5  14..12=2 6..2=0x0A 1..0=3
+saes64.imix       rd rs1 24..20=1  31..25=6  14..12=2 6..2=0x0A 1..0=3
 
-saes64.encsm.lo    rd rs1 rs2      31..25=8  14..12=2 6..2=0x0A 1..0=3
-saes64.encsm.hi    rd rs1 rs2      31..25=9  14..12=2 6..2=0x0A 1..0=3
-saes64.encs.lo     rd rs1 rs2      31..25=10 14..12=2 6..2=0x0A 1..0=3
-saes64.encs.hi     rd rs1 rs2      31..25=11 14..12=2 6..2=0x0A 1..0=3
+saes64.encsm.lo   rd rs1 rs2       31..25=8  14..12=2 6..2=0x0A 1..0=3
+saes64.encsm.hi   rd rs1 rs2       31..25=9  14..12=2 6..2=0x0A 1..0=3
+saes64.encs.lo    rd rs1 rs2       31..25=10 14..12=2 6..2=0x0A 1..0=3
+saes64.encs.hi    rd rs1 rs2       31..25=11 14..12=2 6..2=0x0A 1..0=3
 
-saes64.decsm.lo    rd rs1 rs2      31..25=12 14..12=2 6..2=0x0A 1..0=3
-saes64.decsm.hi    rd rs1 rs2      31..25=13 14..12=2 6..2=0x0A 1..0=3
-saes64.decs.lo     rd rs1 rs2      31..25=14 14..12=2 6..2=0x0A 1..0=3
-saes64.decs.hi     rd rs1 rs2      31..25=15 14..12=2 6..2=0x0A 1..0=3
+saes64.decsm.lo   rd rs1 rs2       31..25=12 14..12=2 6..2=0x0A 1..0=3
+saes64.decsm.hi   rd rs1 rs2       31..25=13 14..12=2 6..2=0x0A 1..0=3
+saes64.decs.lo    rd rs1 rs2       31..25=14 14..12=2 6..2=0x0A 1..0=3
+saes64.decs.hi    rd rs1 rs2       31..25=15 14..12=2 6..2=0x0A 1..0=3
 
 #
 # ------------------------------------------------------------

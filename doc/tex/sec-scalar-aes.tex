@@ -68,7 +68,9 @@ RV32 base architecture.}
 \subsubsection{RV64 Instructions}
 
 \begin{cryptoisa}
-saes64.sub      rd, rs1        // SubBytes only, for KeySchedule
+saes64.ks1      rd, rs1, rcon  // KeySchedule: SubBytes, Rotate, Round Const
+saes64.ks2      rd, rs1, rs2   // KeySchedule: XOR sumation.
+
 saes64.encsm.lo rd, rs1, rs2   // Encrypt ShiftRows, SubBytes, MixColumns
 saes64.encsm.hi rd, rs1, rs2   //
 saes64.encs.lo  rd, rs1, rs2   // Encrypt ShiftRows, SubBytes
@@ -112,19 +114,20 @@ thrown away.
 In this way, the {\tt *.lo/*.hi} encoding bit acts as an input selector.
 See the pseudocode in \figref{pesudo:aes:rv64} to see how this works.
 \item
-The {\tt encsm}/{\tt decsm} instructions perform the (Inverse) SubBytes,
-ShiftRows and MixColumns Transformations.
+The \mnemonic{saes64.encsm.*}/\mnemonic{saes64.decsm.*} instructions perform the
+(Inverse) SubBytes, ShiftRows and MixColumns Transformations.
 \item
-The {\tt encs}/{\tt decs} instructions perform the (Inverse) SubBytes and
-ShiftRows Transformations. They are used for the last round of AES only.
+The \mnemonic{saes64.encs.*}/\mnemonic{saes64.decs.*} instructions perform the
+(Inverse) SubBytes and ShiftRows Transformations.
+They are used for the last round of AES only.
 \item
-The {\tt sub} instruction applies $4$ sboxes to the low
-$4$ bytes in the source register, and writes them to the corresponding
-byte in the destination register.
-The high $4$ bytes are left un-modified.
-It is used for the Key Schedule only.
+The \mnemonic{saes64.ks1}/\mnemonic{saes64.ks2} instructions are used in the
+KeySchedule.
+\mnemonic{saes64.ks1} implements the rotation, SubBytes and Round Constant
+addition steps.
+\mnemonic{saes64.ks2} implements the remaining {\tt xor} operations.
 \item
-The \mnemonic{imix} instruction applies only the inverse MixColumns
+The \mnemonic{saes64.imix} instruction applies only the inverse MixColumns
 transformation to two columns of the state array, packed into a single
 64-bit register.
 It is used to create the inverse cipher key schedule, according to
@@ -185,25 +188,35 @@ the RV64 AES instructions.
 
 \begin{figure}
 \begin{lstlisting}[language=pseudo]
-saes.sub(rs1):               // SubBytes Only for Encrypt KeySchedule
-    rd.8[i]  = AESSBox(rs1.8[i]) for i=0..3
-    rd.8[j]  =         rs1.8[j]  for j=4..7
+saes64.ks1(rs1,rcon):          // KeySchedule: SubBytes, Rotate, Round Const
+    temp.32   = rs1.32[1]
+    if(rcon != 0):
+        temp.32 = ROTL32(temp.32, 8)
+    temp.8[i] = AESSBox(temp.8[i])  for i=0..3
+    temp.8[0] = temp.8[i] ^ rcon
+    rd.8[i]   = temp.8[i  ]         for i=0..3
+    rd.8[j]   = temp.8[j-4]         for j=4..7
 
-saes.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
+saes64.ks2(rs1,rs2):           // KeySchedule: XOR
+    temp.32   = rs1.32[0]
+    rd.32[0]  = temp.32 ^ rs2.32[0]
+    rd.32[1]  = temp.32 ^ rs2.32[0] ^ rs2.32[1]
+
+saes64.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
     t1.128    = AESShiftRows(rs2 || rs1)
     t2.64     = t1.64[1] if hi else t1.64[0]
     t3.8[i]   = AESSBox(t2.8[i]) for i=0..7
     rd.32[0]  = AESMixColumn(t3.32[0]) if mix else t3.32[0]
     rd.32[1]  = AESMixColumn(t3.32[1]) if mix else t3.32[1]
 
-saes.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
+saes64.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
     t1.128    = InvAESShiftRows(rs2 || rs1)
     t2.64     = t1.64[1] if hi else t1.64[0]
     t3.8[i]   = InvAESSBox(t2.8[i]) for i=0..7
     rd.32[0]  = InvAESMixColumn(t3.32[0]) if mix else t3.32[0]
     rd.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
 
-saes.imix(rs1):              // Inverse MixColumns
+saes64.imix(rs1):              // Inverse MixColumns
     rd.32[0]  = InvAESMixColumn(rs1.32[0])
     rd.32[1]  = InvAESMixColumn(rs1.32[1])
 \end{lstlisting}
