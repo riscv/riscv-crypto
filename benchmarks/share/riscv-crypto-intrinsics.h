@@ -52,28 +52,6 @@ static inline uint64_t _ssha512_s3 (uint64_t rs1) {return (ROTR64(rs1,19) ^ ROTR
 #endif
 
 //
-// SHA3
-//
-
-#if (defined(__ZSCRYPTO) && (defined(RISCV_CRYPTO_RV32) || defined(RISCV_CRYPTO_RV64)))
-static inline int _ssha3_xy (int x, int y) { int rd; __asm__("ssha3.xy %0, %1, %2" : "=r"(rd) : "r"(x), "r"(y)); return rd;}
-static inline int _ssha3_x1 (int x, int y) { int rd; __asm__("ssha3.x1 %0, %1, %2" : "=r"(rd) : "r"(x), "r"(y)); return rd;}
-static inline int _ssha3_x2 (int x, int y) { int rd; __asm__("ssha3.x2 %0, %1, %2" : "=r"(rd) : "r"(x), "r"(y)); return rd;}
-static inline int _ssha3_x4 (int x, int y) { int rd; __asm__("ssha3.x4 %0, %1, %2" : "=r"(rd) : "r"(x), "r"(y)); return rd;}
-static inline int _ssha3_yx (int x, int y) { int rd; __asm__("ssha3.yx %0, %1, %2" : "=r"(rd) : "r"(x), "r"(y)); return rd;}
-
-static inline uint64_t * _ssha3_idx (uint64_t * base, int idx) {uint64_t * rd; __asm__("add %0, %1, %2 ;" : "=r"(rd) : "r"(base), "r"(idx)); return rd;}
-#else
-static inline int _ssha3_xy (int x, int y) { return ((x  )%5)+(5*((      y)%5));}
-static inline int _ssha3_x1 (int x, int y) { return ((x+1)%5)+(5*((      y)%5));}
-static inline int _ssha3_x2 (int x, int y) { return ((x+2)%5)+(5*((      y)%5));}
-static inline int _ssha3_x4 (int x, int y) { return ((x+4)%5)+(5*((      y)%5));}
-static inline int _ssha3_yx (int x, int y) { return ((y  )%5)+(5*((2*x+3*y)%5));}
-
-static inline uint64_t * _ssha3_idx (uint64_t * base, int idx) {uint64_t * rd; __asm__("add %0, %1, %2 ;" : "=r"(rd) : "r"(base), "r"(idx)); return rd;}
-#endif
-
-//
 // AES
 //
 
