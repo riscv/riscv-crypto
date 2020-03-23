@@ -457,43 +457,336 @@ index 0000000..a5d606e
 +
 diff --git a/riscv/insns/saes64_decs_hi.h b/riscv/insns/saes64_decs_hi.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..a28d3d7
+--- /dev/null
++++ b/riscv/insns/saes64_decs_hi.h
+@@ -0,0 +1,20 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_INVSHIFROWS_HI(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_DEC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_DEC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++WRITE_RD(temp);
++
 diff --git a/riscv/insns/saes64_decs_lo.h b/riscv/insns/saes64_decs_lo.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..4e5212a
+--- /dev/null
++++ b/riscv/insns/saes64_decs_lo.h
+@@ -0,0 +1,20 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_INVSHIFROWS_LO(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_DEC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_DEC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++WRITE_RD(temp);
++
 diff --git a/riscv/insns/saes64_decsm_hi.h b/riscv/insns/saes64_decsm_hi.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..800a4f3
+--- /dev/null
++++ b/riscv/insns/saes64_decsm_hi.h
+@@ -0,0 +1,28 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_INVSHIFROWS_HI(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_DEC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_DEC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++uint32_t col_0 = temp & 0xFFFFFFFF;
++uint32_t col_1 = temp >> 32       ;
++
++         col_0 = AES_INVMIXCOLUMN(col_0);
++         col_1 = AES_INVMIXCOLUMN(col_1);
++
++uint64_t result= ((uint64_t)col_1 << 32) | col_0;
++
++WRITE_RD(result);
++
 diff --git a/riscv/insns/saes64_decsm_lo.h b/riscv/insns/saes64_decsm_lo.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..122bb5f
+--- /dev/null
++++ b/riscv/insns/saes64_decsm_lo.h
+@@ -0,0 +1,29 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_INVSHIFROWS_LO(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_DEC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_DEC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_DEC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++uint32_t col_0 = temp & 0xFFFFFFFF;
++uint32_t col_1 = temp >> 32       ;
++
++         col_0 = AES_INVMIXCOLUMN(col_0);
++         col_1 = AES_INVMIXCOLUMN(col_1);
++
++uint64_t result= ((uint64_t)col_1 << 32) | col_0;
++
++WRITE_RD(result);
++
++
 diff --git a/riscv/insns/saes64_encs_hi.h b/riscv/insns/saes64_encs_hi.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..d0a0236
+--- /dev/null
++++ b/riscv/insns/saes64_encs_hi.h
+@@ -0,0 +1,20 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_SHIFROWS_HI(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_ENC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_ENC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++WRITE_RD(temp);
++
 diff --git a/riscv/insns/saes64_encs_lo.h b/riscv/insns/saes64_encs_lo.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..c8cac92
+--- /dev/null
++++ b/riscv/insns/saes64_encs_lo.h
+@@ -0,0 +1,20 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_SHIFROWS_LO(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_ENC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_ENC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++WRITE_RD(temp);
++
 diff --git a/riscv/insns/saes64_encsm_hi.h b/riscv/insns/saes64_encsm_hi.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..4f80864
+--- /dev/null
++++ b/riscv/insns/saes64_encsm_hi.h
+@@ -0,0 +1,28 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_SHIFROWS_HI(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_ENC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_ENC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++uint32_t col_0 = temp & 0xFFFFFFFF;
++uint32_t col_1 = temp >> 32       ;
++
++         col_0 = AES_MIXCOLUMN(col_0);
++         col_1 = AES_MIXCOLUMN(col_1);
++
++uint64_t result= ((uint64_t)col_1 << 32) | col_0;
++
++WRITE_RD(result);
++
 diff --git a/riscv/insns/saes64_encsm_lo.h b/riscv/insns/saes64_encsm_lo.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..d72a223
+--- /dev/null
++++ b/riscv/insns/saes64_encsm_lo.h
+@@ -0,0 +1,28 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint64_t temp = AES_SHIFROWS_LO(RS1,RS2);
++
++         temp = (
++    ((uint64_t)AES_ENC_SBOX[(temp >>  0) & 0xFF] <<  0) |
++    ((uint64_t)AES_ENC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 32) & 0xFF] << 32) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 40) & 0xFF] << 40) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 48) & 0xFF] << 48) |
++    ((uint64_t)AES_ENC_SBOX[(temp >> 56) & 0xFF] << 56) 
++);
++
++uint32_t col_0 = temp & 0xFFFFFFFF;
++uint32_t col_1 = temp >> 32       ;
++
++         col_0 = AES_MIXCOLUMN(col_0);
++         col_1 = AES_MIXCOLUMN(col_1);
++
++uint64_t result= ((uint64_t)col_1 << 32) | col_0;
++
++WRITE_RD(result);
++
 diff --git a/riscv/insns/saes64_imix.h b/riscv/insns/saes64_imix.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..a7d638a
+--- /dev/null
++++ b/riscv/insns/saes64_imix.h
+@@ -0,0 +1,15 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint32_t col_0 = RS1 & 0xFFFFFFFF;
++uint32_t col_1 = RS1 >> 32       ;
++
++         col_0 = AES_INVMIXCOLUMN(col_0);
++         col_1 = AES_INVMIXCOLUMN(col_1);
++
++uint64_t result= ((uint64_t)col_1 << 32) | col_0;
++
++WRITE_RD(result);
++
 diff --git a/riscv/insns/saes64_ks1.h b/riscv/insns/saes64_ks1.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..cef20f7
+--- /dev/null
++++ b/riscv/insns/saes64_ks1.h
+@@ -0,0 +1,37 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint8_t     round_consts [10] = {
++    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36
++};
++
++uint8_t     enc_rcon          = insn.rcon() ;
++
++if(enc_rcon > 0xA) {
++    // Invalid opcode.
++    throw trap_illegal_instruction(0);
++}
++
++uint32_t    temp              = (RS1 >> 32) & 0xFFFFFFFF  ;
++uint8_t     rcon              = 0            ;
++uint64_t    result                           ;
++
++if(enc_rcon != 0xA) {
++    temp    = (temp >> 8) | (temp << 24); // Rotate left by 8
++    rcon    = round_consts[enc_rcon];
++}
++
++temp        =
++    ((uint32_t)AES_ENC_SBOX[(temp >> 24) & 0xFF] << 24) |
++    ((uint32_t)AES_ENC_SBOX[(temp >> 16) & 0xFF] << 16) |
++    ((uint32_t)AES_ENC_SBOX[(temp >>  8) & 0xFF] <<  8) |
++    ((uint32_t)AES_ENC_SBOX[(temp >>  0) & 0xFF] <<  0) ;
++
++temp       ^= rcon;
++
++result      = ((uint64_t)temp << 32) | temp;
++
++WRITE_RD(result);
++
 diff --git a/riscv/insns/saes64_ks2.h b/riscv/insns/saes64_ks2.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..317f7ef
+--- /dev/null
++++ b/riscv/insns/saes64_ks2.h
+@@ -0,0 +1,15 @@
++
++#include "saes_common.h"
++
++require_rv64;
++
++uint32_t    rs1_hi  =  RS1 >> 32;
++uint32_t    rs2_lo  =  RS2      ;
++uint32_t    rs2_hi  =  RS2 >> 32;
++
++uint32_t    r_lo    = (rs1_hi ^ rs2_lo         ) ;
++uint32_t    r_hi    = (rs1_hi ^ rs2_lo ^ rs2_hi) ;
++uint64_t    result  =  ((uint64_t)r_hi << 32) | r_lo ;
++
++WRITE_RD(result);
++
 diff --git a/riscv/insns/saes_common.h b/riscv/insns/saes_common.h
 new file mode 100644
-index 0000000..b04f8a8
+index 0000000..d14b737
 --- /dev/null
 +++ b/riscv/insns/saes_common.h
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,176 @@
 +
 +uint8_t AES_ENC_SBOX[]= {
 +  0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5,
@@ -597,6 +890,79 @@ index 0000000..b04f8a8
 +    ( ( (b) & 0x2 ) ?                     AES_XTIME(a)   : 0 ) ^ \
 +    ( ( (b) & 0x4 ) ?           AES_XTIME(AES_XTIME(a))  : 0 ) ^ \
 +    ( ( (b) & 0x8 ) ? AES_XTIME(AES_XTIME(AES_XTIME(a))) : 0 ) )&0xFF)
++
++#define BY(X,I) ((X >> (8*I)) & 0xFF)
++
++#define AES_SHIFROWS_LO(RS1,RS2) ( \
++    (((RS1 >> 24) & 0xFF) << 56) | \
++    (((RS2 >> 48) & 0xFF) << 48) | \
++    (((RS2 >>  8) & 0xFF) << 40) | \
++    (((RS1 >> 32) & 0xFF) << 32) | \
++    (((RS2 >> 56) & 0xFF) << 24) | \
++    (((RS2 >> 16) & 0xFF) << 16) | \
++    (((RS1 >> 40) & 0xFF) <<  8) | \
++    (((RS1 >>  0) & 0xFF) <<  0) ) 
++
++#define AES_SHIFROWS_HI(RS1,RS2) ( \
++    (((RS2 >> 24) & 0xFF) << 56) | \
++    (((RS1 >> 48) & 0xFF) << 48) | \
++    (((RS1 >>  8) & 0xFF) << 40) | \
++    (((RS2 >> 32) & 0xFF) << 32) | \
++    (((RS1 >> 56) & 0xFF) << 24) | \
++    (((RS1 >> 16) & 0xFF) << 16) | \
++    (((RS2 >> 40) & 0xFF) <<  8) | \
++    (((RS2 >>  0) & 0xFF) <<  0) ) 
++
++#define AES_INVSHIFROWS_LO(RS1,RS2) ( \
++    (((RS2 >> 24) & 0xFF) << 56) | \
++    (((RS2 >> 48) & 0xFF) << 48) | \
++    (((RS1 >>  8) & 0xFF) << 40) | \
++    (((RS1 >> 32) & 0xFF) << 32) | \
++    (((RS1 >> 56) & 0xFF) << 24) | \
++    (((RS2 >> 16) & 0xFF) << 16) | \
++    (((RS2 >> 40) & 0xFF) <<  8) | \
++    (((RS1 >>  0) & 0xFF) <<  0) ) 
++
++#define AES_INVSHIFROWS_HI(RS1,RS2) ( \
++    (((RS1 >> 24) & 0xFF) << 56) | \
++    (((RS1 >> 48) & 0xFF) << 48) | \
++    (((RS2 >>  8) & 0xFF) << 40) | \
++    (((RS2 >> 32) & 0xFF) << 32) | \
++    (((RS2 >> 56) & 0xFF) << 24) | \
++    (((RS1 >> 16) & 0xFF) << 16) | \
++    (((RS1 >> 40) & 0xFF) <<  8) | \
++    (((RS2 >>  0) & 0xFF) <<  0) ) 
++
++
++#define AES_MIXBYTE(COL,B0,B1,B2,B3) ( \
++              BY(COL,B3)     ^ \
++              BY(COL,B2)     ^ \
++    AES_GFMUL(BY(COL,B1), 3) ^ \
++    AES_GFMUL(BY(COL,B0), 2)   \
++)
++
++#define AES_MIXCOLUMN(COL) ( \
++    AES_MIXBYTE(COL,3,0,1,2) << 24 | \
++    AES_MIXBYTE(COL,2,3,0,1) << 16 | \
++    AES_MIXBYTE(COL,1,2,3,0) <<  8 | \
++    AES_MIXBYTE(COL,0,1,2,3) <<  0   \
++)
++
++
++#define AES_INVMIXBYTE(COL,B0,B1,B2,B3) ( \
++    AES_GFMUL(BY(COL,B3),0x9) ^ \
++    AES_GFMUL(BY(COL,B2),0xd) ^ \
++    AES_GFMUL(BY(COL,B1),0xb) ^ \
++    AES_GFMUL(BY(COL,B0),0xe)   \
++)
++
++#define AES_INVMIXCOLUMN(COL) ( \
++    AES_INVMIXBYTE(COL,3,0,1,2) << 24 | \
++    AES_INVMIXBYTE(COL,2,3,0,1) << 16 | \
++    AES_INVMIXBYTE(COL,1,2,3,0) <<  8 | \
++    AES_INVMIXBYTE(COL,0,1,2,3) <<  0   \
++)
++
 diff --git a/riscv/insns/sbx.h b/riscv/insns/sbx.h
 new file mode 100644
 index 0000000..b31ed78

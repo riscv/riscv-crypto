@@ -194,17 +194,15 @@ saes64.ks1(rs1,enc_rcon):      // KeySchedule: SubBytes, Rotate, Round Const
     temp.32   = rs1.32[1]
     rcon      = 0x0
     if(enc_rcon != 0xA):
-        temp.32 = ROTL32(temp.32, 8)
+        temp.32 = ROTR32(temp.32, 8)
         rcon    = round_consts.8[enc_rcon]
     temp.8[i] = AESSBox(temp.8[i])  for i=0..3
     temp.8[0] = temp.8[i  ] ^ rcon
-    rd.8[i]   = temp.8[i  ]         for i=0..3
-    rd.8[j]   = temp.8[j-4]         for j=4..7
+    rd.64     = {temp.32, temp.32}
 
 saes64.ks2(rs1,rs2):           // KeySchedule: XOR
-    temp.32   = rs1.32[0]
-    rd.32[0]  = temp.32 ^ rs2.32[0]
-    rd.32[1]  = temp.32 ^ rs2.32[0] ^ rs2.32[1]
+    rd.32[0]  = rs1.32[1] ^ rs2.32[0]
+    rd.32[1]  = rs1.32[1] ^ rs2.32[0] ^ rs2.32[1]
 
 saes64.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
     t1.128    = AESShiftRows(rs2 || rs1)

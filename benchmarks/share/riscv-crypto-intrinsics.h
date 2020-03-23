@@ -62,6 +62,20 @@ static inline uint32_t _saes32_decs (uint32_t rs1, uint32_t rs2, int bs) {uint32
 static inline uint32_t _saes32_decsm(uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes32.decsm %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 #endif
 
+#if (defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV64))
+static inline uint64_t _saes64_ks1     (uint64_t rs1, int      rcon) {uint64_t rd; __asm__("saes64.ks1      %0, %1, %2" : "=r"(rd) : "r"(rs1), "i"(rcon)); return rd;}
+static inline uint64_t _saes64_ks2     (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.ks2      %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_imix    (uint64_t rs1               ) {uint64_t rd; __asm__("saes64.imix     %0, %1    " : "=r"(rd) : "r"(rs1)           ); return rd;}
+static inline uint64_t _saes64_encsm_lo(uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.encsm.lo %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_encsm_hi(uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.encsm.hi %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_encs_lo (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.encs.lo  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_encs_hi (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.encs.hi  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_decsm_lo(uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decsm.lo %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_decsm_hi(uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decsm.hi %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_decs_lo (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decs.lo  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+static inline uint64_t _saes64_decs_hi (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decs.hi  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+#endif
+
 //
 // Bitmanip Instruction Intrinsics
 //
