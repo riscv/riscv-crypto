@@ -16,7 +16,8 @@ input  wire         mix     , // Mix enable for op_enc/op_dec
 input  wire         op_enc  , // Encrypt hi/lo
 input  wire         op_dec  , // Decrypt hi/lo 
 input  wire         op_imix , // Inverse MixColumn transformation (if set)
-input  wire         op_sub  , // Perform only a sub-bytes operation
+input  wire         op_ks1  , // KeySchedule 1
+input  wire         op_ks2  , // KeySchedule 2
 
 input  wire [ 63:0] rs1     , // Source register 1
 input  wire [ 63:0] rs2     , // Source register 2
@@ -30,6 +31,18 @@ output wire         ready     // Compute finished?
 
 // Always finish in a single cycle.
 assign     ready            = valid              ;
+
+// AES Round Constants
+wire [ 7:0] rcon [0:15];
+assign rcon[ 0] = 8'h01; assign rcon[ 8] = 8'h1b;
+assign rcon[ 1] = 8'h02; assign rcon[ 9] = 8'h36;
+assign rcon[ 2] = 8'h04; assign rcon[10] = 8'h00;
+assign rcon[ 3] = 8'h08; assign rcon[11] = 8'h00;
+assign rcon[ 4] = 8'h10; assign rcon[12] = 8'h00;
+assign rcon[ 5] = 8'h20; assign rcon[13] = 8'h00;
+assign rcon[ 6] = 8'h40; assign rcon[14] = 8'h00;
+assign rcon[ 7] = 8'h80; assign rcon[15] = 8'h00;
+
 
 //
 // Shift Rows
@@ -77,15 +90,27 @@ wire [ 7:0] sb_fwd_out_4, sb_fwd_out_5, sb_fwd_out_6, sb_fwd_out_7;
 wire [ 7:0] sb_inv_out_0, sb_inv_out_1, sb_inv_out_2, sb_inv_out_3;
 wire [ 7:0] sb_inv_out_4, sb_inv_out_5, sb_inv_out_6, sb_inv_out_7;
 
+//
+// KeySchedule 1 SBox input selection
+wire        rcon_rot    = rs2[3:0] != 4'hA;
+wire [ 3:0] rconst      = rcon_rot ? rcon[rs2[3:0]] : 4'b0;
+
+wire [ 7:0] ks1_sb3     = rcon_rot ? rs1[55:48] : rs1[63:56];
+wire [ 7:0] ks1_sb2     = rcon_rot ? rs1[47:40] : rs1[55:48];
+wire [ 7:0] ks1_sb1     = rcon_rot ? rs1[39:32] : rs1[47:40];
+wire [ 7:0] ks1_sb0     = rcon_rot ? rs1[63:56] : rs1[39:32];
+
+wire [31:0] ks1_sbout   = e_sbout[31:0] ^ {28'b0, rconst};
+
 // If just doing sub-bytes, sbox inputs direct from rs1.
-wire [ 7:0] sb_fwd_in_0 = op_sub ? rs1[ 7: 0] : `BY(enc_sel, 0);
-wire [ 7:0] sb_fwd_in_1 = op_sub ? rs1[15: 8] : `BY(enc_sel, 1);
-wire [ 7:0] sb_fwd_in_2 = op_sub ? rs1[23:16] : `BY(enc_sel, 2);
-wire [ 7:0] sb_fwd_in_3 = op_sub ? rs1[31:24] : `BY(enc_sel, 3);
-wire [ 7:0] sb_fwd_in_4 =                       `BY(enc_sel, 4);
-wire [ 7:0] sb_fwd_in_5 =                       `BY(enc_sel, 5);
-wire [ 7:0] sb_fwd_in_6 =                       `BY(enc_sel, 6);
-wire [ 7:0] sb_fwd_in_7 =                       `BY(enc_sel, 7);
+wire [ 7:0] sb_fwd_in_0 = op_ks1 ? ks1_sb0 : `BY(enc_sel, 0);
+wire [ 7:0] sb_fwd_in_1 = op_ks1 ? ks1_sb1 : `BY(enc_sel, 1);
+wire [ 7:0] sb_fwd_in_2 = op_ks1 ? ks1_sb2 : `BY(enc_sel, 2);
+wire [ 7:0] sb_fwd_in_3 = op_ks1 ? ks1_sb3 : `BY(enc_sel, 3);
+wire [ 7:0] sb_fwd_in_4 =                    `BY(enc_sel, 4);
+wire [ 7:0] sb_fwd_in_5 =                    `BY(enc_sel, 5);
+wire [ 7:0] sb_fwd_in_6 =                    `BY(enc_sel, 6);
+wire [ 7:0] sb_fwd_in_7 =                    `BY(enc_sel, 7);
 
 wire [ 7:0] sb_inv_in_0 = `BY(dec_sel, 0);
 wire [ 7:0] sb_inv_in_1 = `BY(dec_sel, 1);
@@ -128,7 +153,12 @@ wire [31:0] mcd_o1      ;
 //
 // Result gathering
 
-wire [63:0] result_sub  = {rs1[63:32], e_sbout[31:0]};
+wire [63:0] result_ks1  = {ks1_sbout, ks1_sbout};
+
+wire [63:0] result_ks2  = {
+    rs1[63:32] ^ rs2[63:32] ^ rs2[31:0] ,
+    rs1[63:32] ^ rs2[63:32]
+};
 
 wire [63:0] result_enc  = mix ? {mce_o1, mce_o0} : e_sbout;
 
@@ -137,7 +167,8 @@ wire [63:0] result_dec  = mix ? {mcd_o1, mcd_o0} : d_sbout;
 wire [63:0] result_imix = {mcd_o1, mcd_o0};
 
 assign rd = 
-    {64{op_sub          }} & result_sub     |
+    {64{op_ks1          }} & result_ks1     |
+    {64{op_ks2          }} & result_ks2     |
     {64{op_enc          }} & result_enc     |
     {64{op_dec          }} & result_dec     |
     {64{op_imix         }} & result_imix    ;

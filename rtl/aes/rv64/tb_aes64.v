@@ -31,9 +31,10 @@ reg          dut_mix     = $anyseq; // Mix enable for op_enc/op_dec
 reg          dut_op_enc  = $anyseq; // Encrypt hi/lo
 reg          dut_op_dec  = $anyseq; // Decrypt hi/lo 
 reg          dut_op_imix = $anyseq; // Inverse MixColumn transform (if set)
-reg          dut_op_sub  = $anyseq; // Perform only a sub-bytes operation
+reg          dut_op_ks1  = $anyseq; // KeySchedule1 instruction
+reg          dut_op_ks2  = $anyseq; // "  "       2 instruction
 reg  [ 63:0] dut_rs1     = $anyseq; // Source register 1
-reg  [ 63:0] dut_rs2     = $anyseq; // Source register 2
+reg  [ 63:0] dut_rs2     = $anyseq; // Source register 2 / rcon immediate
 
 wire [ 63:0] dut_rd      ; // output destination register value.
 wire         dut_ready   ; // Compute finished?
@@ -122,20 +123,55 @@ function [63:0] inv_subbytes_doubleword;
     `BYTE(inv_subbytes_doubleword,7) = aes_sbox_inv(`BYTE(dw,7));
 endfunction
 
+// AES Round Constants with some redundancy
+wire [ 7:0] rcon [0:15];
+assign rcon[ 0] = 8'h01; assign rcon[ 8] = 8'h1b;
+assign rcon[ 1] = 8'h02; assign rcon[ 9] = 8'h36;
+assign rcon[ 2] = 8'h04; assign rcon[10] = 8'h00;
+assign rcon[ 3] = 8'h08; assign rcon[11] = 8'h00;
+assign rcon[ 4] = 8'h10; assign rcon[12] = 8'h00;
+assign rcon[ 5] = 8'h20; assign rcon[13] = 8'h00;
+assign rcon[ 6] = 8'h40; assign rcon[14] = 8'h00;
+assign rcon[ 7] = 8'h80; assign rcon[15] = 8'h00;
 
-wire [63:0] result_sub = {
-                 dut_rs1[63:32] ,
-    aes_sbox_fwd(dut_rs1[31:24]),
-    aes_sbox_fwd(dut_rs1[23:16]),
-    aes_sbox_fwd(dut_rs1[15: 8]),
-    aes_sbox_fwd(dut_rs1[ 7: 0])
+// Assume rcon immediate is supplied in the rs2 input
+wire [3:0] enc_rcon = dut_rs2[3:0];
+
+//
+// KeySchedule 1
+
+wire        ks1_dorcon = enc_rcon != 4'hA;
+wire [31:0] ks1_temp = dut_rs1[63:32];
+wire [31:0] ks1_rot  = ks1_dorcon ? {ks1_temp[7:0],ks1_temp[23:8]} :
+                                     ks1_temp                      ;
+wire [31:0] ks1_sub    = {
+    aes_sbox_fwd(ks1_rot[31:24]),
+    aes_sbox_fwd(ks1_rot[23:16]),
+    aes_sbox_fwd(ks1_rot[15: 8]),
+    aes_sbox_fwd(ks1_rot[ 7: 0])
+} ^ (ks1_dorcon ? {28'b0, rcon[enc_rcon]} : 32'b0) ;
+
+wire [63:0] result_ks1 = {ks1_sub, ks1_sub};
+
+//
+// KeySchedule 2
+
+wire [63:0] result_ks2 = {
+    dut_rs1[63:32] ^ dut_rs2[63:32] ^ dut_rs2[31:0] ,
+    dut_rs1[63:32] ^ dut_rs2[63:32]
 };
+
+//
+// imix
 
 wire [63:0] result_imix ;
 assign      result_imix[63:32] = mixcolumn_word_dec(dut_rs1[63:32]);
 assign      result_imix[31: 0] = mixcolumn_word_dec(dut_rs1[31: 0]);
 
 wire [127:0] grm_state      = regs_to_state(dut_rs1, dut_rs2);
+
+//
+// Encrypt
 
 wire [127:0] renc_shifted   = state_shift_rows(grm_state);
 wire [ 63:0] renc_hilo      = dut_hi ? renc_shifted[127:64] :
@@ -148,6 +184,8 @@ wire [ 63:0] renc_mix       = {
 
 wire[63:0]  result_enc      = dut_mix ? renc_mix : renc_sub;
 
+//
+// Decrypt
 
 wire [127:0] rdec_shifted   = state_inv_shift_rows(grm_state);
 wire [ 63:0] rdec_hilo      = dut_hi ? rdec_shifted[127:64] :
@@ -195,21 +233,27 @@ always @(posedge g_clk) begin
         assume($stable(dut_op_enc ));
         assume($stable(dut_op_dec ));
         assume($stable(dut_op_imix));
-        assume($stable(dut_op_sub ));
+        assume($stable(dut_op_ks1 ));
+        assume($stable(dut_op_ks2 ));
         assume($stable(dut_rs1    ));
         assume($stable(dut_rs2    ));
         
         // Atlease one op should be set!
-        assume(|{dut_op_enc,dut_op_dec, dut_op_imix,dut_op_sub});
+        assume(|{dut_op_enc,dut_op_dec, dut_op_imix,dut_op_ks1,dut_op_ks2});
 
+    end
+
+    if(dut_op_ks1) begin
+        assume(dut_rs2[3:0] <= 4'hA);
     end
         
     // Assume one-hotness of input op commands.
     assume(
-        {dut_op_enc,dut_op_dec, dut_op_imix,dut_op_sub} == 4'b1000 ||
-        {dut_op_enc,dut_op_dec, dut_op_imix,dut_op_sub} == 4'b0100 ||
-        {dut_op_enc,dut_op_dec, dut_op_imix,dut_op_sub} == 4'b0010 ||
-        {dut_op_enc,dut_op_dec, dut_op_imix,dut_op_sub} == 4'b0001
+    {dut_op_enc,dut_op_dec,dut_op_imix,dut_op_ks1,dut_op_ks2} == 5'b10000 ||
+    {dut_op_enc,dut_op_dec,dut_op_imix,dut_op_ks1,dut_op_ks2} == 5'b01000 ||
+    {dut_op_enc,dut_op_dec,dut_op_imix,dut_op_ks1,dut_op_ks2} == 5'b00100 ||
+    {dut_op_enc,dut_op_dec,dut_op_imix,dut_op_ks1,dut_op_ks2} == 5'b00010 ||
+    {dut_op_enc,dut_op_dec,dut_op_imix,dut_op_ks1,dut_op_ks2} == 5'b00001
     );
 
     assume(dut_rs1 == 64'h2be2f4a0bee33d19);
@@ -236,9 +280,13 @@ always @(posedge g_clk) begin
             
             assert(dut_rd == result_imix);
 
-        end else if(dut_op_sub) begin
+        end else if(dut_op_ks1) begin
             
-            assert(dut_rd == result_sub );
+            assert(dut_rd == result_ks1 );
+        
+        end else if(dut_op_ks2) begin
+            
+            assert(dut_rd == result_ks2 );
 
         end
     end
@@ -262,7 +310,8 @@ aes64 i_dut (
 .op_enc     (dut_op_enc ), //
 .op_dec     (dut_op_dec ), // 
 .op_imix    (dut_op_imix), // Inverse MixColumn transformation (if set)
-.op_sub     (dut_op_sub ), // Perform only a sub-bytes operation
+.op_ks1     (dut_op_ks1 ), // KeySchedule1
+.op_ks2     (dut_op_ks2 ), // "  "       2
 .rs1        (dut_rs1    ), // Source register 1
 .rs2        (dut_rs2    ), // Source register 2
 .rd         (dut_rd     ), // output destination register value.
