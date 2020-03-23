@@ -20,7 +20,7 @@ V2 Latency  & 325   & 307   & 462  &  581  & 1867   \\
 V2 Size     & 552   & 539   & 462  &  687  & -      \\
 V3.1        & 321   & 321   & 238  &  682  & 1952   \\
 V3.2        & 480   & 470   & 238  &  826  & 2264   \\
-V4 / RV64   & TBD   & TBD   & TBD  &  TBD  & TBD     \\
+V4 / RV64   & 101   & 111   & 67   &  132  & 594     \\
 \end{tabular}
 \caption{
 AES instruction execution counts measured using Spike
@@ -34,7 +34,7 @@ The ``size" rows assume four cycles per instruction (corresponding to
 one implemented SBox), which is modelled by padding each AES instruction
 with 3 additional {\tt nop} instructions.
 Static code size is reported as the sum of all {\tt .text} and {\tt .data}
-sections.
+sections for encrypt, decrypt and key schedule.
 }
 \label{tab:benchmarks:aes:perf}
 \end{table}
@@ -50,7 +50,7 @@ V2 Latency   & 18                       & 3453        \\
 V2 Size      & 21                       & 1287        \\
 V3.1         & 30                       & 1157        \\
 V3.2         & 23                       & 1117        \\
-V4 / RV64 Latency & 27                  & 8027        \\
+V4 / RV64 Latency & 28                  & 8482        \\
 \end{tabular}
 \caption{
 AES proposal RTL implementation benchmarks.
