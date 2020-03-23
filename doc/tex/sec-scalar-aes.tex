@@ -188,12 +188,16 @@ the RV64 AES instructions.
 
 \begin{figure}
 \begin{lstlisting}[language=pseudo]
-saes64.ks1(rs1,rcon):          // KeySchedule: SubBytes, Rotate, Round Const
+round_consts.8 = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
+
+saes64.ks1(rs1,enc_rcon):      // KeySchedule: SubBytes, Rotate, Round Const
     temp.32   = rs1.32[1]
-    if(rcon != 0):
+    rcon      = 0x0
+    if(enc_rcon != 0xA):
         temp.32 = ROTL32(temp.32, 8)
+        rcon    = round_consts.8[enc_rcon]
     temp.8[i] = AESSBox(temp.8[i])  for i=0..3
-    temp.8[0] = temp.8[i] ^ rcon
+    temp.8[0] = temp.8[i  ] ^ rcon
     rd.8[i]   = temp.8[i  ]         for i=0..3
     rd.8[j]   = temp.8[j-4]         for j=4..7
 
