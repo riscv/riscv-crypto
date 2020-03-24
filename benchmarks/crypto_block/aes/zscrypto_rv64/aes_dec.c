@@ -1,7 +1,3 @@
-//  aes_dec.c
-//  2020-01-22  Markku-Juhani O. Saarinen <mjos@pqhsield.com>
-//  Copyright (c) 2020, PQShield Ltd. All rights reserved.
-
 
 /*!
 @addtogroup crypto_block_aes_reference AES Reference
