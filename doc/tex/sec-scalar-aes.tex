@@ -144,49 +144,19 @@ $2$ of the relevent AES encrypt/decrypt instructions to perform the
 This adds up to approximately $80$ instructions per AES-128 block
 encryption, including pre/post-amble instructions.
 
-\begin{figure}
-\begin{subfigure}[b]{1.0\textwidth}
+\begin{figure}[h]
 \centering
-\begin{bytefield}[endianness=big,bitwidth=0.014\linewidth]{64}
-\bitheader{0,7,8,15,16,23,24,31,32,39,40,47,48,55,56,63} \\
-\bitboxes{8}{{rs2.8[7]}{rs2.8[6]}{rs2.8[5]}{rs2.8[4]}{rs2.8[3]}{rs2.8[2]}{rs2.8[1]}{rs2.8[0]}} \bitbox{8}{{\bf rs2}} \\
-\bitboxes{8}{{rs1.8[7]}{rs1.8[6]}{rs1.8[5]}{rs1.8[4]}{rs1.8[3]}{rs1.8[2]}{rs1.8[1]}{rs1.8[0]}} \bitbox{8}{{\bf rs1}}
-\end{bytefield}
-Input Register Values
-\end{subfigure}
-
-\begin{subfigure}[b]{1.0\textwidth}
-\vspace{0.2cm}
-\centering
-\begin{bytefield}[endianness=big,bitwidth=0.02\linewidth]{32}
-\bitheader{0,7,8,15,16,23,24,31} \\
-\bitboxes{8}{{b0=rs1.8[0]}{b4=rs1.8[4]}{b8 =rs2.8[0]}{b12=rs2.8[4]}} \\
-\bitboxes{8}{{b1=rs1.8[1]}{b5=rs1.8[5]}{b9 =rs2.8[1]}{b13=rs2.8[5]}} \\
-\bitboxes{8}{{b2=rs1.8[2]}{b6=rs1.8[6]}{b10=rs2.8[2]}{b14=rs2.8[6]}} \\
-\bitboxes{8}{{b3=rs1.8[3]}{b7=rs1.8[7]}{b11=rs2.8[3]}{b15=rs2.8[7]}} \\
-\end{bytefield} \\
-\vspace{-0.5cm}
-AES State
-\end{subfigure}
-
-\begin{subfigure}[b]{1.0\textwidth}
-\vspace{0.2cm}
-\centering
-\begin{bytefield}[endianness=big,bitwidth=0.014\linewidth]{64}
-\bitheader{0,7,8,15,16,23,24,31,32,39,40,47,48,55,56,63} \\
-\bitboxes{8}{{b15=rd.8[7]}{b14=rd.8[6]}{b13=rd.8[5]}{b12=rd.8[4]}{b11=rd.8[3]}{b10=rd.8[2]}{b9=rd.8[1]}{b8=rd.8[0]}} \bitbox{8}{{\bf rd(hi)}} \\
-\bitboxes{8}{{b7 =rd.8[7]}{b6 =rd.8[6]}{b5 =rd.8[5]}{b4 =rd.8[4]}{b3 =rd.8[3]}{b2 =rd.8[2]}{b1=rd.8[1]}{b0=rd.8[0]}} \bitbox{8}{{\bf rd(lo)}}
-\end{bytefield}
-Output Register Values
-\end{subfigure}
+\includegraphics[width=0.8\textwidth]{diagrams/aes-rv64-state.png}
 \caption{
-Mapping of AES state bytes between input and output registers for
-the RV64 AES instructions.
+Mapping of AES state between input and output registers for
+the \mnemonic{saes64.enc.*} and \mnemonic{saes64.dec.*} instructions.
+$RD_{LO}$ and $RD_{HI}$ are the output of \mnemonic{saes64.*.lo}
+and \mnemonic{saes64.*.hi} instructions respectivley.
 }
 \label{fig:aes:rv64:mapping}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
 round_consts.8 = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
 
