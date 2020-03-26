@@ -42,8 +42,8 @@ saes32.encs       rd rs1 rs2 bs    29..25=1  14..12=2 6..2=0x0A 1..0=3
 saes32.decsm      rd rs1 rs2 bs    29..25=2  14..12=2 6..2=0x0A 1..0=3
 saes32.decs       rd rs1 rs2 bs    29..25=3  14..12=2 6..2=0x0A 1..0=3
 
-# sm4 placeholder rd rs1 rs2 bs    29..25=4  14..12=2 6..2=0x0A 1..0=3
-# sm4 placeholder rd rs1 rs2 bs    29..25=5  14..12=2 6..2=0x0A 1..0=3
+ssm4.ed           rd rs1 rs2 bs    29..25=4  14..12=3 6..2=0x0A 1..0=3
+ssm4.ks           rd rs1 rs2 bs    29..25=5  14..12=3 6..2=0x0A 1..0=3
 
 saes64.ks1        rd rs1 rcon 24=0 31..25=4  14..12=2 6..2=0x0A 1..0=3
 saes64.ks2        rd rs1 rs2       31..25=5  14..12=2 6..2=0x0A 1..0=3
