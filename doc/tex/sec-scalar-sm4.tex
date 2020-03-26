@@ -1,8 +1,45 @@
 
+\newpage
 \subsection{Scalar SM4 Acceleration}
 
-\note{
-This section is a placeholder.
-It will contain a proposal for accelerating the SM4 block cipher,
-based on work in \cite{MJS:20}.
-}
+This section proposes acceleration instructions for
+the SM4 block cipher\cite{block:sm4:1, ietf:sm4}.
+
+\begin{cryptoisa}
+RV32 / RV64:
+    ssm4.ed     rd, rs1, rs2, bs
+    ssm4.ks     rd, rs1, rs2, bs
+\end{cryptoisa}
+
+The instructions are taken from proposals found in \cite{MJS:20}.
+They are very lightweight and require only a single SBox instance.
+They are designed to give an very high performance improvement with
+minimal area requirements, and resemble a TTables-esq
+software implementation.
+
+\begin{itemize}
+\item \mnemonic{ssm4.ed} - Encrypt/Decrypt instruction. Applies the
+    SBox and $L$ transformations as part of the round function.
+\item \mnemonic{ssm4.ks} - KeySchedule instruction. Applies the
+    SBox and $L'$ transformations as part of the KeySchedule.
+\end{itemize}
+
+\begin{figure}[h]
+\begin{lstlisting}[language=pseudo]
+ssm4.ed(rs1, rs2, bs):
+    x.8   = rs2.8[bs]
+    x.32  = zext(SM4SBox(x.8), XLEN)
+    x.32  = x.32 ^ (x.32 << 8) ^ (x.32 << 2) ^ (x.32 << 18)
+    x.32  = ((x.32 & 0x3F) << 26) ^ ((x.32 & 0xC0) << 10)
+    x.32  = ROTL(x.32, 8*bs) ^ rs1
+
+ssm4.ks(rs1, rs2, bs):
+    x.8   = rs2.8[bs]
+    x.32  = zext(SM4SBox(x.8), XLEN)
+    x.32  = x.32 ^ ((x.32 & 0x07) << 29) ^ ((x.32 & 0xFE) << 7)
+    x.32  = ((x.32 & 1) << 23) ^ ((x.32 & 0xF8) << 13)
+    x.32  = ROTL(x.32, 8*bs) ^ rs1
+\end{lstlisting}
+\caption{Scalar SM4 instruction pseudocode.}
+\end{figure}
+
