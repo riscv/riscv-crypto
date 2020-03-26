@@ -1,26 +1,33 @@
 
 \begin{itemize}
-\item[17/12/19] - Initial first version shown to Crypto Task group.
+\item[17/12/19] \begin{itemize}
+    \item Initial first version shown to Crypto Task group.
+\end{itemize}
 \item[10/01/20] \begin{itemize}
     \item Don't recommend funnel shifts for RV64, 128-bit rotations
           are not common enough to justify.
     \item Change LUT4 instruction. Go for very efficient RV64 instruction
           and split 4-to-2 32-bit instruction.
           Avoids extra ternary instructions.
-    \end{itemize}
+\end{itemize}
 \item[20/01/20] \begin{itemize}
     \item LUT4 specification updates for 32-bit variant based on TG discussion.
     \item Initial performance code size impact for SHA256/512 instructions.
-    \end{itemize}
-\item[24/01/20] Split AES proposals into 3 variants.
+\end{itemize}
+\item[24/01/20] \begin{itemize}
+    \item Split AES proposals into 3 variants.
+\end{itemize}
 \item[19/02/20] \begin{itemize}
     \item Revisions to AES proposals and added benchmarking results.
     \item Added SHA256/512 benchmark results.
     \item Added AES        benchmark results.
     \item Codified scalar extension design policies.
-    \end{itemize}
+\end{itemize}
 \item[09/03/20] \begin{itemize}
     \item Selected Markku's lightweight AES proposal for RV32.
     \item Added a dedicated RV64 scalar AES proposal.
+\end{itemize}
+\item[26/03/20] \begin{itemize}
+    \item Modified AES RV64 proposal with Barry's improved KeySchedule.
 \end{itemize}
 \end{itemize}

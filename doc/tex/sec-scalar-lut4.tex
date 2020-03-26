@@ -10,7 +10,7 @@ lut4lo  rd, rs1, rs2    // RV32, RV64
 lut4hi  rd, rs1, rs2    // RV32, RV64
     for i = 0..7 : rd.4[i] = rs2.4[rs1.4[i]&0x7] if (rs1.4[i] >= 8) else 0
 
-lut4    rd, rs1, rs2    // RV32, RV64
+lut4    rd, rs1, rs2    //       RV64
     for i = 0..15 : rd.4[i] = rs2.4[rs1.4[i]]
 \end{cryptoisa}
 

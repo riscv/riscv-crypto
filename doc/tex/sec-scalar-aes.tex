@@ -156,16 +156,14 @@ and \mnemonic{saes64.*.hi} instructions respectivley.
 \label{fig:aes:rv64:mapping}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{lstlisting}[language=pseudo]
-round_consts.8 = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
-
 saes64.ks1(rs1,enc_rcon):      // KeySchedule: SubBytes, Rotate, Round Const
     temp.32   = rs1.32[1]
     rcon      = 0x0
     if(enc_rcon != 0xA):
         temp.32 = ROTR32(temp.32, 8)
-        rcon    = round_consts.8[enc_rcon]
+        rcon    = AESRoundConstants.8[enc_rcon]
     temp.8[i] = AESSBox(temp.8[i])  for i=0..3
     temp.8[0] = temp.8[i  ] ^ rcon
     rd.64     = {temp.32, temp.32}
