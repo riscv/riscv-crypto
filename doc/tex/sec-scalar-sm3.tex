@@ -10,7 +10,7 @@ the same pattern as the scalar SHA2 instructions
 
 \begin{cryptoisa}
 RV32, RV64
-    ssm3.p1 rd, rs1 : rd = rs1 ^ ROR32(rs1, 9) ^ ROR32(rs1,17) ^ ROR32(rs2,25)
+    ssm3.p1 rd, rs1 : rd = rs1 ^ ROL32(rs1, 9) ^ ROL32(rs1,17)
     ssm3.p0 rd, rs1 : rd = rs1 ^ ROL32(rs1,15) ^ ROL32(rs1,23)
 \end{cryptoisa}
 
