@@ -22,7 +22,7 @@ saes32.decsm     rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
 \end{cryptoisa}
 
 These instructions are a very lightweight proposal, derived from
-\cite{MJS:20}.
+\cite{MJS:LWAES:20}.
 They are designed to enable a partial T-Table based implementation
 of AES in hardware, where the SubBytes, ShiftRows and MixColumns
 transformations are all rolled into a single instruction, with the
