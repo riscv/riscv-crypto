@@ -1,0 +1,19 @@
+
+\subsection{Scalar SM3 Acceleration}
+\label{sec:scalar:sm3}
+
+These instructions are designed to accelerate the SM3 secure
+hash function\cite{ietf:sm3}.
+They are based on work done in \cite{MJS:LWSHA:20}, and follow
+the same pattern as the scalar SHA2 instructions
+(Section \ref{sec:scalar:sha2}).
+
+\begin{cryptoisa}
+RV32, RV64
+    ssm3.p1 rd, rs1 : rd = rs1 ^ ROR32(rs1, 9) ^ ROR32(rs1,17) ^ ROR32(rs2,25)
+    ssm3.p0 rd, rs1 : rd = rs1 ^ ROL32(rs1,15) ^ ROL32(rs1,23)
+\end{cryptoisa}
+
+The instructions implement versions of the $P_0$ and $P_1$
+permutations, per the SM3 specification \cite{ietf:sm3}.
+

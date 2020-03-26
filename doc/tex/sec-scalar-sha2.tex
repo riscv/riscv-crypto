@@ -1,6 +1,7 @@
 
 \newpage
-\subsection{Scalar SHA2 Acceleration}
+\subsection{Scalar SHA256/SHA512 Acceleration}
+\label{sec:scalar:sha2}
 
 \begin{cryptoisa}
 RV32, RV64:
@@ -51,11 +52,4 @@ As ternary functions, they are much too expensive in terms of
 opcode space to consider for inclusion as dedicated instructions for
 such a specialist use-case.
 They are amenable however to macro-op fusion on cores which implement it.
-}
-
-\note{
-The Sigma functions of SHA-256 are identical to the P0 and P1 permutations
-used in the SM3\cite{ietf:sm3} hash function.
-Hence, the \mnemonic{ssha256.s[2,3]} instructions can be used for both
-algorithms.
 }
