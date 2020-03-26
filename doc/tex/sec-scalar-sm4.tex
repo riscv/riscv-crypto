@@ -1,6 +1,7 @@
 
 \newpage
 \subsection{Scalar SM4 Acceleration}
+\label{sec:scalar:sm4}
 
 This section proposes acceleration instructions for
 the SM4 block cipher\cite{block:sm4:1, ietf:sm4}.
@@ -43,3 +44,9 @@ ssm4.ks(rs1, rs2, bs):
 \caption{Scalar SM4 instruction pseudocode.}
 \end{figure}
 
+\note{
+The SM4 and RV32 AES (see Section \ref{sec:scalar:aes:rv32})
+instructions are designed to share much of their datapath, and
+can be implemented with much logic shared  between their SBoxes
+in particular.
+}

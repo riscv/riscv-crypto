@@ -1,6 +1,7 @@
 
 \newpage
 \subsection{Scalar AES Acceleration}
+\label{sec:scalar:aes}
 
 This section details proposals for acceleration of
 the AES block cipher \cite{nist:fips:197} within a scalar RISC-V core,
@@ -11,6 +12,7 @@ instruction proposals are found in Section
 \ref{sec:benchmark:aes}.
 
 \subsubsection{RV32 Instructions}
+\label{sec:scalar:aes:rv32}
 
 \begin{cryptoisa}
 saes32.encs      rd, rs1, rs2, bs // Encrypt: SubBytes
@@ -61,11 +63,19 @@ RV32 base architecture.}
 \label{fig:pseudo:aes:rv32}
 \end{figure}
 
+\note{
+The SM4 (see Section \ref{sec:scalar:sm4}) and RV32 AES 
+instructions are designed to share much of their datapath, and
+can be implemented with much logic shared  between their SBoxes
+in particular.
+}
+
 
 % ------------------------------------------------------------
 
 \newpage
 \subsubsection{RV64 Instructions}
+\label{sec:scalar:aes:rv64}
 
 \begin{cryptoisa}
 saes64.ks1      rd, rs1, rcon  // KeySchedule: SubBytes, Rotate, Round Const
