@@ -240,10 +240,6 @@ index 7e67c7f9a2..5b63384d2e 100644
    };
  
  /* This structure holds information for a particular instruction.  */
-diff --git a/opcodes/.riscv-opc.c.swp b/opcodes/.riscv-opc.c.swp
-new file mode 100644
-index 0000000000..304f41c6c8
-Binary files /dev/null and b/opcodes/.riscv-opc.c.swp differ
 diff --git a/opcodes/riscv-dis.c b/opcodes/riscv-dis.c
 index 19f10c0e55..24e1d28a02 100644
 --- a/opcodes/riscv-dis.c
