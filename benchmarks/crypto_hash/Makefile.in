@@ -1,5 +1,0 @@
-
-include crypto_hash/sha256/Makefile.in
-include crypto_hash/sha512/Makefile.in
-include crypto_hash/sha3/Makefile.in
-

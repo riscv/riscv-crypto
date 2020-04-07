@@ -1,6 +1,0 @@
-
-include crypto_block/aes/reference/Makefile.in
-include crypto_block/aes/ttable/Makefile.in
-include crypto_block/aes/zscrypto_rv32/Makefile.in
-include crypto_block/aes/zscrypto_rv64/Makefile.in
-

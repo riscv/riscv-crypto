@@ -1,5 +1,5 @@
 
-VALID_CONFIGS = $(basename $(notdir $(shell find ./config/ -name *.conf)))
+VALID_CONFIGS = $(basename $(notdir $(shell find $(REPO_HOME)/benchmarks/config/)))
 
 ifeq ($(CONFIG),)
     $(error Please specify a config using 'CONFIG=X' where X is one of $(VALID_CONFIGS))

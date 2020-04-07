@@ -6,50 +6,9 @@ toolchain and ISA simulator.*
 
 ---
 
-## A note on target architectures
-
-By default, this process will build a toolchain targeting 64-bit RISC-V.
-This is controlled by the `RISCV_ARCH` environment variable, and is
-setup in the `bin/conf.sh` script.
-
-- To setup the build environment for `rv32`:
-
-    ```
-    $> export RISCV_ARCH=riscv32-unknown-elf
-    $> source bin/conf.sh
-    ```
-
-    The toolchain will then be installed into
-    `$REPO_BUILD/toolchain/riscv32-unknown-elf`.
-
-- To setup the build environment for `rv64`:
-
-    ```
-    $> export RISCV_ARCH=riscv64-unknown-elf
-    $> source bin/conf.sh
-    ```
-    
-    The toolchain will then be installed into
-    `$REPO_BUILD/toolchain/riscv64-unknown-elf`.
-
-Both toolchains can be built and installed / used independently.
-In order to run some of the benchmark configurations, you will need
-to install both. Some benchmarks are only designed to work on some
-architectures.
-See the [Benchmarks README](../benchmarks/README.md) file for more
-information.
-
-I haven't found the magic way to build a single toolchain which will
-build and like both 32-bit *and* 64-bit programs, *and* work with the
-experimental bitmanip extension branch that the patches are based on.
-Suggestions welcome.
-
-
 ## Building the Toolchain
 
 **TL;DR:**
-
-Build a 64-bit toolchain:
 
 ```sh
 $> export RISCV_ARCH=riscv64-unknown-elf
@@ -57,9 +16,7 @@ $> source bin/conf.sh
 $> $REPO_HOME/tools/start-from-scratch.sh
 ```
 
-You only need to clone the external repos once. Once cloned, you
-can just change the `RISCV_ARCH` variable, re-run `bin/conf.sh`,
-and run the `tools/build-all.sh` script.
+You only need to clone the external repos once.
 
 **Long Version:**
 

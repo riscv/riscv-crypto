@@ -19,14 +19,27 @@ $(foreach HEADER,$(HEADERS_IN),$(eval $(call add_header_target,$(HEADER))))
 
 headers: $(HEADERS_OUT)
 
-include crypto_hash/Makefile.in
-include crypto_block/Makefile.in
+
+include aes/reference/Makefile.in
+include aes/ttable/Makefile.in
+include aes/zscrypto_rv32/Makefile.in
+include aes/zscrypto_rv64/Makefile.in
+
+include sha256/reference/Makefile.in
+include sha256/zscrypto/Makefile.in
+include sha512/reference/Makefile.in
+include sha512/zscrypto/Makefile.in
+
+include sha3/reference/Makefile.in
 
 include test/Makefile.in
 
 all: headers $(TARGETS)
 
 run: $(RUNTARGETS)
+
+print-configs:
+	@echo $(VALID_CONFIGS) | sed "s/ /\n/g"
 
 print-all-targets:
 	@echo $(TARGETS) | sed "s/ /\n/g"
