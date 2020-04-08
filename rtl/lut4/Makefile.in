@@ -1,18 +1,8 @@
 
 $(eval $(call add_synth_target,lut4_rv64,lut4/lut4_rv64.v, lut4_rv64))
+$(eval $(call add_synth_target,lut4_rv32,lut4/lut4_rv32.v, lut4_rv32))
 
-$(eval $(call add_synth_target,lut4_rv32_v1,lut4/lut4_rv32_v1.v, lut4_rv32_v1))
-$(eval $(call add_synth_target,lut4_rv32_v2,lut4/lut4_rv32_v2.v, lut4_rv32_v2))
-$(eval $(call add_synth_target,lut4_rv32_v3,lut4/lut4_rv32_v3.v, lut4_rv32_v3))
-
-$(eval $(call add_sim_target,lut4_rv32_v1,\
-    lut4/lut4_rv32_v1.v  \
-    lut4/lut4_rv32_v1_tb.v))
-
-$(eval $(call add_sim_target,lut4_rv32_v2,\
-    lut4/lut4_rv32_v2.v  \
-    lut4/lut4_rv32_v2_tb.v))
-
-$(eval $(call add_sim_target,lut4_rv32_v3,\
-    lut4/lut4_rv32_v3.v  \
-    lut4/lut4_rv32_v3_tb.v))
+$(eval $(call add_sim_target,lut4_rv32,\
+    lut4/lut4_rv32.v  \
+    lut4/lut4_rv32_checker.v  \
+    lut4/lut4_rv32_tb.v))

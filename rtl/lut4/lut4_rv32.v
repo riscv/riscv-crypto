@@ -6,7 +6,7 @@
 //     sel_zero= hi && !idx_hi || !hi && idx_hi
 //     rd.4[i] = sel_zero ? 4'b0000 : rs2.4[idx]
 // 
-module lut4_rv32_v3 (
+module lut4_rv32 (
 
 input  wire [31:0] rs1,
 input  wire [31:0] rs2,
@@ -22,6 +22,8 @@ localparam PAIRS    = XLEN / 2;
 
 wire [3:0] lut [NIBBLES-1:0];
 
+//
+// Generate the LUT
 genvar i;
 generate for(i = 0; i < NIBBLES; i = i + 1) begin
 
@@ -29,6 +31,8 @@ generate for(i = 0; i < NIBBLES; i = i + 1) begin
 
 end endgenerate
 
+//
+// Generate the output.
 genvar j;
 generate for(j = 0; j < NIBBLES; j = j + 1) begin
     
