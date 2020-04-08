@@ -1,3 +1,0 @@
-
-$(eval $(call add_synth_target,ssha3,ssha3/ssha3.v,ssha3))
-

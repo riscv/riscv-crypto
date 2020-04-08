@@ -122,7 +122,6 @@ endef
 include lut4/Makefile.in
 include ssha256/Makefile.in
 include ssha512/Makefile.in
-include ssha3/Makefile.in
 include aes/Makefile.in
 
 all: $(TARGETS)
