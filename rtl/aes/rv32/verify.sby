@@ -15,6 +15,7 @@ smtbmc boolector
 read -formal aes_sbox_latency.v
 read -formal tb_aes32.v
 read -formal aes32.v
+read -formal aes32_checker.v
 
 prep -top tb_aes32
 
@@ -22,5 +23,6 @@ prep -top tb_aes32
 aes/share/aes_sbox_latency.v
 aes/share/aes_functions.vh
 aes/rv32/aes32.v
+aes/rv32/aes32_checker.v
 aes/rv32/tb_aes32.v
 
