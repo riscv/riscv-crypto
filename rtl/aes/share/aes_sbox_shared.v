@@ -34,7 +34,9 @@
 
 module sbox_inv_mid( output [17:0] y, input [20:0] x );
 
+    /* verilator lint_off UNOPTFLAT */
     wire [45:0] t;
+    /* verilator lint_on UNOPTFLAT */
 
     assign  t[ 0] = x[ 3] ^  x[12];
     assign  t[ 1] = x[ 9] &  x[ 5];
@@ -111,7 +113,9 @@ endmodule
 
 module sbox_aes_top( output [20:0] y, input [7:0] x);
 
+    /* verilator lint_off UNOPTFLAT */
     wire [5:0] t;
+    /* verilator lint_on UNOPTFLAT */
 
     assign  y[ 0] = x[ 0];
     assign  y[ 1] = x[ 7] ^  x[ 4];
@@ -147,7 +151,9 @@ endmodule
 
 module sbox_aes_out( output [7:0] y, input [17:0] x);
 
+    /* verilator lint_off UNOPTFLAT */
     wire [29:0] t;
+    /* verilator lint_on UNOPTFLAT */
 
     assign  t[ 0] = x[11] ^  x[12];
     assign  t[ 1] = x[ 0] ^  x[ 6];
@@ -194,12 +200,14 @@ endmodule
 
 module aes_fwd_sbox( output [7:0] fx, input [7:0] in );
 
+    /* verilator lint_off UNOPTFLAT */
     wire [20:0] t1;
     wire [17:0] t2;
+    /* verilator lint_on UNOPTFLAT */
 
-    sbox_aes_top top ( t1, in );
-    sbox_inv_mid mid ( t2, t1 );
-    sbox_aes_out out ( fx, t2 );
+    sbox_aes_top top ( .y(t1), .x(in) );
+    sbox_inv_mid mid ( .y(t2), .x(t1) );
+    sbox_aes_out out ( .y(fx), .x(t2) );
 
 endmodule
 
@@ -214,7 +222,9 @@ endmodule
 
 module sbox_aesi_top( output [20:0] y, input [7:0] x);
 
+    /* verilator lint_off UNOPTFLAT */
     wire [4:0] t;
+    /* verilator lint_on UNOPTFLAT */
 
     assign  y[17] = x[ 7] ^  x[ 4];
     assign  y[16] = x[ 6] ^~ x[ 4];
@@ -249,7 +259,9 @@ endmodule
 
 module sbox_aesi_out( output [7:0] y, input [17:0] x);
 
+    /* verilator lint_off UNOPTFLAT */
     wire [29:0] t;
+    /* verilator lint_on UNOPTFLAT */
 
     assign  t[ 0] = x[ 2] ^  x[11];
     assign  t[ 1] = x[ 8] ^  x[ 9];
@@ -295,12 +307,14 @@ endmodule
 
 module aes_inv_sbox( output [7:0] fx, input [7:0] in );
 
+    /* verilator lint_off UNOPTFLAT */
     wire [20:0] t1;
     wire [17:0] t2;
+    /* verilator lint_on UNOPTFLAT */
 
-    sbox_aesi_top top ( t1, in );
-    sbox_inv_mid mid ( t2, t1 );
-    sbox_aesi_out out ( fx, t2 );
+    sbox_aesi_top top ( .y(t1), .x(in) );
+    sbox_inv_mid mid  ( .y(t2), .x(t1) );
+    sbox_aesi_out out ( .y(fx), .x(t2) );
 
 endmodule
 

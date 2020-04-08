@@ -93,14 +93,14 @@ wire [ 7:0] sb_inv_out_4, sb_inv_out_5, sb_inv_out_6, sb_inv_out_7;
 //
 // KeySchedule 1 SBox input selection
 wire        rcon_rot    = rs2[3:0] != 4'hA;
-wire [ 3:0] rconst      = rcon_rot ? rcon[rs2[3:0]] : 4'b0;
+wire [ 7:0] rconst      = rcon_rot ? rcon[rs2[3:0]] : 8'b0;
 
 wire [ 7:0] ks1_sb3     = rcon_rot ? rs1[55:48] : rs1[63:56];
 wire [ 7:0] ks1_sb2     = rcon_rot ? rs1[47:40] : rs1[55:48];
 wire [ 7:0] ks1_sb1     = rcon_rot ? rs1[39:32] : rs1[47:40];
 wire [ 7:0] ks1_sb0     = rcon_rot ? rs1[63:56] : rs1[39:32];
 
-wire [31:0] ks1_sbout   = e_sbout[31:0] ^ {28'b0, rconst};
+wire [31:0] ks1_sbout   = e_sbout[31:0] ^ {24'b0, rconst};
 
 // If just doing sub-bytes, sbox inputs direct from rs1.
 wire [ 7:0] sb_fwd_in_0 = op_ks1 ? ks1_sb0 : `BY(enc_sel, 0);
