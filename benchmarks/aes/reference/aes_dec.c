@@ -1,7 +1,7 @@
 
 /*!
 @addtogroup crypto_block_aes_reference AES Reference
-@brief Reference implementation of AES.
+@brief Byte-wise Reference implementation of AES.
 @ingroup crypto_block_aes
 @{
 */
@@ -67,6 +67,15 @@ static void aes_subbytes_shiftrows_dec(
     pt[15] = d_sbox[pt[ 3]];
     pt[ 3] = tmp;
 }
+
+#define XT2(x) ((x << 1) ^ (x & 0x80 ? 0x1b : 0x00))
+#define XT3(x) (XT2(x) ^ x)
+#define XT4(x) XT2(XT2(x))
+#define XT8(x) XT2(XT4(x))
+#define XT9(x) (XT8(x) ^ x)
+#define XTB(x) (XT8(x) ^ XT2(x) ^ x)
+#define XTD(x) (XT8(x) ^ XT4(x) ^ x)
+#define XTE(x) (XT8(x) ^ XT4(x) ^ XT2(x))
 
 //! Inverse mix columns transformation.
 static void aes_mix_columns_dec(

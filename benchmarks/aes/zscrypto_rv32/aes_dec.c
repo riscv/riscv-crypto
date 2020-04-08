@@ -4,8 +4,8 @@
 
 
 /*!
-@addtogroup crypto_block_aes_reference AES Reference
-@brief Reference implementation of AES.
+@addtogroup crypto_block_aes_rv32 AES RV32
+@brief RV32 AES Example benchmark code
 @ingroup crypto_block_aes
 @{
 */

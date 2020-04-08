@@ -1,7 +1,7 @@
 
 /*!
-@addtogroup crypto_block_aes_reference AES Reference
-@brief Reference implementation of AES.
+@addtogroup crypto_block_aes_rv64 AES RV64
+@brief RV64 AES Example benchmark code
 @ingroup crypto_block_aes
 @{
 */
@@ -11,8 +11,7 @@
 
 #include "riscvcrypto/crypto_block/aes/api_aes.h"
 
-//  Decrypt rounds. Implements AES-128/192/256 depending on nr = {10,12,14}
-
+//! Decrypt rounds. Implements AES-128/192/256 depending on nr = {10,12,14}
 void aes_ecb_decrypt (
     uint8_t    pt[AES_BLOCK_BYTES],
     uint8_t    ct[AES_BLOCK_BYTES],
@@ -56,8 +55,7 @@ void aes_ecb_decrypt (
 }
 
 
-//  Key schedule for AES-128 decryption.
-
+//! Key schedule for AES-128 decryption.
 void aes_128_dec_key_schedule(
     uint32_t rk[AES_128_RK_WORDS  ],
     uint8_t  key[AES_128_KEY_BYTES]

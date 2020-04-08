@@ -5,13 +5,19 @@
 
 #include "riscvcrypto/crypto_block/aes/api_aes.h"
 
-//  round constants -- just iterations of the xtime() LFSR
+/*!
+@addtogroup crypto_block_aes_rv64 AES RV64
+@brief RV64 AES Example benchmark code
+@ingroup crypto_block_aes
+@{
+*/
+
+//! round constants -- just iterations of the xtime() LFSR
 static const uint8_t aes_rcon[] = {
     0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
 };
 
-//  Encrypt rounds. Implements AES-128/192/256 depending on nr = {10,12,14}
-
+//! Encrypt rounds. Implements AES-128/192/256 depending on nr = {10,12,14}
 void aes_ecb_encrypt (
     uint8_t   ct[AES_BLOCK_BYTES],
     uint8_t   pt[AES_BLOCK_BYTES],

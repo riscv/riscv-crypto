@@ -1,6 +1,7 @@
 
 /*!
-@addtogroup crypto_block_aes_ttable AES Reference
+@addtogroup crypto_block_aes_ttable AES TTable Reference
+@brief Standard TTable implementation of AES w.out acceleration .
 @ingroup crypto_block_aes
 @{
 */
