@@ -16,7 +16,8 @@ then responsible for adding the sensible targets for each instruction.
 
 ## Getting Started
 
-You will need Yosys and Icarus Verilog installed for these flows to work.
+You will need Yosys, SymbiYosys and Icarus Verilog installed for these flows
+to work.
 
 - Make sure you have run the project workspace setup script:
 
@@ -45,6 +46,11 @@ You will need Yosys and Icarus Verilog installed for these flows to work.
   $> make sim-all
   ```
 
+- The model checking targets can be run using:
+  ```sh
+  $> make prove-all
+  ```
+
 - The results of synthesis and simulation runs are placed in
  `$REPO_BUILD/rtl/*`.
 
@@ -53,21 +59,18 @@ You will need Yosys and Icarus Verilog installed for these flows to work.
 These are the results of running each design through Yosys and ABC
 to get rough synthesis results.
 
-Module Name    | Abstract Cells[1] | Simple CMOS Cells [2] | LTP[3]
----------------|-------------------|-----------------------|----------------
-`lut4_rv32_v1` | 776               | 752                   | 8
-`lut4_rv32_v2` | 813               | 839                   | 9
-`lut4_rv32_v3` | 638               | 745                   | 8
-`lut4_rv64`    | 2512              | 2496                  | 8
-`ssha256`      | 439               | 928                   | 6
-`ssha512`      | 951               | 1925                  | 6
-`ssha3`        | TBD               | TBD                   | TBD
+Module Name    | NAND2 Cells[1] | LTP[2]
+---------------|----------------|----------------
+`lut4_rv32`    | 566            | 6 
+`lut4_rv64`    | 1888           | 7 
+`aes_rv32`     | 1176           | 30
+`aes_rv64`     | 8462           | 28
+`ssha256`      | 787            | 5 
+`ssha512`      | 1534           | 6 
 
-1. Abstract cells are Yosys's internal representation.
-
-2. Yosys has a "Simple CMOS" library, which targets only NAND, NOR, NOT
+1. Yosys has a "Simple CMOS" library, which targets only NAND, NOR, NOT
    cells.
 
-3. "Longest Topological Path Length" from input to output, measured after
+2. "Longest Topological Path Length" from input to output, measured after
    mapping to Yosys Abstract Cell representation.
 
