@@ -1090,10 +1090,28 @@ index 0000000..0b490b0
 +
 diff --git a/riscv/insns/ssha512_sig0h.h b/riscv/insns/ssha512_sig0h.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..f6bf249
+--- /dev/null
++++ b/riscv/insns/ssha512_sig0h.h
+@@ -0,0 +1,6 @@
++
++uint32_t result =
++    ((uint32_t)RS1 >>  1) ^ ((uint32_t)RS1 >>  7) ^ ((uint32_t)RS1 >>  8) ^
++    ((uint32_t)RS2 << 31) ^                         ((uint32_t)RS2 << 24);
++
++WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/ssha512_sig0l.h b/riscv/insns/ssha512_sig0l.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..eb3bd0e
+--- /dev/null
++++ b/riscv/insns/ssha512_sig0l.h
+@@ -0,0 +1,6 @@
++
++uint32_t result =
++    ((uint32_t)RS1 >>  1) ^ ((uint32_t)RS1 >>  7) ^ ((uint32_t)RS1 >>  8) ^
++    ((uint32_t)RS2 << 31) ^ ((uint32_t)RS2 << 25) ^ ((uint32_t)RS2 << 24);
++
++WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/ssha512_sig1.h b/riscv/insns/ssha512_sig1.h
 new file mode 100644
 index 0000000..ab66c6a
@@ -1114,10 +1132,28 @@ index 0000000..ab66c6a
 +
 diff --git a/riscv/insns/ssha512_sig1h.h b/riscv/insns/ssha512_sig1h.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..4171156
+--- /dev/null
++++ b/riscv/insns/ssha512_sig1h.h
+@@ -0,0 +1,6 @@
++
++uint32_t result =
++    ((uint32_t)RS1 <<  3) ^ ((uint32_t)RS1 >>  6) ^ ((uint32_t)RS1 >> 19) ^
++    ((uint32_t)RS2 >> 29) ^                         ((uint32_t)RS2 << 13);
++
++WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/ssha512_sig1l.h b/riscv/insns/ssha512_sig1l.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..b47affd
+--- /dev/null
++++ b/riscv/insns/ssha512_sig1l.h
+@@ -0,0 +1,6 @@
++
++uint32_t result =
++    ((uint32_t)RS1 <<  3) ^ ((uint32_t)RS1 >>  6) ^ ((uint32_t)RS1 >> 19) ^
++    ((uint32_t)RS2 >> 29) ^ ((uint32_t)RS2 << 26) ^ ((uint32_t)RS2 << 13);
++
++WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/ssha512_sum0.h b/riscv/insns/ssha512_sum0.h
 new file mode 100644
 index 0000000..ad2dc89
@@ -1138,7 +1174,16 @@ index 0000000..ad2dc89
 +
 diff --git a/riscv/insns/ssha512_sum0r.h b/riscv/insns/ssha512_sum0r.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..87a055b
+--- /dev/null
++++ b/riscv/insns/ssha512_sum0r.h
+@@ -0,0 +1,6 @@
++
++uint32_t result =
++    ((uint32_t)RS1 << 25) ^ ((uint32_t)RS1 << 30) ^ ((uint32_t)RS1 >> 28) ^
++    ((uint32_t)RS2 >>  7) ^ ((uint32_t)RS2 >>  2) ^ ((uint32_t)RS2 <<  4);
++
++WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/ssha512_sum1.h b/riscv/insns/ssha512_sum1.h
 new file mode 100644
 index 0000000..a2e555b
@@ -1159,7 +1204,16 @@ index 0000000..a2e555b
 +
 diff --git a/riscv/insns/ssha512_sum1r.h b/riscv/insns/ssha512_sum1r.h
 new file mode 100644
-index 0000000..e69de29
+index 0000000..c41253b
+--- /dev/null
++++ b/riscv/insns/ssha512_sum1r.h
+@@ -0,0 +1,6 @@
++
++uint32_t result =
++    ((uint32_t)RS1 << 23) ^ ((uint32_t)RS1 >> 14) ^ ((uint32_t)RS1 >> 18) ^
++    ((uint32_t)RS2 >>  9) ^ ((uint32_t)RS2 << 18) ^ ((uint32_t)RS2 << 14);
++
++WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/ssm4_ed.h b/riscv/insns/ssm4_ed.h
 new file mode 100644
 index 0000000..e69de29
