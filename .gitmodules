@@ -1,3 +1,9 @@
 [submodule "extern/riscv-opcodes"]
 	path = extern/riscv-opcodes
 	url = git@github.com:riscv/riscv-opcodes.git
+[submodule "extern/riscv-gnu-toolchain"]
+	path = extern/riscv-gnu-toolchain
+	url = https://github.com/riscv/riscv-gnu-toolchain.git
+[submodule "extern/riscv-isa-sim"]
+	path = extern/riscv-isa-sim
+	url = https://github.com/riscv/riscv-isa-sim.git
