@@ -1,8 +1,8 @@
 diff --git a/riscv/decode.h b/riscv/decode.h
-index cc7cf56..915e283 100644
+index 9e03676..6311f0e 100644
 --- a/riscv/decode.h
 +++ b/riscv/decode.h
-@@ -86,12 +86,16 @@ public:
+@@ -90,12 +90,16 @@ public:
    int64_t u_imm() { return int64_t(b) >> 12 << 12; }
    int64_t uj_imm() { return (x(21, 10) << 1) + (x(20, 1) << 11) + (x(12, 8) << 12) + (imm_sign() << 20); }
    uint64_t rd() { return x(7, 5); }
@@ -20,13 +20,13 @@ index cc7cf56..915e283 100644
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 371457f..2e4b64b 100644
+index 3c4bf1c..785e12e 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -408,6 +408,102 @@
- #define MASK_REMW  0xfe00707f
- #define MATCH_REMUW 0x200703b
- #define MASK_REMUW  0xfe00707f
+@@ -564,6 +564,102 @@
+ #define MASK_PACKUW  0xfe00707f
+ #define MATCH_BFPW 0x4800703b
+ #define MASK_BFPW  0xfe00707f
 +// Crypto ISE - Begin
 +#define MATCH_LUT4LO 0x6000002b
 +#define MASK_LUT4LO 0xfe00707f
@@ -126,10 +126,10 @@ index 371457f..2e4b64b 100644
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -1934,6 +2030,55 @@ DECLARE_INSN(divw, MATCH_DIVW, MASK_DIVW)
- DECLARE_INSN(divuw, MATCH_DIVUW, MASK_DIVUW)
- DECLARE_INSN(remw, MATCH_REMW, MASK_REMW)
- DECLARE_INSN(remuw, MATCH_REMUW, MASK_REMUW)
+@@ -2156,6 +2252,55 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+ DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
+ DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
+ DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
 +// Crypto ISE - Begin
 +DECLARE_INSN(lut4lo, MATCH_LUT4LO, MASK_LUT4LO)
 +DECLARE_INSN(lut4hi, MATCH_LUT4HI, MASK_LUT4HI)
@@ -1160,6 +1160,12 @@ index 0000000..a2e555b
 diff --git a/riscv/insns/ssha512_sum1r.h b/riscv/insns/ssha512_sum1r.h
 new file mode 100644
 index 0000000..e69de29
+diff --git a/riscv/insns/ssm4_ed.h b/riscv/insns/ssm4_ed.h
+new file mode 100644
+index 0000000..e69de29
+diff --git a/riscv/insns/ssm4_ks.h b/riscv/insns/ssm4_ks.h
+new file mode 100644
+index 0000000..e69de29
 diff --git a/riscv/insns/swx.h b/riscv/insns/swx.h
 new file mode 100644
 index 0000000..c5141dc
@@ -1169,10 +1175,10 @@ index 0000000..c5141dc
 +MMU.store_uint32(RS1 + (RS2 << 2), RS3);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 252b196..58cb69d 100644
+index 4ee64fa..4098a53 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -672,6 +672,54 @@ riscv_insn_priv = \
+@@ -772,6 +772,54 @@ riscv_insn_priv = \
  	sret \
  	wfi \
  
@@ -1227,8 +1233,8 @@ index 252b196..58cb69d 100644
  
  riscv_insn_list = \
  	$(riscv_insn_ext_a) \
-@@ -683,6 +731,7 @@ riscv_insn_list = \
- 	$(riscv_insn_ext_q) \
+@@ -784,6 +832,7 @@ riscv_insn_list = \
+ 	$(riscv_insn_ext_b) \
  	$(if $(HAVE_INT128),$(riscv_insn_ext_v),) \
  	$(riscv_insn_priv) \
 +	$(riscv_insn_crypto)

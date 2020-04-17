@@ -9,10 +9,10 @@ export RISCV=$INSTALL_DIR
 
 mkdir -p $INSTALL_DIR
 
-# ------ Binutils ----------------------------------------------------------
+# ------ Toolchain -------------------------------------------------------------
 
-cd   $DIR_BINUTILS_BUILD
+cd           $DIR_TOOLCHAIN_BUILD
 
-make -j 4
+make  -j 4
 make install
 
