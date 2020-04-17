@@ -11,7 +11,7 @@ and related or neighboring rights to the source code in this file.
 http://creativecommons.org/publicdomain/zero/1.0/
 */
 
-#include "riscvcrypto/crypto_hash/sha3/fips202.h"
+#include "riscvcrypto/sha3/fips202.h"
 
 
 /**

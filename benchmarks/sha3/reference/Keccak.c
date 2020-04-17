@@ -11,7 +11,7 @@ and related or neighboring rights to the source code in this file.
 http://creativecommons.org/publicdomain/zero/1.0/
 */
 
-#include "riscvcrypto/crypto_hash/sha3/Keccak.h"
+#include "riscvcrypto/sha3/Keccak.h"
 
 /*!
 @addtogroup crypto_hash_sha3_reference SHA3 Reference

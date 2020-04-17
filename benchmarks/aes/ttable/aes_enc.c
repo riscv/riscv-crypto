@@ -8,7 +8,7 @@
 
 #include "riscvcrypto/share/util.h"
 
-#include "riscvcrypto/crypto_block/aes/api_aes.h"
+#include "riscvcrypto/aes/api_aes.h"
 
 //! AES Round constants
 static const uint8_t round_const[11] = {

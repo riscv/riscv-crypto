@@ -10,7 +10,7 @@ Public domain.
 @{
 */
 
-#include "riscvcrypto/crypto_hash/sha512/api_sha512.h"
+#include "riscvcrypto/sha512/api_sha512.h"
 
 static const unsigned char iv[64] = {
   0x6a,0x09,0xe6,0x67,0xf3,0xbc,0xc9,0x08,

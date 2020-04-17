@@ -8,8 +8,8 @@
 
 #include "riscvcrypto/share/util.h"
 
-#include "riscvcrypto/crypto_block/aes/api_aes.h"
-#include "riscvcrypto/crypto_block/aes/ttable/common.h"
+#include "riscvcrypto/aes/api_aes.h"
+#include "riscvcrypto/aes/ttable/common.h"
 
 #define AES_DEC_TBOX_X { \
   TUPLE(52,A7,51,F4,50), TUPLE(09,65,7E,41,53), TUPLE(6A,A4,1A,17,C3), TUPLE(D5,5E,3A,27,96), \

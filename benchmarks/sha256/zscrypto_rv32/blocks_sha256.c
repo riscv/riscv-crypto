@@ -5,7 +5,7 @@
 @{
 */
 
-#include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
+#include "riscvcrypto/sha256/api_sha256.h"
 
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
 
@@ -33,10 +33,10 @@ static void store_bigendian(unsigned char *x,uint32_t u)
 #define Ch(x,y,z) ((x & y) ^ (~x & z))
 #define Maj(x,y,z) ((x & y) ^ (x & z) ^ (y & z))
 
-#define Sigma0(x) _ssha256_s2(x)
-#define Sigma1(x) _ssha256_s3(x)
-#define sigma0(x) _ssha256_s0(x)
-#define sigma1(x) _ssha256_s1(x)
+#define Sigma0(x) _ssha256_sum0(x)
+#define Sigma1(x) _ssha256_sum1(x)
+#define sigma0(x) _ssha256_sig0(x)
+#define sigma1(x) _ssha256_sig1(x)
 
 #define M(w0,w14,w9,w1) w0 = sigma1(w14) + w9 + sigma0(w1) + w0;
 

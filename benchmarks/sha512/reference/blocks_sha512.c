@@ -6,7 +6,7 @@
 @{
 */
 
-#include "riscvcrypto/crypto_hash/sha512/api_sha512.h"
+#include "riscvcrypto/sha512/api_sha512.h"
 
 typedef unsigned long long uint64;
 

@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "riscvcrypto/crypto_hash/sha3/Keccak.h"
+#include "riscvcrypto/sha3/Keccak.h"
 
 #ifndef __FIPS202_H__
 #define __FIPS202_H__

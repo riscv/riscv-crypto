@@ -13,7 +13,7 @@
 #include "riscvcrypto/share/util.h"
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
 
-#include "riscvcrypto/crypto_block/aes/api_aes.h"
+#include "riscvcrypto/aes/api_aes.h"
 
 //! round constants -- just iterations of the xtime() LFSR
 static const uint8_t aes_rcon[] = {

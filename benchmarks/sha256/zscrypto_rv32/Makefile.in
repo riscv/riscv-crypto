@@ -1,0 +1,14 @@
+
+ifeq ($(ZSCRYPTO),1)
+
+ifeq ($(XLEN),32)
+
+HASH_SHA256_ZSCRYPTO_RV32_FILES = \
+    sha256/zscrypto_rv32/blocks_sha256.c \
+    sha256/zscrypto_rv32/hash_sha256.c
+
+$(eval $(call add_lib_target,sha256_zscrypto_rv32,$(HASH_SHA256_ZSCRYPTO_RV32_FILES)))
+
+endif
+
+endif

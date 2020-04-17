@@ -4,7 +4,7 @@
 
 #include "riscvcrypto/share/test.h"
 
-#include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
+#include "riscvcrypto/sha256/api_sha256.h"
 
 
 int main(int argc, char ** argv) {

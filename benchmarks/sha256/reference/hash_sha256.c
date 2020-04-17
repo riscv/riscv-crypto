@@ -9,7 +9,7 @@
 @{
 */
 
-#include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
+#include "riscvcrypto/sha256/api_sha256.h"
 
 static const char iv[32] = {
   0x6a,0x09,0xe6,0x67,

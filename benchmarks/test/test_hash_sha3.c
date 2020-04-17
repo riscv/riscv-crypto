@@ -5,7 +5,7 @@
 #include "riscvcrypto/share/test.h"
 #include "riscvcrypto/share/util.h"
 
-#include "riscvcrypto/crypto_hash/sha3/fips202.h"
+#include "riscvcrypto/sha3/fips202.h"
 
 
 int main(int argc, char ** argv) {

@@ -66,7 +66,7 @@ endef
 define add_header_target
 $(call map_header,${1}) : ${1}
 	@mkdir -p $(dir $(call map_header,${1}))
-	@cp   $${<} $${@}
+	cp   $${<} $${@}
 
 HEADERS_OUT += $(call map_header,${1})
 endef
@@ -76,7 +76,7 @@ endef
 # 1. Input file
 define add_obj_target
 
-$(call map_obj,${1}) : ${1}
+$(call map_obj,${1}) : ${1} headers
 	@mkdir -p $(dir $(call map_obj,${1}))
 	$(CC) $(CFLAGS) -c -o $${@} $${<}
 

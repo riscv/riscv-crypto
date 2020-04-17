@@ -6,7 +6,7 @@
 @{
 */
 
-#include "riscvcrypto/crypto_block/aes/api_aes.h"
+#include "riscvcrypto/aes/api_aes.h"
 
 //! AES Inverse SBox
 static const uint8_t d_sbox[256] = { 

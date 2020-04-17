@@ -5,7 +5,7 @@
 @{
 */
 
-#include "riscvcrypto/crypto_hash/sha256/api_sha256.h"
+#include "riscvcrypto/sha256/api_sha256.h"
 
 
 static uint32_t load_bigendian(const unsigned char *x)

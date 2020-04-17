@@ -3,7 +3,7 @@
 #include "riscvcrypto/share/util.h"
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
 
-#include "riscvcrypto/crypto_block/aes/api_aes.h"
+#include "riscvcrypto/aes/api_aes.h"
 
 /*!
 @addtogroup crypto_block_aes_rv64 AES RV64

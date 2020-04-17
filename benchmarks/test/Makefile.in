@@ -9,13 +9,21 @@ $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_reference,aes_refere
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_ttable,aes_ttable))
 
 ifeq ($(ZSCRYPTO),1)
-$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256_zscrypto))
-$(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto,sha512_zscrypto))
+
+ifeq ($(XLEN),32)
+
+$(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto_rv32,sha256_zscrypto_rv32))
 
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_rv32,aes_zscrypto_rv32))
 
+endif
+
 ifeq ($(XLEN),64)
+
+$(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto_rv64,sha512_zscrypto_rv64))
+
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_rv64,aes_zscrypto_rv64))
+
 endif
 
 endif
