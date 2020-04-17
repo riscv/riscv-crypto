@@ -33,12 +33,7 @@ static void store_bigendian(unsigned char *x,uint32_t u)
 #define Ch(x,y,z) ((x & y) ^ (~x & z))
 #define Maj(x,y,z) ((x & y) ^ (x & z) ^ (y & z))
 
-#define Sigma0(x) _ssha256_sum0(x)
-#define Sigma1(x) _ssha256_sum1(x)
-#define sigma0(x) _ssha256_sig0(x)
-#define sigma1(x) _ssha256_sig1(x)
-
-#define M(w0,w14,w9,w1) w0 = sigma1(w14) + w9 + sigma0(w1) + w0;
+#define M(w0,w14,w9,w1) w0 = _ssha256_sig1(w14) + w9 + _ssha256_sig0(w1) + w0;
 
 #define EXPAND \
   M(w0 ,w14,w9 ,w1 ) \
@@ -59,8 +54,8 @@ static void store_bigendian(unsigned char *x,uint32_t u)
   M(w15,w13,w8 ,w0 )
 
 #define F(w,k) \
-  T1 = h + Sigma1(e) + Ch(e,f,g) + k + w; \
-  T2 = Sigma0(a) + Maj(a,b,c); \
+  T1 = h + _ssha256_sum1(e) + Ch(e,f,g) + k + w; \
+  T2 = _ssha256_sum0(a) + Maj(a,b,c); \
   h = g; \
   g = f; \
   f = e; \
