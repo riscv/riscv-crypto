@@ -550,11 +550,31 @@ function [7:0] mixcolumn_byte_enc;
     mixcolumn_byte_enc = xtN(b0,4'd2) ^ xtN(b1,4'd3) ^ b2 ^ b3;
 endfunction
 
+function [7:0] mixcolumn_byte_enc2;
+    input [31:0] word;
+    wire [7:0] b0, b1, b2, b3;
+    b0   = word[31:24];
+    b1   = word[23:16];
+    b2   = word[15: 8];
+    b3   = word[ 7: 0];
+    mixcolumn_byte_enc2 = xtN(b0,4'd2) ^ xtN(b1,4'd3) ^ b2 ^ b3;
+endfunction
+
 //
 // Performs the mix column transformation on a single word.
 function [7:0] mixcolumn_byte_dec;
     input [7:0] b0, b1, b2, b3;
     mixcolumn_byte_dec = xtN(b0,4'he) ^ xtN(b1,4'hb) ^ xtN(b2,4'hd) ^ xtN(b3,4'h9);
+endfunction
+
+function [7:0] mixcolumn_byte_dec2;
+    input [31:0] word;
+    wire [7:0] b0, b1, b2, b3;
+    b0   = word[31:24];
+    b1   = word[23:16];
+    b2   = word[15: 8];
+    b3   = word[ 7: 0];
+    mixcolumn_byte_dec2 = xtN(b0,4'he) ^ xtN(b1,4'hb) ^ xtN(b2,4'hd) ^ xtN(b3,4'h9);
 endfunction
 
 
@@ -570,7 +590,7 @@ function [31:0] mixcolumn_word_enc;
     mix_0   = word[ 7: 0];
     mixcolumn_word_enc[31:24] = mixcolumn_byte_enc(mix_3, mix_0, mix_1, mix_2);
     mixcolumn_word_enc[23:16] = mixcolumn_byte_enc(mix_2, mix_3, mix_0, mix_1);
-    mixcolumn_word_enc[15: 8] = mixcolumn_byte_enc(mix_1, mix_2, mix_0, mix_3);
+    mixcolumn_word_enc[15: 8] = mixcolumn_byte_enc(mix_1, mix_2, mix_3, mix_0);
     mixcolumn_word_enc[ 7: 0] = mixcolumn_byte_enc(mix_0, mix_1, mix_2, mix_3);
 endfunction
 
@@ -587,7 +607,7 @@ function [31:0] mixcolumn_word_dec;
     mix_0   = word[ 7: 0];
     mixcolumn_word_dec[31:24] = mixcolumn_byte_dec(mix_3, mix_0, mix_1, mix_2);
     mixcolumn_word_dec[23:16] = mixcolumn_byte_dec(mix_2, mix_3, mix_0, mix_1);
-    mixcolumn_word_dec[15: 8] = mixcolumn_byte_dec(mix_1, mix_2, mix_0, mix_3);
+    mixcolumn_word_dec[15: 8] = mixcolumn_byte_dec(mix_1, mix_2, mix_3, mix_0);
     mixcolumn_word_dec[ 7: 0] = mixcolumn_byte_dec(mix_0, mix_1, mix_2, mix_3);
 endfunction
 

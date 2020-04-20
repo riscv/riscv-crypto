@@ -95,7 +95,7 @@ wire [ 7:0] b3 = col_in[31:24];
     
 wire [31:0] mix_in_3 = {b3, b0, b1, b2};
 wire [31:0] mix_in_2 = {b2, b3, b0, b1};
-wire [31:0] mix_in_1 = {b1, b2, b0, b3};
+wire [31:0] mix_in_1 = {b1, b2, b3, b0};
 wire [31:0] mix_in_0 = {b0, b1, b2, b3};
 
 wire [ 7:0] mix_out_3;
@@ -131,7 +131,7 @@ wire [ 7:0] b3 = col_in[31:24];
     
 wire [31:0] mix_in_3 = {b3, b0, b1, b2};
 wire [31:0] mix_in_2 = {b2, b3, b0, b1};
-wire [31:0] mix_in_1 = {b1, b2, b0, b3};
+wire [31:0] mix_in_1 = {b1, b2, b3, b0};
 wire [31:0] mix_in_0 = {b0, b1, b2, b3};
 
 wire [ 7:0] mix_out_3;
