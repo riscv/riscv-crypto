@@ -8,7 +8,7 @@ set -x
 # ------ Toolchain ----------------------------------------------------------
 
 cd $REPO_HOME
-git submoulde update --init extern/riscv-gnu-toolchain
+git submodule update --init extern/riscv-gnu-toolchain
 
 cd $DIR_TOOLCHAIN
 git submodule update --init --recursive riscv-binutils
