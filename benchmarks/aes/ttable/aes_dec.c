@@ -150,8 +150,8 @@ uint32_t AES_DEC_TBOX_4[] = AES_DEC_TBOX_X;
 /*!
 */
 void    aes_128_dec_key_schedule (
-    uint32_t    rk [AES_128_RK_WORDS ],
-    uint8_t     ck [AES_128_KEY_BYTES]
+    uint32_t * const rk,
+    uint8_t  * const ck
 ){
     // First, call the encryption key-schedule
     aes_128_enc_key_schedule(rk,ck);

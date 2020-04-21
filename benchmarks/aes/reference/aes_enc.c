@@ -61,8 +61,8 @@ static uint32_t aes_sub_word(uint32_t in) {
 @brief A generic AES key schedule
 */
 void    aes_key_schedule (
-    uint32_t * rk , //!< Output Nk*(Nr+1) word cipher key.
-    uint8_t  * ck , //!< Input Nk byte cipher key
+    uint32_t * const rk , //!< Output Nk*(Nr+1) word cipher key.
+    uint8_t  * const ck , //!< Input Nk byte cipher key
     const int  Nk , //!< Number of words in the key.
     const int  Nr   //!< Number of rounds.
 ){
@@ -98,8 +98,8 @@ void    aes_key_schedule (
 /*!
 */
 void    aes_128_enc_key_schedule (
-    uint32_t    rk [AES_128_RK_WORDS ],
-    uint8_t     ck [AES_128_KEY_BYTES]
+    uint32_t * const rk,
+    uint8_t  * const ck
 ){
     aes_key_schedule(rk, ck, 4, 10);
 }
@@ -107,8 +107,8 @@ void    aes_128_enc_key_schedule (
 /*!
 */
 void    aes_128_dec_key_schedule (
-    uint32_t    rk [AES_128_RK_WORDS ],
-    uint8_t     ck [AES_128_KEY_BYTES]
+    uint32_t * const rk,
+    uint8_t  * const ck
 ){
     aes_key_schedule(rk, ck, 4, 10);
 }

@@ -43,8 +43,8 @@ AES  |   Nk  | Nb   | Nr
 @param [in]  ck - The cipher key to expand
 */
 void    aes_128_enc_key_schedule (
-    uint32_t    rk [AES_128_NK*(AES_128_NR+1)   ],
-    uint8_t     ck [AES_128_KEY_BYTES           ]
+    uint32_t * const rk,
+    uint8_t  * const ck
 );
 
 /*!
@@ -53,8 +53,8 @@ void    aes_128_enc_key_schedule (
 @param [in]  ck - The cipher key to expand
 */
 void    aes_128_dec_key_schedule (
-    uint32_t    rk [AES_128_NK*(AES_128_NR+1)   ],
-    uint8_t     ck [AES_128_KEY_BYTES           ]
+    uint32_t * const rk,
+    uint8_t  * const ck
 );
 
 
