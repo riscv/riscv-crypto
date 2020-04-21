@@ -129,3 +129,11 @@ aes_128_dec_key_schedule:           // a0 - uint32_t rk [AES_128_RK_WORDS]
     addi    sp, sp,  16
 
     ret
+    
+    #undef RK
+    #undef RKP
+    #undef RKE
+    #undef T0
+    #undef T1
+.endfunc
+
