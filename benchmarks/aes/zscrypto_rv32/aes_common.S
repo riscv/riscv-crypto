@@ -18,7 +18,7 @@
 //
 .macro AES_LOAD_STATE T0, T1, T2, T3, CK, X0, X1, X2, X3
 
-#if ((AES_WORD_ALIGNED == 0) || (!defined(AES_WORD_ALIGNED)))
+#if ((AES_BYTE_ALIGNED == 1) || (defined(AES_BYTE_ALIGNED)))
 
     lbu     \T0,  3(\CK)
     lbu     \T1,  7(\CK)
@@ -77,7 +77,7 @@
 //
 .macro AES_DUMP_STATE T0, T1, T2, T3, CT
 
-#if ((AES_WORD_ALIGNED == 0) || (!defined(AES_WORD_ALIGNED)))
+#if ((AES_BYTE_ALIGNED == 1) || (defined(AES_BYTE_ALIGNED)))
 
     sb      \T0,  0(\CT)
     sb      \T1,  4(\CT)
