@@ -49,7 +49,6 @@ aes_128_ecb_encrypt:                           // a2 - uint32_t  * rk,
     #define PT      a1
     #define RK      a2
     #define NR      a3
-    #define RKE     a4
     #define S0      a5
     #define S1      a6
     #define N0      a7
@@ -66,4 +65,17 @@ aes_128_ecb_encrypt:                           // a2 - uint32_t  * rk,
     AES_DUMP_STATE S0, S1, CT, T0, T1, 0    // Save ciphertext
 
     ret
+    
+    #undef T0
+    #undef T1
+    #undef K0
+    #undef K1
+    #undef CT
+    #undef PT
+    #undef RK
+    #undef NR
+    #undef S0
+    #undef S1
+    #undef N0
+    #undef N1
 .endfunc

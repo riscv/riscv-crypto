@@ -52,3 +52,50 @@ aes_128_enc_key_schedule:       // a0 - uint32_t rk [AES_128_RK_WORDS]
 
 .endfunc
 
+.func   aes_128_dec_key_schedule
+.global aes_128_dec_key_schedule
+aes_128_dec_key_schedule:       // a0 - uint32_t rk [AES_128_RK_WORDS]
+                                // a1 - uint8_t  ck [AES_128_CK_BYTE ]
+
+    #define RKP t0
+    #define RKE t1
+
+    addi sp, sp, -16
+    sd   ra, 0(sp)
+
+    call aes_128_enc_key_schedule
+
+    addi   RKP, a0, 16
+    addi   RKE, a0, 160 - 16
+    
+    .loop:
+
+        ld  a2, 0(RKP)          // Load 2 16-byte round keys at once.
+        ld  a3, 8(RKP)          //
+        ld  a4,16(RKP)          //
+        ld  a5,24(RKP)          //
+
+        saes64.imix a2, a2      // Perform inverse mix-columns
+        saes64.imix a3, a3      //
+        saes64.imix a4, a4      //
+        saes64.imix a5, a5      //
+        
+        sd  a2, 0(RKP)          // Store back
+        sd  a3, 8(RKP)          //
+        sd  a4,16(RKP)          //
+        sd  a5,24(RKP)          //
+
+        addi    RKP, RKP, 32
+        bne RKP, RKE, .loop
+        
+    ld  a2, 0(RKP)          // Load 2 16-byte round keys at once.
+    ld  a3, 8(RKP)          //
+    ld  ra, 0(sp)
+    addi sp, sp, 16
+
+    saes64.imix a2, a2      // Perform inverse mix-columns
+    saes64.imix a3, a3      //
+    sd  a2, 0(RKP)          // Store back
+    sd  a3, 8(RKP)          // Store back
+    
+    ret
