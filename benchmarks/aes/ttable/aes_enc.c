@@ -193,11 +193,10 @@ void    aes_128_enc_key_schedule (
 
 /*!
 */
-void    aes_ecb_encrypt (
+void    aes_128_ecb_encrypt (
     uint8_t     ct [AES_BLOCK_BYTES],
     uint8_t     pt [AES_BLOCK_BYTES],
-    uint32_t  * rk,
-    int         nr
+    uint32_t  * rk
 ){
     uint32_t *rkp = ( uint32_t* )( rk ), t_0, t_1, t_2, t_3, t_4, t_5, t_6, t_7;
 

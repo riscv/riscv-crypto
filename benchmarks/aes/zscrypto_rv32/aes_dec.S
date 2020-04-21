@@ -1,10 +1,9 @@
 
 #include "aes_common.S"
 
-.func   aes_ecb_decrypt                         // a0 - uint8_t     pt [16],
-.global aes_ecb_decrypt                         // a1 - uint8_t     ct [16],
-aes_ecb_decrypt:                                // a2 - uint32_t  * rk,
-                                                // a3 - int         nr
+.func   aes_128_ecb_decrypt                     // a0 - uint8_t     pt [16],
+.global aes_128_ecb_decrypt                     // a1 - uint8_t     ct [16],
+aes_128_ecb_decrypt:                            // a2 - uint32_t  * rk,
     #define T0 a4
     #define T1 a5
     #define T2 a6
@@ -16,11 +15,9 @@ aes_ecb_decrypt:                                // a2 - uint32_t  * rk,
     #define PT a0
     #define CT a1
     #define RK a2
-    #define NR a3
     #define KP a3
 
-    slli    KP, NR, 4
-    add     KP, KP, RK                          // kp = rk + 4*nr
+    addi    KP, RK, 160                         // kp = rk + 4*nr
 
     AES_LOAD_STATE T0,T1,T2,T3,CT,U0,U1,U2,U3   // Columns in T*
 
@@ -133,7 +130,6 @@ aes_ecb_decrypt:                                // a2 - uint32_t  * rk,
     #undef CT 
     #undef PT 
     #undef RK 
-    #undef NR 
     #undef KP 
 
 .endfunc

@@ -37,10 +37,9 @@
     xor \S1, \S1, \K1
 .endm
 
-.func   aes_ecb_encrypt                         // a0 - uint8_t     ct [16],
-.global aes_ecb_encrypt                         // a1 - uint8_t     pt [16],
-aes_ecb_encrypt:                                // a2 - uint32_t  * rk,
-                                                // a3 - int         nr
+.func   aes_128_ecb_encrypt                    // a0 - uint8_t     ct [16],
+.global aes_128_ecb_encrypt                    // a1 - uint8_t     pt [16],
+aes_128_ecb_encrypt:                           // a2 - uint32_t  * rk,
     
     #define T0      t0
     #define T1      t1

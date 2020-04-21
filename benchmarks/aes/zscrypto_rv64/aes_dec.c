@@ -11,19 +11,18 @@
 
 #include "riscvcrypto/aes/api_aes.h"
 
-//! Decrypt rounds. Implements AES-128/192/256 depending on nr = {10,12,14}
-void aes_ecb_decrypt (
+//! Decrypt rounds.
+void aes_128_ecb_decrypt (
     uint8_t    pt[AES_BLOCK_BYTES],
     uint8_t    ct[AES_BLOCK_BYTES],
-    uint32_t * rk,
-    int nr
+    uint32_t * rk
 ) {
     uint64_t   n0, n1               ;
     int        rnd = 0              ;
 
     uint64_t * ptp = (uint64_t*)pt   ;
     uint64_t * ctp = (uint64_t*)ct   ;
-    uint64_t * rkp = (uint64_t*)rk + (nr*2);
+    uint64_t * rkp = (uint64_t*)rk + (10*2);
 
     uint64_t   t0  = ctp[0]         ;
     uint64_t   t1  = ctp[1]         ;
@@ -33,7 +32,7 @@ void aes_ecb_decrypt (
 
               rkp -= 2              ;
 
-    for(rnd = nr-1; rnd > 0; rnd --) {
+    for(rnd = 9; rnd > 0; rnd --) {
 
         t0  = _saes64_decsm_lo(n0, n1);
         t1  = _saes64_decsm_hi(n0, n1);

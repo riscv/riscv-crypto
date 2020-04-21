@@ -65,11 +65,10 @@ void    aes_128_dec_key_schedule (
 @param [in]  rk - The expanded key schedule
 @param [in]  nr - Number of encryption rounds to perform.
 */
-void    aes_ecb_encrypt (
+void    aes_128_ecb_encrypt (
     uint8_t     ct [AES_BLOCK_BYTES],
     uint8_t     pt [AES_BLOCK_BYTES],
-    uint32_t  * rk,
-    int         nr
+    uint32_t  * rk
 );
 
 /*!
@@ -79,19 +78,11 @@ void    aes_ecb_encrypt (
 @param [in]  rk - The expanded key schedule
 @param [in]  nr - Number of decryption rounds to perform.
 */
-void    aes_ecb_decrypt (
+void    aes_128_ecb_decrypt (
     uint8_t     pt [AES_BLOCK_BYTES],
     uint8_t     ct [AES_BLOCK_BYTES],
-    uint32_t  * rk,
-    int         nr
+    uint32_t  * rk
 );
-
-
-//! Macro for AES 128 encrypt
-#define aes_128_ecb_encrypt(ct,pt,rk) aes_ecb_encrypt(ct,pt,rk,AES_128_NR)
-
-//! Macro for AES 128 decrypt
-#define aes_128_ecb_decrypt(ct,pt,rk) aes_ecb_decrypt(ct,pt,rk,AES_128_NR)
 
 #endif
 

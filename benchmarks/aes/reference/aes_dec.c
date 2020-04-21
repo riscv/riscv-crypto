@@ -109,19 +109,17 @@ static void aes_mix_columns_dec(
 @param [out] pt - Output plaintext
 @param [in]  ct - Input cipher text
 @param [in]  rk - The expanded key schedule
-@param [in]  nr - Number of decryption rounds to perform.
 */
-void    aes_ecb_decrypt (
+void    aes_128_ecb_decrypt (
     uint8_t     pt [AES_BLOCK_BYTES],
     uint8_t     ct [AES_BLOCK_BYTES],
-    uint32_t  * rk,
-    int         nr
+    uint32_t  * rk
 ){
     for(int i = 0; i < 16; i ++) {
-        pt[i] = ct[i] ^ ((uint8_t*)rk)[(16*nr) + i];
+        pt[i] = ct[i] ^ ((uint8_t*)rk)[(16*AES_128_NR) + i];
     }
 
-    for(int round = nr-1; round >= 1; round --) {
+    for(int round = AES_128_NR-1; round >= 1; round --) {
         
         aes_subbytes_shiftrows_dec(pt);
     

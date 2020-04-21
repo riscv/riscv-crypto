@@ -181,11 +181,10 @@ static void aes_mix_columns_enc(
 
 /*!
 */
-void    aes_ecb_encrypt (
+void    aes_128_ecb_encrypt (
     uint8_t     ct [AES_BLOCK_BYTES],
     uint8_t     pt [AES_BLOCK_BYTES],
-    uint32_t  * rk,
-    int         nr
+    uint32_t  * rk
 ){
     int round = 0;
 
@@ -194,7 +193,7 @@ void    aes_ecb_encrypt (
         ct[i] = pt[i] ^ ((uint8_t*)rk)[i];
     }
     
-    for(round = 1; round < nr; round ++) {
+    for(round = 1; round < AES_128_NR; round ++) {
         
         aes_subbytes_shiftrows(ct);
         aes_mix_columns_enc(ct);

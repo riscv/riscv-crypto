@@ -190,13 +190,11 @@ void    aes_128_dec_key_schedule (
 @param [out] pt - Output plaintext
 @param [in]  ct - Input cipher text
 @param [in]  rk - The expanded key schedule
-@param [in]  nr - Number of decryption rounds to perform.
 */
-void    aes_ecb_decrypt (
+void    aes_128_ecb_decrypt (
     uint8_t     pt [AES_BLOCK_BYTES],
     uint8_t     ct [AES_BLOCK_BYTES],
-    uint32_t  * rk,
-    int         nr
+    uint32_t  * rk
 ){
     uint32_t *rkp = ( AES_128_NB * AES_128_NR ) + ( uint32_t* )( rk ), t_0, t_1, t_2, t_3, t_4, t_5, t_6, t_7;
 
