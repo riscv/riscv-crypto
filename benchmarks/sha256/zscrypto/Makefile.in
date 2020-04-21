@@ -2,8 +2,7 @@
 ifeq ($(ZSCRYPTO),1)
 
 HASH_SHA256_ZSCRYPTO_FILES = \
-    sha256/zscrypto/blocks_sha256.c \
-    sha256/zscrypto/hash_sha256.c
+    sha256/zscrypto/sha256.c \
 
 $(eval $(call add_lib_target,sha256_zscrypto,$(HASH_SHA256_ZSCRYPTO_FILES)))
 
