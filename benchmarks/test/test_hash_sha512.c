@@ -14,22 +14,22 @@ int main(int argc, char ** argv) {
 
     const int num_tests = 10;
         
-    unsigned long long   hash_input_len = TEST_HASH_INPUT_LENGTH    ;
-    unsigned char      * hash_input                                 ;
-    unsigned char        hash_signature  [CRYPTO_HASH_SHA512_BYTES] ;
+    size_t     message_len  = TEST_HASH_INPUT_LENGTH  ;
+    uint8_t  * message      ;
+    uint64_t   digest    [8];
 
     for(int i = 0; i < num_tests; i ++) {
 
-        hash_input  = calloc(hash_input_len, sizeof(unsigned char));
+        message  = calloc(message_len, sizeof(unsigned char));
 
-        test_rdrandom(hash_input, hash_input_len);
+        test_rdrandom(message, message_len);
 
         const uint64_t start_instrs   = test_rdinstret();
 
-        crypto_hash_sha512(
-            hash_signature,
-            hash_input    ,
-            hash_input_len
+        sha512_hash(
+            digest,
+            message    ,
+            message_len
         );
         
         const uint64_t end_instrs     = test_rdinstret();
@@ -38,14 +38,14 @@ int main(int argc, char ** argv) {
 
         printf("#\n# test %d/%d\n",i , num_tests);
 
-        printf("input_len       = %llu\n", hash_input_len);
+        printf("input_len       = %lu\n", message_len);
         
         printf("input_data      = ");
-        puthex_py(hash_input,hash_input_len);
+        puthex_py(message,message_len);
         printf("\n");
 
         printf("signature       = ");
-        puthex_py(hash_signature, CRYPTO_HASH_SHA512_BYTES);
+        puthex_py((uint8_t*)digest, 8*8);
         printf("\n");
 
         printf("instr_count     = 0x");
@@ -53,7 +53,7 @@ int main(int argc, char ** argv) {
         printf("\n");
         
         printf("testnum         = %d\n",i);
-        printf("ipb             = instr_count / input_len\n",i);
+        printf("ipb             = instr_count / input_len\n");
 
         printf("reference       = SHA2_512.new(input_data).digest()\n");
         printf("if( reference  != signature ):\n");
@@ -67,9 +67,9 @@ int main(int argc, char ** argv) {
                "%%d instrs / %%d bytes. IPB=%%f\" %% "
                "(testnum,instr_count,input_len,ipb))\n");
 
-        hash_input_len += TEST_HASH_INPUT_LENGTH / 2;
+        message_len += TEST_HASH_INPUT_LENGTH / 2;
 
-        free(hash_input);
+        free(message);
 
     }
 
