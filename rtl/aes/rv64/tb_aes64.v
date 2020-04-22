@@ -18,7 +18,6 @@ input   g_resetn
 //
 // DUT Inputs
 reg          dut_valid   = $anyseq; // Are the inputs valid?
-reg          dut_hi      = $anyseq; // High (set) or low (clear) output?
 reg          dut_mix     = $anyseq; // Mix enable for op_enc/op_dec
 reg          dut_op_enc  = $anyseq; // Encrypt hi/lo
 reg          dut_op_dec  = $anyseq; // Decrypt hi/lo 
@@ -65,7 +64,6 @@ always @(posedge g_clk) begin
         // If the TB is waiting for the DUT to compute an output,
         // make sure that the inputs are stable.
         assume($stable(dut_valid  ));
-        assume($stable(dut_hi     ));
         assume($stable(dut_mix    ));
         assume($stable(dut_op_enc ));
         assume($stable(dut_op_dec ));
@@ -120,7 +118,6 @@ end
 //
 aes64 i_dut (
 .valid      (dut_valid  ), // Are the inputs valid? Used for logic gating.
-.hi         (dut_hi     ), // High (set) or low (clear) output?
 .mix        (dut_mix    ), // Enable mix for enc/dec operations.
 .op_enc     (dut_op_enc ), //
 .op_dec     (dut_op_dec ), // 
@@ -139,7 +136,6 @@ aes64 i_dut (
 //
 aes64_checker i_grm (
 .valid      (dut_valid  ), // Are the inputs valid? Used for logic gating.
-.hi         (dut_hi     ), // High (set) or low (clear) output?
 .mix        (dut_mix    ), // Enable mix for enc/dec operations.
 .op_enc     (dut_op_enc ), //
 .op_dec     (dut_op_dec ), // 

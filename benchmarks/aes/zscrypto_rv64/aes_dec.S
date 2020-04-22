@@ -4,33 +4,33 @@
 .text
 
 .macro DOUBLE_ROUND RK, K0, K1, K2, K3, S0, S1, N0, N1, OFFSET
-    ld      \K0, \OFFSET +16(\RK)
-    ld      \K1, \OFFSET +24(\RK)
-    ld      \K2, \OFFSET + 0(\RK)
-    ld      \K3, \OFFSET + 8(\RK)
-    saes64.decsm.lo \N0, \S0, \S1
-    saes64.decsm.lo \N1, \S1, \S0
-    xor     \S0, \N0, \K0
-    xor     \S1, \N1, \K1
-    saes64.decsm.lo \N0, \S0, \S1
-    saes64.decsm.lo \N1, \S1, \S0
-    xor     \S0, \N0, \K2
-    xor     \S1, \N1, \K3
+    ld           \K0, \OFFSET +16(\RK)      // Load two roundkeys in a
+    ld           \K1, \OFFSET +24(\RK)      // batch
+    ld           \K2, \OFFSET + 0(\RK)
+    ld           \K3, \OFFSET + 8(\RK)
+    saes64.decsm \N0, \S0, \S1              // InvShiftRows, InvSubBytes
+    saes64.decsm \N1, \S1, \S0              // InvMixColumns
+    xor          \S0, \N0, \K0              // Add Round Key
+    xor          \S1, \N1, \K1
+    saes64.decsm \N0, \S0, \S1              // InvShiftRows, InvSubBytes
+    saes64.decsm \N1, \S1, \S0              // InvMixColumns
+    xor          \S0, \N0, \K2              // AddRoundKey
+    xor          \S1, \N1, \K3
 .endm
 
 .macro LAST_2ROUNDS RK, K0, K1, K2, K3, S0, S1, N0, N1, OFFSET
-    ld      \K0,\OFFSET +16(\RK)
-    ld      \K1,\OFFSET +24(\RK)
-    ld      \K2,\OFFSET + 0(\RK)
-    ld      \K3,\OFFSET + 8(\RK)
-    saes64.decsm.lo \N0, \S0, \S1
-    saes64.decsm.lo \N1, \S1, \S0
-    xor     \S0, \N0, \K0
-    xor     \S1, \N1, \K1
-    saes64.decs.lo \N0, \S0, \S1
-    saes64.decs.lo \N1, \S1, \S0
-    xor     \S0, \N0, \K2
-    xor     \S1, \N1, \K3
+    ld           \K0,\OFFSET +16(\RK)       // Load two round keys
+    ld           \K1,\OFFSET +24(\RK)
+    ld           \K2,\OFFSET + 0(\RK)
+    ld           \K3,\OFFSET + 8(\RK)
+    saes64.decsm \N0, \S0, \S1              // InvShiftRows, InvSubBytes
+    saes64.decsm \N1, \S1, \S0              // InvMixColumns
+    xor          \S0, \N0, \K0              // Add Round Key
+    xor          \S1, \N1, \K1
+    saes64.decs  \N0, \S0, \S1              // InvShiftRows, InvSubBytes
+    saes64.decs  \N1, \S1, \S0
+    xor          \S0, \N0, \K2              // Final AddRoundKey
+    xor          \S1, \N1, \K3
 .endm
 
 .func   aes_128_ecb_decrypt                    // a0 - uint8_t     pt [16],

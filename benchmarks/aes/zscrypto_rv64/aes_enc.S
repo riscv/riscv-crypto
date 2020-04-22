@@ -4,37 +4,37 @@
 .text
 
 .macro DOUBLE_ROUND RK, K0, K1, K2, K3, S0, S1, N0, N1, OFFSET
-    ld  \K0, (\OFFSET + 0)(\RK)                // Load round keys in
-    ld  \K1, (\OFFSET + 8)(\RK)                // batches of 4 double words
-    ld  \K2, (\OFFSET +16)(\RK)
-    ld  \K3, (\OFFSET +24)(\RK)
-    xor \S0, \S0, \K0                          // AddRoundKey
-    xor \S1, \S1, \K1
-    saes64.encsm.lo \N0, \S0, \S1              // Rest of round
-    saes64.encsm.lo \N1, \S1, \S0
-    xor \N0, \N0, \K2                          // AddRoundKey
-    xor \N1, \N1, \K3
-    saes64.encsm.lo \S0, \N0, \N1              // Rest of round
-    saes64.encsm.lo \S1, \N1, \N0
+    ld            \K0, (\OFFSET + 0)(\RK)      // Load round keys in
+    ld            \K1, (\OFFSET + 8)(\RK)      // batches of 4 double words
+    ld            \K2, (\OFFSET +16)(\RK)
+    ld            \K3, (\OFFSET +24)(\RK)
+    xor           \S0, \S0, \K0                // AddRoundKey
+    xor           \S1, \S1, \K1
+    saes64.encsm  \N0, \S0, \S1                // Rest of round
+    saes64.encsm  \N1, \S1, \S0
+    xor           \N0, \N0, \K2                // AddRoundKey
+    xor           \N1, \N1, \K3
+    saes64.encsm  \S0, \N0, \N1                // Rest of round
+    saes64.encsm  \S1, \N1, \N0
 .endm
 
 .macro LAST_2ROUNDS RK, K0, K1, K2, K3, S0, S1, N0, N1, OFFSET
-    ld  \K0, (\OFFSET + 0)(\RK)                // Load two round keys
-    ld  \K1, (\OFFSET + 8)(\RK)
-    ld  \K2, (\OFFSET +16)(\RK)
-    ld  \K3, (\OFFSET +24)(\RK)
-    xor \S0, \S0, \K0                          // AddRoundKey
-    xor \S1, \S1, \K1
-    ld  \K0, (\OFFSET +32)(\RK)                // Load final round key
-    ld  \K1, (\OFFSET +40)(\RK)
-    saes64.encsm.lo \N0, \S0, \S1              // Rest of round
-    saes64.encsm.lo \N1, \S1, \S0
-    xor \N0, \N0, \K2                          // AddRoundKey
-    xor \N1, \N1, \K3
-    saes64.encs.lo  \S0, \N0, \N1              // Rest of round
-    saes64.encs.lo  \S1, \N1, \N0
-    xor \S0, \S0, \K0                          // Final AddRoundKey
-    xor \S1, \S1, \K1
+    ld            \K0, (\OFFSET + 0)(\RK)      // Load two round keys
+    ld            \K1, (\OFFSET + 8)(\RK)
+    ld            \K2, (\OFFSET +16)(\RK)
+    ld            \K3, (\OFFSET +24)(\RK)
+    xor           \S0, \S0, \K0                // AddRoundKey
+    xor           \S1, \S1, \K1
+    ld            \K0, (\OFFSET +32)(\RK)      // Load final round key
+    ld            \K1, (\OFFSET +40)(\RK)
+    saes64.encsm  \N0, \S0, \S1                // Rest of round: Shift,
+    saes64.encsm  \N1, \S1, \S0                // Sub, Mix
+    xor           \N0, \N0, \K2                // AddRoundKey
+    xor           \N1, \N1, \K3
+    saes64.encs   \S0, \N0, \N1                // Final round: Shift, Sub
+    saes64.encs   \S1, \N1, \N0
+    xor           \S0, \S0, \K0                // Final AddRoundKey
+    xor           \S1, \S1, \K1
 .endm
 
 .func   aes_128_ecb_encrypt                    // a0 - uint8_t     ct [16],

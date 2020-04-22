@@ -11,10 +11,9 @@
 module aes64_checker (
 
 input  wire         valid   , // Are the inputs valid?
-input  wire         hi      , // High (set) or low (clear) output?
 input  wire         mix     , // Mix enable for op_enc/op_dec
-input  wire         op_enc  , // Encrypt hi/lo
-input  wire         op_dec  , // Decrypt hi/lo 
+input  wire         op_enc  , // Encrypt
+input  wire         op_dec  , // Decrypt
 input  wire         op_imix , // Inverse MixColumn transformation (if set)
 input  wire         op_ks1  , // KeySchedule 1
 input  wire         op_ks2  , // KeySchedule 2
@@ -177,9 +176,8 @@ wire [127:0] grm_state      = regs_to_state(rs1, rs2);
 // ------------------------------------------------------------
 
 wire [127:0] renc_shifted   = state_shift_rows(grm_state);
-wire [ 63:0] renc_hilo      = hi ? renc_shifted[127:64] :
-                                   renc_shifted[ 63: 0] ;
-wire [ 63:0] renc_sub       = subbytes_doubleword(renc_hilo);
+wire [ 63:0] renc_lo        = renc_shifted[ 63: 0] ;
+wire [ 63:0] renc_sub       = subbytes_doubleword(renc_lo  );
 wire [ 63:0] renc_mix       = {
     mixcolumn_word_enc(renc_sub[63:32]),
     mixcolumn_word_enc(renc_sub[31: 0])
@@ -192,9 +190,8 @@ wire[63:0]  result_enc      = mix ? renc_mix : renc_sub;
 // ------------------------------------------------------------
 
 wire [127:0] rdec_shifted   = state_inv_shift_rows(grm_state);
-wire [ 63:0] rdec_hilo      = hi ? rdec_shifted[127:64] :
-                                   rdec_shifted[ 63: 0] ;
-wire [ 63:0] rdec_sub       = inv_subbytes_doubleword(rdec_hilo);
+wire [ 63:0] rdec_lo        = rdec_shifted[ 63: 0] ;
+wire [ 63:0] rdec_sub       = inv_subbytes_doubleword(rdec_lo  );
 wire [ 63:0] rdec_mix       = {
     mixcolumn_word_dec(rdec_sub[63:32]),
     mixcolumn_word_dec(rdec_sub[31: 0])
