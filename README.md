@@ -36,6 +36,7 @@
   of Bristol Cryptography Group on scalar cryptography extensions
   to RISC-V.
 
+- There is a rough [Todo List](todo.md).
 
 ## Specification
 
