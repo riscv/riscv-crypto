@@ -32,6 +32,7 @@ include sha512/reference/Makefile.in
 include sha512/zscrypto_rv64/Makefile.in
 
 include sha3/reference/Makefile.in
+include sha3/zscrypto_rv64/Makefile.in
 
 include test/Makefile.in
 

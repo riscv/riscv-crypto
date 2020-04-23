@@ -24,6 +24,8 @@ $(eval $(call add_test_elf_target,test/test_hash_sha512.c,sha512_zscrypto_rv64,s
 
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_zscrypto_rv64,aes_zscrypto_rv64))
 
+$(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_zscrypto_rv64,sha3_zscrypto_rv64))
+
 endif
 
 endif
