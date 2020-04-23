@@ -13,8 +13,6 @@ SPEC_TEX  = $(SPEC_TOP) $(wildcard $(REPO_HOME)/doc/tex/*)
 SPEC_EXTRA= riscv-crypto-spec.sty $(OPCODES)
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
-REPO_DIRTY =$(shell git diff)
-
 $(OPCODES) : $(REPO_HOME)/tools/opcodes-crypto
 	@mkdir -p $(dir $(OPCODES))
 	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -tex > $@
@@ -24,9 +22,6 @@ $(SPEC_COMMIT):
 	@git rev-parse --abbrev-ref HEAD > ${@}
 	@echo "@" >> ${@}
 	@git log --pretty=format:'%H' -n 1 >> ${@}
-ifneq ("$(REPO_DIRTY)","")
-	@echo "{\\\color{red}\\\bf -dirty}" >> ${@} ;
-endif
 
 $(SPEC_OUT) : $(SPEC_TEX) $(SPEC_EXTRA) $(SPEC_COMMIT)
 	@mkdir -p $(BUILD_DIR)
