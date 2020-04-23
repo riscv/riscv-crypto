@@ -1,0 +1,9 @@
+
+ifeq ($(ZSCRYPTO),1)
+
+HASH_SHA256_ZSCRYPTO_FILES = \
+    sha256/zscrypto/sha256.c \
+
+$(eval $(call add_lib_target,sha256_zscrypto,$(HASH_SHA256_ZSCRYPTO_FILES)))
+
+endif

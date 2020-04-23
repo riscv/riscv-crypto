@@ -1,8 +1,5 @@
 #!/bin/bash
 
-set -e
-set -x
-
 source $REPO_HOME/tools/share.sh
 
 echo "Setting up toolchain..."
@@ -10,9 +7,9 @@ echo "---------------------------------------------------"
 echo "Download Dir    : $DIR_BASE"
 echo "Installation Dir: $INSTALL_DIR"
 echo "Target Arch     : $TARGET_ARCH"
-echo "GCC Commit      : $COMMIT_GCC"
-echo "Binutils Commit : $COMMIT_BINUTILS"
-echo "Spike Commit    : $COMMIT_SPIKE"
+echo "GCC Commit      : $GCC_COMMIT"
+echo "Binutils Commit : $BINUTILS_COMMIT"
+echo "Spike Commit    : $SPIKE_COMMIT"
 echo ""
 echo "DIR_GCC         = $DIR_GCC"
 echo "DIR_BINUTILS    = $DIR_BINUTILS"
@@ -23,13 +20,20 @@ echo ""
 echo "Branch Name     = $BRANCH_NAME"
 echo "---------------------------------------------------"
 
-bash $REPO_HOME/tools/clone.sh
+set -e
+set -x
 
-bash $REPO_HOME/tools/binutils-apply.sh
-bash $REPO_HOME/tools/gcc-apply.sh
-bash $REPO_HOME/tools/newlib-apply.sh
-bash $REPO_HOME/tools/spike-apply.sh
-bash $REPO_HOME/tools/pk-apply.sh
+#bash $REPO_HOME/tools/clone.sh
+#
+#bash $REPO_HOME/tools/binutils-apply.sh
+#bash $REPO_HOME/tools/spike-apply.sh
 
-bash $REPO_HOME/tools/build-all.sh
+bash $REPO_HOME/tools/toolchain-conf.sh
+bash $REPO_HOME/tools/spike-conf.sh
+
+bash $REPO_HOME/tools/toolchain-build.sh
+bash $REPO_HOME/tools/spike-build.sh
+
+bash $REPO_HOME/tools/pk-conf.sh
+bash $REPO_HOME/tools/pk-build.sh
 

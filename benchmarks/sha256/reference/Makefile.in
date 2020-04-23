@@ -1,0 +1,6 @@
+
+HASH_SHA256_REF_FILES = \
+    sha256/reference/sha256.c \
+
+$(eval $(call add_lib_target,sha256_reference,$(HASH_SHA256_REF_FILES)))
+

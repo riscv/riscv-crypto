@@ -1,0 +1,13 @@
+
+ifeq ($(ZSCRYPTO),1)
+ifeq ($(XLEN),64)
+
+BLOCK_AES_ZSCRYPTO_RV64_FILES = \
+    aes/zscrypto_rv64/aes_enc.S \
+    aes/zscrypto_rv64/aes_dec.S \
+    aes/zscrypto_rv64/aes_128_ks.S
+
+$(eval $(call add_lib_target,aes_zscrypto_rv64,$(BLOCK_AES_ZSCRYPTO_RV64_FILES)))
+
+endif
+endif

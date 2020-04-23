@@ -8,14 +8,13 @@
 //      - saes32.decs  : dec=1, mix=0
 //      - saes32.decsm : dec=1, mix=1
 //
-//  More performant in terms of instructions / round, but puts the MixColumns
-//  and SubBytes operations in sequence, leading to a longer timing path.
-//
 module aes32(
 
 input  wire         valid   , // Are the inputs valid? Used for logic gating.
-input  wire         dec     , // Encrypt (clear) or decrypt (set)
-input  wire         mix     , // Perform MixColumn transformation (if set)
+input  wire         op_encs , // Encrypt SubBytes
+input  wire         op_encsm, // Encrypt SubBytes + MixColumn
+input  wire         op_decs , // Decrypt SubBytes
+input  wire         op_decsm, // Decrypt SubBytes + MixColumn
 
 input  wire [ 31:0] rs1     , // Source register 1
 input  wire [ 31:0] rs2     , // Source register 2
@@ -38,7 +37,9 @@ assign     bytes_in [  3]   =  rs2[31:24]               ;
 
 wire [7:0] sel_byte         = bytes_in[bs]              ;
 
-wire       sbox_inv         = dec                       ;
+wire       dec              = op_decs  || op_decsm      ;
+wire       mix              = op_encsm || op_decsm      ;
+
 wire [7:0] sbox_out         ;
 
 //
@@ -84,7 +85,7 @@ assign      rd          = rotated ^ rs1;
 //
 // Single SBOX instance
 aes_sbox i_aes_sbox (
-.inv(sbox_inv),
+.inv(dec     ),
 .in (sel_byte),
 .out(sbox_out)
 );

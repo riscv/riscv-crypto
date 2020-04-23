@@ -5,7 +5,7 @@
 #include "riscvcrypto/share/test.h"
 #include "riscvcrypto/share/util.h"
 
-#include "riscvcrypto/crypto_block/aes/api_aes.h"
+#include "riscvcrypto/aes/api_aes.h"
 
 
 int main(int argc, char ** argv) {

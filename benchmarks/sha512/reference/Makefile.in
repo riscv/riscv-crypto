@@ -1,0 +1,6 @@
+
+HASH_SHA512_REF_FILES = \
+    sha512/reference/sha512.c
+
+$(eval $(call add_lib_target,sha512_reference,$(HASH_SHA512_REF_FILES)))
+

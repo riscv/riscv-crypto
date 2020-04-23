@@ -23,7 +23,7 @@ if [ -z $RISCV_ARCH ] ; then
     export RISCV_ARCH=riscv64-unknown-elf
 fi
 
-export RISCV=$REPO_BUILD/toolchain/$RISCV_ARCH
+export RISCV=$REPO_BUILD/$RISCV_ARCH
 
 echo "REPO_HOME  = $REPO_HOME"
 echo "REPO_BUILD = $REPO_BUILD"

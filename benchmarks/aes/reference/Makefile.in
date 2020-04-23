@@ -1,0 +1,8 @@
+
+BLOCK_AES_REF_FILES = \
+    aes/reference/aes_enc.c \
+    aes/reference/aes_dec.c
+
+$(eval $(call add_lib_target,aes_reference,$(BLOCK_AES_REF_FILES)))
+
+

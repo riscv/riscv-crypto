@@ -24,31 +24,28 @@
 //
 
 #if (defined(__ZSCRYPTO) && (defined(RISCV_CRYPTO_RV32) || defined(RISCV_CRYPTO_RV64)))
-static inline uint32_t _ssha256_s0 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s0  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint32_t _ssha256_s1 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s1  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint32_t _ssha256_s2 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s2  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint32_t _ssha256_s3 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.s3  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-#else 
-static inline uint32_t _ssha256_s0 (uint32_t rs1) {return (ROTR32(rs1, 2) ^ ROTR32(rs1,13) ^ ROTR32(rs1,22));}
-static inline uint32_t _ssha256_s1 (uint32_t rs1) {return (ROTR32(rs1, 6) ^ ROTR32(rs1,11) ^ ROTR32(rs1,25));}
-static inline uint32_t _ssha256_s2 (uint32_t rs1) {return (ROTR32(rs1, 7) ^ ROTR32(rs1,18) ^    SHR(rs1, 3));}
-static inline uint32_t _ssha256_s3 (uint32_t rs1) {return (ROTR32(rs1,17) ^ ROTR32(rs1,19) ^    SHR(rs1,10));}
+static inline uint32_t _ssha256_sig0 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.sig0 %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint32_t _ssha256_sig1 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.sig1 %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint32_t _ssha256_sum0 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.sum0 %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint32_t _ssha256_sum1 (uint32_t rs1) {uint32_t rd; __asm__ ("ssha256.sum1 %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 #endif
 
 //
 // SHA512
 //
 
-#if defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV64)
-static inline uint64_t _ssha512_s0 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.s0  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint64_t _ssha512_s1 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.s1  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint64_t _ssha512_s2 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.s2  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-static inline uint64_t _ssha512_s3 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.s3  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
-#else 
-static inline uint64_t _ssha512_s0 (uint64_t rs1) {return (ROTR64(rs1,28) ^ ROTR64(rs1,34) ^ ROTR64(rs1,39));}
-static inline uint64_t _ssha512_s1 (uint64_t rs1) {return (ROTR64(rs1,14) ^ ROTR64(rs1,18) ^ ROTR64(rs1,41));}
-static inline uint64_t _ssha512_s2 (uint64_t rs1) {return (ROTR64(rs1, 1) ^ ROTR64(rs1, 8) ^ SHR(rs1,7))    ;}
-static inline uint64_t _ssha512_s3 (uint64_t rs1) {return (ROTR64(rs1,19) ^ ROTR64(rs1,61) ^ SHR(rs1,6))    ;}
+#if defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV32)
+static inline uint32_t _ssha512_sig0l(uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__ ("ssha512.sig0l %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _ssha512_sig0h(uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__ ("ssha512.sig0h %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _ssha512_sig1l(uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__ ("ssha512.sig1l %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _ssha512_sig1h(uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__ ("ssha512.sig1h %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _ssha512_sum0r(uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__ ("ssha512.sum0r %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _ssha512_sum1r(uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__ ("ssha512.sum1r %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+#elif defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV64)
+static inline uint64_t _ssha512_sig0 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.sig0  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint64_t _ssha512_sig1 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.sig1  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint64_t _ssha512_sum0 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.sum0  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint64_t _ssha512_sum1 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha512.sum1  %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 #endif
 
 //

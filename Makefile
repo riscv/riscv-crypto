@@ -30,3 +30,6 @@ clean:
 	$(MAKE) -C $(REPO_HOME)/doc/ clean
 	$(MAKE) -C $(REPO_HOME)/benchmarks/hash/sha3 clean
 
+doxygen:
+	doxygen benchmarks/doxygen.conf
+

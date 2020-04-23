@@ -1,4 +1,0 @@
-
-include crypto_hash/sha512/reference/Makefile.in
-include crypto_hash/sha512/zscrypto/Makefile.in
-

@@ -1,5 +1,5 @@
 
-VALID_CONFIGS = $(basename $(notdir $(shell find ./config/ -name *.conf)))
+VALID_CONFIGS = $(basename $(notdir $(shell find $(REPO_HOME)/benchmarks/config/)))
 
 ifeq ($(CONFIG),)
     $(error Please specify a config using 'CONFIG=X' where X is one of $(VALID_CONFIGS))
@@ -66,7 +66,7 @@ endef
 define add_header_target
 $(call map_header,${1}) : ${1}
 	@mkdir -p $(dir $(call map_header,${1}))
-	@cp   $${<} $${@}
+	cp   $${<} $${@}
 
 HEADERS_OUT += $(call map_header,${1})
 endef
@@ -76,7 +76,7 @@ endef
 # 1. Input file
 define add_obj_target
 
-$(call map_obj,${1}) : ${1}
+$(call map_obj,${1}) : ${1} headers
 	@mkdir -p $(dir $(call map_obj,${1}))
 	$(CC) $(CFLAGS) -c -o $${@} $${<}
 

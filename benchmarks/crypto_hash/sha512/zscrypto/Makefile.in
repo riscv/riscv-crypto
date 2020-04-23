@@ -1,7 +1,0 @@
-
-HASH_SHA512_ZSCRYPTO_FILES = \
-    crypto_hash/sha512/zscrypto/blocks_sha512.c \
-    crypto_hash/sha512/zscrypto/hash_sha512.c
-
-$(eval $(call add_lib_target,sha512_zscrypto,$(HASH_SHA512_ZSCRYPTO_FILES)))
-

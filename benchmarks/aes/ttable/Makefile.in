@@ -1,0 +1,8 @@
+
+BLOCK_AES_TTABLE_FILES = \
+    aes/ttable/aes_enc.c \
+    aes/ttable/aes_dec.c
+
+$(eval $(call add_lib_target,aes_ttable,$(BLOCK_AES_TTABLE_FILES)))
+
+

@@ -1,8 +1,0 @@
-
-
-SHA3_COMMON_SRC = crypto_hash/sha3/fips202.c
-SHA3_COMMON_OBJ = $(call map_obj,$(SHA3_COMMON_SRC))
-
-$(foreach SRC,$(SHA3_COMMON_SRC),$(eval $(call add_obj_target,$(SRC))))
-
-include crypto_hash/sha3/reference/Makefile.in

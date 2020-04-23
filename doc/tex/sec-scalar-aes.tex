@@ -78,71 +78,65 @@ in particular.
 \label{sec:scalar:aes:rv64}
 
 \begin{cryptoisa}
-saes64.ks1      rd, rs1, rcon  // KeySchedule: SubBytes, Rotate, Round Const
-saes64.ks2      rd, rs1, rs2   // KeySchedule: XOR sumation.
-
-saes64.encsm.lo rd, rs1, rs2   // Encrypt ShiftRows, SubBytes, MixColumns
-saes64.encsm.hi rd, rs1, rs2   //
-saes64.encs.lo  rd, rs1, rs2   // Encrypt ShiftRows, SubBytes
-saes64.encs.hi  rd, rs1, rs2   //
-
-saes64.imix     rd, rs1        // InvMixColumns for Decrypt KeySchedule
-saes64.decsm.lo rd, rs1, rs2   // Decrypt ShiftRows, SubBytes, MixColumns
-saes64.decsm.hi rd, rs1, rs2   //
-saes64.decs.lo  rd, rs1, rs2   // Decrypt ShiftRows, SubBytes
-saes64.decs.hi  rd, rs1, rs2   //
+saes64.ks1   rd, rs1, rcon // KeySchedule: SubBytes, Rotate, Round Const
+saes64.ks2   rd, rs1, rs2  // KeySchedule: XOR sumation
+saes64.imix  rd, rs1       // KeySchedule: InvMixColumns for Decrypt
+saes64.encsm rd, rs1, rs2  // Round:    ShiftRows,    SubBytes,    MixColumns
+saes64.encs  rd, rs1, rs2  // Round:    ShiftRows,    SubBytes
+saes64.decsm rd, rs1, rs2  // Round: InvShiftRows, InvSubBytes, InvMixColumns
+saes64.decs  rd, rs1, rs2  // Round: InvShiftRows, InvSubBytes
 \end{cryptoisa}
 
 These instructions are for RV64 only.
-They implement the SubBytes, ShiftRows and MixColumns transformations of AES
-over two instructions.
-Each instruction takes two 64-bit registers as input, which represents
-the entire 128 bit state of the AES cipher.
-The instructions use the equivalent inverse cipher construction
-\cite[Page 23, Section 5.3.5]{nist:fips:197}.
-Hence there are additional instruction specifically for performing the
-inverse MixColumns transformation as part of the modified key schedule.
+They implement the SubBytes, ShiftRows and MixColumns transformations of AES.
+Each round instruction takes two 64-bit registers as input, representing
+the 128-bit state of the AES cipher, and outputs one 64-bit
+result, i.e. half of the next round state.
 The byte mapping of input register values to AES state and output register
 values is shown in \figref{aes:rv64:mapping}.
 Pseudocode for the instructions is illustrated in
 \figref{pesudo:aes:rv64}.
 
-These instructions are designed to be implemented using macro-op fusion or
-operand memoisation.
-This is similar to the recommended \mnemonic{mulh}, \mnemonic{mul}
-sequence in the M extension to compute a full $32*32->64$ bit
-multiplication result \cite[Section 7.1]{riscv:spec:user}.
-
 \begin{itemize}
+
 \item
-The {\tt *.lo} variants compute the first 8 bytes of the next round
-state, while the {\tt *.hi} variants compute the last 8 bytes of the
-next round state.
-By performing the (Inverse) ShiftRows transformation before the
-(Inverse) SubBytes transformation, no SubBytes computations need to be
-thrown away.
-In this way, the {\tt *.lo/*.hi} encoding bit acts as an input selector.
-See the pseudocode in \figref{pesudo:aes:rv64} to see how this works.
-\item
-The \mnemonic{saes64.encsm.*}/\mnemonic{saes64.decsm.*} instructions perform the
-(Inverse) SubBytes, ShiftRows and MixColumns Transformations.
-\item
-The \mnemonic{saes64.encs.*}/\mnemonic{saes64.decs.*} instructions perform the
-(Inverse) SubBytes and ShiftRows Transformations.
-They are used for the last round of AES only.
-\item
-The \mnemonic{saes64.ks1}/\mnemonic{saes64.ks2} instructions are used in the
-KeySchedule.
+The
+\mnemonic{saes64.ks1}/\mnemonic{saes64.ks2}
+instructions are used in the encrypt KeySchedule.
 \mnemonic{saes64.ks1} implements the rotation, SubBytes and Round Constant
 addition steps.
 \mnemonic{saes64.ks2} implements the remaining {\tt xor} operations.
+
 \item
-The \mnemonic{saes64.imix} instruction applies only the inverse MixColumns
+The
+\mnemonic{saes64.imix}
+instruction applies the inverse MixColumns
 transformation to two columns of the state array, packed into a single
 64-bit register.
-It is used to create the inverse cipher key schedule, according to
+It is used to create the inverse cipher KeySchedule, according to
 the equivalent inverse cipher construction in
 \cite[Page 23, Section 5.3.5]{nist:fips:197}.
+
+\item
+The \mnemonic{saes64.encsm}/\mnemonic{saes64.decsm} instructions perform the
+(Inverse) SubBytes, ShiftRows and MixColumns Transformations.
+
+\item
+The \mnemonic{saes64.encs}/\mnemonic{saes64.decs} instructions perform the
+(Inverse) SubBytes and ShiftRows Transformations.
+They are used for the last round only.
+
+\item
+Computing the next round state uses two instructions.
+The high or low 8 bytes of the next state are selected by swapping the order
+of the source registers.
+The following code snippet shows one round of the AES block encryption.
+{\tt t0} and {\tt t1} hold the current round state.
+{\tt t2} and {\tt t3} hold the next round state.
+\begin{lstlisting}
+saes64.encsm t2, t0, t1 // ShiftRows, SubBytes, MixColumns bytes 0..7
+saes64.encsm t3, t1, t0 // "          "         "          "     8..15
+\end{lstlisting}
 \end{itemize}
 
 This proposal requires $6$ instructions per AES round:
@@ -151,17 +145,32 @@ $2$ \mnemonic{xor} to add the round key to the current state
 and
 $2$ of the relevent AES encrypt/decrypt instructions to perform the
     SubBytes, ShiftRows and MixColumns round functions.
-This adds up to approximately $80$ instructions per AES-128 block
-encryption, including pre/post-amble instructions.
+This adds up to $76$ instructions per AES-128 block
+encryption.
+Loading the plaintext and storing the cipher text (if 8-byte aligned)
+takes $4$ instructions.
+
+These instructions are amenable to macro-op fusion.
+The recommended sequences are:
+\begin{lstlisting}[language=pseudo]
+saes64.encsm rd1, rs1, rs2 // Different destination registers,
+saes64.encsm rd2, rs2, rs1 // identical source registers with swapped order.
+\end{lstlisting}
+This is similar to the recommended \mnemonic{mulh}, \mnemonic{mul}
+sequence in the M extension to compute a full $32*32->64$ bit
+multiplication result \cite[Section 7.1]{riscv:spec:user}.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{diagrams/aes-rv64-state.png}
 \caption{
-Mapping of AES state between input and output registers for
-the \mnemonic{saes64.enc.*} and \mnemonic{saes64.dec.*} instructions.
-$RD_{LO}$ and $RD_{HI}$ are the output of \mnemonic{saes64.*.lo}
-and \mnemonic{saes64.*.hi} instructions respectivley.
+Mapping of AES state between input and output registers for the round
+instructions.
+{\tt Rout1} is given by \mnemonic{saes64.encsm rd, rs1, rs2},
+and
+{\tt Rout2}          by \mnemonic{saes64.encsm rd, rs2, rs1}.
+The {\tt [Inv]ShiftRows} blocks show how to select the relevent $8$ bytes
+for further processing from the concatenation {\tt rs2 || \tt rs1}.
 }
 \label{fig:aes:rv64:mapping}
 \end{figure}
@@ -182,28 +191,26 @@ saes64.ks2(rs1,rs2):           // KeySchedule: XOR
     rd.32[0]  = rs1.32[1] ^ rs2.32[0]
     rd.32[1]  = rs1.32[1] ^ rs2.32[0] ^ rs2.32[1]
 
-saes64.enc(rs1, rs2, mix, hi): // SubBytes, ShiftRows, MixColumns
+saes64.imix(rs1):              // Inverse MixColumns
+    rd.32[0]  = InvAESMixColumn(rs1.32[0])
+    rd.32[1]  = InvAESMixColumn(rs1.32[1])
+
+saes64.enc(rs1, rs2, mix):     // SubBytes, ShiftRows, MixColumns
     t1.128    = AESShiftRows(rs2 || rs1)
-    t2.64     = t1.64[1] if hi else t1.64[0]
+    t2.64     = t1.64[0]
     t3.8[i]   = AESSBox(t2.8[i]) for i=0..7
     rd.32[0]  = AESMixColumn(t3.32[0]) if mix else t3.32[0]
     rd.32[1]  = AESMixColumn(t3.32[1]) if mix else t3.32[1]
 
-saes64.dec(rs1, rs2, mix, hi): // InvSubBytes, InvShiftRows, InvMixColumns
+saes64.dec(rs1, rs2, mix):     // InvSubBytes, InvShiftRows, InvMixColumns
     t1.128    = InvAESShiftRows(rs2 || rs1)
-    t2.64     = t1.64[1] if hi else t1.64[0]
+    t2.64     = t1.64[0]
     t3.8[i]   = InvAESSBox(t2.8[i]) for i=0..7
     rd.32[0]  = InvAESMixColumn(t3.32[0]) if mix else t3.32[0]
     rd.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
-
-saes64.imix(rs1):              // Inverse MixColumns
-    rd.32[0]  = InvAESMixColumn(rs1.32[0])
-    rd.32[1]  = InvAESMixColumn(rs1.32[1])
 \end{lstlisting}
 \caption{
 RV64 AES instruction pseudocode.
-Note how the $128$-bit {\tt [Inv]AESShiftRows} result in {\tt t1} has
-either the high or low $64$ bits selected for further processing.
 }
 \label{fig:pesudo:aes:rv64}
 \end{figure}

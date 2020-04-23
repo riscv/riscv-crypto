@@ -1,0 +1,13 @@
+
+ifeq ($(ZSCRYPTO),1)
+ifeq ($(XLEN),64)
+
+HASH_SHA3_ZSCRYPTO_RV64_FILES = \
+    sha3/fips202.c \
+    sha3/zscrypto_rv64/Keccak.c \
+#    sha3/zscrypto_rv64/KeccakPermute.S
+
+$(eval $(call add_lib_target,sha3_zscrypto_rv64,$(HASH_SHA3_ZSCRYPTO_RV64_FILES)))
+
+endif
+endif

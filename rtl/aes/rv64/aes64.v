@@ -11,10 +11,9 @@
 module aes64(
 
 input  wire         valid   , // Are the inputs valid?
-input  wire         hi      , // High (set) or low (clear) output?
 input  wire         mix     , // Mix enable for op_enc/op_dec
-input  wire         op_enc  , // Encrypt hi/lo
-input  wire         op_dec  , // Decrypt hi/lo 
+input  wire         op_enc  , // Encrypt
+input  wire         op_dec  , // Decrypt
 input  wire         op_imix , // Inverse MixColumn transformation (if set)
 input  wire         op_ks1  , // KeySchedule 1
 input  wire         op_ks2  , // KeySchedule 2
@@ -66,21 +65,17 @@ wire [31:0] ish_3   = {row_3[23: 0], row_3[31:24]};
 
 //
 // Re-construct columns from rows
-wire [31:0] f_col_3 = {`BY(fsh_3,0),`BY(fsh_2,0),`BY(fsh_1,0),`BY(fsh_0,0)};
-wire [31:0] f_col_2 = {`BY(fsh_3,1),`BY(fsh_2,1),`BY(fsh_1,1),`BY(fsh_0,1)};
 wire [31:0] f_col_1 = {`BY(fsh_3,2),`BY(fsh_2,2),`BY(fsh_1,2),`BY(fsh_0,2)};
 wire [31:0] f_col_0 = {`BY(fsh_3,3),`BY(fsh_2,3),`BY(fsh_1,3),`BY(fsh_0,3)};
 
-wire [31:0] i_col_3 = {`BY(ish_3,0),`BY(ish_2,0),`BY(ish_1,0),`BY(ish_0,0)};
-wire [31:0] i_col_2 = {`BY(ish_3,1),`BY(ish_2,1),`BY(ish_1,1),`BY(ish_0,1)};
 wire [31:0] i_col_1 = {`BY(ish_3,2),`BY(ish_2,2),`BY(ish_1,2),`BY(ish_0,2)};
 wire [31:0] i_col_0 = {`BY(ish_3,3),`BY(ish_2,3),`BY(ish_1,3),`BY(ish_0,3)};
 
 //
 // Hi/Lo selection
 
-wire [63:0] enc_sel = hi ? {f_col_3, f_col_2} : {f_col_1, f_col_0};
-wire [63:0] dec_sel = hi ? {i_col_3, i_col_2} : {i_col_1, i_col_0};
+wire [63:0] enc_sel = {f_col_1, f_col_0};
+wire [63:0] dec_sel = {i_col_1, i_col_0};
 
 //
 // SBox input/output
@@ -93,14 +88,14 @@ wire [ 7:0] sb_inv_out_4, sb_inv_out_5, sb_inv_out_6, sb_inv_out_7;
 //
 // KeySchedule 1 SBox input selection
 wire        rcon_rot    = rs2[3:0] != 4'hA;
-wire [ 3:0] rconst      = rcon_rot ? rcon[rs2[3:0]] : 4'b0;
+wire [ 7:0] rconst      = rcon_rot ? rcon[rs2[3:0]] : 8'b0;
 
 wire [ 7:0] ks1_sb3     = rcon_rot ? rs1[55:48] : rs1[63:56];
 wire [ 7:0] ks1_sb2     = rcon_rot ? rs1[47:40] : rs1[55:48];
 wire [ 7:0] ks1_sb1     = rcon_rot ? rs1[39:32] : rs1[47:40];
 wire [ 7:0] ks1_sb0     = rcon_rot ? rs1[63:56] : rs1[39:32];
 
-wire [31:0] ks1_sbout   = e_sbout[31:0] ^ {28'b0, rconst};
+wire [31:0] ks1_sbout   = e_sbout[31:0] ^ {24'b0, rconst};
 
 // If just doing sub-bytes, sbox inputs direct from rs1.
 wire [ 7:0] sb_fwd_in_0 = op_ks1 ? ks1_sb0 : `BY(enc_sel, 0);

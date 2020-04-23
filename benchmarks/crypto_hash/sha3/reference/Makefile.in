@@ -1,7 +1,0 @@
-
-HASH_SHA3_REF_FILES = \
-    $(SHA3_COMMON_OBJ) \
-    crypto_hash/sha3/reference/Keccak.c
-
-$(eval $(call add_lib_target,sha3_reference,$(HASH_SHA3_REF_FILES)))
-
