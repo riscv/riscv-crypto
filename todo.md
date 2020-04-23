@@ -31,7 +31,7 @@ SM4         |          |       |
 - [x] [AES RV64](rtl/aes/rv64)
 - [x] [SHA256](rtl/ssha256)
 - [x] [SHA512](rtl/ssha512)
-- [ ] SM3   
+- [x] [SM3](rtl/ssm3)
 - [ ] SM4   
 
 **Combined Instruction Classes:**

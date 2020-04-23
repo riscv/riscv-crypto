@@ -123,6 +123,7 @@ include lut4/Makefile.in
 include ssha256/Makefile.in
 include ssha512/Makefile.in
 include aes/Makefile.in
+include ssm3/Makefile.in
 
 all: $(TARGETS)
 
