@@ -13,6 +13,10 @@
 
 ## About
 
+- **Note:** See the
+   [dev/next-release](https://github.com/scarv/riscv-crypto/tree/dev/next-release)
+   branch for the most up to date version.
+
 - This repository is used to develop standardisation proposals for
   scalar cryptographic instruction set extensions for the RISC-V
   architecture.
