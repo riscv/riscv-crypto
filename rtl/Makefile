@@ -124,6 +124,7 @@ include ssha256/Makefile.in
 include ssha512/Makefile.in
 include aes/Makefile.in
 include ssm3/Makefile.in
+include ssm4/Makefile.in
 
 all: $(TARGETS)
 

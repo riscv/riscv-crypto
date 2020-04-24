@@ -29,17 +29,19 @@ software implementation.
 \begin{lstlisting}[language=pseudo]
 ssm4.ed(rs1, rs2, bs):
     x.8   = rs2.8[bs]
-    x.32  = zext(SM4SBox(x.8), XLEN)
-    x.32  = x.32 ^ (x.32 << 8) ^ (x.32 << 2) ^ (x.32 << 18)
-    x.32  = ((x.32 & 0x3F) << 26) ^ ((x.32 & 0xC0) << 10)
-    x.32  = ROTL(x.32, 8*bs) ^ rs1
+    x.32  = zext(SM4SBox(x.8), 32)
+    x.32  = x.32 ^ (x.32 << 8) ^ (x.32 << 2) ^ (x.32 << 18) ^
+                   ((x.32 & 0x3F) << 26) ^ ((x.32 & 0xC0) << 10)
+    x.32  = ROTL(x.32, 8*bs)
+    rd    = x.32 ^ rs1
 
 ssm4.ks(rs1, rs2, bs):
     x.8   = rs2.8[bs]
-    x.32  = zext(SM4SBox(x.8), XLEN)
-    x.32  = x.32 ^ ((x.32 & 0x07) << 29) ^ ((x.32 & 0xFE) << 7)
-    x.32  = ((x.32 & 1) << 23) ^ ((x.32 & 0xF8) << 13)
-    x.32  = ROTL(x.32, 8*bs) ^ rs1
+    x.32  = zext(SM4SBox(x.8), 32)
+    x.32  = x.32 ^ ((x.32 & 0x07) << 29) ^ ((x.32 & 0xFE) << 7) ^
+                   ((x.32 & 1) << 23) ^ ((x.32 & 0xF8) << 13)
+    x.32  = ROTL(x.32, 8*bs)
+    rd    = x.32 ^ rs1
 \end{lstlisting}
 \caption{Scalar SM4 instruction pseudocode.}
 \end{figure}

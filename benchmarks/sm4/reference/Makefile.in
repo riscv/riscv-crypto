@@ -1,0 +1,7 @@
+
+BLOCK_SM4_REF_FILES = \
+    sm4/reference/sm4_key_schedule.c
+
+$(eval $(call add_lib_target,sm4_reference,$(BLOCK_SM4_REF_FILES)))
+
+

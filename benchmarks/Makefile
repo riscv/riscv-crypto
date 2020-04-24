@@ -25,6 +25,8 @@ include aes/ttable/Makefile.in
 include aes/zscrypto_rv32/Makefile.in
 include aes/zscrypto_rv64/Makefile.in
 
+include sm4/reference/Makefile.in
+
 include sha256/reference/Makefile.in
 include sha256/zscrypto/Makefile.in
 

@@ -8,6 +8,8 @@ $(eval $(call add_test_elf_target,test/test_hash_sha3.c,sha3_reference,sha3_refe
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_reference,aes_reference))
 $(eval $(call add_test_elf_target,test/test_block_aes.c,aes_ttable,aes_ttable))
 
+$(eval $(call add_test_elf_target,test/test_block_sm4.c,sm4_reference,sm4_reference))
+
 ifeq ($(ZSCRYPTO),1)
 
 $(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256_zscrypto))
