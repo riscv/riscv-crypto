@@ -51,31 +51,100 @@ const uint32_t CK [32] = {
                 ((uint32_t)SBOX[(A >>  8) & 0xFF] <<  8) | \
                 ((uint32_t)SBOX[(A >>  0) & 0xFF] <<  0) ) \
 
-#define L(B)  (B ^ ROL32(B, 2) ^ ROL32(B,10) ^ ROL32(B,18) ^ ROL32(B,24))
-#define Lp(B) (B ^ ROL32(B,13) ^ ROL32(B,23)                            )
+static inline uint32_t T(uint32_t X) {
+    uint32_t x1 = TAU(X);
+    uint32_t x2 = x1 ^ ROL32(x1, 2) ^ ROL32(x1,10) ^
+                       ROL32(x1,18) ^ ROL32(x1,24) ;
+    return   x2;
+}
 
-#define T(X) (L(TAU(X)))
-#define Tp(X) (Lp(TAU(X)))
+static inline uint32_t Tp(uint32_t X) {
+    uint32_t x1 = TAU(X);
+    uint32_t x2 = x1 ^ ROL32(x1,13) ^ ROL32(x1,23);
+    return   x2;
+}
 
 void    sm4_key_schedule_enc (
     uint32_t rk [32], //!< Output expanded round key
     uint8_t  mk [16]  //!< Input cipher key
 ) {
-
     uint32_t * mkp = (uint32_t*)mk;
+    uint32_t * rkp = (uint32_t*)rk;
+    uint32_t * ckp = (uint32_t*)CK;
+    uint32_t * rke = (uint32_t*)rk + 32;
 
-    uint32_t K0 = __bultin_swap32(mkp[0]) ^ FK[0];
-    uint32_t K1 = __bultin_swap32(mkp[1]) ^ FK[1];
-    uint32_t K2 = __bultin_swap32(mkp[2]) ^ FK[2];
-    uint32_t K3 = __bultin_swap32(mkp[3]) ^ FK[3];
+    uint32_t K0 = __builtin_bswap32(mkp[0]) ^ FK[0];
+    uint32_t K1 = __builtin_bswap32(mkp[1]) ^ FK[1];
+    uint32_t K2 = __builtin_bswap32(mkp[2]) ^ FK[2];
+    uint32_t K3 = __builtin_bswap32(mkp[3]) ^ FK[3];
 
-    for(int i = 0; i < 32; i++) {
+    while(rkp < rke) {
 
-        uint32_t K4 = K0 ^ Tp(K1 ^ K2 ^ K3 ^ CK[i]);
+        K0 = K0 ^ Tp(K1 ^ K2 ^ K3 ^ ckp[0]);
+        K1 = K1 ^ Tp(K2 ^ K3 ^ K0 ^ ckp[1]);
+        K2 = K2 ^ Tp(K3 ^ K0 ^ K1 ^ ckp[2]);
+        K3 = K3 ^ Tp(K0 ^ K1 ^ K2 ^ ckp[3]);
 
-        rk[i] = K4;
+        rkp[0] = K0;
+        rkp[1] = K1;
+        rkp[2] = K2;
+        rkp[3] = K3;
 
+        rkp     += 4;
+        ckp     += 4;
     }
+
+}
+
+
+void    sm4_key_schedule_dec (
+    uint32_t rk [32], //!< Output expanded round key
+    uint8_t  mk [16]  //!< Input cipher key
+){
+
+    uint32_t tmp;
+
+    sm4_key_schedule_enc(rk, mk);
+
+    for(int i = 0; i < 16; i ++) {
+        tmp      = rk[   i];
+        rk[   i] = rk[31-i];
+        rk[31-i] = tmp     ;
+    }
+
+}
+
+
+void    sm4_block_enc_dec (
+    uint8_t  out [16], // Output block
+    uint8_t  in  [16], // Input block
+    uint32_t rk  [32]  // Round key (encrypt or decrypt)
+){
+
+    uint32_t * inp = (uint32_t*)in      ;
+    uint32_t * op  = (uint32_t*)out     ;
+    uint32_t * rkp = (uint32_t*)rk      ;
+    uint32_t * rke = (uint32_t*)rk + 32 ;
+
+    uint32_t   X0  = __builtin_bswap32(inp[0]);
+    uint32_t   X1  = __builtin_bswap32(inp[1]);
+    uint32_t   X2  = __builtin_bswap32(inp[2]);
+    uint32_t   X3  = __builtin_bswap32(inp[3]);
+
+    while(rkp < rke) {
+
+        X0   = X0 ^ T(X1 ^ X2 ^ X3 ^ rkp[0]);
+        X1   = X1 ^ T(X2 ^ X3 ^ X0 ^ rkp[1]);
+        X2   = X2 ^ T(X3 ^ X0 ^ X1 ^ rkp[2]);
+        X3   = X3 ^ T(X0 ^ X1 ^ X2 ^ rkp[3]);
+
+        rkp += 4;
+    }
+
+    op[0] = __builtin_bswap32(X3);
+    op[1] = __builtin_bswap32(X2);
+    op[2] = __builtin_bswap32(X1);
+    op[3] = __builtin_bswap32(X0);
 
 }
 
