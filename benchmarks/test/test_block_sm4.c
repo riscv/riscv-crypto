@@ -68,12 +68,22 @@ int main(int argc, char ** argv) {
         int tr = 0;
         for(int i = 0; i < 16; i ++) {
 
-            if(ct[i] != cts[test][i]) { tr |= 1; }
-            if(fi[i] != pt[i])        { tr |= 2; }
+            if(ct[i] != cts[test][i]) {
+                tr |= 1; 
+            }
+            if(fi[i] != pt[i])        {
+                tr |= 2;
+            }
 
         }
 
-        if(tr) {return tr;}
+        if(tr) {
+            printf("print('"STR(TEST_NAME)"Test %d Failed with code: %d')\n", test, tr);
+            printf("sys.exit(1)\n", test, tr);
+            return tr;
+        } else {
+            printf("print('"STR(TEST_NAME)" Test %d passed.')\n", test);
+        }
     }
 
     return 0;

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "riscvcrypto/sm4/api_sm4.h"
 
@@ -78,9 +79,13 @@ void    sm4_key_schedule_enc (
     uint32_t K2 = __builtin_bswap32(mkp[2]) ^ FK[2];
     uint32_t K3 = __builtin_bswap32(mkp[3]) ^ FK[3];
 
+    uint32_t t  ;
+
     while(rkp < rke) {
 
-        K0 = K0 ^ Tp(K1 ^ K2 ^ K3 ^ ckp[0]);
+        t  = K1 ^ K2 ^ K3 ^ ckp[0];
+        K0 = K0 ^ Tp(t);
+
         K1 = K1 ^ Tp(K2 ^ K3 ^ K0 ^ ckp[1]);
         K2 = K2 ^ Tp(K3 ^ K0 ^ K1 ^ ckp[2]);
         K3 = K3 ^ Tp(K0 ^ K1 ^ K2 ^ ckp[3]);

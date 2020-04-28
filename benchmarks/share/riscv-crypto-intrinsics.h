@@ -52,7 +52,7 @@ static inline uint64_t _ssha512_sum1 (uint64_t rs1) {uint64_t rd; __asm__ ("ssha
 // AES
 //
 
-#if (defined(__ZSCRYPTO))
+#if (defined(__ZSCRYPTO) && defined(RISCV_CRYPTO_RV32))
 static inline uint32_t _saes32_encs (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes32.encs  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 static inline uint32_t _saes32_encsm(uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes32.encsm %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 static inline uint32_t _saes32_decs (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("saes32.decs  %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
@@ -71,6 +71,15 @@ static inline uint64_t _saes64_decsm_lo(uint64_t rs1, uint64_t rs2 ) {uint64_t r
 static inline uint64_t _saes64_decsm_hi(uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decsm.hi %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
 static inline uint64_t _saes64_decs_lo (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decs.lo  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
 static inline uint64_t _saes64_decs_hi (uint64_t rs1, uint64_t rs2 ) {uint64_t rd; __asm__("saes64.decs.hi  %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2 )); return rd;}
+#endif
+
+//
+// SM4
+//
+
+#if (defined(__ZSCRYPTO))
+static inline uint32_t _ssm4_ks (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("ssm4.ks %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
+static inline uint32_t _ssm4_ed (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd; __asm__("ssm4.ed %0, %1, %2, %3" : "=r"(rd) : "r"(rs1), "r"(rs2), "i"(bs)); return rd;}
 #endif
 
 //

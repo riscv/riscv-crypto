@@ -1,0 +1,7 @@
+
+BLOCK_SM4_ZSCRYPTO_FILES = \
+    sm4/zscrypto/sm4_zscrypto.c
+
+$(eval $(call add_lib_target,sm4_zscrypto,$(BLOCK_SM4_ZSCRYPTO_FILES)))
+
+
