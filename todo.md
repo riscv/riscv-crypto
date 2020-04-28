@@ -14,7 +14,7 @@ SHA256      |    x     |  x    | x
 SHA512      |    x     |       | x
 SHA3        |    x     |       |
 SM3         |          |       | 
-SM4         |          |       | 
+SM4         |    x     |  x    | x
 
 - For SM4 example code, see
   [mjosaarinen / lwaes_isa](https://github.com/mjosaarinen/lwaes_isa/).
@@ -32,7 +32,7 @@ SM4         |          |       |
 - [x] [SHA256](rtl/ssha256)
 - [x] [SHA512](rtl/ssha512)
 - [x] [SM3](rtl/ssm3)
-- [ ] SM4   
+- [x] [SM4](rtl/ssm4)
 
 **Combined Instruction Classes:**
 
