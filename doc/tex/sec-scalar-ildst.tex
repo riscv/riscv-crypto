@@ -5,6 +5,11 @@
 \subsection{Auto-aligning Indexed Load and Store}
 \label{sec:ildst}
 
+\note{These instruction are marked for removal, since their benefits
+      can be made up for using micro-architectural techniques.
+      And, though they are very useful generally, they are not ``Crypto''
+      instructions.}
+
 \begin{cryptoisa}
 RV32, RV64:
     lbx     rd,  rs1, rs2 : rd = sext(mem[rs1 + (rs2     )])
