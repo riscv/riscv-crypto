@@ -206,7 +206,7 @@ void    aes_key_schedule (
 
     }
     
-    for(int i = Nk; i < Nk*(Nr+1); i += 1) {
+    for(int i = Nk; i < 4*(Nr+1); i += 1) {
 
         uint32_t temp = rk[i-1];
 
