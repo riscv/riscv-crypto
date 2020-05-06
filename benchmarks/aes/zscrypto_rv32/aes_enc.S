@@ -1,25 +1,46 @@
 
 #include "aes_common.S"
 
+#define T0 a4
+#define T1 a5
+#define T2 a6
+#define T3 a7
+#define U0 t0
+#define U1 t1
+#define U2 t2
+#define U3 t3
+#define CT a0
+#define PT a1
+#define RK a2
+#define KP a3
+
 .text
 
 .func   aes_128_ecb_encrypt                     // a0 - uint8_t     ct [16],
 .global aes_128_ecb_encrypt                     // a1 - uint8_t     pt [16],
 aes_128_ecb_encrypt:                            // a2 - uint32_t  * rk,
-    #define T0 a4
-    #define T1 a5
-    #define T2 a6
-    #define T3 a7
-    #define U0 t0
-    #define U1 t1
-    #define U2 t2
-    #define U3 t3
-    #define CT a0
-    #define PT a1
-    #define RK a2
-    #define KP a3
+    addi    KP, RK, 16*10                       // kp = rk + 4*nr
+    j       aes_ecb_encrypt
+.endfunc
 
-    addi    KP, RK, 160                         // kp = rk + 4*nr
+.func   aes_192_ecb_encrypt                     // a0 - uint8_t     ct [16],
+.global aes_192_ecb_encrypt                     // a1 - uint8_t     pt [16],
+aes_192_ecb_encrypt:                            // a2 - uint32_t  * rk,
+    addi    KP, RK, 16*12                       // kp = rk + 4*nr
+    j       aes_ecb_encrypt
+.endfunc
+
+.func   aes_256_ecb_encrypt                     // a0 - uint8_t     ct [16],
+.global aes_256_ecb_encrypt                     // a1 - uint8_t     pt [16],
+aes_256_ecb_encrypt:                            // a2 - uint32_t  * rk,
+    addi    KP, RK, 16*14                       // kp = rk + 4*nr
+    j       aes_ecb_encrypt
+.endfunc
+
+
+.func   aes_ecb_encrypt                         // a0 - uint8_t     ct [16],
+                                                // a1 - uint8_t     pt [16],
+aes_ecb_encrypt:                                // a2 - uint32_t  * rk,
 
     AES_LOAD_STATE T0,T1,T2,T3,PT,U0,U1,U2,U3   // Columns in T*
 

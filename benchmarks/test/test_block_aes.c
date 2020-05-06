@@ -112,6 +112,11 @@ void test_aes_192(int num_tests) {
     uint64_t start_instrs;
 
     for(int i = 0; i < num_tests; i ++) {
+        
+        for(int i = 0; i < AES_192_RK_WORDS; i ++) {
+            erk[i] = 0;
+            drk[i] = 0;
+        }
 
         start_instrs = test_rdinstret();
         aes_192_enc_key_schedule(erk, key    );

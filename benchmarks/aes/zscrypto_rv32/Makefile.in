@@ -4,7 +4,9 @@ ifeq ($(ZSCRYPTO),1)
 BLOCK_AES_ZSCRYPTO_RV32_FILES = \
     aes/zscrypto_rv32/aes_enc.S \
     aes/zscrypto_rv32/aes_dec.S \
-    aes/zscrypto_rv32/aes_128_ks.S
+    aes/zscrypto_rv32/aes_128_ks.S \
+    aes/zscrypto_rv32/aes_192_ks.S \
+    aes/zscrypto_rv32/aes_256_ks.S
 
 $(eval $(call add_lib_target,aes_zscrypto_rv32,$(BLOCK_AES_ZSCRYPTO_RV32_FILES)))
 
