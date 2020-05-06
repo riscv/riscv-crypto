@@ -66,15 +66,13 @@ void    aes_key_schedule (
     const int  Nk , //!< Number of words in the key.
     const int  Nr   //!< Number of rounds.
 ){
-    const int        Nb = 4;
-
-    for(int i = 0; i < Nb; i ++) {
+    for(int i = 0; i < Nk; i ++) {
         
         rk[i] = U8_TO_U32LE((ck +  4*i));
 
     }
     
-    for(int i = 4; i < Nk*(Nr+1); i += 1) {
+    for(int i = Nk; i < Nk*(Nr+1); i += 1) {
 
         uint32_t temp = rk[i-1];
 
@@ -101,16 +99,22 @@ void    aes_128_enc_key_schedule (
     uint32_t * const rk,
     uint8_t  * const ck
 ){
-    aes_key_schedule(rk, ck, 4, 10);
+    aes_key_schedule(rk, ck, AES_128_NK, AES_128_NR);
 }
 
-/*!
-*/
-void    aes_128_dec_key_schedule (
+void    aes_192_enc_key_schedule (
     uint32_t * const rk,
     uint8_t  * const ck
 ){
-    aes_key_schedule(rk, ck, 4, 10);
+    aes_key_schedule(rk, ck, AES_192_NK, AES_192_NR);
+}
+
+
+void    aes_256_enc_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_key_schedule(rk, ck, AES_256_NK, AES_256_NR);
 }
 
 
@@ -181,10 +185,11 @@ static void aes_mix_columns_enc(
 
 /*!
 */
-void    aes_128_ecb_encrypt (
+void    aes_ecb_encrypt (
     uint8_t     ct [AES_BLOCK_BYTES],
     uint8_t     pt [AES_BLOCK_BYTES],
-    uint32_t  * rk
+    uint32_t  * rk                  ,
+    int         nr
 ){
     int round = 0;
 
@@ -193,7 +198,7 @@ void    aes_128_ecb_encrypt (
         ct[i] = pt[i] ^ ((uint8_t*)rk)[i];
     }
     
-    for(round = 1; round < AES_128_NR; round ++) {
+    for(round = 1; round < nr; round ++) {
         
         aes_subbytes_shiftrows(ct);
         aes_mix_columns_enc(ct);
@@ -209,6 +214,31 @@ void    aes_128_ecb_encrypt (
     for(int i = 0; i < AES_BLOCK_BYTES; i ++) {
         ct[i] ^= ((uint8_t*)rk)[(16*round)+i];
     }
+}
+
+void    aes_128_ecb_encrypt (
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_encrypt(ct,pt,rk,AES_128_NR);
+}
+
+
+void    aes_192_ecb_encrypt (
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_encrypt(ct,pt,rk,AES_192_NR);
+}
+
+void    aes_256_ecb_encrypt (
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_encrypt(ct,pt,rk,AES_256_NR);
 }
 
 //!@}

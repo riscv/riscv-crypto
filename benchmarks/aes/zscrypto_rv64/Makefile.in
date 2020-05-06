@@ -5,7 +5,10 @@ ifeq ($(XLEN),64)
 BLOCK_AES_ZSCRYPTO_RV64_FILES = \
     aes/zscrypto_rv64/aes_enc.S \
     aes/zscrypto_rv64/aes_dec.S \
-    aes/zscrypto_rv64/aes_128_ks.S
+    aes/zscrypto_rv64/aes_128_ks.S \
+    aes/zscrypto_rv64/aes_192_ks.S \
+    aes/zscrypto_rv64/aes_256_ks.S \
+    aes/zscrypto_rv64/aes_ks_dec_invmc.S
 
 $(eval $(call add_lib_target,aes_zscrypto_rv64,$(BLOCK_AES_ZSCRYPTO_RV64_FILES)))
 

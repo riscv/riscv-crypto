@@ -103,23 +103,48 @@ static void aes_mix_columns_dec(
     }
 }
 
+// defined in aes_enc.c
+extern void    aes_key_schedule (
+    uint32_t * const rk , //!< Output Nk*(Nr+1) word cipher key.
+    uint8_t  * const ck , //!< Input Nk byte cipher key
+    const int  Nk , //!< Number of words in the key.
+    const int  Nr   //!< Number of rounds.
+);
 
-/*!
-@brief Generic single-block AES encrypt function
-@param [out] pt - Output plaintext
-@param [in]  ct - Input cipher text
-@param [in]  rk - The expanded key schedule
-*/
-void    aes_128_ecb_decrypt (
+void    aes_128_dec_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_key_schedule(rk, ck, AES_128_NK, AES_128_NR);
+}
+
+void    aes_192_dec_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_key_schedule(rk, ck, AES_192_NK, AES_192_NR);
+}
+
+
+void    aes_256_dec_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_key_schedule(rk, ck, AES_256_NK, AES_256_NR);
+}
+
+
+void    aes_ecb_decrypt (
     uint8_t     pt [AES_BLOCK_BYTES],
     uint8_t     ct [AES_BLOCK_BYTES],
-    uint32_t  * rk
+    uint32_t  * rk                  ,
+    int         nr
 ){
     for(int i = 0; i < 16; i ++) {
-        pt[i] = ct[i] ^ ((uint8_t*)rk)[(16*AES_128_NR) + i];
+        pt[i] = ct[i] ^ ((uint8_t*)rk)[(16*nr) + i];
     }
 
-    for(int round = AES_128_NR-1; round >= 1; round --) {
+    for(int round = nr -1; round >= 1; round --) {
         
         aes_subbytes_shiftrows_dec(pt);
     
@@ -136,6 +161,30 @@ void    aes_128_ecb_decrypt (
     for(int i = 0; i < 16; i ++) {
         pt[i] ^= ((uint8_t*)rk)[i];
     }
+}
+
+void    aes_128_ecb_decrypt (
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_decrypt(pt,ct,rk,AES_128_NR);
+}
+
+void    aes_192_ecb_decrypt (
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_decrypt(pt,ct,rk,AES_192_NR);
+}
+
+void    aes_256_ecb_decrypt (
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_decrypt(pt,ct,rk,AES_256_NR);
 }
 
 //!@}

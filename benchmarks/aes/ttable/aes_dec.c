@@ -149,17 +149,17 @@ uint32_t AES_DEC_TBOX_4[] = AES_DEC_TBOX_X;
 
 /*!
 */
-void    aes_128_dec_key_schedule (
+void    aes_dec_key_schedule_inv_mc (
     uint32_t * const rk,
-    uint8_t  * const ck
+    uint8_t  * const ck,
+    int              nr
 ){
     // First, call the encryption key-schedule
-    aes_128_enc_key_schedule(rk,ck);
-    for( int i = 1; i < AES_128_NR; i++ ) {
-      uint32_t t_0 = rk[ ( i * AES_128_NB ) + 0 ];
-      uint32_t t_1 = rk[ ( i * AES_128_NB ) + 1 ];
-      uint32_t t_2 = rk[ ( i * AES_128_NB ) + 2 ];
-      uint32_t t_3 = rk[ ( i * AES_128_NB ) + 3 ];
+    for( int i = 1; i < nr; i++ ) {
+      uint32_t t_0 = rk[ ( i * 4 ) + 0 ];
+      uint32_t t_1 = rk[ ( i * 4 ) + 1 ];
+      uint32_t t_2 = rk[ ( i * 4 ) + 2 ];
+      uint32_t t_3 = rk[ ( i * 4 ) + 3 ];
 
       t_0 = AES_DEC_TBOX_0[ AES_ENC_TBOX_4[ ( t_0 >>  0 ) & 0xFF ] & 0xFF ] ^
             AES_DEC_TBOX_1[ AES_ENC_TBOX_4[ ( t_0 >>  8 ) & 0xFF ] & 0xFF ] ^
@@ -178,25 +178,53 @@ void    aes_128_dec_key_schedule (
             AES_DEC_TBOX_2[ AES_ENC_TBOX_4[ ( t_3 >> 16 ) & 0xFF ] & 0xFF ] ^
             AES_DEC_TBOX_3[ AES_ENC_TBOX_4[ ( t_3 >> 24 ) & 0xFF ] & 0xFF ] ;
 
-      rk[ ( i * AES_128_NB ) + 0 ] = t_0;
-      rk[ ( i * AES_128_NB ) + 1 ] = t_1;
-      rk[ ( i * AES_128_NB ) + 2 ] = t_2;
-      rk[ ( i * AES_128_NB ) + 3 ] = t_3;
+      rk[ ( i * 4 ) + 0 ] = t_0;
+      rk[ ( i * 4 ) + 1 ] = t_1;
+      rk[ ( i * 4 ) + 2 ] = t_2;
+      rk[ ( i * 4 ) + 3 ] = t_3;
     }
 }
 
-/*!
-@brief Generic single-block AES encrypt function
-@param [out] pt - Output plaintext
-@param [in]  ct - Input cipher text
-@param [in]  rk - The expanded key schedule
-*/
-void    aes_128_ecb_decrypt (
+// defined in aes_enc.c
+extern void    aes_key_schedule (
+    uint32_t * const rk , //!< Output Nk*(Nr+1) word cipher key.
+    uint8_t  * const ck , //!< Input Nk byte cipher key
+    const int  Nk , //!< Number of words in the key.
+    const int  Nr   //!< Number of rounds.
+);
+
+void    aes_128_dec_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_128_enc_key_schedule(rk, ck);
+    aes_dec_key_schedule_inv_mc(rk,ck,AES_128_NR);
+}
+
+void    aes_192_dec_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_192_enc_key_schedule(rk, ck);
+    aes_dec_key_schedule_inv_mc(rk,ck,AES_192_NR);
+}
+
+
+void    aes_256_dec_key_schedule (
+    uint32_t * const rk,
+    uint8_t  * const ck
+){
+    aes_256_enc_key_schedule(rk, ck);
+    aes_dec_key_schedule_inv_mc(rk,ck,AES_256_NR);
+}
+
+void    aes_ecb_decrypt (
     uint8_t     pt [AES_BLOCK_BYTES],
     uint8_t     ct [AES_BLOCK_BYTES],
-    uint32_t  * rk
+    uint32_t  * rk,
+    int         nr
 ){
-    uint32_t *rkp = ( AES_128_NB * AES_128_NR ) + ( uint32_t* )( rk ), t_0, t_1, t_2, t_3, t_4, t_5, t_6, t_7;
+    uint32_t *rkp = ( AES_128_NB * nr) + ( uint32_t* )( rk ), t_0, t_1, t_2, t_3, t_4, t_5, t_6, t_7;
 
     t_0 = U8_TO_U32LE((ct +  0));
     t_1 = U8_TO_U32LE((ct +  4));
@@ -205,7 +233,7 @@ void    aes_128_ecb_decrypt (
 
     AES_DEC_RND_INIT();
 
-    for( int i = 1; i < AES_128_NR; i++ ) {
+    for( int i = 1; i < nr; i++ ) {
       AES_DEC_RND_ITER();
     }
 
@@ -215,6 +243,32 @@ void    aes_128_ecb_decrypt (
     U32_TO_U8LE(pt, t_1,  4 );
     U32_TO_U8LE(pt, t_2,  8 );
     U32_TO_U8LE(pt, t_3, 12 );
+}
+
+void    aes_128_ecb_decrypt (
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_decrypt(pt,ct,rk,AES_128_NR);
+}
+
+
+void    aes_192_ecb_decrypt (
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_decrypt(pt,ct,rk,AES_192_NR);
+}
+
+
+void    aes_256_ecb_decrypt (
+    uint8_t     pt [AES_BLOCK_BYTES],
+    uint8_t     ct [AES_BLOCK_BYTES],
+    uint32_t  * rk
+){
+    aes_ecb_decrypt(pt,ct,rk,AES_256_NR);
 }
 
 //!@}
