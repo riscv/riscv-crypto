@@ -59,16 +59,36 @@ to work.
 These are the results of running each design through Yosys and ABC
 to get rough synthesis results.
 
-Module Name    | NAND2 Cells[1] | LTP[2]
----------------|----------------|----------------
-`lut4_rv32`    |                |   
-`lut4_rv64`    |                |   
-`saes32`       |                |   
-`saes64`       |                |   
-`ssha256`      |                |   
-`ssha512`      |                |   
-`ssm3`         |                |   
-`ssm4`         |                |   
+The top level module for RV32/64 gives results for *all* crypto
+instructions for the given architecture.
+This is then broken down per instruction module in the rows below.
+
+Note that none of these numbers include the proposed shared Bitmanip
+extension instructions.
+
+**RV32:**
+
+Module Name                       | NAND2 Cells[1] | LTP[2]
+----------------------------------|----------------|----------------
+`riscv_crypto_fu_rv32`            |      4241      | 31
+`- riscv_crypto_fu_lut4` (RV32)   |       566      |  6
+`- riscv_crypto_fu_saes32`        |      1176      | 30
+`- riscv_crypto_fu_ssha256`       |       737      |  5
+`- riscv_crypto_fu_ssha512` (RV32)|       701      |  6
+`- riscv_crypto_fu_ssm3`          |       474      |  3
+`- riscv_crypto_fu_ssm4`          |       724      | 25
+
+**RV64:**
+
+Module Name                       | NAND2 Cells[1] | LTP[2]
+----------------------------------|----------------|----------------
+`riscv_crypto_fu_rv64`            |     13643      | 29
+`- riscv_crypto_fu_lut4` (RV64)   |      1938      |  7
+`- riscv_crypto_fu_saes64`        |      8250      | 28
+`- riscv_crypto_fu_ssha256`       |       737      |  5
+`- riscv_crypto_fu_ssha512` (RV64)|      1986      |  4
+`- riscv_crypto_fu_ssm3`          |       474      |  3
+`- riscv_crypto_fu_ssm4`          |       724      | 25
 
 1. Yosys has a "Simple CMOS" library, which targets only NAND, NOR, NOT
    cells.

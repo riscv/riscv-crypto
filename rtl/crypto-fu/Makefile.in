@@ -42,7 +42,7 @@ $(eval $(call add_synth_target,riscv_crypto_fu_saes32,$(RTL_SAES32),riscv_crypto
 $(eval $(call add_synth_target,riscv_crypto_fu_saes64,$(RTL_SAES64),riscv_crypto_fu_saes64))
 $(eval $(call add_synth_target,riscv_crypto_fu_lut4,$(RTL_LUT4),riscv_crypto_fu_lut4))
 $(eval $(call add_synth_target,riscv_crypto_fu_ssm3,$(RTL_SSM3),riscv_crypto_fu_ssm3))
-$(eval $(call add_synth_target,riscv_crypto_fu_ssm3,$(RTL_SSM4),riscv_crypto_fu_ssm4))
+$(eval $(call add_synth_target,riscv_crypto_fu_ssm4,$(RTL_SSM4),riscv_crypto_fu_ssm4))
 $(eval $(call add_synth_target,riscv_crypto_fu_ssha256,$(RTL_SSHA256),riscv_crypto_fu_ssha256))
 $(eval $(call add_synth_target,riscv_crypto_fu_ssha512,$(RTL_SSHA512),riscv_crypto_fu_ssha512))
 
