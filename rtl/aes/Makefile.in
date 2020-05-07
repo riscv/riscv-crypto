@@ -1,9 +1,0 @@
-
-include aes/rv32/Makefile.in
-include aes/rv64/Makefile.in
-
-#
-# Synthesise just the SBoxes to see what the overhead is
-$(eval $(call add_synth_target,aes_sbox_shared,aes/share/aes_sbox_shared.v,aes_sbox))
-
-$(eval $(call add_synth_target,aes_mixcolumn,aes/share/aes_mixcolumn.v,aes_mixcolumn))
