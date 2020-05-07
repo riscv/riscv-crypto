@@ -1,0 +1,42 @@
+
+RTL_SAES32  = crypto-fu/riscv_crypto_fu_saes32.v            \
+              crypto-fu/riscv_crypto_fu_sboxes.v
+RTL_SAES64  = crypto-fu/riscv_crypto_fu_saes64.v            \
+              crypto-fu/riscv_crypto_fu_aes_mix_columns.v   \
+              crypto-fu/riscv_crypto_fu_sboxes.v
+RTL_LUT4    = crypto-fu/riscv_crypto_fu_lut4.v              \
+RTL_SSM3    = crypto-fu/riscv_crypto_fu_ssm3.v              \
+RTL_SSHA256 = crypto-fu/riscv_crypto_fu_ssha256.v           \
+RTL_SSHA512 = crypto-fu/riscv_crypto_fu_ssha512.v           \
+RTL_SSM4    = crypto-fu/riscv_crypto_fu_ssm4.v              \
+              crypto-fu/riscv_crypto_fu_sboxes.v
+
+
+RTL_FU      = crypto-fu/riscv_crypto_fu.v                   \
+              crypto-fu/riscv_crypto_fu_saes32.v            \
+              crypto-fu/riscv_crypto_fu_saes64.v            \
+              crypto-fu/riscv_crypto_fu_aes_mix_columns.v   \
+              crypto-fu/riscv_crypto_fu_lut4.v              \
+              crypto-fu/riscv_crypto_fu_sboxes.v            \
+              crypto-fu/riscv_crypto_fu_sm3.v               \
+              crypto-fu/riscv_crypto_fu_ssha256.v           \
+              crypto-fu/riscv_crypto_fu_ssha512.v           \
+              crypto-fu/riscv_crypto_fu_ssm4.v
+
+PROVE_FU    = $(RTL_FU)                                     \
+              crypto-fu/tb_riscv_crypto_fu.v                \
+              crypto-fu/tb_checker_saes32.v                 \
+              crypto-fu/tb_checker_saes64.v                 \
+              crypto-fu/tb_checker_lut4_rv32.v              
+
+$(eval $(call add_synth_target,riscv_crypto_fu,$(RTL_FU),riscv_crypto_fu))
+$(eval $(call add_synth_target,riscv_crypto_fu_saes32,$(RTL_SAES32),riscv_crypto_fu_saes32))
+$(eval $(call add_synth_target,riscv_crypto_fu_saes64,$(RTL_SAES64),riscv_crypto_fu_saes64))
+$(eval $(call add_synth_target,riscv_crypto_fu_lut4,$(RTL_LUT4),riscv_crypto_fu_lut4))
+$(eval $(call add_synth_target,riscv_crypto_fu_ssm3,$(RTL_SSM3),riscv_crypto_fu_ssm3))
+$(eval $(call add_synth_target,riscv_crypto_fu_ssm3,$(RTL_SSM4),riscv_crypto_fu_ssm4))
+$(eval $(call add_synth_target,riscv_crypto_fu_ssha256,$(RTL_SSHA256),riscv_crypto_fu_ssha256))
+$(eval $(call add_synth_target,riscv_crypto_fu_ssha512,$(RTL_SSHA512),riscv_crypto_fu_ssha512))
+
+$(eval $(call add_prove_target,prove_riscv_crypto_fu,crypto-fu/verify.sby,$(PROVE_FU)))
+

@@ -61,12 +61,14 @@ to get rough synthesis results.
 
 Module Name    | NAND2 Cells[1] | LTP[2]
 ---------------|----------------|----------------
-`lut4_rv32`    | 566            | 6 
-`lut4_rv64`    | 1888           | 7 
-`aes_rv32`     | 1176           | 30
-`aes_rv64`     | 8462           | 28
-`ssha256`      | 787            | 5 
-`ssha512`      | 1534           | 6 
+`lut4_rv32`    |                |   
+`lut4_rv64`    |                |   
+`saes32`       |                |   
+`saes64`       |                |   
+`ssha256`      |                |   
+`ssha512`      |                |   
+`ssm3`         |                |   
+`ssm4`         |                |   
 
 1. Yosys has a "Simple CMOS" library, which targets only NAND, NOR, NOT
    cells.

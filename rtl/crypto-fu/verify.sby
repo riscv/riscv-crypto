@@ -1,0 +1,54 @@
+
+[tasks]
+rv32_prove prove rv32
+rv32_cover cover rv32
+rv64_prove prove rv64
+rv64_cover cover rv64
+
+[options]
+depth   5
+prove: mode bmc
+cover: mode cover
+timeout 7200
+
+[engines]
+smtbmc boolector
+
+[script]
+rv32: verilog_defaults -add -DXLEN=32 
+rv64: verilog_defaults -add -DXLEN=64 
+read_verilog -formal riscv_crypto_fu.v
+read_verilog -formal riscv_crypto_fu_aes_mix_columns.v
+read_verilog -formal riscv_crypto_fu_lut4.v
+read_verilog -formal riscv_crypto_fu_saes32.v
+read_verilog -formal riscv_crypto_fu_saes64.v
+read_verilog -formal riscv_crypto_fu_sboxes.v
+read_verilog -formal riscv_crypto_fu_sm3.v
+read_verilog -formal riscv_crypto_fu_ssha256.v
+read_verilog -formal riscv_crypto_fu_ssha512.v
+read_verilog -formal riscv_crypto_fu_ssm4.v
+read_verilog -formal tb_checker_saes32.v
+read_verilog -formal tb_checker_saes64.v
+read_verilog -formal tb_checker_lut4_rv32.v
+read_verilog -formal tb_riscv_crypto_fu.v
+
+prep -top tb_riscv_crypto_fu
+
+[files]
+crypto-fu/riscv_crypto_fu.v
+crypto-fu/riscv_crypto_fu_aes_mix_columns.v
+crypto-fu/riscv_crypto_fu_lut4.v
+crypto-fu/riscv_crypto_fu_saes32.v
+crypto-fu/riscv_crypto_fu_saes64.v
+crypto-fu/riscv_crypto_fu_sboxes.v
+crypto-fu/riscv_crypto_fu_sm3.v
+crypto-fu/riscv_crypto_fu_ssha256.v
+crypto-fu/riscv_crypto_fu_ssha512.v
+crypto-fu/riscv_crypto_fu_ssm4.v
+crypto-fu/tb_checker_saes32.v
+crypto-fu/tb_checker_saes64.v
+crypto-fu/tb_checker_saes.vh
+crypto-fu/tb_checker_lut4_rv32.v
+crypto-fu/tb_riscv_crypto_fu.v
+
+

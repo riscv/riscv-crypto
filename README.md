@@ -60,6 +60,6 @@ benchmarks.
 
 ## Verilog RTL Prototypes
 
-See [`rtl/README.md`](rtl/README.md) for information on experimental
+See the [`rtl/`](rtl/) directory for information on experimental
 RTL implementations of the proposed instructions.
 
