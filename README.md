@@ -44,6 +44,8 @@ To see the latest draft release of the proposals, look at the
 [Releases](https://github.com/scarv/riscv-crypto/releases) tab of
 the [Github Repository](https://github.com/scarv/riscv-crypto).
 
+Source code and supplementary information is found in the
+[doc/](doc/README.md) directory.
 
 ## Toolchain
 
