@@ -29,6 +29,7 @@ read_verilog -formal riscv_crypto_fu_ssha512.v
 read_verilog -formal riscv_crypto_fu_ssm4.v
 read_verilog -formal tb_checker_saes32.v
 read_verilog -formal tb_checker_saes64.v
+read_verilog -formal tb_checker_ssm4.v
 read_verilog -formal tb_checker_lut4_rv32.v
 read_verilog -formal tb_checker_lut4_rv64.v
 read_verilog -formal tb_riscv_crypto_fu.v
@@ -48,6 +49,7 @@ crypto-fu/riscv_crypto_fu_ssha512.v
 crypto-fu/riscv_crypto_fu_ssm4.v
 crypto-fu/tb_checker_saes32.v
 crypto-fu/tb_checker_saes64.v
+crypto-fu/tb_checker_ssm4.v
 crypto-fu/tb_checker_saes.vh
 crypto-fu/tb_checker_lut4_rv32.v
 crypto-fu/tb_checker_lut4_rv64.v

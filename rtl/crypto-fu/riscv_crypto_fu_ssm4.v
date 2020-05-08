@@ -51,6 +51,10 @@ output wire         ready         //
 // Always finish in a single cycle.
 assign     ready            = valid ;
 
+//
+// SBOX Byte select
+// ------------------------------------------------------------
+
 wire [7:0] in_bytes [3:0];
 
 assign in_bytes[0]  = rs2[ 7: 0];
@@ -63,13 +67,25 @@ wire [ 7:0] sbox_out;
 
 wire [31:0] l       = {24'b0, sbox_out};
 
+//
+// ED Instruction
+// ------------------------------------------------------------
+
 wire [31:0] l_ed1   = l     ^  (l << 8) ^ (l << 2) ^  (l << 18);
 wire [31:0] l_ed2   = l_ed1 ^ ((l     & 32'h3F) << 26) ^
                               ((l     & 32'hC0) << 10) ;
 
+//
+// KS Instruction
+// ------------------------------------------------------------
+
 wire [31:0] l_ks1   = l     ^ ((l & 32'h7) << 29) ^ ((l & 32'hFE) << 7);
 wire [31:0] l_ks2   = l_ks1 ^ ((l     & 32'h01) << 23) ^
                               ((l     & 32'hF8) << 13) ;
+
+//
+// Rotate and XOR result
+// ------------------------------------------------------------
 
 wire [31:0] rot_in  = op_ssm4_ks ? l_ks2 : l_ed2;
 

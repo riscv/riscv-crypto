@@ -34,7 +34,8 @@ PROVE_FU    = $(RTL_FU)                                     \
               crypto-fu/tb_checker_saes32.v                 \
               crypto-fu/tb_checker_saes64.v                 \
               crypto-fu/tb_checker_lut4_rv32.v              \
-              crypto-fu/tb_checker_lut4_rv64.v              
+              crypto-fu/tb_checker_lut4_rv64.v              \
+              crypto-fu/tb_checker_ssm4.v              
 
 $(eval $(call add_synth_target,riscv_crypto_fu_rv32,$(RTL_FU_32),riscv_crypto_fu_rv32))
 $(eval $(call add_synth_target,riscv_crypto_fu_rv64,$(RTL_FU_64),riscv_crypto_fu_rv64))

@@ -121,8 +121,11 @@ wire             grm_lut4_valid = RV64 ? dut_op_lut4                    :
                                          dut_op_lut4lo || dut_op_lut4hi ;
 wire             grm_lut4_ready = grm_lut4_valid ;
 
+wire             grm_ssm4_valid = dut_op_ssm4_ks || dut_op_ssm4_ed      ;
+
 wire [XLEN-1:0]  grm_saes_rd    ;
 wire [XLEN-1:0]  grm_lut4_rd    ;
+wire [    31:0]  grm_ssm4_rd    ;
 
 reg  [XLEN-1:0]  grm_rd         ;
 
@@ -251,7 +254,7 @@ always @(posedge dut_g_clk) begin
 
     if(dut_g_resetn && dut_valid && dut_ready) begin
             
-        if(grm_saes_valid) begin
+        if(grm_saes_valid) begin    : check_saes
 
             assert(dut_rd == grm_saes_rd);
             cover (dut_rd == grm_saes_rd);
@@ -271,7 +274,7 @@ always @(posedge dut_g_clk) begin
                 cover(dut_op_saes64_decsm);
             end
 
-        end else if(grm_lut4_valid) begin
+        end else if(grm_lut4_valid) begin : check_lut4
 
             assert(dut_rd == grm_lut4_rd);
             cover (dut_rd == grm_lut4_rd);
@@ -286,6 +289,18 @@ always @(posedge dut_g_clk) begin
                 cover(dut_op_lut4  );
 
             end
+
+        end else if(grm_ssm4_valid) begin: check_ssm4
+
+            if(RV64) begin
+                assert(dut_rd == {32'b0,grm_ssm4_rd});
+                cover (dut_rd == {32'b0,grm_ssm4_rd});
+            end else if(RV32) begin
+                assert(dut_rd ==        grm_ssm4_rd );
+                cover (dut_rd ==        grm_ssm4_rd );
+            end
+            cover (dut_op_ssm4_ks       );
+            cover (dut_op_ssm4_ed       );
 
         end
 
@@ -413,6 +428,17 @@ tb_checker_lut4_rv64 i_checker_lut4_rv64 (
 );
 
 end endgenerate
+
+
+tb_checker_ssm4 i_tb_checker_ssm4 (
+.rs1         (dut_rs1[31:0]   ), // Source register 1
+.rs2         (dut_rs2[31:0]   ), // Source register 2
+.bs          (dut_imm[1:0]    ), // Byte select
+.op_ssm4_ks  (dut_op_ssm4_ks  ), // Do ssm4.ks instruction
+.op_ssm4_ed  (dut_op_ssm4_ed  ), // Do ssm4.ed instruction
+.result      (grm_ssm4_rd     ), // Writeback result
+);
+
 
 endmodule
 
