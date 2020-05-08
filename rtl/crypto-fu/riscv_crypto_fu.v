@@ -83,15 +83,16 @@
 //    valid is de-asserted.
 //
 module riscv_crypto_fu #(
-parameter XLEN          = 64, // Must be one of: 32, 64.
-parameter LUT4_EN       = 1 , // Enable the lut4 instructions.
-parameter SAES_EN       = 1 , // Enable the saes32/64 instructions.
-parameter SAES_DEC_EN   = 1 , // Enable the saes32/64 decrypt instructions.
-parameter SAES64_SBOXES = 8 , // saes64 sbox instances. Valid values: 8
-parameter SSHA256_EN    = 1 , // Enable the ssha256.* instructions.
-parameter SSHA512_EN    = 1 , // Enable the ssha256.* instructions.
-parameter SSM3_EN       = 1 , // Enable the ssm3.* instructions.
-parameter SSM4_EN       = 1   // Enable the ssm4.* instructions.
+parameter XLEN              = 64, // Must be one of: 32, 64.
+parameter LUT4_EN           = 1 , // Enable the lut4 instructions.
+parameter SAES_EN           = 1 , // Enable the saes32/64 instructions.
+parameter SAES_DEC_EN       = 1 , // Enable saes32/64 decrypt instructions.
+parameter SAES64_SBOXES     = 8 , // saes64 sbox instances. Valid values: 8
+parameter SSHA256_EN        = 1 , // Enable the ssha256.* instructions.
+parameter SSHA512_EN        = 1 , // Enable the ssha256.* instructions.
+parameter SSM3_EN           = 1 , // Enable the ssm3.* instructions.
+parameter SSM4_EN           = 1 , // Enable the ssm4.* instructions.
+parameter COMBINE_AES_SM4   = 1   // Enable combined RV32 AES/SM4.
 )(
 
 input  wire             g_clk           , // Global clock
@@ -147,6 +148,9 @@ output wire [ XLEN-1:0] rd
 localparam XL   = XLEN -  1  ;
 localparam RV32 = XLEN == 32 ;
 localparam RV64 = XLEN == 64 ;
+
+localparam EN_COMBINE_SAES32_SM4 = 
+    RV32 && SAES_EN && SSM4_EN && COMBINE_AES_SM4;
 
 //
 // LUT4 instructions:
@@ -383,7 +387,62 @@ end endgenerate
 
 
 //
+// Combined SM4 AES 32-bit instructions
+//
+//  This module is generated iff XLEN==32, and both the AES and
+//  SM4 instructions are enabled.
+//  Otherwise, the ready and result wires are tied to zero and
+//  optimised away.
+//
+// ------------------------------------------------------------
+
+wire        saes32_ssm4_valid    ;
+wire [XL:0] saes32_ssm4_rs1      = rs1       ;
+wire [XL:0] saes32_ssm4_rs2      = rs2       ;
+wire [ 1:0] saes32_ssm4_bs       = imm[1:0]  ;
+wire        saes32_ssm4_ready    ;
+wire [XL:0] saes32_ssm4_result   ;
+
+generate if(EN_COMBINE_SAES32_SM4) begin : combined_saes32_ssm4_implemented
+
+    assign saes32_ssm4_valid    =
+        op_saes32_encs  || op_saes32_encsm || op_saes32_decs  ||
+        op_saes32_decsm || op_ssm4_ks      || op_ssm4_ed      ;
+        
+
+    riscv_crypto_fu_saes32_ssm4 #(
+        .SAES_DEC_EN(SAES_DEC_EN) // Enable saes32 decrypt instructions.
+    ) i_riscv_crypto_fu_saes32_ssm4 (
+        .valid          (saes32_ssm4_valid ), // Are the inputs valid?
+        .rs1            (saes32_ssm4_rs1   ), // Source register 1
+        .rs2            (saes32_ssm4_rs2   ), // Source register 2
+        .bs             (saes32_ssm4_bs    ), // Byte select immediate
+        .op_saes32_encs (op_saes32_encs    ), // Encrypt SubBytes
+        .op_saes32_encsm(op_saes32_encsm   ), // Encrypt SubBytes + MixColumn
+        .op_saes32_decs (op_saes32_decs    ), // Decrypt SubBytes
+        .op_saes32_decsm(op_saes32_decsm   ), // Decrypt SubBytes + MixColumn
+        .op_ssm4_ks     (op_ssm4_ks        ), // Do ssm4.ks instruction
+        .op_ssm4_ed     (op_ssm4_ed        ), // Do ssm4.ed instruction
+        .rd             (saes32_ssm4_result), // output register value.
+        .ready          (saes32_ssm4_ready )  // Compute finished?
+    );
+
+end else begin : combined_saes32_ssm4_not_implemented
+
+    assign saes32_ssm4_valid    =       1'b0  ;
+    assign saes32_ssm4_ready    =       1'b0  ;
+    assign saes32_ssm4_result   = {XLEN{1'b0}};
+
+end endgenerate
+
+//
 // AES 32-bit instructions
+//
+//  This module is generated iff XLEN==32 and the SAES instructions are
+//  enabled and the EN_COMBINE_SAES32_SM4 paramter is not set.
+//  Otherwise, the ready and result wires are tied to zero and
+//  optimised away.
+//
 // ------------------------------------------------------------
 
 wire        saes32_valid    ;
@@ -393,7 +452,7 @@ wire [ 1:0] saes32_bs       = imm[1:0]  ;
 wire        saes32_ready    ;
 wire [XL:0] saes32_result   ;
 
-generate if(SAES_EN && RV32) begin: saes32_implemented
+generate if(SAES_EN && RV32 && !EN_COMBINE_SAES32_SM4) begin: saes32_implemented
         
     if(SAES_DEC_EN) begin
 
@@ -431,6 +490,12 @@ end endgenerate
 
 //
 // SSM4 Instructions
+//
+//  This module is generated iff SM4 instructions are enabled and
+//  the EN_COMBINE_SAES32_SM4 paramter is not set.
+//  Otherwise, the ready and result wires are tied to zero and
+//  optimised away.
+//
 // ------------------------------------------------------------
 
 wire        ssm4_valid    ;
@@ -440,7 +505,7 @@ wire [ 1:0] ssm4_bs       = imm[ 1:0];
 wire        ssm4_ready    ;
 wire [XL:0] ssm4_result   ;
 
-generate if(SSM4_EN) begin: ssm4_implemented
+generate if(SSM4_EN && !EN_COMBINE_SAES32_SM4) begin: ssm4_implemented
 
     wire [31:0] ssm4_rd32  ;
 
@@ -481,22 +546,24 @@ end endgenerate
 // ------------------------------------------------------------
 
 assign ready =
-    lut4_ready      ||
-    ssha256_ready   ||
-    ssha512_ready   ||
-    saes32_ready    ||
-    saes64_ready    ||
-    ssm3_ready      ||
-    ssm4_ready      ;
+    lut4_ready          ||
+    ssha256_ready       ||
+    ssha512_ready       ||
+    saes32_ready        ||
+    saes64_ready        ||
+    ssm3_ready          ||
+    ssm4_ready          ||
+    saes32_ssm4_ready   ;
 
 assign rd   =
-    {XLEN{lut4_valid   }} & lut4_result     |
-    {XLEN{ssha256_valid}} & ssha256_result  |
-    {XLEN{ssha512_valid}} & ssha512_result  |
-    {XLEN{saes32_valid }} & saes32_result   |
-    {XLEN{saes64_valid }} & saes64_result   |
-    {XLEN{ssm3_valid   }} & ssm3_result     |
-    {XLEN{ssm4_valid   }} & ssm4_result     ;
+    {XLEN{lut4_valid        }} & lut4_result        |
+    {XLEN{ssha256_valid     }} & ssha256_result     |
+    {XLEN{ssha512_valid     }} & ssha512_result     |
+    {XLEN{saes32_valid      }} & saes32_result      |
+    {XLEN{saes64_valid      }} & saes64_result      |
+    {XLEN{ssm3_valid        }} & ssm3_result        |
+    {XLEN{ssm4_valid        }} & ssm4_result        |
+    {XLEN{saes32_ssm4_valid }} & saes32_ssm4_result ;
 
 endmodule // riscv_crypto_fu
 

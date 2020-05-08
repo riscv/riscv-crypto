@@ -50,13 +50,14 @@
 //   ssm4.ed        | SSM4_EN
 //
 module riscv_crypto_fu_rv32 #(
-parameter LUT4_EN       = 1 , // Enable the lut4 instructions.
-parameter SAES_EN       = 1 , // Enable the saes32/64 instructions.
-parameter SAES_DEC_EN   = 1 , // Enable the saes32/64 decrypt instructions.
-parameter SSHA256_EN    = 1 , // Enable the ssha256.* instructions.
-parameter SSHA512_EN    = 1 , // Enable the ssha256.* instructions.
-parameter SSM3_EN       = 1 , // Enable the ssm3.* instructions.
-parameter SSM4_EN       = 1   // Enable the ssm4.* instructions.
+parameter LUT4_EN           = 1 , // Enable the lut4 instructions.
+parameter SAES_EN           = 1 , // Enable the saes32/64 instructions.
+parameter SAES_DEC_EN       = 1 , // Enable the saes32/64 decrypt instructions.
+parameter SSHA256_EN        = 1 , // Enable the ssha256.* instructions.
+parameter SSHA512_EN        = 1 , // Enable the ssha256.* instructions.
+parameter SSM3_EN           = 1 , // Enable the ssm3.* instructions.
+parameter SSM4_EN           = 1 , // Enable the ssm4.* instructions.
+parameter COMBINE_AES_SM4   = 1   // Enable combined RV32 AES/SM4 module.
 )(
 
 input  wire             g_clk           , // Global clock
@@ -96,15 +97,16 @@ output wire [     31:0] rd
 
 
 riscv_crypto_fu #(
-.XLEN         (32          ), // Must be one of: 32, 64.
-.LUT4_EN      (LUT4_EN     ), // Enable the lut4 instructions.
-.SAES_EN      (SAES_EN     ), // Enable the saes32/64 instructions.
-.SAES_DEC_EN  (SAES_DEC_EN ), // Enable the saes32/64 decrypt instructions.
-.SAES64_SBOXES(8           ), // saes64 sbox instances. Valid values: 8
-.SSHA256_EN   (SSHA256_EN  ), // Enable the ssha256.* instructions.
-.SSHA512_EN   (SSHA512_EN  ), // Enable the ssha256.* instructions.
-.SSM3_EN      (SSM3_EN     ), // Enable the ssm3.* instructions.
-.SSM4_EN      (SSM4_EN     )  // Enable the ssm4.* instructions.
+.XLEN           (32             ), // Must be one of: 32, 64.
+.LUT4_EN        (LUT4_EN        ), // Enable the lut4 instructions.
+.SAES_EN        (SAES_EN        ), // Enable the saes32/64 instructions.
+.SAES_DEC_EN    (SAES_DEC_EN    ), // Enable saes32/64 decrypt instructions.
+.SAES64_SBOXES  (8              ), // saes64 sbox instances. Valid values: 8
+.SSHA256_EN     (SSHA256_EN     ), // Enable the ssha256.* instructions.
+.SSHA512_EN     (SSHA512_EN     ), // Enable the ssha256.* instructions.
+.SSM3_EN        (SSM3_EN        ), // Enable the ssm3.* instructions.
+.SSM4_EN        (SSM4_EN        ), // Enable the ssm4.* instructions.
+.COMBINE_AES_SM4(COMBINE_AES_SM4)  // Not applicable for RV64
 ) i_riscv_crypto_fu (
 .g_clk           (g_clk           ), // Global clock
 .g_resetn        (g_resetn        ), // Synchronous active low reset.

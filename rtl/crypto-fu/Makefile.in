@@ -10,6 +10,8 @@ RTL_SSHA256 = crypto-fu/riscv_crypto_fu_ssha256.v
 RTL_SSHA512 = crypto-fu/riscv_crypto_fu_ssha512.v            
 RTL_SSM4    = crypto-fu/riscv_crypto_fu_ssm4.v              \
               crypto-fu/riscv_crypto_fu_sboxes.v
+RTL_AES_SM4 = crypto-fu/riscv_crypto_fu_saes32_ssm4.v       \
+              crypto-fu/riscv_crypto_fu_sboxes.v
 
 
 RTL_FU      = crypto-fu/riscv_crypto_fu.v                   \
@@ -21,7 +23,8 @@ RTL_FU      = crypto-fu/riscv_crypto_fu.v                   \
               crypto-fu/riscv_crypto_fu_ssm3.v              \
               crypto-fu/riscv_crypto_fu_ssha256.v           \
               crypto-fu/riscv_crypto_fu_ssha512.v           \
-              crypto-fu/riscv_crypto_fu_ssm4.v
+              crypto-fu/riscv_crypto_fu_ssm4.v              \
+              crypto-fu/riscv_crypto_fu_saes32_ssm4.v
 
 RTL_FU_32   = $(RTL_FU)                                     \
               crypto-fu/riscv_crypto_fu_rv32.v
@@ -47,6 +50,14 @@ $(eval $(call add_synth_target,riscv_crypto_fu_ssm3,$(RTL_SSM3),riscv_crypto_fu_
 $(eval $(call add_synth_target,riscv_crypto_fu_ssm4,$(RTL_SSM4),riscv_crypto_fu_ssm4))
 $(eval $(call add_synth_target,riscv_crypto_fu_ssha256,$(RTL_SSHA256),riscv_crypto_fu_ssha256))
 $(eval $(call add_synth_target,riscv_crypto_fu_ssha512,$(RTL_SSHA512),riscv_crypto_fu_ssha512))
+$(eval $(call add_synth_target,riscv_crypto_fu_saes32_ssm4,$(RTL_AES_SM4),riscv_crypto_fu_saes32_ssm4))
 
 $(eval $(call add_prove_target,prove_riscv_crypto_fu,crypto-fu/verify.sby,$(PROVE_FU)))
+
+#
+# SBoxes
+$(eval $(call add_synth_target,sbox_aes_inv,crypto-fu/riscv_crypto_fu_sboxes.v,riscv_crypto_aes_inv_sbox))
+$(eval $(call add_synth_target,sbox_aes_fwd,crypto-fu/riscv_crypto_fu_sboxes.v,riscv_crypto_aes_fwd_sbox))
+$(eval $(call add_synth_target,sbox_sm4,crypto-fu/riscv_crypto_fu_sboxes.v,riscv_crypto_sm4_sbox))
+$(eval $(call add_synth_target,sbox_aes_sm4,crypto-fu/riscv_crypto_fu_sboxes.v,riscv_crypto_aes_sm4_sbox))
 
