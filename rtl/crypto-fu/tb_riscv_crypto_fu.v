@@ -406,14 +406,11 @@ tb_checker_lut4_rv32 i_checker_lut4_rv32 (
 
 end else if(RV64) begin : checker_model_lut4_rv64
 
-    wire[3:0] lut4_rv64_lut [15:0];
-
-    genvar i;
-
-    for(i=0; i < (XLEN/4); i=i+1) begin
-        assign lut4_rv64_lut[  i   ] =               dut_rs2[4*i+:4] ;
-        assign grm_lut4_rd  [4*i+:4] = lut4_rv64_lut[dut_rs1[4*i+:4]];
-    end
+tb_checker_lut4_rv64 i_checker_lut4_rv64 (
+.rs1(dut_rs1        ),
+.rs2(dut_rs2        ),
+.rd (grm_lut4_rd    )
+);
 
 end endgenerate
 
