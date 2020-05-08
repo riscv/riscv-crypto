@@ -37,8 +37,8 @@ SM4         |    x     |  x    | x
 **Combined Instruction Classes:**
 
 - [ ] AES RV32 + SM4.
-- [ ] All SHA instructions.
-- [ ] Complete Crypto ISE Core "drop-in".
+- [x] All SHA instructions.
+- [x] Complete Crypto ISE Core "drop-in".
 
 
 ## Public review checklist

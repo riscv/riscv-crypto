@@ -41,7 +41,10 @@
 \end{itemize}
 \item[28/04/20] \begin{itemize}
     \item Fix SM4 instruction specs. 
-    \item Marked indexed load/store + weird multi-precision arithmetic
-          for removal.
+\end{itemize}
+\item[08/05/20] \begin{itemize}
+    \item Removed Indexed load/store. They weren't used in any of the
+          benchmarked workloads, and can be optimised/coded around.
+    \item Removed old fused multiply add/accumulate. Not used, ternary.
 \end{itemize}
 \end{itemize}
