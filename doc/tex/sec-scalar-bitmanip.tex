@@ -103,10 +103,6 @@ PRESENT\cite{block:present} with
 irregular / odd permutations are most-likely to benefit from this
 instruction.
 
-\todo{More research needed on specific algorithms / use-cases for
-these instructions. They are included as ``hypothetically useful"
-at the moment.}
-
 \subsubsection{Carry-less Multiply}
 
 \begin{cryptobitmanipisa}
@@ -125,17 +121,6 @@ GCM is recommended by NIST as a block cipher mode of operation
 \cite{nist:gcm}, and is the only {\em required} mode for the TLS 1.3
 protocol.
 
-\subsubsection{Conditional Move}
-
-\begin{cryptobitmanipisa}
-RV32, RV64:
-    cmov rd, rs2, rs1, rs3
-\end{cryptobitmanipisa}
-
-See \cite[Section 2.9.2]{riscv:bitmanip:draft} for details of
-this instruction.
-Conditional move is useful for implementing constant-time cryptographic
-code and avoiding control flow changes.
 
 \subsubsection{Logic With Negate}
 

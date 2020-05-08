@@ -46,5 +46,7 @@
     \item Removed Indexed load/store. They weren't used in any of the
           benchmarked workloads, and can be optimised/coded around.
     \item Removed old fused multiply add/accumulate. Not used, ternary.
+    \item Removed cmov instruction. Single ternary op not justified since
+          it doesn't appear in performance critical places.
 \end{itemize}
 \end{itemize}
