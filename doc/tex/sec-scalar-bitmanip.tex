@@ -135,6 +135,8 @@ See \cite[Section 2.1.3]{riscv:bitmanip:draft} for details of
 these instructions.
 These instructions are useful inside hash functions, block ciphers and
 for implementing software based side-channel countermeasures like masking.
+The {\tt andn} instruction is also useful for constant time word-select
+in systems without the ternary Bitmanip {\tt cmov} instruction.
 
 Useful for:
 SHA3 Chi step,
