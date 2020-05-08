@@ -78,17 +78,29 @@ RV32 and RV64 CPUs.
 - The RV32 core can also optionally use the combined AES+SM4 module,
   reducing it's size by increasing it's path length.
 
-Module Name            | Parameters                     | NAND2 Cells | LTP
------------------------|--------------------------------|-------------|------
-`riscv_crypto_fu_rv32` | `COMBINE_AES_SM4=0`            |      4259   | 31
-`riscv_crypto_fu_rv32` | `COMBINE_AES_SM4=1`            |      3846   | 36
-`riscv_crypto_fu_rv64` |                                |     13582   | 28
+- The cores optionally allow gating of inputs to each sub-module.
+  This prevents downstream toggling in logic we are not using for the current
+  instruction and saves power.
+
+Module Name            | Combined AES/SM4 | Gate Inputs | NAND2 Cells | LTP
+-----------------------|------------------|-------------|-------------|------
+`riscv_crypto_fu_rv32` |        No        |     No      |      4259   | 31
+`riscv_crypto_fu_rv32` |       Yes        |     No      |      3846   | 36
+`riscv_crypto_fu_rv32` |       Yes        |     Yes     |      3672   | 35
+`riscv_crypto_fu_rv64` |       N/A        |     No      |     13582   | 28
+`riscv_crypto_fu_rv64` |       N/A        |     Yes     |     14116   | 28
 
 Notes:
 
 - The numbers reported here are for all instructions being included.
 
 - The RV64 core instances `8` sboxes for the 64-bit AES instructions.
+
+- The results with(out) logic gating of the inputs are a little
+  counter-intuitive.
+  It is possible the synthesis tool is "being clever".
+  I have no way of evaluating the effectivness of the logic
+  gating at the moment, 3'rd party evaluations are very welcome.
 
 
 ### SBoxes

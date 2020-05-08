@@ -57,7 +57,8 @@ parameter SSHA256_EN        = 1 , // Enable the ssha256.* instructions.
 parameter SSHA512_EN        = 1 , // Enable the ssha256.* instructions.
 parameter SSM3_EN           = 1 , // Enable the ssm3.* instructions.
 parameter SSM4_EN           = 1 , // Enable the ssm4.* instructions.
-parameter COMBINE_AES_SM4   = 1   // Enable combined RV32 AES/SM4 module.
+parameter COMBINE_AES_SM4   = 1 , // Enable combined RV32 AES/SM4 module.
+parameter LOGIC_GATING      = 0   // Gate sub-module inputs to save toggling
 )(
 
 input  wire             g_clk           , // Global clock
@@ -106,7 +107,8 @@ riscv_crypto_fu #(
 .SSHA512_EN     (SSHA512_EN     ), // Enable the ssha256.* instructions.
 .SSM3_EN        (SSM3_EN        ), // Enable the ssm3.* instructions.
 .SSM4_EN        (SSM4_EN        ), // Enable the ssm4.* instructions.
-.COMBINE_AES_SM4(COMBINE_AES_SM4)  // Not applicable for RV64
+.COMBINE_AES_SM4(COMBINE_AES_SM4), // Not applicable for RV64
+.LOGIC_GATING   (LOGIC_GATING   )  // Gate submodule inputs to save toggling.
 ) i_riscv_crypto_fu (
 .g_clk           (g_clk           ), // Global clock
 .g_resetn        (g_resetn        ), // Synchronous active low reset.

@@ -92,7 +92,8 @@ parameter SSHA256_EN        = 1 , // Enable the ssha256.* instructions.
 parameter SSHA512_EN        = 1 , // Enable the ssha256.* instructions.
 parameter SSM3_EN           = 1 , // Enable the ssm3.* instructions.
 parameter SSM4_EN           = 1 , // Enable the ssm4.* instructions.
-parameter COMBINE_AES_SM4   = 1   // Enable combined RV32 AES/SM4.
+parameter COMBINE_AES_SM4   = 1 , // Enable combined RV32 AES/SM4.
+parameter LOGIC_GATING      = 0   // Gate sub-module inputs to save toggling
 )(
 
 input  wire             g_clk           , // Global clock
@@ -152,14 +153,18 @@ localparam RV64 = XLEN == 64 ;
 localparam EN_COMBINE_SAES32_SM4 = 
     RV32 && SAES_EN && SSM4_EN && COMBINE_AES_SM4;
 
+`define GATE_INPUTS(LEN,SEL,SIG) \
+    (LOGIC_GATING ? ({LEN{SEL}} & SIG[LEN-1:0]) : \
+                                  SIG[LEN-1:0]  )
+
 //
 // LUT4 instructions:
 // ------------------------------------------------------------
 
 wire        lut4_valid  ;
 
-wire [XL:0] lut4_rs1    = rs1   ;
-wire [XL:0] lut4_rs2    = rs2   ;
+wire [XL:0] lut4_rs1    = `GATE_INPUTS(XLEN,lut4_valid,rs1);
+wire [XL:0] lut4_rs2    = `GATE_INPUTS(XLEN,lut4_valid,rs2);
 
 wire        lut4_ready  ;
 wire [XL:0] lut4_result ;
@@ -205,7 +210,7 @@ end endgenerate
 // ------------------------------------------------------------
 
 wire        ssha256_valid   ;
-wire [31:0] ssha256_rs1     = rs1[31:0];
+wire [31:0] ssha256_rs1     = `GATE_INPUTS(32,ssha256_valid, rs1);
 wire        ssha256_ready   ;
 wire [XL:0] ssha256_result  ;
 
@@ -243,8 +248,8 @@ end endgenerate // SSHA256_EN
 // ------------------------------------------------------------
 
 wire        ssha512_valid   ;
-wire [XL:0] ssha512_rs1     = rs1 ;
-wire [XL:0] ssha512_rs2     = rs2 ;
+wire [XL:0] ssha512_rs1     = `GATE_INPUTS(XLEN, ssha512_valid, rs1) ;
+wire [XL:0] ssha512_rs2     = `GATE_INPUTS(XLEN, ssha512_valid, rs2) ;
 wire        ssha512_ready   ;
 wire [XL:0] ssha512_result  ;
 
@@ -299,7 +304,7 @@ end endgenerate // SSHA512_EN
 // ------------------------------------------------------------
 
 wire        ssm3_valid   ;
-wire [31:0] ssm3_rs1     = rs1[31:0];
+wire [31:0] ssm3_rs1     = `GATE_INPUTS(32, ssm4_valid, rs1);
 wire        ssm3_ready   ;
 wire [XL:0] ssm3_result  ;
 
@@ -334,8 +339,8 @@ end endgenerate // SSHA256_EN
 
 wire        saes64_valid    ;
 
-wire [XL:0] saes64_rs1      = rs1;
-wire [XL:0] saes64_rs2      = rs2;
+wire [XL:0] saes64_rs1      = `GATE_INPUTS(XLEN, saes64_valid, rs1);
+wire [XL:0] saes64_rs2      = `GATE_INPUTS(XLEN, saes64_valid, rs2);
 wire [ 3:0] saes64_enc_rcon = imm;
 wire        saes64_ready    ;
 wire [XL:0] saes64_result   ;
@@ -397,8 +402,8 @@ end endgenerate
 // ------------------------------------------------------------
 
 wire        saes32_ssm4_valid    ;
-wire [XL:0] saes32_ssm4_rs1      = rs1       ;
-wire [XL:0] saes32_ssm4_rs2      = rs2       ;
+wire [XL:0] saes32_ssm4_rs1      = `GATE_INPUTS(XLEN, saes32_ssm4_valid, rs1);
+wire [XL:0] saes32_ssm4_rs2      = `GATE_INPUTS(XLEN, saes32_ssm4_valid, rs2);
 wire [ 1:0] saes32_ssm4_bs       = imm[1:0]  ;
 wire        saes32_ssm4_ready    ;
 wire [XL:0] saes32_ssm4_result   ;
@@ -446,8 +451,8 @@ end endgenerate
 // ------------------------------------------------------------
 
 wire        saes32_valid    ;
-wire [XL:0] saes32_rs1      = rs1       ;
-wire [XL:0] saes32_rs2      = rs2       ;
+wire [XL:0] saes32_rs1      = `GATE_INPUTS(XLEN, saes32_valid, rs1);
+wire [XL:0] saes32_rs2      = `GATE_INPUTS(XLEN, saes32_valid, rs2);
 wire [ 1:0] saes32_bs       = imm[1:0]  ;
 wire        saes32_ready    ;
 wire [XL:0] saes32_result   ;
@@ -499,8 +504,8 @@ end endgenerate
 // ------------------------------------------------------------
 
 wire        ssm4_valid    ;
-wire [31:0] ssm4_rs1      = rs1[31:0];
-wire [31:0] ssm4_rs2      = rs2[31:0];
+wire [31:0] ssm4_rs1      = `GATE_INPUTS(32, ssm4_valid, rs1);
+wire [31:0] ssm4_rs2      = `GATE_INPUTS(32, ssm4_valid, rs2);
 wire [ 1:0] ssm4_bs       = imm[ 1:0];
 wire        ssm4_ready    ;
 wire [XL:0] ssm4_result   ;
@@ -564,6 +569,10 @@ assign rd   =
     {XLEN{ssm3_valid        }} & ssm3_result        |
     {XLEN{ssm4_valid        }} & ssm4_result        |
     {XLEN{saes32_ssm4_valid }} & saes32_ssm4_result ;
+
+//
+// Clean up macros
+// ------------------------------------------------------------
 
 endmodule // riscv_crypto_fu
 
