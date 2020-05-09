@@ -22,8 +22,8 @@ This directory contains two types of information:
   page.
 
 
-- [Supplementary information](supplementary-info.adoc),
-  in ascii doc form.
+- [Supplementary information](supp/supplementary-info.adoc),
+  in [AsciiDoc](https://asciidoctor.org/) format.
   This contains various recommendations, discussions and design
   rationale which we have developed in conjunction to the specification.
 
