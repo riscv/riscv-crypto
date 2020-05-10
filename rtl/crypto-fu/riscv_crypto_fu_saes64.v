@@ -122,11 +122,10 @@ wire [63:0] shiftrows_dec = {i_col_1, i_col_0};
 
 //
 // SBox input/output
-wire [ 7:0] sb_fwd_out_0, sb_fwd_out_1, sb_fwd_out_2, sb_fwd_out_3;
-wire [ 7:0] sb_fwd_out_4, sb_fwd_out_5, sb_fwd_out_6, sb_fwd_out_7;
-
-wire [ 7:0] sb_inv_out_0, sb_inv_out_1, sb_inv_out_2, sb_inv_out_3;
-wire [ 7:0] sb_inv_out_4, sb_inv_out_5, sb_inv_out_6, sb_inv_out_7;
+wire [ 7:0] sb_fwd_in  [7:0];
+wire [ 7:0] sb_fwd_out [7:0];
+wire [ 7:0] sb_inv_in  [7:0];
+wire [ 7:0] sb_inv_out [7:0];
 
 //
 // KeySchedule 1 SBox input selection
@@ -141,34 +140,34 @@ wire [ 7:0] ks1_sb0     = rcon_rot ? rs1[47:40] : rs1[39:32];
 wire [31:0] ks1_sbout   = e_sbout[31:0] ^ {24'b0, rconst};
 
 // If just doing sub-bytes, sbox inputs direct from rs1.
-wire [ 7:0] sb_fwd_in_0 = op_saes64_ks1 ? ks1_sb0 : `BY(shiftrows_enc, 0);
-wire [ 7:0] sb_fwd_in_1 = op_saes64_ks1 ? ks1_sb1 : `BY(shiftrows_enc, 1);
-wire [ 7:0] sb_fwd_in_2 = op_saes64_ks1 ? ks1_sb2 : `BY(shiftrows_enc, 2);
-wire [ 7:0] sb_fwd_in_3 = op_saes64_ks1 ? ks1_sb3 : `BY(shiftrows_enc, 3);
-wire [ 7:0] sb_fwd_in_4 =                           `BY(shiftrows_enc, 4);
-wire [ 7:0] sb_fwd_in_5 =                           `BY(shiftrows_enc, 5);
-wire [ 7:0] sb_fwd_in_6 =                           `BY(shiftrows_enc, 6);
-wire [ 7:0] sb_fwd_in_7 =                           `BY(shiftrows_enc, 7);
+assign      sb_fwd_in[0]= op_saes64_ks1 ? ks1_sb0 : `BY(shiftrows_enc, 0);
+assign      sb_fwd_in[1]= op_saes64_ks1 ? ks1_sb1 : `BY(shiftrows_enc, 1);
+assign      sb_fwd_in[2]= op_saes64_ks1 ? ks1_sb2 : `BY(shiftrows_enc, 2);
+assign      sb_fwd_in[3]= op_saes64_ks1 ? ks1_sb3 : `BY(shiftrows_enc, 3);
+assign      sb_fwd_in[4]=                           `BY(shiftrows_enc, 4);
+assign      sb_fwd_in[5]=                           `BY(shiftrows_enc, 5);
+assign      sb_fwd_in[6]=                           `BY(shiftrows_enc, 6);
+assign      sb_fwd_in[7]=                           `BY(shiftrows_enc, 7);
 
-wire [ 7:0] sb_inv_in_0 = `BY(shiftrows_dec, 0);
-wire [ 7:0] sb_inv_in_1 = `BY(shiftrows_dec, 1);
-wire [ 7:0] sb_inv_in_2 = `BY(shiftrows_dec, 2);
-wire [ 7:0] sb_inv_in_3 = `BY(shiftrows_dec, 3);
-wire [ 7:0] sb_inv_in_4 = `BY(shiftrows_dec, 4);
-wire [ 7:0] sb_inv_in_5 = `BY(shiftrows_dec, 5);
-wire [ 7:0] sb_inv_in_6 = `BY(shiftrows_dec, 6);
-wire [ 7:0] sb_inv_in_7 = `BY(shiftrows_dec, 7);
+assign      sb_inv_in[0]= `BY(shiftrows_dec, 0);
+assign      sb_inv_in[1]= `BY(shiftrows_dec, 1);
+assign      sb_inv_in[2]= `BY(shiftrows_dec, 2);
+assign      sb_inv_in[3]= `BY(shiftrows_dec, 3);
+assign      sb_inv_in[4]= `BY(shiftrows_dec, 4);
+assign      sb_inv_in[5]= `BY(shiftrows_dec, 5);
+assign      sb_inv_in[6]= `BY(shiftrows_dec, 6);
+assign      sb_inv_in[7]= `BY(shiftrows_dec, 7);
 
 // Decrypt sbox output
 wire [63:0] d_sbout     = {
-    sb_inv_out_7, sb_inv_out_6, sb_inv_out_5, sb_inv_out_4,
-    sb_inv_out_3, sb_inv_out_2, sb_inv_out_1, sb_inv_out_0 
+    sb_inv_out[7], sb_inv_out[6], sb_inv_out[5], sb_inv_out[4],
+    sb_inv_out[3], sb_inv_out[2], sb_inv_out[1], sb_inv_out[0] 
 };
 
 // Encrypt sbox output
 wire [63:0] e_sbout     = {
-    sb_fwd_out_7, sb_fwd_out_6, sb_fwd_out_5, sb_fwd_out_4,
-    sb_fwd_out_3, sb_fwd_out_2, sb_fwd_out_1, sb_fwd_out_0 
+    sb_fwd_out[7], sb_fwd_out[6], sb_fwd_out[5], sb_fwd_out[4],
+    sb_fwd_out[3], sb_fwd_out[2], sb_fwd_out[1], sb_fwd_out[0] 
 };
 
 //
@@ -225,36 +224,36 @@ assign rd =
 // AES SBox instances
 // ------------------------------------------------------------
 
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_0 (.in(sb_fwd_in_0),.fx(sb_fwd_out_0));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_1 (.in(sb_fwd_in_1),.fx(sb_fwd_out_1));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_2 (.in(sb_fwd_in_2),.fx(sb_fwd_out_2));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_3 (.in(sb_fwd_in_3),.fx(sb_fwd_out_3));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_4 (.in(sb_fwd_in_4),.fx(sb_fwd_out_4));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_5 (.in(sb_fwd_in_5),.fx(sb_fwd_out_5));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_6 (.in(sb_fwd_in_6),.fx(sb_fwd_out_6));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_7 (.in(sb_fwd_in_7),.fx(sb_fwd_out_7));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_0 (.in(sb_fwd_in[0]),.fx(sb_fwd_out[0]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_1 (.in(sb_fwd_in[1]),.fx(sb_fwd_out[1]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_2 (.in(sb_fwd_in[2]),.fx(sb_fwd_out[2]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_3 (.in(sb_fwd_in[3]),.fx(sb_fwd_out[3]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_4 (.in(sb_fwd_in[4]),.fx(sb_fwd_out[4]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_5 (.in(sb_fwd_in[5]),.fx(sb_fwd_out[5]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_6 (.in(sb_fwd_in[6]),.fx(sb_fwd_out[6]));
+riscv_crypto_aes_fwd_sbox i_fwd_sbox_7 (.in(sb_fwd_in[7]),.fx(sb_fwd_out[7]));
 
 generate if(SAES_DEC_EN) begin : saes64_dec_sboxes_implemented
 
-riscv_crypto_aes_inv_sbox i_inv_sbox_0 (.in(sb_inv_in_0),.fx(sb_inv_out_0));
-riscv_crypto_aes_inv_sbox i_inv_sbox_1 (.in(sb_inv_in_1),.fx(sb_inv_out_1));
-riscv_crypto_aes_inv_sbox i_inv_sbox_2 (.in(sb_inv_in_2),.fx(sb_inv_out_2));
-riscv_crypto_aes_inv_sbox i_inv_sbox_3 (.in(sb_inv_in_3),.fx(sb_inv_out_3));
-riscv_crypto_aes_inv_sbox i_inv_sbox_4 (.in(sb_inv_in_4),.fx(sb_inv_out_4));
-riscv_crypto_aes_inv_sbox i_inv_sbox_5 (.in(sb_inv_in_5),.fx(sb_inv_out_5));
-riscv_crypto_aes_inv_sbox i_inv_sbox_6 (.in(sb_inv_in_6),.fx(sb_inv_out_6));
-riscv_crypto_aes_inv_sbox i_inv_sbox_7 (.in(sb_inv_in_7),.fx(sb_inv_out_7));
+riscv_crypto_aes_inv_sbox i_inv_sbox_0 (.in(sb_inv_in[0]),.fx(sb_inv_out[0]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_1 (.in(sb_inv_in[1]),.fx(sb_inv_out[1]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_2 (.in(sb_inv_in[2]),.fx(sb_inv_out[2]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_3 (.in(sb_inv_in[3]),.fx(sb_inv_out[3]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_4 (.in(sb_inv_in[4]),.fx(sb_inv_out[4]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_5 (.in(sb_inv_in[5]),.fx(sb_inv_out[5]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_6 (.in(sb_inv_in[6]),.fx(sb_inv_out[6]));
+riscv_crypto_aes_inv_sbox i_inv_sbox_7 (.in(sb_inv_in[7]),.fx(sb_inv_out[7]));
 
 end else begin  : saes64_dec_sboxes_not_implemented
 
-assign sb_inv_out_0 = 8'b0;
-assign sb_inv_out_1 = 8'b0;
-assign sb_inv_out_2 = 8'b0;
-assign sb_inv_out_3 = 8'b0;
-assign sb_inv_out_4 = 8'b0;
-assign sb_inv_out_5 = 8'b0;
-assign sb_inv_out_6 = 8'b0;
-assign sb_inv_out_7 = 8'b0;
+assign sb_inv_out[0] = 8'b0;
+assign sb_inv_out[1] = 8'b0;
+assign sb_inv_out[2] = 8'b0;
+assign sb_inv_out[3] = 8'b0;
+assign sb_inv_out[4] = 8'b0;
+assign sb_inv_out[5] = 8'b0;
+assign sb_inv_out[6] = 8'b0;
+assign sb_inv_out[7] = 8'b0;
 
 end endgenerate
 
