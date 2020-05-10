@@ -22,6 +22,9 @@ providing supplementary information that is intended to be helpful for
 implementation and optimization of certain tasks, and provides partial
 rationale for certain ISA features.
 
-include::rbr-arithmetic.adoc[]
 include::indexed-loads-stores.adoc[]
+
+include::rbr-arithmetic.adoc[]
+
+include::gcm-mode-cmul.adoc[]
 

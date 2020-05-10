@@ -4,8 +4,7 @@ The RISC-V architecture is a pure load-and-store achitecture. The perform
 a an _indexed_ load or store, the index must generally be scaled and added
 to a base pointer, and only then a separate load operation can be performed.
 
-TIP:    Try to avoid table lookups with secret-derived indexes.
-
+**Try to avoid table lookups with secret-derived indexes.**
 One prominent use of indexed loads in cryptography is to implement S-Boxes
 found in various secret-key algorithms. Secret-dependant loads (table lookups)
 are problematic in cryptography because of their high potential for cache
@@ -14,8 +13,7 @@ for AES and other relevant cryptographic algorithms; they often allow
 lookup-free implementation without resorting to "bit slicing" the entire
 algorithm.
 
-TIP:    In RISC-V pointers are generally used for loop control.
-
+**In RISC-V pointers are generally used for loop control.**
 For (arithmetic) loops the lack of indexing becomes less of a problem when
 one understands that RISC-V also makes no distinction between index and
 address registers and hence one can use pointers as indexes and loop
@@ -25,8 +23,7 @@ with `i=0..n` there is no trace of an "index" in the compiled code.
 A single register is both a pointer and index and iterates through
 `*v++` until it reaches a pre-computed v + n point.
 
-TIP:    Offset loads and stores are "free".
-
+**Offset loads and stores are "free".**
 All loads and stores in RISC-V have a 12-bit signed byte offset built into
 the instruction word itself. The offset loads and stores allow an
 implementor to often easily unroll a few steps to reduce the relative

@@ -1,13 +1,11 @@
 ==  Notes on RISC-V Cryptographic Arithmetic
 
 Implementors of cryptographic large-integer arithmetic on RISC-V are
-initially faced with the biggest single issue that differentiates this architecture
-from many others; Lack of carry bits and overflow detection and lack of
-indexed load and store. This section discusses typical implementation
-techniques used for constant-time implementation of cryptographic
-large-integer arithmetic.
+initially faced with the biggest single issue that differentiates this architecture from many others; Lack of carry bits and overflow detection.
+This section discusses typical implementation techniques used for
+constant-time implementation of large-integer arithmetic for cryptography.
 
-=== Redundant Binary Representation
+=== Redundant Binary Representation (RBR)
 
 A natural RISC-V approach is to use https://en.wikipedia.org/wiki/Redundant_binary_representation[Redundant Binary Representation] (RBR)
 for cryptographic big-integer arithmetic.
@@ -16,13 +14,13 @@ Each XLEN-wide word carries d significant bits and r=XLEN-d
 additional redundancy bits. The numerical value X represented by
 little-endian vector of n words `x[n]` is therefore:
 
-[asciimath]
+[latexmath]
 ++++
-X = sum_(i=0)^(n-1) 2^(i*d) * x[i]
+X = \sum_{i=0}^{n-1} 2^{id} x[i]
 ++++
 
-This representation is redundant (not unique) since each `x[i]` may still
-have numerical values up to 2^XLEN^-1 if unsigned. Also note
+This representation is redundant (not unique) since each word `x[i]` may
+still have numerical values up to 2^XLEN^-1 if unsigned. Also note
 that sometimes it is preferable to use signed `x[i]`.
 
 RBR algorithms are often used even when carry is available, since it (a) allows effective parallelization (even in SIMD and Vector architectures)
@@ -31,7 +29,7 @@ are no variable-length carry chains. Constant-time implementation is
 very important in cryptographic applications.
 
 
-==== Usage of RBR
+=== Usage of RBR
 
 It is easy to see that addition and subtraction become fully parallel vector operations up to saturation; when implementing a sequence of arithmetic operations one can analyze where an overflow becomes possible and carry reduction is potentially required. Fortunately carry reduction can also be usually parallelized.
 
@@ -42,12 +40,12 @@ One should try to complete a larger cryptographic operation such as elliptic cur
 Often these algorithms require additional representation tricks such as Montgomery form (to avoid modular remaindering) or Projective, Jacobian,... coordinates (to avoid division with Elliptic Curves). Most of such techniques apply to RBR equally well as they do to non-redundant representations.
 
 
-==== Parallel carry and Semi-Redundant Binary Representation SRBR
+=== Parallel carry and Semi-Redundant Binary Representation SRBR
 
 There are two kinds of carry-reduction operations, one which is
 parallelizable and another which is not.
 
-In the following I'll use DMASK to denote the bit mask 2^d^-1
+In the following I'll use `DMASK` to denote the bit mask 2^d^-1
 that cuts a number to `d` bits, e.g. `0x00FFFFFF` or `0x00FFFFFFFFFFFFFF`.
 
 In parallel carry  we simultaneously replace all `x[i]` with `x'[i]`:
@@ -61,28 +59,29 @@ In parallel carry  we simultaneously replace all `x[i]` with `x'[i]`:
 
 
 In unsigned case this puts each word `w=x[i]` in range
-asciimath:[0 le w < 2^d + 2^r], with bits `w[XLEN-1:d+1]=0`
+latexmath:[$0 \le w < 2^d + 2^r$], with bits `w[XLEN-1:d+1]=0`
 and a relatively small probability that bit `w[d]` is nonzero.
 Vectors satisfying this condition are considered to have
 Semi-Redundant Binary Representation (SRBR). In vector format such
 a semi-reduction involves only pairs of vector elements.
 
 
-====  Full carry and Non-Redundant Binary Representation (NRBR)
+=== Full carry and Non-Redundant Binary Representation (NRBR)
 
 Full carry is usually only required for serialization and numeric
 comparisons. In non-redundant NRBR form, each word `w=x[i]` is in range
-asciimath:[0 le w < 2^d].
+latexmath:[$0 \le w < 2^d$].
 Note that the r redundancy bits are still there but they're zeroes;
 `w[XLEN-1:d] = 0`.
-For negative numbers a convention may be adopted where the highest-order
-word has redundancy -1.
+For negative numbers a NRBR convention may be adopted where the
+highest-order word (only) has redundancy equivalent to -1 (all 1 bits):
+`w[XLEN-1:d] = 111..1`.
 
 NRBR reduction can be implemented as a loop that proceeds word-by-word
 from least significant towards more significant words:
 
 ----
-    c = 0  (or carry-in)
+    c = 0                               //  (or carry-in)
     for i = 0, 1, .. n-1 in sequence:
         c = c + x[i]
         x'[i] = c & DMASK
@@ -94,7 +93,7 @@ Serialization to some fully canonical little- or big-endian wire formatting
 is an application matter and not discussed here.
 
 
-====  (Parallel) Multiplication and Input Prepping
+=== (Parallel) Multiplication and Input Prepping
 
 When multiplying two RBR numbers `x[0..n-1]` and `y[0..m-1]` the
 product `xy[0..n + m -1]` can be formed by starting with
@@ -103,32 +102,36 @@ product `xy[0..n + m -1]` can be formed by starting with
 ----
     for all (i,j), 0 <= i < n, 0 <= j < m:
         t = x[i] * y[i]
-        xy[i + j] = xy[i + j] + (t & DMASK)
-        xy[i + j + 1] = xy[i + j + 1] + (t >> d)
+        k = i + j
+        xy[k] = xy[k] + (t & DMASK)         //  <1>
+        xy[k + 1] = xy[k + 1] + (t >> d)    //  <2>
     end
 ----
+<1> The first addition uses bits `t[d-1:0]` of the product.
+<2> Second addition uses bits `t[XLEN+d-1:d]` of the product.
 
-We see that the high r bits `t[2 * XLEN-1 : r + 2 * d]` of the sub-product
+The standard RISC-V instructions `MUL` and `MULH[[S]U]` return bits
+`t[XLEN-1:0]` and `t[2*XLEN-1:XLEN]` of the product, which would seem
+not necessitate a couple of additional few shifts and an XOR for each
+step.
+
+An easy input-prep trick is to left-shift both (SRBR-format) inputs left
+by `r/2` bits before starting the operation (typically 4 positions).
+As result the product is shifted left  by `r` bits and hence `MULH[[S]U]`
+directly returns the desired value and the lower word needs to be
+right shifted by `r` bits.
+
+We see that the high `r` bits `t[2*XLEN-1:XLEN+d]` of the sub-product
 are discarded -- this style of implementation assumes that the
-inputs are SRBR (or similar) rather than general RBR. An alternative
-approach would be to apply DMASK to `xy[i + j + 1]` too, and
-add `(t >> (2*d))` to `xy[i + j + 2]`. However, it would seem to be
+inputs are SRBR (or similar) rather than general RBR.
+An alternative approach would be to apply `DMASK` to `xy[k + 1]` too, and
+add `(t >> (2*d))` to `xy[k + 2]`. However, it would seem to be
 always easier to SBRB-reduce inputs first. As a general strategy any easy
 O(n) or one-step parallel input prepping is worthwhile since the main body
 of multiplication is superlinear, often up to O(n^2^).
 
-The first addition requires bits `t[d-1 : 0]` of the product and the
-second addition requires `t[r + 2*d - 1 : d]`. The standard RISC-V
-instructions MUL and `MULH[[S]]U]` return bits `t[XLEN-1:0]`
-and `t[2*XLEN-1:XLEN]` of the product, which would seem not necessitate
-a couple of additional few shifts and an XOR for each step.
 
-An easy input-prep trick is to left-shift both (SRBR-format) inputs left
-by r/2 bits before starting the operation (typically 4 positioins).
-As result the product is shifted left  by r bits and hence `MULH[[S]U]`
-directly returns the desired value and the lower word needs to be
-shifted right by r steps logically (no masking):
-
+Together with input prepping we have:
 ----
     for all i, 0 <= i < n:
         x'[i] = x[i] << (r / 2)

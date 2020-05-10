@@ -1,0 +1,105 @@
+==  Galois/Counter Mode (GCM) with Carryless Multiply
+
+The Galois/Counter Mode (GCM) specified in
+https://doi.org/10.6028/NIST.SP.800-38D[NIST SP 800-38D] is a prominent
+Authenticated Encryption with Associated Data (AEAD) mechanism. It is
+the only cipher mode mandated as *MUST* for all
+https://www.rfc-editor.org/rfc/rfc8446.html[TLS 1.3] implementations
+and also frequently used in government and military applications.
+
+Here we'll briefly discuss implementation aspects of AES-GCM using the
+https://github.com/riscv/riscv-bitmanip[bitmanip] extension `B`.
+The instructions relevant to GCM are the Carry-Less Multiply instructions
+`CMUL[H][W]` and also the Generalized Reverse `GREV[W]`.
+The `[W]` suffix indicates a 32-bit word size variant on RV64.
+An attempt should be made to pair `CMULH` immediately followed by `CMUL`,
+as is done with `MULH`/`MUL`, although there is less of a performance
+advantage in this case.
+
+=== Finite Field Arithmetic in GF(2^128^)
+
+While message confidentiality in GCM is provided by a block cipher (AES)
+in counter mode (a CTR variant), authentication is based on a GHASH, a
+universal hash defined over the binary field GF(2^128^).
+Without custom instruction support GCM, just like AES itself, is either
+very slow or susceptible to cache timing attacks.
+
+Whether or not authenticating ciphertext or associated data, the main
+operation of GCM is the GHASH multiplication between a block of
+authentication data and a secret generator `H`. The addition in the
+field is trivial; just two or four XORs, depending on whether RV32 or RV64
+implementation is used.
+
+The finite field is defined to be the ring of binary polynomials modulo
+the primitive pentanomial
+latexmath:[$R(x) = x^{128} + x^7 + x^2 + x + 1.$]
+The field encoding is slightly unusual, with the multiplicative identity
+(i.e. one -- "1") being encoded as a byte sequence `0x80, 0x00, .., 0x00`.
+Converting to little-endian encoding involves inverting bits in each byte;
+the `GREV[W]` instruction with constant 7 (pseudo-instruction `rev`)
+accomplishes this.
+
+The multiplication itself can be asymptotically sped up with the Karatsuba
+method, which works even better in binary fields than it does with integers.
+This reduces the number of `CMUL`/`CMULH` pairs on RV64 from 4 to 3 and
+the on RV32 from 16 to 9, with the cost of many XORs.
+
+
+=== Reduction via Shifts or with Multiplication
+
+The second arithmetic step to consider is the polynomial reduction of the
+255-bit ring product down to 128 bits (the field) again. The best way of
+doing reduction depends on _how_ _fast_ the carry-less multiplication
+instructions `CMUL[H][W]` are in relation to shifts and XORs.
+
+We consider two alternative reduction methods:
+
+1. **Shift reduction**: Based on the low Hamming weight of the
+polynomial R.
+2. **Multiplication reduction**: Analogous to Montgomery and Barrett
+methods -- albeit simpler because we're working in characteristic 2.
+
+
+=== Determining the Fastest Method
+
+Examining the multiplication implementations in micro benchmarks
+we obtain the following  arithmetic counts:
+
+[cols="1,1,1,1,1,1,1,1", options="header"]
+.Instruction Counts
+|===
+| **Arch** | **Karatsuba**  | **Reduce**    | `GREV` | `XOR` | `S[L/R]L` | `CLMUL` | `CLMULH`
+| RV32B |   no  |   mul |   4   |   36  |   0   |   20  |   20
+| RV32B |   no  | shift |   4   |   56  |   24  |   16  |   16
+| RV32B |   yes |   mul |   4   |   52  |   0   |   13  |   13
+| RV32B |   yes | shift |   4   |   72  |   24  |   9   |   9
+| RV64B |   no  |   mul |   2   |   10  |   0   |   6   |   6
+| RV64B |   no  | shift |   2   |   20  |   12  |   4   |   4
+| RV64B |   yes |   mul |   2   |   14  |   0   |   5   |   5
+| RV64B |   yes | shift |   2   |   24  |   12  |   3   |   3
+|===
+
+
+We can see that the best selection of algorithms depends on the relative
+cost of multiplication. Assuming that other instructions have unit cost
+and multiply instructions require a multiple of it, and ignoring loops etc,
+we have:
+
+[cols="1,1,1,1,1,1,1", options="header"]
+.Clock Counts
+|===
+| **Arch** | **Karatsuba**  | **Reduce**    | **MUL=1** | **MUL=2** | **MUL=3** | **MUL=6**
+| RV32B |   no  |   mul | **80**    |   120     |   160     | 280
+| RV32B |   no  | shift |   116     |   148     |   180     | 276
+| RV32B |   yes |   mul |   82      |   **108** | **134**   | 212
+| RV32B |   yes | shift |   118     |   136     |   154     | **208**
+| RV64B |   no  |   mul | **24**    |   **36**  |   48      | 84
+| RV64B |   no  | shift |   42      |   50      |   58      | 82
+| RV64B |   yes |   mul |   26      |   **36**  | **46**    | 76
+| RV64B |   yes | shift |   44      |   50      |   56      | **74**
+|===
+
+We see that if `CLMUL[H][W]` takes twice the time of XOR and shifts,
+or more, then Karatsuba is worthwhile. If these multiplication instructions
+are six times slower, or more, then it is worthwhile to convert the reduction multiplications to shifts and XORs.
+
