@@ -29,7 +29,7 @@ are no variable-length carry chains. Constant-time implementation is
 very important in cryptographic applications.
 
 
-=== Usage of RBR
+=== Redundancy bits
 
 It is easy to see that addition and subtraction become fully parallel vector operations up to saturation; when implementing a sequence of arithmetic operations one can analyze where an overflow becomes possible and carry reduction is potentially required. Fortunately carry reduction can also be usually parallelized.
 
@@ -40,7 +40,7 @@ One should try to complete a larger cryptographic operation such as elliptic cur
 Often these algorithms require additional representation tricks such as Montgomery form (to avoid modular remaindering) or Projective, Jacobian,... coordinates (to avoid division with Elliptic Curves). Most of such techniques apply to RBR equally well as they do to non-redundant representations.
 
 
-=== Parallel carry and Semi-Redundant Binary Representation SRBR
+=== Parallel carry and Semi-Redundant Form (SRBR)
 
 There are two kinds of carry-reduction operations, one which is
 parallelizable and another which is not.
@@ -66,7 +66,7 @@ Semi-Redundant Binary Representation (SRBR). In vector format such
 a semi-reduction involves only pairs of vector elements.
 
 
-=== Full carry and Non-Redundant Binary Representation (NRBR)
+=== Full carry and Non-Redundant Form (NRBR)
 
 Full carry is usually only required for serialization and numeric
 comparisons. In non-redundant NRBR form, each word `w=x[i]` is in range
