@@ -39,7 +39,7 @@
 //
 module riscv_crypto_fu_saes64 #(
 parameter SAES_DEC_EN = 1 , // Enable the saes64 decrypt instructions.
-parameter SAES64_SBOXES = 8   // saes64 sbox instances. Valid values: 8
+parameter SAES64_SBOXES = 8   // saes64 sbox instances. Valid values: 8,4
 )(
 
 input  wire         g_clk           , // Global clock
@@ -67,7 +67,7 @@ output wire         ready             // Compute finished?
 `define BY(X,I) X[7+8*I:8*I]
 
 // Always finish in a single cycle.
-assign     ready            = valid              ;
+assign     ready            = valid && sbox_ready;
 
 // AES Round Constants
 wire [ 7:0] rcon [0:15];
@@ -126,6 +126,8 @@ wire [ 7:0] sb_fwd_in  [7:0];
 wire [ 7:0] sb_fwd_out [7:0];
 wire [ 7:0] sb_inv_in  [7:0];
 wire [ 7:0] sb_inv_out [7:0];
+
+wire        sbox_ready      ;
 
 //
 // KeySchedule 1 SBox input selection
@@ -221,39 +223,101 @@ assign rd =
     {64{op_saes64_imix         }} & result_imix    ;
 
 //
-// AES SBox instances
+// Generate AES SBox instances
 // ------------------------------------------------------------
 
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_0 (.in(sb_fwd_in[0]),.fx(sb_fwd_out[0]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_1 (.in(sb_fwd_in[1]),.fx(sb_fwd_out[1]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_2 (.in(sb_fwd_in[2]),.fx(sb_fwd_out[2]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_3 (.in(sb_fwd_in[3]),.fx(sb_fwd_out[3]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_4 (.in(sb_fwd_in[4]),.fx(sb_fwd_out[4]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_5 (.in(sb_fwd_in[5]),.fx(sb_fwd_out[5]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_6 (.in(sb_fwd_in[6]),.fx(sb_fwd_out[6]));
-riscv_crypto_aes_fwd_sbox i_fwd_sbox_7 (.in(sb_fwd_in[7]),.fx(sb_fwd_out[7]));
+genvar i;
 
-generate if(SAES_DEC_EN) begin : saes64_dec_sboxes_implemented
+generate if(SAES64_SBOXES == 8) begin : saes64_8_sboxes
+    
+    // All sboxes complete in a single cycle.
+    assign sbox_ready = 1'b1;
 
-riscv_crypto_aes_inv_sbox i_inv_sbox_0 (.in(sb_inv_in[0]),.fx(sb_inv_out[0]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_1 (.in(sb_inv_in[1]),.fx(sb_inv_out[1]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_2 (.in(sb_inv_in[2]),.fx(sb_inv_out[2]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_3 (.in(sb_inv_in[3]),.fx(sb_inv_out[3]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_4 (.in(sb_inv_in[4]),.fx(sb_inv_out[4]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_5 (.in(sb_inv_in[5]),.fx(sb_inv_out[5]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_6 (.in(sb_inv_in[6]),.fx(sb_inv_out[6]));
-riscv_crypto_aes_inv_sbox i_inv_sbox_7 (.in(sb_inv_in[7]),.fx(sb_inv_out[7]));
+    for(i = 0; i < 8; i = i + 1) begin
 
-end else begin  : saes64_dec_sboxes_not_implemented
+        riscv_crypto_aes_fwd_sbox i_fwd_sbox (
+            .in(sb_fwd_in [i]),
+            .fx(sb_fwd_out[i])
+        );
 
-assign sb_inv_out[0] = 8'b0;
-assign sb_inv_out[1] = 8'b0;
-assign sb_inv_out[2] = 8'b0;
-assign sb_inv_out[3] = 8'b0;
-assign sb_inv_out[4] = 8'b0;
-assign sb_inv_out[5] = 8'b0;
-assign sb_inv_out[6] = 8'b0;
-assign sb_inv_out[7] = 8'b0;
+        if(SAES_DEC_EN) begin : saes64_dec_sboxes_implemented
+
+            riscv_crypto_aes_inv_sbox i_inv_sbox (
+                .in(sb_inv_in [i]),
+                .fx(sb_inv_out[i])
+            );
+
+        end else begin  : saes64_dec_sboxes_not_implemented
+
+            assign sb_inv_out[i] = 8'b0;
+
+        end
+
+    end
+
+end else if(SAES64_SBOXES == 4) begin : saes64_4_sboxes
+
+    // Is this an instruction using >4 sboxes?
+    wire sbox_instr = op_saes64_encs || op_saes64_encsm ||
+                      op_saes64_decs || op_saes64_decsm ||
+                      op_saes64_ks1  ;
+
+    reg sbox_hi;
+
+    reg [7:0]   sbox_regs [3:0];
+    wire[7:0] n_sbox_inv  [3:0];
+    wire[7:0] n_sbox_fwd  [3:0];
+
+    wire      sbox_reg_ld_en = !sbox_hi && sbox_instr && valid;
+
+    assign sbox_ready = sbox_hi && sbox_instr || !sbox_instr;
+
+    for(i = 0; i < 4; i = i + 1) begin
+
+        always @(posedge g_clk) begin
+            if(sbox_reg_ld_en) begin
+                if(op_dec) begin
+                    sbox_regs[i] <= n_sbox_inv[i];
+                end else begin
+                    sbox_regs[i] <= n_sbox_fwd[i];
+                end
+            end
+        end
+
+        assign sb_inv_out[i  ] = sbox_regs [i  ];
+        assign sb_inv_out[i+4] = n_sbox_inv[i  ];
+        assign sb_fwd_out[i  ] = sbox_regs [i  ];
+        assign sb_fwd_out[i+4] = n_sbox_fwd[i  ];
+        
+        riscv_crypto_aes_fwd_sbox i_fwd_sbox (
+            .in(sb_fwd_in [i + (sbox_hi ? 4 : 0)]),
+            .fx(n_sbox_fwd[i                    ])
+        );
+
+        if(SAES_DEC_EN) begin : saes64_dec_sboxes_implemented
+
+            riscv_crypto_aes_inv_sbox i_inv_sbox (
+                .in(sb_inv_in [i + (sbox_hi ? 4 : 0)]),
+                .fx(n_sbox_inv[i                    ])
+            );
+
+        end else begin  : saes64_dec_sboxes_not_implemented
+
+            assign n_sbox_inv[i] = 8'b0;
+
+        end
+
+    end
+
+    always @(posedge g_clk) begin
+        if(!g_resetn) begin
+            sbox_hi <= 1'b0;
+        end else if(valid && ready) begin
+            sbox_hi <= 1'b0;
+        end else if(valid && sbox_instr) begin
+            sbox_hi <= 1'b1;
+        end
+    end
 
 end endgenerate
 

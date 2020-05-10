@@ -38,7 +38,7 @@ parameter XLEN          = `XLEN ; // Must be one of: 32, 64.
 parameter LUT4_EN       = 1     ; // Enable the lut4 instructions.
 parameter SAES_EN       = 1     ; // Enable the saes32/64 instructions.
 parameter SAES_DEC_EN   = 1     ; // Enable the saes32/64 decrypt instructions.
-parameter SAES64_SBOXES = 8     ; // saes64 sbox instances. Valid values: 8
+parameter SAES64_SBOXES =`SBOXES; // saes64 sbox instances. Valid values: 8
 parameter SSHA256_EN    = 1     ; // Enable the ssha256.* instructions.
 parameter SSHA512_EN    = 1     ; // Enable the ssha256.* instructions.
 parameter SSM3_EN       = 1     ; // Enable the ssm3.* instructions.
@@ -193,6 +193,7 @@ always @(posedge dut_g_clk) begin
     if($past(dut_valid) && $past(!dut_ready)) begin
         // If the TB is waiting for the DUT to compute an output,
         // make sure that the inputs are stable.
+        assume(        dut_valid            );
         assume($stable(dut_rs1             ));
         assume($stable(dut_rs2             ));
         assume($stable(dut_imm             ));

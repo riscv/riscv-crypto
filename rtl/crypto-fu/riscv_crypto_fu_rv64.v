@@ -53,7 +53,7 @@ module riscv_crypto_fu_rv64 #(
 parameter LUT4_EN       = 1 , // Enable the lut4 instructions.
 parameter SAES_EN       = 1 , // Enable the saes32/64 instructions.
 parameter SAES_DEC_EN   = 1 , // Enable the saes32/64 decrypt instructions.
-parameter SAES64_SBOXES = 8 , // saes64 sbox instances. Valid values: 8
+parameter SAES64_SBOXES = 8 , // saes64 sbox instances. Valid values: 8,4
 parameter SSHA256_EN    = 1 , // Enable the ssha256.* instructions.
 parameter SSHA512_EN    = 1 , // Enable the ssha256.* instructions.
 parameter SSM3_EN       = 1 , // Enable the ssm3.* instructions.
@@ -97,17 +97,17 @@ output wire [     63:0] rd
 
 
 riscv_crypto_fu #(
-.XLEN           (64          ), // Must be one of: 32, 64.
-.LUT4_EN        (LUT4_EN     ), // Enable the lut4 instructions.
-.SAES_EN        (SAES_EN     ), // Enable the saes32/64 instructions.
-.SAES_DEC_EN    (SAES_DEC_EN ), // Enable the saes32/64 decrypt instructions.
-.SAES64_SBOXES  (8           ), // saes64 sbox instances. Valid values: 8
-.SSHA256_EN     (SSHA256_EN  ), // Enable the ssha256.* instructions.
-.SSHA512_EN     (SSHA512_EN  ), // Enable the ssha256.* instructions.
-.SSM3_EN        (SSM3_EN     ), // Enable the ssm3.* instructions.
-.SSM4_EN        (SSM4_EN     ), // Enable the ssm4.* instructions.
-.COMBINE_AES_SM4(        1'b0), // Not applicable for RV64
-.LOGIC_GATING   (LOGIC_GATING)  // Gate submodule inputs to save toggling.
+.XLEN           (64           ), // Must be one of: 32, 64.
+.LUT4_EN        (LUT4_EN      ), // Enable the lut4 instructions.
+.SAES_EN        (SAES_EN      ), // Enable the saes32/64 instructions.
+.SAES_DEC_EN    (SAES_DEC_EN  ), // Enable the saes32/64 decrypt instructions.
+.SAES64_SBOXES  (SAES64_SBOXES), // saes64 sbox instances. Valid values: 8,4
+.SSHA256_EN     (SSHA256_EN   ), // Enable the ssha256.* instructions.
+.SSHA512_EN     (SSHA512_EN   ), // Enable the ssha256.* instructions.
+.SSM3_EN        (SSM3_EN      ), // Enable the ssm3.* instructions.
+.SSM4_EN        (SSM4_EN      ), // Enable the ssm4.* instructions.
+.COMBINE_AES_SM4(        1'b0 ), // Not applicable for RV64
+.LOGIC_GATING   (LOGIC_GATING )  // Gate submodule inputs to save toggling.
 ) i_riscv_crypto_fu (
 .g_clk           (g_clk           ), // Global clock
 .g_resetn        (g_resetn        ), // Synchronous active low reset.

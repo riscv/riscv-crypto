@@ -87,7 +87,7 @@ parameter XLEN              = 64, // Must be one of: 32, 64.
 parameter LUT4_EN           = 1 , // Enable the lut4 instructions.
 parameter SAES_EN           = 1 , // Enable the saes32/64 instructions.
 parameter SAES_DEC_EN       = 1 , // Enable saes32/64 decrypt instructions.
-parameter SAES64_SBOXES     = 8 , // saes64 sbox instances. Valid values: 8
+parameter SAES64_SBOXES     = 8 , // saes64 sbox instances. Valid values: 8,4
 parameter SSHA256_EN        = 1 , // Enable the ssha256.* instructions.
 parameter SSHA512_EN        = 1 , // Enable the ssha256.* instructions.
 parameter SSM3_EN           = 1 , // Enable the ssm3.* instructions.
@@ -349,15 +349,17 @@ generate if(SAES_EN && RV64) begin  : saes64_implemented
 
     if(SAES_DEC_EN) begin
 
-        assign saes64_valid = op_saes64_ks1   || op_saes64_ks2   ||
-                              op_saes64_imix  || op_saes64_encs  ||
-                              op_saes64_encsm || op_saes64_decs  ||
-                              op_saes64_decsm ;
+        assign saes64_valid = valid && (
+            op_saes64_ks1   || op_saes64_ks2   ||
+            op_saes64_imix  || op_saes64_encs  ||
+            op_saes64_encsm || op_saes64_decs  ||
+            op_saes64_decsm );
 
     end else begin
 
-        assign saes64_valid = op_saes64_ks1   || op_saes64_ks2   ||
-                              op_saes64_encs  || op_saes64_encsm ;
+        assign saes64_valid = valid && (
+            op_saes64_ks1   || op_saes64_ks2   ||
+            op_saes64_encs  || op_saes64_encsm );
 
     end
 

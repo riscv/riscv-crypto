@@ -1,12 +1,17 @@
 
 [tasks]
-rv32_prove prove rv32
-rv32_cover cover rv32
-rv64_prove prove rv64
-rv64_cover cover rv64
+rv32_prove prove rv32   sboxes_1
+rv32_cover cover rv32   sboxes_1
+rv64_4_prove prove rv64 sboxes_4
+rv64_4_cover cover rv64 sboxes_4
+rv64_8_prove prove rv64 sboxes_8
+rv64_8_cover cover rv64 sboxes_8
 
 [options]
-depth   5
+sboxes_1: depth 5
+sboxes_4: depth 6
+sboxes_8: depth 5
+
 prove: mode bmc
 cover: mode cover
 timeout 7200
@@ -17,6 +22,12 @@ smtbmc boolector
 [script]
 rv32: verilog_defaults -add -DXLEN=32 
 rv64: verilog_defaults -add -DXLEN=64 
+
+sboxes_1: verilog_defaults -add -DSBOXES=1
+sboxes_4: verilog_defaults -add -DSBOXES=4
+sboxes_8: verilog_defaults -add -DSBOXES=8
+
+
 read_verilog -formal riscv_crypto_fu.v
 read_verilog -formal riscv_crypto_fu_aes_mix_columns.v
 read_verilog -formal riscv_crypto_fu_lut4.v

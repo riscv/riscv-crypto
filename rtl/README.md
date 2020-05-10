@@ -40,7 +40,8 @@ Module Name                       | NAND2 Cells | LTP
 `riscv_crypto_fu_lut4` (RV32)     |       566   |  6
 `riscv_crypto_fu_lut4` (RV64)     |      1938   |  7
 `riscv_crypto_fu_saes32`          |      1176   | 30
-`riscv_crypto_fu_saes64`          |      8250   | 28
+`riscv_crypto_fu_saes64` (8 Sbox) |      8663   | 28
+`riscv_crypto_fu_saes64` (4 Sbox) |      6277   | 29
 `riscv_crypto_fu_ssha256`         |       737   |  5
 `riscv_crypto_fu_ssha512` (RV32)  |       701   |  6
 `riscv_crypto_fu_ssha512` (RV64)  |      1986   |  4
@@ -87,7 +88,7 @@ Module Name            | Combined AES/SM4 | Gate Inputs | NAND2 Cells | LTP
 `riscv_crypto_fu_rv32` |        No        |     No      |      4259   | 31
 `riscv_crypto_fu_rv32` |       Yes        |     No      |      3846   | 36
 `riscv_crypto_fu_rv32` |       Yes        |     Yes     |      3672   | 35
-`riscv_crypto_fu_rv64` |       N/A        |     No      |     13582   | 28
+`riscv_crypto_fu_rv64` |       N/A        |     No      |     13806   | 28
 `riscv_crypto_fu_rv64` |       N/A        |     Yes     |     14116   | 28
 
 Notes:
