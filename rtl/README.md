@@ -85,11 +85,11 @@ RV32 and RV64 CPUs.
 
 Module Name            | Combined AES/SM4 | Gate Inputs | NAND2 Cells | LTP
 -----------------------|------------------|-------------|-------------|------
-`riscv_crypto_fu_rv32` |        No        |     No      |      4259   | 31
-`riscv_crypto_fu_rv32` |       Yes        |     No      |      3846   | 36
+`riscv_crypto_fu_rv32` |        No        |     No      |      4267   | 29
+`riscv_crypto_fu_rv32` |       Yes        |     No      |      3845   | 34
 `riscv_crypto_fu_rv32` |       Yes        |     Yes     |      3672   | 35
-`riscv_crypto_fu_rv64` |       N/A        |     No      |     13806   | 28
-`riscv_crypto_fu_rv64` |       N/A        |     Yes     |     14116   | 28
+`riscv_crypto_fu_rv64` |       N/A        |     No      |     13678   | 29
+`riscv_crypto_fu_rv64` |       N/A        |     Yes     |     14126   | 29
 
 Notes:
 
