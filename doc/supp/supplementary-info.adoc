@@ -1,0 +1,30 @@
+= RISC-V Crypto Extension: Supplementary Information
+:doctype: article
+:encoding: utf-8
+:lang: en
+:toc: left
+:numbered:
+:stem: latexmath
+:le: &#8804;
+:ge: &#8805;
+:ne: &#8800;
+:inf: &#8734;
+
+_Work In Progress_
+
+== Introduction
+
+This document contains additional information for engineers implementing
+or using the RISC-V cryptography extension.
+
+NOTE:   The following discussion is not a _requirement_. We are simply
+providing supplementary information that is intended to be helpful for
+implementation and optimization of certain tasks, and provides partial
+rationale for certain ISA features.
+
+include::indexed-loads-stores.adoc[]
+
+include::rbr-arithmetic.adoc[]
+
+include::gcm-mode-cmul.adoc[]
+
