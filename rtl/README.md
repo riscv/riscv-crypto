@@ -77,7 +77,7 @@ RV32 and RV64 CPUs.
 - They can also optionally drop support for AES decryption instructions.
 
 - The RV32 core can also optionally use the combined AES+SM4 module,
-  reducing it's size by increasing it's path length.
+  reducing it's size but increasing it's path length.
 
 - The cores optionally allow gating of inputs to each sub-module.
   This prevents downstream toggling in logic we are not using for the current
