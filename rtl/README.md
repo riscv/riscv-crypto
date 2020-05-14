@@ -90,6 +90,8 @@ Module Name            | Combined AES/SM4 | Gate Inputs | NAND2 Cells | LTP
 `riscv_crypto_fu_rv32` |       Yes        |     Yes     |      3672   | 35
 `riscv_crypto_fu_rv64` |       N/A        |     No      |     13678   | 29
 `riscv_crypto_fu_rv64` |       N/A        |     Yes     |     14126   | 29
+RocketCore RV32 MulDiv |       N/A        |     N/A     |      5167   | 43
+RocketCore RV64 MulDiv |       N/A        |     N/A     |     12404   | 68
 
 Notes:
 
@@ -102,6 +104,11 @@ Notes:
   It is possible the synthesis tool is "being clever".
   I have no way of evaluating the effectivness of the logic
   gating at the moment, 3'rd party evaluations are very welcome.
+
+- The RocketCore RV32 and RV64 mutliplier/divider units are included for
+  comparison.
+  These numbers are taken from the
+  [Bitmanip Draft specification v0.92](https://github.com/riscv/riscv-bitmanip).
 
 
 ### SBoxes
