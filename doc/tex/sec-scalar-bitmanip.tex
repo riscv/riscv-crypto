@@ -121,6 +121,14 @@ GCM is recommended by NIST as a block cipher mode of operation
 \cite{nist:gcm}, and is the only {\em required} mode for the TLS 1.3
 protocol.
 
+\note{
+    To be used in a cryptographic context, the RISC-V extension
+    {\em requires} that these instructions be implemented in
+    a constant time fashion.
+    That is, their execution latency {\em must not} depend on
+    their operands.
+}
+
 
 \subsubsection{Logic With Negate}
 
