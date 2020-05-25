@@ -180,8 +180,8 @@ Some of the functions delegated to software driver component are:
 ===    Background: Criteria for Randomness
 
 NOTE:	While we do not require entropy source implementations to be
-certified designs, we do expect that they should behave in a compatible
-manner do not create undue security risks to users. Self-evaluation and
+certified designs, we do expect that they behave in a compatible manner and
+do not create undue security risks to users. Self-evaluation and
 testing in accordance with appropriate security standards is a good way of 
 achieving this.
 
