@@ -179,6 +179,12 @@ Some of the functions delegated to software driver component are:
 
 ===    Background: Criteria for Randomness
 
+NOTE:	While we do not require that entropy source implementations are
+certified designs, we do expect that they should behave in an compatible
+manner do not create undue security risks to users. Self-evaluation and
+testing in accordance with appropriate security standards is a good way of 
+achieving this.
+
 U.S. NIST has published a recommendation for entropy source evaluation
 in 2018 <<SP800-90B>>, which complements earlier DRBG specification
 <<SP800-90A>>. NIST has also made a statistical test suite
