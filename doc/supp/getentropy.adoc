@@ -50,10 +50,14 @@ In other words, a caller may interpret the return value as C type `int` on
 all architectures, with negative values indicating failure (FAIL) and
 the low 8 bits of positive values having a random seed byte.
 
-The FAIL and non-fail conditions may convey additional information in
+NOTE: The FAIL and non-fail conditions may convey additional information in
 extended (non-baseline) implementations; for example additional entropy
-bits may be available along with indicators of the internal state of the
-the generator may be conveyed.
+bits may be available, and indicators of the internal state of the
+the generator may be conveyed. However we urge implementors against creating
+"oracles" of any unnecessary information or to allow the instruction
+to disable or affect the operation of the TNRG in any significant way,
+since all such interaction mechanisms with "state" can be potentially 
+used in attacks.
 
 Raw output from this instruction should not be used for cryptographic
 purposes directly. Its purpose is to provide entropy for cryptographic
