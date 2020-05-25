@@ -96,13 +96,13 @@ e   [ Crypto-based DRBG ]       //    e.g. CTR_DRBG, Hash_DRBG, HMAC_DRBG
     (IID), meaning that the output distribution does not change over time
     and that output bytes do not convey information about each other.
     This implies that IID tests in <<SP800-90B>> are consistently passed
-    and that the TRNG construction and model implies nothing against IID.
+    and that the physical construction and model implies nothing against IID.
 
 *   **Entropy:** A minimum requirement is that n, n >= 128 bits of "full
     entropy" can be consistently obtained from 2*n `getentropy` seed bits
     via (vetted) cryptographic conditioning and min-entropy assesment.
     If no other information is available, driver developers may make this
-    minimum assumption (see Section 3.1.5.1.2 in <<SP800-90B>>).
+    conservative assumption (see Section 3.1.5.1.2 in <<SP800-90B>>).
     In practice we recommend the distribution to be significantly closer
     to uniform to satisfy practical and <<AIG31>> requirements.
 
