@@ -1,4 +1,5 @@
-**INITIAL DRAFT**  For discussion. This document holds no concensus status yet.
+**INITIAL DRAFT**  For discussion. 
+__This document holds no concensus status yet.__
 
 May 25, 2020  Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
