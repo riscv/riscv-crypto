@@ -2,8 +2,6 @@
 
 May 25, 2020  Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
-With input from many others.
-
 
 == GetEntropy - Baseline Requirements
 
@@ -14,14 +12,14 @@ implementation should satisfy properties that allow it to be used to
 virtually any state size.
 
 NOTE: The purpose of this baseline requirement is to guarantee that a simple,
-device-independent driver component (e.g. in Linux kernel or a cryptographic
-library) can use the instruction to generate truly random bytes. If a TRNG
-component cannot be interfaced or conditioned in a way that meets these
-criteria, it should be interfaced via regular IO interfaces and custom
-drivers instead.
+device-independent driver component (e.g. in Linux kernel, embedded firmware,
+or a cryptographic library) can use the instruction to generate truly random
+bytes. If a TRNG component cannot be interfaced or conditioned in a way that
+meets these criteria, it should be interfaced via regular IO interfaces and
+custom drivers instead.
 
 
-=== Output
+=== Accessing the Entropy Source
 
 ----
 # Get a byte of entropy. imm=0 for baseline operation
@@ -190,7 +188,7 @@ cryptographic conditioning of relatively low-quality random numbers as input.
 
 IID is an optional requirement in <<SP800-90B>>, but is needed to prevent
 information leakage between processes using the `getentropy` instruction.
-Furthermore, it significantly simplifies certification and vendor-independent 
+Furthermore, it significantly simplifies certification and vendor-independent
 driver development.
 
 A conditioning component may be applied to the output from a raw random
@@ -226,6 +224,14 @@ source should meet the requirement to generate n bits of "full randomness"
 when a cryptographic conditioner is used. However <<SP800-90B>> is relatively
 new and fewer certifications have been made to this standard as to Common
 Criteria and <<AIS31>>, so we recommend targeting higher entropy rates.
+
+This interface can be used by both classical Entropy Sources (ES) and
+Quantum Entropy Sources (QES-- see ITU  <<X.1709>> for definitions).
+Use of QES is usually only required in protocols that have security proofs
+derived directly from quantum mechanics (e.g. Quantum Key Agreement).
+Pure cryptographic protocols that do not impose requirements on the physical
+layer communication channels usually only require secret randomness; this
+also applies to post-quantum cryptographic standards <<NISTPQC>>.
 
 
 === References
@@ -348,4 +354,16 @@ J. S. Coron,
 "On the Security of Random Sources."
 PKC 1999, LNCS 1560, Springer, pp. 29-42, 1999.
 https://doi.org/10.1007/3-540-49162-7_3
+
+[[X.1709]][X.1709]
+ITU,
+"Quantum noise random number generator architecture."
+Recommendation ITU-T X.1702, November 2019.
+https://www.itu.int/rec/T-REC-X.1702-201911-I/en
+
+[[NISTPQC]][NISTPQC]
+NIST,
+"Post-Quantum Cryptography Standardization."
+NIST Post Quantum Cryptography project, 2017-.
+https://csrc.nist.gov/Projects/post-quantum-cryptography/Post-Quantum-Cryptography-Standardization
 
