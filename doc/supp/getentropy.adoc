@@ -59,6 +59,8 @@ to disable or affect the operation of the TNRG in any significant way,
 since all such interaction mechanisms with "state" can be potentially 
 used in attacks.
 
+==== Architecture
+
 Raw output from this instruction should not be used for cryptographic
 purposes directly. Its purpose is to provide entropy for cryptographic
 conditioning components and a DRBG (PRNG) implemented in software.
