@@ -193,9 +193,9 @@ Some of the functions delegated to software driver component
 
 NOTE:   While we do not require entropy source implementations to be
 certified designs, we do expect that they behave in a compatible manner and
-do not create undue security risks to users. Self-evaluation and
-testing in accordance with appropriate security standards is a good way of
-achieving this.
+do not create additional security risks to users. Self-evaluation and
+testing in accordance with appropriate security standards is usually needed
+to achieve this.
 
 U.S. NIST has published a recommendation for entropy source evaluation
 in 2018 <<SP800-90B>>, which complements earlier DRBG specification
