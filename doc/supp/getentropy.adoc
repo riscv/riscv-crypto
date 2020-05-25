@@ -160,18 +160,20 @@ Some of the functions delegated to software driver component are:
     by certification such as <<FIPS140>>. This is typically performed by
     the system kernel or other shared runtime components.
 -   Cryptographic conditioning, e.g. SHA2/HMAC, AES/CMAC, AES/CBC-MAC as
-    discussed in <<SP800-90B>>.
--   Produce DRBG output using cryptographic mechanisms such as CTR_DRBG,
+    discussed in <<SP800-90B>> to compress 2*n bits of `getentropy` output
+    into n bits of "full entropy" output.
+-   Producing DRBG output using cryptographic mechanisms such as CTR_DRBG,
     Hash_DRBG, HMAC_DRBG as discussed in <<SP800-90A>>.
 -   Known-answer tests of cryptographic components used for conditioning
     or DRBG, if required. These cryptographic components can leverage
     the relevant (AES and SHA-2) cryptographic instructions.
--   Key zeroization. Since cryptographic keys are held in software and
-    the hardware component maintains a minimum correlated state, software
-    zeroization is sufficient.
 -   Additional Health monitoring (power-up tests, software/firmware tests,
     continuous tests, critical functions tests, conditional tests, etc) as
     required by <<FIPS140>>.
+-   Key zeroization and other validation interfaces. Since cryptographic keys
+    are held in software and the hardware component maintains a minimum
+    correlated state, the hardware implementation should be designed in a
+    way that software zeroization is sufficient.
 
 
 ===    Background: Criteria for Randomness
@@ -289,6 +291,17 @@ number generators."
 AIS 20, Version 2.0, BSI, December 1999.
 https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_20_Functionality_Classes_Evaluation_Methodology_DRNG_e.html
 
+[[X.1709]][X.1709]
+ITU,
+"Quantum noise random number generator architecture."
+Recommendation ITU-T X.1702, November 2019.
+https://www.itu.int/rec/T-REC-X.1702-201911-I/en
+
+[[NISTPQC]][NISTPQC]
+NIST,
+"Post-Quantum Cryptography Standardization."
+NIST Post Quantum Cryptography project, 2017-.
+https://csrc.nist.gov/Projects/post-quantum-cryptography/Post-Quantum-Cryptography-Standardization
 
 ==== Informational References
 
@@ -354,16 +367,4 @@ J. S. Coron,
 "On the Security of Random Sources."
 PKC 1999, LNCS 1560, Springer, pp. 29-42, 1999.
 https://doi.org/10.1007/3-540-49162-7_3
-
-[[X.1709]][X.1709]
-ITU,
-"Quantum noise random number generator architecture."
-Recommendation ITU-T X.1702, November 2019.
-https://www.itu.int/rec/T-REC-X.1702-201911-I/en
-
-[[NISTPQC]][NISTPQC]
-NIST,
-"Post-Quantum Cryptography Standardization."
-NIST Post Quantum Cryptography project, 2017-.
-https://csrc.nist.gov/Projects/post-quantum-cryptography/Post-Quantum-Cryptography-Standardization
 
