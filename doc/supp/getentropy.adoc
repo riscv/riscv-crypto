@@ -162,26 +162,25 @@ NOTE:   Our discussion of software components is informational only;
 we emphasize that users of `getentropy` should not expect that it produces
 full-entropy output.
 
-Some of the functions delegated to software driver component are:
+Some of the functions delegated to software driver component
+(in system kernel, shared runtime, or cryptographic library):
 
--   Detection of the instruction and possible warm-up tests if required
-    by certification such as <<FIPS140>>. This is typically performed by
-    the system kernel or other shared runtime components.
+-   Detection of the existence of the instruction and its features.
+-   Possible warm-up tests if required for certification such as <<FIPS140>>.
 -   Cryptographic conditioning, e.g. SHA2/HMAC, AES/CMAC, AES/CBC-MAC as
-    discussed in <<SP800-90B>> to compress 2*n bits of `getentropy` output
-    into n bits of "full entropy" output.
+    discussed in <<SP800-90B>>. This is required to compress 2*n bits of
+    `getentropy` output into n bits of "full entropy".
 -   Producing DRBG output using cryptographic mechanisms such as CTR_DRBG,
     Hash_DRBG, HMAC_DRBG as discussed in <<SP800-90A>>.
 -   Known-answer tests of cryptographic components used for conditioning
-    or DRBG, if required. These cryptographic components can leverage
-    the relevant (AES and SHA-2) cryptographic instructions.
+    or DRBG, if required. These implementations can leverage the relevant
+    (AES and SHA-2) cryptographic instructions.
 -   Additional Health monitoring (power-up tests, software/firmware tests,
     continuous tests, critical functions tests, conditional tests, etc) as
     required by <<FIPS140>>.
 -   Key zeroization and other validation interfaces. Since cryptographic keys
-    are held in software and the hardware component maintains a minimum
-    correlated state, the hardware implementation should be designed in a
-    way that software zeroization is sufficient.
+    are not held by the TRNG and the hardware component maintains a minimum
+    correlated state, software zeroization is sufficient.
 
 
 ===    Background: Criteria for Randomness
