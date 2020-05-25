@@ -55,7 +55,7 @@ bits may be available, and indicators of the internal state of the the
 generator may be conveyed. However we urge implementors against creating
 "oracles" of any unnecessary information or to allow the instruction
 to disable or affect the operation of the TNRG in any significant way,
-since all such interaction mechanisms with "state" can be potentially 
+since all such interaction mechanisms with its "state" can be potentially 
 used in attacks.
 
 
