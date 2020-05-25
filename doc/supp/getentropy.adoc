@@ -122,7 +122,7 @@ that generator is considered to be sufficient for all possible applications
 === Polling Randomness
 
 The instruction returns immediately, either with a byte of randomness
-satisfying the criteria below, or FAIL (high bit set).
+satisfying the criteria above, or FAIL (high bit set).
 
 We recommend against busy-loop polling on this instruction as it may have
 relatively low bandwidth. Even though no specific interrupt sequence is
