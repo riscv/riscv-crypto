@@ -228,11 +228,11 @@ new and fewer certifications have been made to this standard as to Common
 Criteria and <<AIS31>>, so we recommend targeting higher entropy rates.
 
 This interface can be used by both classical Entropy Sources (ES) and
-Quantum Entropy Sources (QES-- see ITU  <<X.1709>> for definitions).
+Quantum Entropy Sources (QES, see ITU <<X.1709>> for definitions).
 Use of QES is usually only required in protocols that have security proofs
 derived directly from quantum mechanics (e.g. Quantum Key Agreement).
 Pure cryptographic protocols that do not impose requirements on the physical
-layer communication channels usually only require secret randomness; this
+layer communication channels usually only require secret ES randomness; this
 also applies to post-quantum cryptographic standards <<NISTPQC>>.
 
 
