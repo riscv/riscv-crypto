@@ -85,9 +85,9 @@ used in attacks.
 
 NOTE:    These are the minimum requirements; an implementation is free to
 also output fully conditioned, perfectly distributed numbers. However the
-instruction should not output DRBG output unless the seed entropy content of
-that generator is considered to be sufficient for all possible applications
-(generally larger than 256 bits).
+instruction should not pass on DRBG output unless the entropy content 
+and secret state of that generator is considered to be sufficient for 
+high-security applications (more than 256 bits).
 
 
 ====	Polling Randomness
