@@ -19,7 +19,6 @@ bytes. If a TRNG component cannot be interfaced or conditioned in a way that
 meets these criteria, it should be interfaced via regular IO interfaces and
 custom drivers instead.
 
-
 === Accessing the Entropy Source
 
 ----
@@ -50,16 +49,78 @@ In other words, a caller may interpret the return value as C type `int` on
 all architectures, with negative values indicating failure (FAIL) and
 the low 8 bits of positive values having a random seed byte.
 
-NOTE: The FAIL and non-fail conditions may convey additional information in
-extended (non-baseline) implementations; for example additional entropy
-bits may be available, and indicators of the internal state of the
-the generator may be conveyed. However we urge implementors against creating
+NOTE:	The FAIL and non-fail conditions may convey additional information
+in extended (non-baseline) implementations; for example additional entropy
+bits may be available, and indicators of the internal state of the the 
+generator may be conveyed. However we urge implementors against creating
 "oracles" of any unnecessary information or to allow the instruction
 to disable or affect the operation of the TNRG in any significant way,
 since all such interaction mechanisms with "state" can be potentially 
 used in attacks.
 
-==== Architecture
+
+====    Baseline requirements
+
+*   **IID**: The output should be __Independent and Identically Distributed__
+    (IID), meaning that the output distribution does not change over time
+    and that output bytes do not convey information about each other.
+    This implies that IID tests in <<SP800-90B>> are consistently passed
+    and that the physical construction and model implies nothing against IID.
+
+*   **Entropy:** A minimum requirement is that 128 bits of "full
+    entropy" can be consistently obtained from each 256-bit `getentropy`
+    output block via (vetted) cryptographic conditioning (see Section
+    3.1.5.1.2 in <<SP800-90B>>). If no other information is available,
+    driver developers may make this conservative assumption. Note that
+    min-entropy assesment in <<SP800-90B>> requires some overhead,
+    so an entropy rate of 4 bits per byte is not necessarily sufficient.
+    In practice we recommend the distribution to be significantly
+    closer to uniform to satisfy usability and <<AIG31>> requirements.
+
+*   **Validity:** The instruction returns FAIL if sufficient entropy is not
+    available. In particular `getentropy` sets FAIL if called too rapidly in
+    succession or immediately after startup. However more detailed warm-up
+    tests may be delegated to the software or firmware component, as required
+    for certification.
+
+NOTE:    These are the minimum requirements; an implementation is free to
+also output fully conditioned, perfectly distributed numbers. However the
+instruction should not output DRBG output unless the seed entropy content of
+that generator is considered to be sufficient for all possible applications
+(generally larger than 256 bits).
+
+
+====	Polling Randomness
+
+The instruction returns immediately, either with a byte of randomness
+satisfying the criteria above, or FAIL (high bit set).
+
+We recommend against busy-loop polling on this instruction as it may have
+relatively low bandwidth. Even though no specific interrupt sequence is
+specified, it is required that the WFI instruction is available and does
+not trap on systems that implement GetEntropy (WFI can be implemented as a
+NOP).
+
+As a minimum requirement for portable drivers, a FAIL from GetEntropy should
+be followed by a WFI before another GetEntropy instruction is issued.
+This (at least potentially) allows energy-saving sleep on MCUs and context
+switching on a higher-end CPUs.
+
+The instruction should return FAIL during its "warm-up" period. An internal
+delay counter or randomness quality monitor can be implemented for this.
+However secondary quality monitors can be implemented in the driver component
+to comply with certification requirements.
+
+On systems that do not have a suitable hardware generator available,
+the instruction should not be available either; they should have negative
+discovery and can trap instead of permanently returning FAIL. On
+virtualized platforms the bytes are expected to be directly sourced from a
+suitable host system resource such as the  `/dev/random` character device
+or `getrandom(2)` syscalls. Note that the host random number generator
+must also satisfy the 256-bit entropy internal seeding requirement.
+
+
+=== Overall RNG Architecture
 
 Raw output from this instruction should not be used for cryptographic
 purposes directly. Its purpose is to provide entropy for cryptographic
@@ -100,67 +161,6 @@ e   [ Crypto-based DRBG ]       //    e.g. CTR_DRBG, Hash_DRBG, HMAC_DRBG
               V
  Application / Crypto Algorithm
 ----
-
-====    Baseline requirements
-
-*   **IID**: The output should be __Independent and Identically Distributed__
-    (IID), meaning that the output distribution does not change over time
-    and that output bytes do not convey information about each other.
-    This implies that IID tests in <<SP800-90B>> are consistently passed
-    and that the physical construction and model implies nothing against IID.
-
-*   **Entropy:** A minimum requirement is that 128 bits of "full
-    entropy" can be consistently obtained from each 256-bit `getentropy`
-    output block via (vetted) cryptographic conditioning (see Section
-    3.1.5.1.2 in <<SP800-90B>>). If no other information is available,
-    driver developers may make this conservative assumption. Note that
-    min-entropy assesment in <<SP800-90B>> requires some overhead,
-    so an entropy rate of 4 bits per byte is not necessarily sufficient.
-    In practice we recommend the distribution to be significantly
-    closer to uniform to satisfy usability and <<AIG31>> requirements.
-
-*   **Validity:** The instruction returns FAIL if sufficient entropy is not
-    available. In particular `getentropy` sets FAIL if called too rapidly in
-    succession or immediately after startup. However more detailed warm-up
-    tests may be delegated to the software or firmware component, as required
-    for certification.
-
-NOTE:    These are the minimum requirements; an implementation is free to
-also output fully conditioned, perfectly distributed numbers. However the
-instruction should not output DRBG output unless the seed entropy content of
-that generator is considered to be sufficient for all possible applications
-(generally larger than 256 bits).
-
-
-=== Polling Randomness
-
-The instruction returns immediately, either with a byte of randomness
-satisfying the criteria above, or FAIL (high bit set).
-
-We recommend against busy-loop polling on this instruction as it may have
-relatively low bandwidth. Even though no specific interrupt sequence is
-specified, it is required that the WFI instruction is available and does
-not trap on systems that implement GetEntropy (WFI can be implemented as a
-NOP).
-
-As a minimum requirement for portable drivers, a FAIL from GetEntropy should
-be followed by a WFI before another GetEntropy instruction is issued.
-This (at least potentially) allows energy-saving sleep on MCUs and context
-switching on a higher-end CPUs.
-
-The instruction should return FAIL during its "warm-up" period. An internal
-delay counter or randomness quality monitor can be implemented for this.
-However secondary quality monitors can be implemented in the driver component
-to comply with certification requirements.
-
-On systems that do not have a suitable hardware generator available,
-the instruction should not be available either; they should have negative
-discovery and can trap instead of permanently returning FAIL. On
-virtualized platforms the bytes are expected to be directly sourced from a
-suitable host system resource such as the  `/dev/random` character device
-or `getrandom(2)` syscalls. Note that the host random number generator
-must also satisfy the 256-bit entropy internal seeding requirement.
-
 
 ==== Typical Driver functionality
 
