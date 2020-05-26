@@ -1,5 +1,5 @@
 **INITIAL DRAFT**  For discussion.
-__This document holds no concensus status yet.__
+__This document does not reflect TG concensus yet.__
 
 May 25, 2020  Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
@@ -16,7 +16,7 @@ NOTE: The purpose of this baseline requirement is to guarantee that a simple,
 device-independent driver component (e.g. in Linux kernel, embedded firmware,
 or a cryptographic library) can use the instruction to generate truly random
 bytes. If a TRNG component cannot be interfaced or conditioned in a way that
-meets these criteria, it should be interfaced via regular IO interfaces and
+meets these criteria, it can be interfaced via regular IO interfaces and
 custom drivers instead.
 
 === Accessing the Entropy Source
@@ -49,15 +49,13 @@ In other words, a caller may interpret the return value as C type `int` on
 all architectures, with negative values indicating failure (FAIL) and
 the low 8 bits of positive values having a random seed byte.
 
-NOTE:	The FAIL and non-fail conditions may convey additional information
+NOTE:   The FAIL and non-fail conditions may convey additional information
 in extended (non-baseline) implementations; for example additional entropy
-bits may be available, and indicators of the internal state of the the 
+bits may be available, and indicators of the internal state of the the
 generator may be conveyed. However we urge implementors against creating
-"oracles" of any unnecessary information or to allow the instruction
-to disable or affect the operation of the TNRG in any significant way,
-since all such interaction mechanisms with its "state" can be potentially 
-used in attacks.
-
+unnecessary information "status oracles" or to allow the instruction to
+disable or affect the TNRG output in any significant way. All such information
+flows and interaction mechanisms can be potentially used in attacks.
 
 ====    Baseline requirements
 
@@ -65,15 +63,15 @@ used in attacks.
     (IID), meaning that the output distribution does not change over time
     and that output bytes do not convey information about each other.
     This implies that IID tests in <<SP800-90B>> are consistently passed
-    and that the physical construction and model implies nothing against IID.
+    and that the construction of the physical source and sampling mechanism
+    implies nothing against the IID assumption.
 
 *   **Entropy:** A minimum requirement is that 128 bits of "full
     entropy" can be consistently obtained from each 256-bit `getentropy`
     output block via (vetted) cryptographic conditioning (see Section
     3.1.5.1.2 in <<SP800-90B>>). If no other information is available,
     driver developers may make this conservative assumption. Note that
-    min-entropy assesment in <<SP800-90B>> requires some overhead,
-    so an entropy rate of 4 bits per byte is not necessarily sufficient.
+    min-entropy assesment in <<SP800-90B>> requires some overhead.
     In practice we recommend the distribution to be significantly
     closer to uniform to satisfy usability and <<AIG31>> requirements.
 
@@ -81,16 +79,17 @@ used in attacks.
     available. In particular `getentropy` sets FAIL if called too rapidly in
     succession or immediately after startup. However more detailed warm-up
     tests may be delegated to the software or firmware component, as required
-    for certification.
+    for certification (the output of the software driver is to be certified,
+    not the instruction).
 
-NOTE:    These are the minimum requirements; an implementation is free to
+NOTE:    These are the minimum requirements; an implementation is can
 also output fully conditioned, perfectly distributed numbers. However the
-instruction should not pass on DRBG output unless the entropy content 
-and secret state of that generator is considered to be sufficient for 
-high-security applications (more than 256 bits).
+instruction should be used to not pass on DRBG output unless the entropy
+content and secret state of that generator is considered to be sufficient for
+highest-security applications (more than 256 bits).
 
 
-====	Polling Randomness
+====    Polling Randomness
 
 The instruction returns immediately, either with a byte of randomness
 satisfying the criteria above, or FAIL (high bit set).
@@ -117,7 +116,7 @@ discovery and can trap instead of permanently returning FAIL. On
 virtualized platforms the bytes are expected to be directly sourced from a
 suitable host system resource such as the  `/dev/random` character device
 or `getrandom(2)` syscalls. Note that the host random number generator
-must also satisfy the 256-bit entropy internal seeding requirement.
+must also satisfy the 256-bit security requirement.
 
 
 === Overall RNG Architecture
@@ -171,7 +170,7 @@ full-entropy output.
 Some of the functions delegated to software driver component
 (in system kernel, shared runtime, or cryptographic library):
 
--   Detection of the existence of the instruction and its features.
+-   Discovery of the instruction and its features.
 -   Possible warm-up tests if required for certification such as <<FIPS140>>.
 -   Cryptographic conditioning, e.g. SHA2/HMAC, AES/CMAC, AES/CBC-MAC as
     discussed in <<SP800-90B>>. This is required to compress 2*n bits of
@@ -186,7 +185,7 @@ Some of the functions delegated to software driver component
     required by <<FIPS140>>.
 -   Key zeroization and other validation interfaces. Since cryptographic keys
     are not held by the TRNG and the hardware component maintains a minimum
-    correlated state, software zeroization is sufficient.
+    correlated state, software zeroization should be sufficient.
 
 
 ===    Background: Criteria for Randomness
@@ -214,20 +213,22 @@ driver development.
 
 A conditioning component may be applied to the output from a raw random
 noise source to reduce bias and/or increase entropy rate to meet the
-criteria for seed output. Some certification approaches may require
-additional access to raw noise source (GetNoise function of <<SP800-90B>>),
-and it is up to the vendor to provide such access in order to certify an
-implementation.
+criteria for seed output. In this case some security evaluation approaches
+will need to bypass the conditioning component and access the raw noise
+sequence directly (GetNoise function of <<SP800-90B>>). This is
+vendor-specific matter (not ISA), and only needed for certification,
+post-fabrication checks, and other evaluation/diagnostics; regular
+applications or drivers should not need it. Such a "debug" interfaces must
+have restricted access for security.
 
-German BSI (Bundesamt für Sicherheit in der Informationstechnik) has
-also published two methods for evaluating random number generators, whose
-status is discussed in document <<BSI-RAND>>; this methodology is widely
-used in Common Criteria (CC) evaluations.
+German BSI (Bundesamt für Sicherheit in der Informationstechnik) has also
+published two methods, "AIS-31" and "AIS-20", for evaluating random number
+generators. Their sstatus is discussed in document <<BSI-RAND>>.
+This methodology is widely used in Common Criteria (CC) evaluations as well.
 
 The methods discussed in "AIS-31" <<AIS31>> are related to physical
 random number generators (i.e. `getentropy`), while "AIS-20" <<AIS20>>
 describes deterministic random number generators. Also see <<ScKi02>>.
-
 <<AIS31>> specifies two classes of TRNGs, P1 and P2, while <<AIS20>>
 describes four classes K1, K2, K3, and K4 of DRBGs (where K4 is the highest).
 There is a relationship between the two; Class P1 randomness source is
@@ -235,16 +236,16 @@ suitable of DRBGs in classes K1 and K2, while P2 source is used for K3 and
 K4 DRBGs and higher overall security levels.
 
 The requirements for the P2 source necessitate near-uniform output even from
-the entropy source. For example criteria P2.i)(vii.e) requires entropy
+the "raw" entropy source. For example criteria P2.i)(vii.e) requires entropy
 estimate of at least 7.976 bits per byte using "test T8" in <<AIS31>>,
 which is derived from Coron's test <<Co99>>. Hence we suggest that each
 output byte has much more than the minimum entropy content of >4 bits per byte.
 
-A generally sufficient criterion seems to be that 2*n bits from an entropy
-source should meet the requirement to generate n bits of "full randomness"
-when a cryptographic conditioner is used. However <<SP800-90B>> is relatively
-new and fewer certifications have been made to this standard as to Common
-Criteria and <<AIS31>>, so we recommend targeting higher entropy rates.
+A common approach seems to be that 2*n bits from an entropy source is used
+to generate n bits of "full randomness" with a cryptographic conditioner.
+However <<SP800-90B> is relatively new and fewer certifications have been
+made to this standard than to Common Criteria and <<AIS31>>, so we recommend
+targeting higher entropy rates.
 
 This interface can be used by both classical Entropy Sources (ES) and
 Quantum Entropy Sources (QES, see ITU <<X.1709>> for definitions).
