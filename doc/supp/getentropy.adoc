@@ -1,5 +1,5 @@
 **INITIAL DRAFT**  For discussion.
-__This document does not reflect TG concensus yet.__
+__This document does not reflect TG consensus yet.__
 
 May 25, 2020  Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
@@ -29,7 +29,7 @@ getentropy rd, imm
 
 Currently `imm` for `getentropy` has no specified input flags; the
 minimum behavior described in this document applies when imm=0.
-If an implementation encounters an input `imm` that it cannot intepret,
+If an implementation encounters an input `imm` that it cannot interpret,
 it must return FAIL and may also trap.
 
 After the instruction, the register `rd` will contain:
@@ -51,11 +51,11 @@ the low 8 bits of positive values having a random seed byte.
 
 NOTE:   The FAIL and non-fail conditions may convey additional information
 in extended (non-baseline) implementations; for example additional entropy
-bits may be available, and indicators of the internal state of the the
-generator may be conveyed. However we urge implementors against creating
-unnecessary information "status oracles" or to allow the instruction to
-disable or affect the TNRG output in any significant way. All such information
-flows and interaction mechanisms can be potentially used in attacks.
+bits may be available, and indicators of the internal state of the generator
+may be conveyed. However we urge implementors against creating unnecessary
+information "status oracles" or to allow the instruction to disable or
+affect the TNRG output in any significant way. All such information flows 
+and interaction mechanisms can be potentially used in attacks.
 
 ====    Baseline requirements
 
@@ -71,7 +71,7 @@ flows and interaction mechanisms can be potentially used in attacks.
     output block via (vetted) cryptographic conditioning (see Section
     3.1.5.1.2 in <<SP800-90B>>). If no other information is available,
     driver developers may make this conservative assumption. Note that
-    min-entropy assesment in <<SP800-90B>> requires some overhead.
+    min-entropy assessment in <<SP800-90B>> requires some overhead.
     In practice we recommend the distribution to be significantly
     closer to uniform to satisfy usability and <<AIG31>> requirements.
 
@@ -85,8 +85,8 @@ flows and interaction mechanisms can be potentially used in attacks.
 NOTE:    These are the minimum requirements; an implementation is can
 also output fully conditioned, perfectly distributed numbers. However the
 instruction should be used to not pass on DRBG output unless the entropy
-content and secret state of that generator is considered to be sufficient for
-highest-security applications (more than 256 bits).
+content and secret state of that generator are considered to be sufficient
+for high-security applications (more than 256 bits).
 
 
 ====    Polling Randomness
@@ -216,15 +216,15 @@ noise source to reduce bias and/or increase entropy rate to meet the
 criteria for seed output. In this case some security evaluation approaches
 will need to bypass the conditioning component and access the raw noise
 sequence directly (GetNoise function of <<SP800-90B>>). This is
-vendor-specific matter (not ISA), and only needed for certification,
+a vendor-specific matter (not ISA), and only needed for certification,
 post-fabrication checks, and other evaluation/diagnostics; regular
-applications or drivers should not need it. Such a "debug" interfaces must
+applications or drivers should not need it. Such a "debug" interface must
 have restricted access for security.
 
 German BSI (Bundesamt für Sicherheit in der Informationstechnik) has also
 published two methods, "AIS-31" and "AIS-20", for evaluating random number
-generators. Their sstatus is discussed in document <<BSI-RAND>>.
-This methodology is widely used in Common Criteria (CC) evaluations as well.
+generators. Their status is discussed in <<BSI-RAND>>. This methodology is
+widely used in Common Criteria (CC) evaluations as well.
 
 The methods discussed in "AIS-31" <<AIS31>> are related to physical
 random number generators (i.e. `getentropy`), while "AIS-20" <<AIS20>>
@@ -248,14 +248,14 @@ made to this standard than to Common Criteria and <<AIS31>>, so we recommend
 targeting higher entropy rates.
 
 This interface can be used by both classical Entropy Sources (ES) and
-Quantum Entropy Sources (QES, see ITU <<X.1709>> for definitions).
-Use of QES is usually only required in protocols that have security proofs
-derived directly from quantum mechanics (e.g. Quantum Key Agreement).
-Pure cryptographic protocols that do not impose requirements on the physical
-layer communication channels usually only require "classical" entropy; 
-this also applies to post-quantum cryptographic standards 
-<<NISTPQC>>.
-
+Quantum Entropy Sources (QES, see ITU <<X.1709>> for definitions), if the
+QES meets the required classical entropy criteria. The use of quantum-origin
+entropy (the distinguishing factor of QES) is usually only required in
+protocols that have security proofs derived directly from quantum mechanics 
+(e.g. Quantum Key Agreement). Pure cryptographic protocols that do not
+impose requirements on the physical layer communication channels usually
+only require "classical" entropy; this also applies to post-quantum 
+cryptographic standards <<NISTPQC>>.
 
 === References
 
