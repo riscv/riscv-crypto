@@ -258,6 +258,7 @@ impose requirements on the physical layer communication channels usually
 only require "classical" entropy; this also applies to post-quantum
 cryptographic standards <<NISTPQC>>.
 
+
 === References
 
 [[SP800-90A]][SP800-90A]
@@ -325,6 +326,7 @@ NIST,
 NIST Post Quantum Cryptography project, 2017-.
 https://csrc.nist.gov/Projects/post-quantum-cryptography/Post-Quantum-Cryptography-Standardization
 
+
 ==== Informational References
 
 [[ScKi02]][ScKi02]
@@ -389,4 +391,26 @@ J. S. Coron,
 "On the Security of Random Sources."
 PKC 1999, LNCS 1560, Springer, pp. 29-42, 1999.
 https://doi.org/10.1007/3-540-49162-7_3
+
+
+==== Latest Results
+
+[[WoSh19]][WoSh19]
+J. Woodage and D. Shumov,
+"An Analysis of NIST SP 800-90A."
+EUROCRYPT 2019, LNCS 11477, pp. 151-180, 2019.
+https://eprint.iacr.org/2018/349
+https://doi.org/10.1007/978-3-030-17656-3_6
+
+[[CoKwPa20]][CoKwPa20]
+S. Cohney, A. Kwong, S. Paz, D. Genkin, N. Heninger, E. Ronen, and Y Yarom,
+"Pseudorandom Black Swans: Cache Attacks on CTR_DRBG."
+IEEE S&P 2020, Vol 1, pp. 875-892, 2020.
+https://doi.ieeecomputersociety.org/10.1109/SP40000.2020.00046
+
+[[HoSh20]][HoSh20]
+V. T. Hoang and Y. Shen,
+"Security Analysis of NIST CTR-DRBG."
+CRYPTO 2020, To appear, 2020.
+https://eprint.iacr.org/2020/619
 
