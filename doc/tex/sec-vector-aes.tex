@@ -1,0 +1,244 @@
+
+\subsection{Vector AES Acceleration - Per Round}
+\label{sec:vector:aes:single-round}
+
+\begin{cryptoisa}
+// Vector-Scalar
+vaese.vs        vrt, vrs1        // Encrypt
+vaeselast.vs    vrt, vrs1        // Encrypt - final round
+vaesd.vs        vrt, vrs1        // Decrypt
+vaesdlast.vs    vrt, vrs1        // Decrypt - final round
+
+// Vector-Vector
+vaese.vv        vrt, vrs1        // Encrypt
+vaeselast.vv    vrt, vrs1        // Encrypt - final round
+vaesd.vv        vrt, vrs1        // Decrypt
+vaesdlast.vv    vrt, vrs1        // Decrypt - final round
+\end{cryptoisa}
+
+The \mnemonic{vaese.*} and \mnemonic{vaesd.*} instructions take
+a single vector source register where each element contains the
+current round key ({\tt vrs1}),
+and
+a source/destination vector register ({\tt vrt}) where each element contains
+the current round state.
+Using these two inputs, they produce the next encryption/decryption
+round state, applying the 
+AddRoundKey, (Inverse-)ShiftRows, (Inverse-)SubBytes and (Inverse-)MixColumns
+transformations.
+The \mnemonic{vaeselast.*} and \mnemonic{vaesdlast.*} instructions
+are used for the final round of AES only.
+They behave identically to \mnemonic{vaese.*}/\mnemonic{vaesd.*}, but
+omit the (Inverse-)MixColumns transformation.
+
+The Vector-Scalar ({\tt *.vs}) instructions use a single round key
+contained in element $0$ of {\tt vrs1} for every data element
+contained in {\tt vrt}.
+The Vector-Vector ({\tt *.vv}) instructions use corresponding
+round key and data elements in {\tt vrs1} and {\tt vrt}.
+
+Each of these instructions requires {\tt SEW=128}
+({\tt vtype.vsew[2:0]=3'b100}).
+Executing these instructions with any other value of {\tt SEW} will cause
+an invalid opcode exception.
+
+\todo{
+What if VLEN $>$ SLEN and we are executing a {\tt *.vs} instruction?
+Is the round-key allowed to cross the striping boundary?
+}
+
+\begin{cryptoisa}
+vaes128keyi     vrt,       rnd    // 1  <= rnd <= 10
+vaes192keyi     vrt, vrs1, rnd    // 1  <= rnd <= 12
+vaes256keyi     vrt, vrs1, rnd    // 2  <= rnd <= 14
+
+vaes128invkeyi  vrt,       rnd    // 9  => rnd =>  0
+vaes192invkeyi  vrt, vrs1, rnd    // 10 => rnd =>  0
+vaes256invkeyi  vrt, vrs1, rnd    // 12 => rnd =>  0
+\end{cryptoisa}
+
+The \mnemonic{vaes*keyi} instructions
+are used to compute the {\em next} AES round key for encryption
+or decryption.
+In the round number is supplied by the $4$-bit {\tt rnd} immediate.
+These instructions are all vector-vector instructions.
+Setting {\tt vl=1, vstart=0} will cause the instruction to work on only a
+single vector element.
+
+The \mnemonic{vaes128keyi} instruction computes
+the {\em next} round key
+from the
+{\em current} round key
+stored in {\tt vrt},
+and writes the result back to {\tt vrt}.
+
+The \mnemonic{vaes192keyi} and \mnemonic{vaes256keyi} instructions
+compute the {\em next} round key
+from the
+{\em current} round key stored in {\tt vrt}
+{\em and}
+the {\em previous} round key stored in {\tt vrs1}.
+The {\em next} round key is written back to {\tt vrt}.
+
+Each of these instructions requires {\tt SEW=128}
+({\tt vtype.vsew[2:0]=3'b100}).
+Executing these instructions with any other value of {\tt SEW} will cause
+an invalid opcode exception.
+
+%vaese.vs        vrt, vrs1:
+%  vrt[i] = AESEncRnd(vrt[i], vrs1[0])     for i=vstart, i<vl, i++ 
+%
+%vaeselast.vs    vrt, vrs1:
+%  vrt[i] = AESEncLastRnd(vrt[i], vrs1[0]) for i=vstart, i<vl, i++ 
+%
+%vaesd.vs        vrt, vrs1:
+%  vrt[i] = AESDecRnd(vrt[i], vrs1[0])     for i=vstart, i<vl, i++ 
+%
+%vaesdlast.vs    vrt, vrs1:
+%  vrt[i] = AESDecLastRnd(vrt[i], vrs1[0]) for i=vstart, i<vl, i++ 
+%
+%vaese.vv        vrt, vrs1:
+%  vrt[i] = AESEncRnd(vrt[i], vrs1[i])     for i=vstart, i<vl, i++ 
+%
+%vaeselast.vv    vrt, vrs1:
+%  vrt[i] = AESEncLastRnd(vrt[i], vrs1[i]) for i=vstart, i<vl, i++ 
+%
+%vaesd.vv        vrt, vrs1:
+%  vrt[i] = AESDecRnd(vrt[i], vrs1[i])     for i=vstart, i<vl, i++ 
+%
+%vaesdlast.vv    vrt, vrs1:
+%  vrt[i] = AESDecLastRnd(vrt[i], vrs1[i]) for i=vstart, i<vl, i++ 
+%
+%vaes128keyi     vrt,       rnd
+%    vrt[i] = AES128RndKeyNext(vrt[i], rnd) for i=vstart, i<vl, i++
+%
+%vaes192keyi     vrt, vrs1, rnd
+%    vrt[i] = AES192RndKeyNext(vrt[i], vrs1[i], rnd) for i=vstart, i<vl, i++
+%
+%vaes256keyi     vrt, vrs1, rnd
+%    vrt[i] = AES256RndKeyNext(vrt[i], vrs1[i], rnd) for i=vstart, i<vl, i++
+%
+%vaes128invkeyi  vrt,       rnd
+%    vrt[i] = AES128RndKeyPrev(vrt[i], rnd) for i=vstart, i<vl, i++
+%
+%vaes192invkeyi  vrt, vrs1, rnd
+%    vrt[i] = AES192RndKeyPrev(vrt[i], vrs1[i], rnd) for i=vstart, i<vl, i++
+%
+%vaes256invkeyi  vrt, vrs1, rnd
+%    vrt[i] = AES256RndKeyPrev(vrt[i], vrs1[i], rnd) for i=vstart, i<vl, i++
+
+\begin{figure}[h]
+\begin{lstlisting}[language=pseudo]
+TBD
+\end{lstlisting}
+\caption{Pseudocode for the per-round vector AES instructions.}
+\label{fig:pseudo:aes:vector:per-round}
+\end{figure}
+
+
+\subsection{Vector AES Acceleration - All Round}
+\label{sec:vector:aes:all-round}
+
+\begin{cryptoisa}
+// Vector-Scalar
+vaese128.vs vrt, vrs1 // Encrypt all rounds,       128 bit cipher Key
+vaese192.vs vrt, vrs1 // Encrypt all rounds, 2*SEW 192 bit cipher Key
+vaese256.vs vrt, vrs1 // Encrypt all rounds, 2*SEW 256 bit cipher Key
+vaesd128.vs vrt, vrs1 // Decrypt all rounds,       128 bit last     round key
+vaesd192.vs vrt, vrs1 // Decrypt all rounds, 2*SEW 192 bit last two round keys
+vaesd256.vs vrt, vrs1 // Decrypt all rounds, 2*SEW 256 bit last two round keys
+
+// Vector-Vector
+vaese128.vv vrt, vrs1 // Encrypt all rounds,       128 bit cipher Key
+vaese192.vv vrt, vrs1 // Encrypt all rounds, 2*SEW 192 bit cipher Key
+vaese256.vv vrt, vrs1 // Encrypt all rounds, 2*SEW 256 bit cipher Key
+vaesd128.vv vrt, vrs1 // Decrypt all rounds,       128 bit last     round key
+vaesd192.vv vrt, vrs1 // Decrypt all rounds, 2*SEW 192 bit last two round keys
+vaesd256.vv vrt, vrs1 // Decrypt all rounds, 2*SEW 256 bit last two round keys
+\end{cryptoisa}
+
+These instructions perform an entire block encryption or decryption
+operation for the given AES parameterisation.
+The {\tt vrt} vector register elements contain $128$-bit blocks
+to be encrypted or decrypted.
+The {\tt vrs1} vector register elements contain the initial
+cipher key.
+
+\todo{
+The vector spec implicitly requires all sourced vector registers
+to be read with the same SEW value.
+Nowhere does it specify how to handle reading vrs1 with SEW=128, and
+also reading vrs2 with SEW=256.
+What if SLEN=128?
+}
+
+\todo{
+For AES vector scalar instructions, we encrypt block element i
+under cipher key element 0.
+For the AES-128 vector-vector instructions, we encrypt/decrypt
+block element i under cipher key element i.
+For the AES-192/256 vector-vector instructions, how do we map 
+$2*N$ block elements onto $N$ cipher key elements?
+This could be solved by reading {\tt vrs1} as though its LMUL value
+is twice that of LMUL for {\tt vrt}.
+This runs into the same problem as SEW: nowhere else in the
+vector spec mixes LMUL values for different registers of the same
+instruction.
+}
+
+\begin{cryptoisa}
+vaes128rkey vrt    // Compute final round key from cipher key.
+vaes192rkey vrt    // Compute final two round keys from cipher key.
+vaes256rkey vrt    // Compute final two round keys from cipher key.
+\end{cryptoisa}
+
+These instructions are used to quickly derive the final round key(s)
+based on the initial cipher key.
+The final round key(s) are then used by the all rounds decryption
+instructions.
+These instructions are all vector-vector instructions.
+Setting {\tt vl=1, vstart=0} will cause the instruction to work on only a
+single vector element.
+
+The \mnemonic{vaes128rkey} instruction takes a single
+vector source register {\tt vrt}, and for each $128$-bit element, computes
+the final AES-128 round key.
+The result is then written back to {\tt vrt}.
+
+The \mnemonic{vaes192rkey} instruction takes a single
+vector source register {\tt vrt}, and for each $256$-bit element
+(containing a $192$-bit cipher key),
+computes the final two AES-192 round keys.
+The result is then written back to {\tt vrt}.
+
+The \mnemonic{vaes256rkey} instruction takes a single
+vector source register {\tt vrt}, and for each $256$-bit element
+(containing a $256$-bit cipher key),
+computes the final two AES-192 round keys.
+The result is then written back to {\tt vrt}.
+
+Each of these instructions requires {\tt SEW=128}
+({\tt vtype.vsew[2:0]=3'b100}).
+Executing these instructions with any other value of {\tt SEW} will cause
+an invalid opcode exception.
+The \mnemonic{vaes192rkey} and \mnemonic{vaes256rkey}
+instructions combine $2$ scalar elements together.
+
+\todo{
+What if {\tt vstart=1} and/or {\tt vl} is odd?
+Are we changing the definition of ``elements''
+to mean
+``pairs of elements''?
+}
+
+\todo{Do we need to state whether people should (not) use the equivilent
+inverse cipher transform?}
+
+\begin{figure}[h]
+\begin{lstlisting}[language=pseudo]
+TBD
+\end{lstlisting}
+\caption{Pseudocode for the all-round vector AES instructions.}
+\label{fig:pseudo:aes:vector:all-round}
+\end{figure}
+

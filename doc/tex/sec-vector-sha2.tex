@@ -1,0 +1,53 @@
+
+\subsection{Vector SHA2 Acceleration}
+\label{sec:vector:sha2}
+
+\begin{cryptoisa}
+vsha2.ms vrd, vrs1      // Update message states by 16 rounds.
+vsha2.ws vrt, vrs1, rnd // Update working states by 16 rounds.
+vsha2.hs vrt, vrs1      // Update hash states (all rounds).
+\end{cryptoisa}
+
+These instructions are used to accelerate the SHA-256 and SHA-512
+hash functions.
+The exact hash algorithm performed by the instructions is
+polymorphic based on {\tt vtype.vsew}.
+To perform SHA-256 functions, {\tt SEW} must be set to $256$.
+To perform SHA-512 functions, {\tt SEW} must be set to $512$.
+Executing these instructions with any other {\tt SEW} value will
+result in an invalid opcode exception.
+
+The \mnemonic{vsha2.ms} instruction updates the current message
+state stored in {\tt vrs1} by $16$ rounds of the hash function
+as defined by {\tt SEW}.
+The $16$ rounds are applied to each pair of $2*${\tt SEW}
+elements stored in {\tt vrs1}.
+The result is then written back to {\tt vrd}.
+
+The \mnemonic{vsha2.ws} instruction updates the current working state
+by $16$ rounds.
+The $2$-bit {\tt rnd} immediate is used to identify the first of
+the $16$ rounds to apply, and hence select appropriate round constants.
+For SHA-256, value values are $0, 16$       and $48$.
+For SHA-512, value values are $0, 16$, $48$ and $64$.
+Executing \mnemonic{vsha2.ws} with {\tt rnd}$=64$ and {\tt SEW}=$512$
+will result in an invalid opcode exception.
+
+The \mnemonic{vsha2.hs} instruction performs all
+$64$ (resp. $80$) rounds of the SHA-256 (resp. SHA-512) block hash function.
+Is sources the current hash state from {\tt vrt}, and
+updates it with the vector of $2*${\tt SEW} elements in {\tt vrs1}.
+The result is then written back to {\tt vrt}.
+
+\todo{
+Again, how do we deal with sourceing one register where SEW=1x, and
+another where SEW=2x, when vlen-vstart=1.
+}
+
+\begin{figure}[h]
+\begin{lstlisting}[language=pseudo]
+TBD
+\end{lstlisting}
+\caption{Pseudocode for the vector SHA2 instructions.}
+\label{fig:pseudo:sha:vector}
+\end{figure}
