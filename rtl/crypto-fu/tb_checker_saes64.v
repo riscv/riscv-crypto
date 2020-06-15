@@ -174,7 +174,7 @@ wire [63:0] result_ks1 = {ks1_sub, ks1_sub};
 
 wire [63:0] result_ks2 = {
     rs1[63:32] ^ rs2[63:32] ^ rs2[31:0] ,
-    rs1[63:32] ^ rs2[63:32]
+    rs1[63:32] ^ rs2[31: 0]
 };
 
 //

@@ -201,7 +201,7 @@ wire [63:0] result_ks1  = {ks1_sbout, ks1_sbout};
 
 wire [63:0] result_ks2  = {
     rs1[63:32] ^ rs2[63:32] ^ rs2[31:0] ,
-    rs1[63:32] ^ rs2[63:32]
+    rs1[63:32] ^ rs2[31: 0]
 };
 
 wire        mix         = op_saes64_encsm || op_saes64_decsm        ;
