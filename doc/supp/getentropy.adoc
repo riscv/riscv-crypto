@@ -23,7 +23,7 @@ See Section 7.18 __"Entropy Estimation and Compliance with SP 800-90B"__ of
 The purpose of this baseline requirement is to guarantee that a simple,
 device-independent driver component (e.g. in Linux kernel, embedded firmware,
 or a cryptographic library) can use the instruction to generate truly random
-bytes. If a TRNG component cannot be interfaced or conditioned in a way that
+bits. If a TRNG component cannot be interfaced or conditioned in a way that
 meets these criteria, it can be interfaced via regular IO interfaces and
 custom drivers instead.
 
@@ -54,19 +54,26 @@ After the instruction, the register `rd` (usually `A0`) will contain:
 |===
 |     Bits  | Name  | Description
 
-| XLEN-1:31 | FAIL  | FAIL=0 if seed is a valid output, FAIL=1 otherwise.
-|     30:16 |       | Reserved for future use.
+| XLEN-1:31 | FAIL  | Failure -- antropy source is not ready.
+|        30 | ENT16 | Seed has 16 bits of source randomness.
+|     29:16 |       | Reserved for future use.
 |      15:0 | seed  | 16-bit output word (randomness).
 |===
 
-In other words, a caller may interpret the return value as C type `int` on
-all architectures, with negative values indicating failure (FAIL) and
-the low 16 bits of positive values having a random seed word.
+In order to verify that the caller has a valid 16-bit entropy seed, the
+caller must check that `FAIL==0` and `ENT16==1`. 
+All other conditions should be rejected and the contents of the reserved 
+bits ignored.
 
-The FAIL and non-fail conditions may convey additional information
-in extended (non-baseline) implementations in bits 30:16; for example
-indications about failure modes (for FAIL=1) or immediate availability of
-further entropy bits (for FAIL=0).
+These additional bits may convey additional information in extended 
+(non-baseline, `imm != 0`) implementations; for example indications about
+failure conditions or about availability of further entropy bits.
+
+In order to guarantee that no sensitive data is read twice and that different
+callers don't get correlated output, hardware implementations should execute 
+*wipe-on-read* on the randomness pathway during a each succesful read.
+For the same reasons "uncooked" randomness should bever be made visible
+via GetEntropy, even when FAIL is set or ENT16 is unset.
 
 WARNING:    We urge implementors against creating unnecessary information
 "status oracles" via the reserved bits or to allow the instruction to disable
@@ -77,12 +84,14 @@ states that "The noise source state shall be protected from adversarial
 knowledge or influence to the  __greatest extent possible__."
 
 WARNING:    Output `seed` from GetRandom is not necessarily fully
-conditioned randomness due to hardware limitations on smaller, low-powered implementations. Cryptographic conditioners such as AES would be too
-large to implement solely to serve GetRandom -- and non-cryptographic
-conditioners too wasteful on input entropy. Hence you should not use the
-output directly but poll twice the amount of required entropy and use that
-to seed a cryptographic DRBG. Implementors are urged to use AES or SHA
-instruction extensions to build such a DRBG.
+conditioned randomness due to hardware limitations of smaller, low-powered
+implementations. Cryptographic conditioners such as AES would be too
+large to implement solely to serve GetRandom -- and simple, non-cryptographic
+conditioners too wasteful on input entropy. Hence a caller should not use the
+output directly but poll twice the amount of required entropy, condition
+it cryptographically (e.g. by hashing it), and use that to seed a
+cryptographic DRBG. Implementors are urged to use AES or SHA instruction
+extensions to build such a DRBG.
 
 
 
@@ -97,10 +106,10 @@ instruction extensions to build such a DRBG.
 
 *   **IID**: The output should be __Independent and Identically Distributed__
     (IID), meaning that the output distribution does not change over time
-    and that output bytes do not convey information about each other.
+    and that output words do not convey information about each other.
     This implies that IID tests in <<SP800-90B>> are consistently passed
     and that the construction of the physical source and sampling mechanism
-    implies nothing against the IID assumption.
+    suggests nothing against the IID assumption.
 
 *   **Validity:** The instruction returns FAIL if sufficient entropy is not
     available. In particular GetEntropy sets FAIL if called too rapidly in
@@ -121,15 +130,24 @@ is never sufficient).
 
 ====    Polling Randomness
 
-An acceptable random number generator initialization sequence would obtain 512
-bits (32 successful calls) of GetEntropy output and hash it with a suitable
-mechanism such as SHA2/3-384/512 or SHAKE256 <<FIPS180>> <<FIPS202>>
-to produce the initial seed for a DRBG -- such as CTR_DRBG built from
+In C, for an output word obtained via `x = GetEntropy(0)` the validity
+check may be implemented as  `(x >> 30) == 1` and output seed derived via 
+`seed = x & 0xFFFF`. It is important that the validity check of two
+bits is performed with a single comparison and that the reserved bits
+are masked away and have no effect on program flow. This protects against
+unwanted timing oracles if these bits are used to convey additional
+information in the future.
+
+An acceptable random number generator (DRBG) initialization sequence would
+obtain 512 bits (32 successful calls) of GetEntropy output and hash it with
+a suitable mechanism such as SHA2/3-384/512 or SHAKE256 <<FIPS180>> <<FIPS202>>
+to produce the initial seed for a DRBG -- such as CTR_DRBG built from 
 AES-256 <<SP800-90A>>.
 
 The instruction returns immediately, either with 16 bits of randomness
-satisfying the criteria above (>8 bits of true entropy), or FAIL
-(high bit set).
+satisfying the criteria above (>8 bits of true entropy, FAIL=0, ENT16=1) or 
+with nothing. We recommend that the failure takes the form FAIL=1, ENT16=0
+or simply 0x80000000.
 
 We recommend against busy-loop polling on this instruction as it may have
 relatively low bandwidth. Even though no specific interrupt sequence is
@@ -282,7 +300,7 @@ The requirements for the P2 source necessitate near-uniform output even from
 the "raw" entropy source. For example criteria P2.i)(vii.e) requires an entropy
 estimate of at least 7.976 bits per byte using "test T8" in <<AIS31>>,
 which is derived from Coron's test <<Co99>>. Hence we suggest that each
-output byte has much more than the minimum entropy content of >4 bits per byte.
+16-bit output word has much more than the minimum entropy content of >8 bits.
 
 A common approach seems to be that 2*n bits from an entropy source is used
 to generate n bits of "full randomness" with a cryptographic conditioner.
