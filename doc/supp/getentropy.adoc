@@ -298,7 +298,7 @@ protocols that have security proofs derived directly from quantum mechanics
 (e.g. Quantum Key Agreement). Pure cryptographic protocols that do not
 impose requirements on the physical layer communication channels usually
 only require "classical" entropy. This also applies to post-quantum
-cryptographic standards <<NISTPQC>>, which generally do not require a QRNG.
+cryptographic standards <<NISTPQC>>, which generally do not require a QES.
 
 
 === References
