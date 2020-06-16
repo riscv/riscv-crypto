@@ -56,7 +56,7 @@ After the instruction, the register `rd` (usually `A0`) will contain:
 
 | XLEN-1:31 | FAIL  | FAIL=0 if seed is a valid output, FAIL=1 otherwise.
 |     30:16 |       | Reserved for future use.
-|      15:0 | seed  | 16-bit otput word (randomness).
+|      15:0 | seed  | 16-bit output word (randomness).
 |===
 
 In other words, a caller may interpret the return value as C type `int` on
