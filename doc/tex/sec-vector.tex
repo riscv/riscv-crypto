@@ -6,6 +6,44 @@ We used the following notation to refer to vector registers:
 and
 {\tt vrt}  is a vector source/destination register.
 
+The following definitions are taken from the draft
+vector specification {\tt v0.9}\footnote{\url{https://github.com/riscv/riscv-v-spec/releases/tag/0.9}}.
+They are re-produced here to make the following sections easier to
+read using only this document.
+
+\begin{itemize}
+\item[\ELEN] - {\em Maximum} size of a single vector element in bits.
+              $\ELEN \ge 8$ and must be a power of $2$.
+\item[\VLEN] - The width in bits of each vector register.
+              $\VLEN \ge \ELEN$ and must be a power of $2$.
+\item[\SLEN] - The striping distance in bits.
+              $\VLEN \ge \SLEN \ge 32$ and must be a power of $2$.
+\item[\SEW]  - The Standard Element Width in bits.
+              Each vector register is viewed as $N=\VLEN/\SEW$ elements.
+\item[\LMUL] - The Vector Length Multiplier.
+              $\LMUL\in\{{1\over 8},{1\over 4},{1\over 2},1,2,4,8\}$.
+              When $\LMUL\ge1$, multiple physical vector registers are
+              concatenated together to form a single {\em logical} register.
+              $\LMUL<1$ is not salient to the vector crypto instructions.
+              When $\LMUL>1$, only vector register addresses which are
+              integer multiples of $\LMUL$ may be accessed.
+\item[\VLMAX]- Is the maximum number of elements a single vector register
+              can contain: $\VLMAX=\LMUL*\VLEN/\SEW$.
+\item[\EEW]  - Effective Element Width. This is defined per vector register
+              operand, and allows for instructions which operate on
+              two sets of elements of different widths.
+\item[\EMUL] - Effective $\LMUL$. Like $\EEW$, this is defined per vector
+              register operand, allowing for widening and narrowing
+              operations.
+\end{itemize}
+
+The base vector extension has the constraint $\VLEN \ge \ELEN$.
+The vector crypto instructions require that $\ELEN \ge 128$ for all
+of it's instructions, and upto $1024$ for some.
+To widen the set of implementation choices for $\VLEN$ which will support
+the vector crypto extension, we allow $\ELEN$ to vary with $\LMUL$,
+requiring instead that $\VLEN*\LMUL \ge \ELEN$.
+
 % ============================================================================
 
 \import{./}{sec-vector-aes.tex}
