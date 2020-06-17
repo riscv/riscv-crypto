@@ -1,0 +1,496 @@
+**INITIAL DRAFT**  For discussion.
+__This document does not reflect the TG consensus yet.__
+
+May 25, 2020.   Markku-Juhani O. Saarinen <mjos@pqshield.com>
+
+June 16, 2020.  Updated and expanded per comments from Chair and TG.
+
+== GetEntropy - Baseline requirements for IID sources.
+
+GetEntropy provides access to a hardware-based (random) entropy source.
+It is not a general-purpose or high-bandwidth random number generator by
+itself, but a valid implementation should satisfy properties that allow it
+to be used to *seed* secure cryptographic DRBGs (Deterministic Random Bit
+Generators) of virtually any state size and security level.
+
+The main design goal is that a FIPS 140-3 <<FIPS140-3>> and NIST SP 800-90B
+<<SP800-90B>> compliant random number generators can be built using GetEntropy
+and other RISC-V cryptographic instructions (notably AES and SHA). GetEntropy
+recommendation will be updated as FIPS-140 implementation guidance is refined.
+See Section 7.18 __"Entropy Estimation and Compliance with SP 800-90B"__ of
+<<FIPS140-2-IG>> for current certification laboratory guidance.
+
+The purpose of this baseline requirement is to guarantee that a simple,
+device-independent driver component (e.g. in Linux kernel, embedded firmware,
+or a cryptographic library) can use the instruction to generate truly random
+bits. If a TRNG component cannot be interfaced or conditioned in a way that
+meets these criteria, it can be interfaced via regular IO interfaces and
+custom drivers instead.
+
+=== Accessing the Entropy Source
+
+----
+# Get entropy bits. imm=0 for baseline operation
+
+getentropy rd, imm
+----
+
+Nonzero values for `imm` are reserved for future use. The behavior described
+in this document applies when imm=0. If an implementation encounters an input
+`imm` that it cannot interpret, it must return FAIL and may also trap.
+For example `imm != 0` may be used to poll non-IID randomness (see below) and
+therefore the same minimum driver requirements are not met.
+
+For purposes of this specification, this corresponds to C calling convention:
+----
+int GetEntropy(0);
+----
+
+After the instruction, the register `rd` (usually `A0`) will contain:
+
+.getentropy output in rd, after call:
+[cols="1,1,3"]
+[%autowidth]
+|===
+|     Bits  | Name  | Description
+
+| XLEN-1:31 | FAIL  | Failure -- antropy source is not ready.
+|        30 | ENT16 | Seed has 16 bits of source randomness.
+|     29:16 |       | Reserved for future use.
+|      15:0 | seed  | 16-bit output word (randomness).
+|===
+
+In order to verify that the caller has a valid 16-bit entropy seed, the
+caller must check that `FAIL==0` and `ENT16==1`. 
+All other conditions should be rejected and the contents of the reserved 
+bits ignored.
+
+These additional bits may convey additional information in extended 
+(non-baseline, `imm != 0`) implementations; for example indications about
+failure conditions or about availability of further entropy bits.
+
+In order to guarantee that no sensitive data is read twice and that different
+callers don't get correlated output, hardware implementations should execute 
+*wipe-on-read* on the randomness pathway during a each succesful read.
+For the same reasons "uncooked" randomness should bever be made visible
+via GetEntropy, even when FAIL is set or ENT16 is unset.
+
+WARNING:    We urge implementors against creating unnecessary information
+"status oracles" via the reserved bits or to allow the instruction to disable
+or affect the TNRG output in any significant way. All such information flows
+and interaction mechanisms can be potentially used in attacks. This also
+applies to the raw noise source. Section 3.2.2, <<SP800-90B>> specifically 
+states that "The noise source state shall be protected from adversarial
+knowledge or influence to the  __greatest extent possible__."
+
+WARNING:    Output `seed` from GetRandom is not necessarily fully
+conditioned randomness due to hardware limitations of smaller, low-powered
+implementations. Cryptographic conditioners such as AES would be too
+large to implement solely to serve GetRandom -- and simple, non-cryptographic
+conditioners too wasteful on input entropy. Hence a caller should not use the
+output directly but poll twice the amount of required entropy, condition
+it cryptographically (e.g. by hashing it), and use that to seed a
+cryptographic DRBG. Implementors are urged to use AES or SHA instruction
+extensions to build such a DRBG.
+
+
+
+====    Baseline output requirements for GetEntropy(0)
+
+*   **Entropy:** A minimum requirement is that 128 bits of "full
+    entropy" can be consistently obtained from each 256-bit GetEntropy
+    output sequence via (vetted) cryptographic conditioning algorithm
+    (see Section 3.1.5.1.2 in <<SP800-90B>>) such as a cryptographic hash
+    (SHA-2 <<FIPS180>> or SHA-3 <<FIPS202>>). Driver developers may make
+    this conservative assumption.
+
+*   **IID**: The output should be __Independent and Identically Distributed__
+    (IID), meaning that the output distribution does not change over time
+    and that output words do not convey information about each other.
+    This implies that IID tests in <<SP800-90B>> are consistently passed
+    and that the construction of the physical source and sampling mechanism
+    suggests nothing against the IID assumption.
+
+*   **Validity:** The instruction returns FAIL if sufficient entropy is not
+    available. In particular GetEntropy sets FAIL if called too rapidly in
+    succession or immediately after startup. More detailed warm-up
+    tests may be delegated to the software or firmware component, as required
+    for certification (the output of the software driver is to be certified,
+    not the instruction).
+
+NOTE: Min-entropy assessment in <<SP800-90B>> requires some overhead.
+In practice we recommend the distribution to be significantly closer to
+uniform to satisfy additional usability and <<AIG31>> requirements.
+
+NOTE: These are minimum requirements; an implementation can also output
+fully conditioned, perfectly distributed numbers. However, we note that even
+if a full DRBG is used as a source, it must have an internal state
+with at least 256 bits of secret entropy (e.g. a CTR_DRBG built from AES-128
+is never sufficient).
+
+====    Polling Randomness
+
+In C, for an output word obtained via `x = GetEntropy(0)` the validity
+check may be implemented as  `(x >> 30) == 1` and output seed derived via 
+`seed = x & 0xFFFF`. It is important that the validity check of two
+bits is performed with a single comparison and that the reserved bits
+are masked away and have no effect on program flow. This protects against
+unwanted timing oracles if these bits are used to convey additional
+information in the future.
+
+An acceptable random number generator (DRBG) initialization sequence would
+obtain 512 bits (32 successful calls) of GetEntropy output and hash it with
+a suitable mechanism such as SHA2/3-384/512 or SHAKE256 <<FIPS180>> <<FIPS202>>
+to produce the initial seed for a DRBG -- such as CTR_DRBG built from 
+AES-256 <<SP800-90A>>.
+
+The instruction returns immediately, either with 16 bits of randomness
+satisfying the criteria above (>8 bits of true entropy, FAIL=0, ENT16=1) or 
+with nothing. We recommend that the failure takes the form FAIL=1, ENT16=0
+or simply 0x80000000.
+
+We recommend against busy-loop polling on this instruction as it may have
+relatively low bandwidth. Even though no specific interrupt sequence is
+specified, it is required that the WFI instruction is available and does
+not trap on systems that implement GetEntropy (WFI can be implemented as a
+NOP).
+
+As a minimum requirement for portable drivers, a FAIL from GetEntropy should
+be followed by a WFI before another GetEntropy instruction is issued.
+This (at least potentially) allows energy-saving sleep on MCUs and context
+switching on a higher-end CPUs.
+
+The instruction should return FAIL during its "warm-up" period. An internal
+delay counter or randomness quality monitor can be implemented for this.
+However secondary quality monitors can be implemented in the driver component
+to comply with certification requirements.
+
+On systems that do not have a suitable hardware generator available,
+the instruction should not be available either; they should have negative
+discovery and can trap instead of permanently returning FAIL. On
+virtualized platforms, the output is expected to be directly sourced from a
+suitable host system resource such as the  `/dev/random` character device
+or `getrandom(2)` syscalls. Note that the host random number generator
+must also satisfy the 256-bit security (secret entropy) requirement.
+
+
+=== Overall RNG Architecture
+
+Raw output from this instruction should not be used for cryptographic
+purposes directly. Its purpose is to provide entropy for cryptographic
+conditioning components and a DRBG (PRNG) implemented in software.
+
+The construction and certification of the hardware component are left
+to the vendor. This ISA document specifies requirements to its output
+and assumptions that can be made when using baseline-compliant IID sources.
+
+The TRNG module (scope of certification and evaluation) consists of the
+hardware circuit together with a suitable driver that implements
+the required health checks, cryptographic conditioning, etc. The
+delineation of the ISA component is as follows:
+
+----
+         [ "NOISE" ]            //    Physical source w. stochastic model.
+              |
+              |     (Raw random signal.)
+              V
+H      [ Digitization ]         //    Sampler, photon detector, etc.
+a             |
+r             |     (Raw random sequence.)
+d             |
+w             +---> "GetNoise"  //    Optional vendor diagnostic interface.
+a             |
+r      [ Conditioning ]         //    Cryptographic or non-cryptographic.
+e             |
+              V
+ISA:   [ GetEntropy ]           //    Instruction, returning 16 bits or FAIL.
+              |
+S             V
+o    [ Software Driver ]        //    Also part of the entropy source (ES)!
+f    [ - Health checks ]        //    e.g. Startup test, continuous test.
+t    [ - Cryptographic ]        //    e.g. SHA2, AES based conditioning
+w    [    conditioning ]        //    input entropy 2 * h_in >= n_out output
+a             |
+r             V
+e      [ Secure DRBG ]          //    e.g. CTR_DRBG, Hash_DRBG, HMAC_DRBG
+              |
+              V
+      [ API Interface ]         //    e.g. /dev/urandom or RAND_bytes(3)
+              |
+              V
+ Application / Crypto Algorithm
+----
+
+==== Typical Driver functionality
+
+NOTE:   Our discussion of software components is informational only but
+we emphasize that users of GetEntropy must always implement a DRBG driver
+for cryptographic use.
+
+Some of the TRNG functions delegated to software driver component may include
+(in system kernel, shared runtime, or cryptographic library):
+
+-   Discovery of the instruction and its features.
+-   Possible warm-up tests if required for certification such as <<FIPS140>>.
+-   Cryptographic conditioning, e.g. SHA2/HMAC, AES/CMAC, AES/CBC-MAC as
+    discussed in <<SP800-90B>>. This is required to compress 2*n bits of
+    GetEntropy output into n bits of "full entropy".
+-   Producing DRBG output using cryptographic mechanisms such as CTR_DRBG,
+    Hash_DRBG, HMAC_DRBG as discussed in <<SP800-90A>>.
+-   Known-answer tests of cryptographic components used for conditioning
+    or DRBG, if required. These implementations can leverage the relevant
+    (AES and SHA-2) cryptographic instructions.
+-   Additional Health monitoring (power-up tests, software/firmware tests,
+    continuous tests, critical functions tests, conditional tests, etc) as
+    required by <<FIPS140>>.
+-   Key zeroization and other validation interfaces. Since cryptographic keys
+    are not held by the TRNG and the hardware component maintains a minimum
+    correlated state, software zeroization should be sufficient.
+
+
+===    Background: Criteria for Randomness
+
+NOTE:   While we do not require entropy source implementations to be
+certified designs, we do expect that they behave in a compatible manner and
+do not create additional security risks to users. Self-evaluation and
+testing in accordance with appropriate security standards is usually needed
+to achieve this.
+
+U.S. NIST has published a recommendation for entropy source evaluation
+in 2018 <<SP800-90B>>, which complements earlier DRBG specification
+<<SP800-90A>>. NIST has also made a statistical test suite
+<<SP800-22>> available.
+
+It is the intention that GetEntropy may be instantiated to meet the
+Entropy Source requirements (with or without conditioning) of <<SP800-90B>>.
+The entropy requirements in the U.S. document focus on min-entropy and allow
+cryptographic conditioning of relatively low-quality random numbers as input.
+
+IID is an optional requirement in <<SP800-90B>> but is needed to prevent
+information leakage between processes using the GetEntropy instruction.
+Furthermore, it significantly simplifies certification and vendor-independent
+driver development. GetEntropy has an argument parameter that can be used
+to access non-IID sources. Those are outside the scope of this specification.
+
+A conditioning component may be applied to the output from a raw
+random noise source to reduce bias and increase the entropy rate to meet 
+the criteria for seed output. Some security evaluation approaches
+will need to bypass the conditioning component and access the raw noise
+sequence directly (GetNoise function of <<SP800-90B>>). This is
+a vendor-specific matter (not ISA), and only needed for certification,
+post-fabrication checks, and other evaluation/diagnostics; regular
+applications or drivers should not need it. Such a "debug" interface must
+have restricted access for security.
+
+German BSI (Bundesamt für Sicherheit in der Informationstechnik) has also
+published two methods, "AIS-31" and "AIS-20", for evaluating random number
+generators. Their status is discussed in <<BSI-RAND>>. This methodology is
+widely used in Common Criteria (CC) evaluations as well.
+
+The methods discussed in "AIS-31" <<AIS31>> are related to physical
+random number generators (i.e. GetEntropy), while "AIS-20" <<AIS20>>
+describes deterministic random number generators. Documents <<ScKi02>>.
+<<AIS31>> specify two classes of TRNGs, P1 and P2, while <<AIS20>>
+describes four classes K1, K2, K3, and K4 of DRBGs (where K4 is the highest).
+There is a relationship between the two; Class P1 randomness source is
+suitable for DRBGs in classes K1 and K2, while P2 source is used for K3 and
+K4 DRBGs and higher overall security levels.
+
+The requirements for the P2 source necessitate near-uniform output even from
+the "raw" entropy source. For example criteria P2.i)(vii.e) requires an entropy
+estimate of at least 7.976 bits per byte using "test T8" in <<AIS31>>,
+which is derived from Coron's test <<Co99>>. Hence we suggest that each
+16-bit output word has much more than the minimum entropy content of >8 bits.
+
+A common approach seems to be that 2*n bits from an entropy source is used
+to generate n bits of "full randomness" with a cryptographic conditioner.
+However <<SP800-90B>> is relatively new and fewer certifications have been
+made to this standard than to Common Criteria and <<AIS31>>, so we recommend
+targeting higher entropy rates.
+
+This interface can be used by both classical Entropy Sources (ES) and
+Quantum Entropy Sources (QES, see ITU <<X.1709>> for definitions) if the
+QES meets the required classical entropy criteria. The use of quantum-origin
+entropy (the distinguishing factor of QES) is usually only required in
+protocols that have security proofs derived directly from quantum mechanics
+(e.g. Quantum Key Agreement). Pure cryptographic protocols that do not
+impose requirements on the physical layer communication channels usually
+only require "classical" entropy. This also applies to post-quantum
+cryptographic standards <<NISTPQC>>, which generally do not require a QES.
+
+
+=== References
+
+[[SP800-90A]][SP800-90A]
+E. Barker and J. Kelsey,
+"Recommendation for Random Number Generation Using Deterministic Random
+Bit Generators." NIST SP 800-90A Rev 1, June 2015.
+https://doi.org/10.6028/NIST.SP.800-90Ar1
+
+[[SP800-90B]][SP800-90B]
+M. S. Turan, E. Barker, J. Kelsey, K. A. McKay, M. L. Baish, and M. Boyle,
+"Recommendation for the Entropy Sources Used for Random Bit Generation."
+NIST SP 800-90B, January 2018.
+https://doi.org/10.6028/NIST.SP.800-90B
+
+[[SP800-22]][SP800-22]
+L. Bassham, A. Rukhin, J. Soto, J. Nechvatal, M. Smid, E. Barker,
+S. Leigh, M. Levenson, M. Vangel, D. Banks, N. Heckert, and J. Dray,
+"A Statistical Test Suite for Random and Pseudorandom Number Generators
+for Cryptographic Applications."
+NIST SP 800-22 Rev. 1a, April 2010.
+https://doi.org/10.6028/NIST.SP.800-22r1a
+
+[[FIPS140]][FIPS140]
+NIST,
+"Security Requirements for Cryptographic Modules."
+FIPS PUB 140-2, May 2001.
+__(Testing on FIPS 140-2 will end in September 2020.)__
+https://doi.org/10.6028/NIST.FIPS.140-2
+
+[[FIPS140-2-IG]][FIPS140-2-IG]
+NIST and CCCS,
+"Implementation Guidance for FIPS 140-2 and the Cryptographic Module
+Validation Program."
+CMVP Update, December 2019.
+https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf
+
+[[FIPS140-3]][FIPS140-3]
+NIST,
+"Security Requirements for Cryptographic Modules."
+FIPS PUB 140-3, March 2019.
+__(Testing on FIPS 140-3 will commence in September 2020.)__
+https://doi.org/10.6028/NIST.FIPS.140-3
+
+[[FIPS180]][FIPS180]
+NIST,
+"Secure Hash Standard (SHS)."
+FIPS PUB 180-4, August 2015.
+https://doi.org/10.6028/NIST.FIPS.180-4
+
+[[FIPS197]][FIPS197]
+NIST,
+"Advanced Encryption Standard (AES)."
+FIPS PUB 197, November 2001.
+https://doi.org/10.6028/NIST.FIPS.197
+
+[[FIPS202]][FIPS202]
+NIST,
+"SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions."
+FIPS PUB 202, August 2015.
+https://doi.org/10.6028/NIST.FIPS.202
+
+[[BSI-RAND]][BSI-RAND]
+BSI, "Evaluation of random number generators."
+Version 0.10, BSI, March 2013.
+https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_20_AIS_31_Evaluation_of_random_number_generators_e.html
+
+[[AIS31]][AIS31]
+W. Killman and W. Schindler.
+"A proposal for: Functionality classes and evaluation methodology for true
+(physical) random number generators."
+AIS 31, Version 3.1, BSI, September 2001.
+https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_Functionality_classes_evaluation_methodology_for_true_RNG_e.html
+
+[[AIS20]][AIS20]
+W. Schindler,
+"Functionality classes and evaluation methodology for deterministic random
+number generators."
+AIS 20, Version 2.0, BSI, December 1999.
+https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_20_Functionality_Classes_Evaluation_Methodology_DRNG_e.html
+
+[[X.1709]][X.1709]
+ITU,
+"Quantum noise random number generator architecture."
+Recommendation ITU-T X.1702, November 2019.
+https://www.itu.int/rec/T-REC-X.1702-201911-I/en
+
+[[NISTPQC]][NISTPQC]
+NIST,
+"Post-Quantum Cryptography Standardization."
+NIST Post Quantum Cryptography project, 2017-.
+https://csrc.nist.gov/Projects/post-quantum-cryptography/Post-Quantum-Cryptography-Standardization
+
+
+
+==== Informational References (Alphabetical)
+
+[[AMD17]][AMD17]
+AMD,
+"AMD Random Number Generator."
+Technical Report, Advanced Micro Devices, June 2017.
+https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
+
+[[BaLuMi11]][BaLuMi11]
+M. Baudet, D. Lubicz, J. Micolod, and André Tassiaux,
+"On the Security of Oscillator-Based Random Number Generators."
+J. Cryptology, vol. 24, pp. 398-425, Springer, 2011.
+https://doi.org/10.1007/s00145-010-9089-3
+
+[[Co99]][Co99]
+J. S. Coron,
+"On the Security of Random Sources."
+PKC 1999, LNCS 1560, Springer, pp. 29-42, 1999.
+https://doi.org/10.1007/3-540-49162-7_3
+
+[[CoKwPa20]][CoKwPa20]
+S. Cohney, A. Kwong, S. Paz, D. Genkin, N. Heninger, E. Ronen, and Y Yarom,
+"Pseudorandom Black Swans: Cache Attacks on CTR_DRBG."
+IEEE S&P 2020, Vol 1, pp. 875-892, 2020.
+https://doi.ieeecomputersociety.org/10.1109/SP40000.2020.00046
+
+[[HaKoMa12]][HaKoMa12]
+M. Hamburg, P. Kocher, and M. E. Marson,
+"Analysis of Intel's Ivy Bridge Digital Random Number Generator."
+Technical Report, Cryptography Research (Prepared for Intel), March 2012.
+
+[[HoSh20]][HoSh20]
+V. T. Hoang and Y. Shen,
+"Security Analysis of NIST CTR-DRBG."
+CRYPTO 2020, To appear, 2020.
+https://eprint.iacr.org/2020/619
+
+[[LiBaBo13]][LiBaBo13]
+J. S. Liberty, A. Barrera, D. W. Boerstler, T. B. Chadwick, S. R. Cottier, H. P. Hofstee, J. A. Rosser, and  M. L. Tsai,
+"True hardware random number generation implemented in the 32-nm SOI POWER7+ processor."
+IBM J. of Res. and Dev., vol. 57, no. 6, pp. 4:1-4:7, Nov.-Dec. 2013.
+https://doi.org/10.1147/JRD.2013.2279599
+
+[[MaMo09]][MaMo09]
+A. T. Markettos and S. W. Moore, "The Frequency Injection Attack on
+Ring-Oscillator-Based True Random Number Generators."
+CHES 2009, LNCS 5747, Springer, pp. 317-331, 2009.
+https://doi.org/10.1007/978-3-642-04138-9_23
+
+[[Me18]][Me18]
+J. P. Mechalas,
+"Intel Digital Random Number Generator (DRNG): Software Implementation Guide."
+Revision 2.1. Intel Technical Report, October 2018.
+https://software.intel.com/content/www/us/en/develop/articles/intel-digital-random-number-generator-drng-software-implementation-guide.html
+
+[[RaSt98]][RaSt98]
+M. Raab and A. Steger,
+"“Balls into Bins” — A Simple and Tight Analysis."
+RANDOM 1998, LNCS 1518, Springer, pp. 159-170, 1999.
+https://doi.org/10.1007/3-540-49543-6_13
+
+[[ScKi02]][ScKi02]
+W. Schindler and W. Killmann,
+"Evaluation Criteria for True (Physical) Random Number Generators Used in
+Cryptographic Applications."
+CHES 2002, LNCS 2523, Springer, pp. 431-449, 2002.
+https://doi.org/10.1007/3-540-36400-5_31
+
+[[ShTe15]][ShTe15]
+T. Shrimpton and R. S. Terashima,
+"A Provable-Security Analysis of Intel’s Secure Key RNG."
+EUROCRYPT 2015, LNVS 9056, Springer, pp. 77-100, 2015.
+https://doi.org/10.1007/978-3-662-46800-5_4
+
+[[WoSh19]][WoSh19]
+J. Woodage and D. Shumov,
+"An Analysis of NIST SP 800-90A."
+EUROCRYPT 2019, LNCS 11477, pp. 151-180, 2019.
+https://eprint.iacr.org/2018/349
+https://doi.org/10.1007/978-3-030-17656-3_6
+
