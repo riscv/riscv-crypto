@@ -1,53 +1,91 @@
 
-\subsection{Vector SHA2 Acceleration}
-\label{sec:vector:sha2}
+\subsection{Vector SHA2 Acceleration - Per Round}
+\label{sec:vector:sha2:per-round}
 
 \begin{cryptoisa}
 vsha2.ms vrd, vrs1      // Update message states by 16 rounds.
 vsha2.ws vrt, vrs1, rnd // Update working states by 16 rounds.
-vsha2.hs vrt, vrs1      // Update hash states (all rounds).
 \end{cryptoisa}
 
 These instructions are used to accelerate the SHA-256 and SHA-512
 hash functions.
 The exact hash algorithm performed by the instructions is
 polymorphic based on {\tt vtype.vsew}.
-To perform SHA-256 functions, {\tt SEW} must be set to $256$.
-To perform SHA-512 functions, {\tt SEW} must be set to $512$.
-Executing these instructions with any other {\tt SEW} value will
-result in an invalid opcode exception.
+To perform SHA-256 functions, set $\SEW=256$.
+To perform SHA-512 functions, set $\SEW=512$.
+Executing these instructions with any other \SEW value will
+result in an Invalid Opcode Exception.
 
-The \mnemonic{vsha2.ms} instruction updates the current message
-state stored in {\tt vrs1} by $16$ rounds of the hash function
-as defined by {\tt SEW}.
-The $16$ rounds are applied to each pair of $2*${\tt SEW}
-elements stored in {\tt vrs1}.
-The result is then written back to {\tt vrd}.
+The \mnemonic{vsha2.ms} instruction updates the current {\em message state}
+stored in \vrs{1} with $16$ rounds of the SHA256/SHA512 hash function
+as defined by \SEW.
+The $16$ rounds are applied to each pair of $2*\SEW$
+elements stored in \vrs{1}.
+The result is then written back to \vrd as $2*\SEW$ elements.
 
-The \mnemonic{vsha2.ws} instruction updates the current working state
+The \mnemonic{vsha2.ws} instruction updates the current {\em working state}
 by $16$ rounds.
-The $2$-bit {\tt rnd} immediate is used to identify the first of
+The $3$-bit {\tt rnd} immediate is used to identify the first of
 the $16$ rounds to apply, and hence select appropriate round constants.
-For SHA-256, value values are $0, 16$       and $48$.
-For SHA-512, value values are $0, 16$, $48$ and $64$.
-Executing \mnemonic{vsha2.ws} with {\tt rnd}$=64$ and {\tt SEW}=$512$
-will result in an invalid opcode exception.
+For SHA-256, valid {\tt rnd} values are $0, 16, 32$   and $48$.
+For SHA-512, valid {\tt rnd} values are $0, 16, 32, 48$ and $64$.
+Executing \mnemonic{vsha2.ws} with
+${\tt rnd}=64$ 
+and
+{\tt SEW}=$512$
+will result in an Invalid Opcode Exception.
 
-The \mnemonic{vsha2.hs} instruction performs all
-$64$ (resp. $80$) rounds of the SHA-256 (resp. SHA-512) block hash function.
-Is sources the current hash state from {\tt vrt}, and
-updates it with the vector of $2*${\tt SEW} elements in {\tt vrs1}.
-The result is then written back to {\tt vrt}.
+\todo{The vsha2.ws immediate requires $3$ bits but only needs to express
+upto $5$ values. Recommend embedding the immediate in the encoding directly
+to make the instructions require fewer encoding points.
+They can still be written as above in assembly to avoid confusing
+mnemonic names.}
 
-\todo{
-Again, how do we deal with sourceing one register where SEW=1x, and
-another where SEW=2x, when vlen-vstart=1.
-}
+To support \mnemonic{vsha2.*} instructions with $\SEW=256$ (i.e. SHA256),
+implementations must support $\ELEN \ge 512$.
+To support \mnemonic{vsha2.*} instructions with $\SEW=512$ (i.e. SHA512),
+implementations must support $\ELEN \ge 1024$.
+Executing these instructions with said parameters on an implementation
+not meeting these criteria will cause an Invalid Opcode Exception.
 
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
 TBD
 \end{lstlisting}
-\caption{Pseudocode for the vector SHA2 instructions.}
-\label{fig:pseudo:sha:vector}
+\caption{Pseudocode for the round-based SHA2 vector instructions.}
+\label{fig:pseudo:sha:per-round}
+\end{figure}
+
+\subsection{Vector SHA2 Acceleration - All Rounds}
+\label{sec:vector:sha2:all-round}
+
+\begin{cryptoisa}
+vsha2.hs vrt, vrs1      // Update hash states (all rounds).
+\end{cryptoisa}
+
+This instruction is used to accelerate the SHA-256 and SHA-512
+hash functions.
+The exact hash algorithm performed by the instructions is
+polymorphic based on {\tt vtype.vsew}.
+To perform SHA-256 functions, set $\SEW=256$.
+To perform SHA-512 functions, set $\SEW=512$.
+Executing these instructions with any other \SEW value will
+result in an Invalid Opcode Exception.
+
+The \mnemonic{vsha2.hs} instruction performs all
+$64$ (resp. $80$) rounds of the SHA-256 (resp. SHA-512) block function.
+The current hash state is sourced from \vrt,
+with $\EEW=\SEW$ and $\EMUL=\LMUL$.
+The input message chunks are sourced from \vrs{1},
+with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
+Hence, each $2*\SEW$-wide message chunk element of \vrs{1} is added into each
+\SEW-wide state element of \vrt.
+Each\SEW-wide result element is then written back to \vrt.
+
+\begin{figure}[h]
+\begin{lstlisting}[language=pseudo]
+TBD
+\end{lstlisting}
+\caption{Pseudocode for the all round vector SHA2 instructions.}
+\label{fig:pseudo:sha:all-round}
 \end{figure}
