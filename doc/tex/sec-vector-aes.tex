@@ -18,9 +18,9 @@ vaesdlast.vv    vrt, vrs1        // Decrypt - final round
 
 The \mnemonic{vaese.*} and \mnemonic{vaesd.*} instructions take
 a single vector source register where each element contains the
-current round key ({\tt vrs1}),
+current round key (\vrs{1}),
 and
-a source/destination vector register ({\tt vrt}) where each element contains
+a source/destination vector register (\vrt) where each element contains
 the current round state.
 Using these two inputs, they produce the next encryption/decryption
 round state, applying the 
@@ -35,17 +35,15 @@ The Vector-Scalar ({\tt *.vs}) instructions use a single round key
 contained in element $0$ of {\tt vrs1} for every data element
 contained in {\tt vrt}.
 The Vector-Vector ({\tt *.vv}) instructions use corresponding
-round key and data elements in {\tt vrs1} and {\tt vrt}.
+round key and data elements in \vrs{1} and \vrt.
 
-Each of these instructions requires {\tt SEW=128}
+All of these instructions requires $\SEW=128$
 ({\tt vtype.vsew[2:0]=3'b100}).
-Executing these instructions with any other value of {\tt SEW} will cause
+Executing these instructions with any other value of \SEW will cause
 an invalid opcode exception.
-
-\todo{
-What if VLEN $>$ SLEN and we are executing a {\tt *.vs} instruction?
-Is the round-key allowed to cross the striping boundary?
-}
+In implementations where $\VLEN<128$, \LMUL may be used to create
+vector register groups with enough bits to express $\SEW=128$.
+E.g. an implementation with $\VLEN=64$ may set $\LMUL=2$ and $\SEW=128$.
 
 \begin{cryptoisa}
 vaes128keyi     vrt,       rnd    // 1  <= rnd <= 10
@@ -69,21 +67,22 @@ The \mnemonic{vaes128keyi} instruction computes
 the {\em next} round key
 from the
 {\em current} round key
-stored in {\tt vrt},
-and writes the result back to {\tt vrt}.
+stored in \vrt,
+and writes the result back to \vrt.
+This instruction must be executed with \SEW
 
 The \mnemonic{vaes192keyi} and \mnemonic{vaes256keyi} instructions
 compute the {\em next} round key
 from the
-{\em current} round key stored in {\tt vrt}
-{\em and}
-the {\em previous} round key stored in {\tt vrs1}.
-The {\em next} round key is written back to {\tt vrt}.
+{\em current} round key stored in \vrt {\em and}
+the {\em previous} round key stored in \vrs{1}.
+The {\em next} round key is written back to \vrt.
 
-Each of these instructions requires {\tt SEW=128}
-({\tt vtype.vsew[2:0]=3'b100}).
-Executing these instructions with any other value of {\tt SEW} will cause
+Each of these instructions requires $\SEW=128$.
+Executing these instructions with any other value of \SEW will cause
 an invalid opcode exception.
+In implementations where $\VLEN<128$, \LMUL may be used to create
+vector register groups with enough bits to express $\SEW=128$.
 
 %vaese.vs        vrt, vrs1:
 %  vrt[i] = AESEncRnd(vrt[i], vrs1[0])     for i=vstart, i<vl, i++ 
@@ -159,32 +158,53 @@ vaesd256.vv vrt, vrs1 // Decrypt all rounds, 2*SEW 256 bit last two round keys
 
 These instructions perform an entire block encryption or decryption
 operation for the given AES parameterisation.
-The {\tt vrt} vector register elements contain $128$-bit blocks
+The \vrt vector register elements contain $128$-bit blocks
 to be encrypted or decrypted.
-The {\tt vrs1} vector register elements contain the initial
+The \vrs{1} vector register elements contain the initial
 cipher key.
 
-\todo{
-The vector spec implicitly requires all sourced vector registers
-to be read with the same SEW value.
-Nowhere does it specify how to handle reading vrs1 with SEW=128, and
-also reading vrs2 with SEW=256.
-What if SLEN=128?
-}
+All of these instructions require $\SEW=128$.
+Executing these instructions with any other value of {\tt SEW} will cause
+an invalid opcode exception.
+In implementations where $\VLEN<128$, \LMUL may be used to create
+vector register groups with enough bits to express $\SEW=128$.
 
-\todo{
-For AES vector scalar instructions, we encrypt block element i
-under cipher key element 0.
-For the AES-128 vector-vector instructions, we encrypt/decrypt
-block element i under cipher key element i.
-For the AES-192/256 vector-vector instructions, how do we map 
-$2*N$ block elements onto $N$ cipher key elements?
-This could be solved by reading {\tt vrs1} as though its LMUL value
-is twice that of LMUL for {\tt vrt}.
-This runs into the same problem as SEW: nowhere else in the
-vector spec mixes LMUL values for different registers of the same
-instruction.
-}
+The \mnemonic{vaes[e|d]128.*} instructions perform a complete AES
+128 block encrypt/decrypt.
+The $128$-bit data block is sourced from \vrt.
+The $128$-bit cipher key is sourced from \vrs{1}.
+The encrypted/decrypted block is written back to \vrt.
+
+The \mnemonic{vaes[e|d]192.*} instructions perform a complete
+AES $192$ encrypt/decrypt.
+The $128$-bit data block is sourced from \vrt, and is sourced with
+$\EEW=\SEW$ and $\EMUL=\LMUL$.
+The $192$ bit cipher keys are sourced from \vrs{1}.
+The cipher key is aligned to the least-significant
+bits of the element, and the upper bits are ignored.
+Note that all of these instructions require $\SEW=128$ when exected.
+Hence, \vrs{1} is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
+The encrypted/decrypted block is written back to \vrt with
+$\EEW=\SEW$ and $\EMUL=\LMUL$.
+
+The \mnemonic{vaes[e|d]256.*} instructions perform a complete
+AES $256$ encrypt/decrypt.
+The $128$-bit data block is sourced from \vrt, and is sourced with
+$\EEW=\SEW$ and $\EMUL=\LMUL$.
+The $256$ bit cipher keys are sourced from \vrs{1}.
+Note that all of these instructions require $\SEW=128$ when exected.
+Hence, \vrs{1} is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
+The encrypted/decrypted block is written back to \vrt with
+$\EEW=\SEW$ and $\EMUL=\LMUL$.
+
+If an implementation does not support the required $\EEW=2*\SEW$
+read mechanisms for the AES-192 and AES-256 instructions, then an invalid
+opcode exception is raised.
+
+The vector-scalar ({\tt *.vs}) instructions use the same key, stored
+in element $0$ of \vrs{1} to encrypt/decrypt every data block in \vrt.
+The vector-vector ({\tt *.vv}) instructions use corresponding elements
+of \vrs{1} and \vrt to perform encryption/decryption.
 
 \begin{cryptoisa}
 vaes128rkey vrt    // Compute final round key from cipher key.
@@ -200,8 +220,12 @@ These instructions are all vector-vector instructions.
 Setting {\tt vl=1, vstart=0} will cause the instruction to work on only a
 single vector element.
 
+Each of these instructions requires $\SEW=128$
+Executing these instructions with any other value of \SEW will cause
+an invalid opcode exception.
+
 The \mnemonic{vaes128rkey} instruction takes a single
-vector source register {\tt vrt}, and for each $128$-bit element, computes
+vector source register \vrt, and for each $128$-bit element, computes
 the final AES-128 round key.
 The result is then written back to {\tt vrt}.
 
@@ -210,26 +234,28 @@ vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $192$-bit cipher key),
 computes the final two AES-192 round keys.
 The result is then written back to {\tt vrt}.
+Note that this instruction requires $\SEW=128$ when exected.
+Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
+The result is written back to \vrt with
+$\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 
 The \mnemonic{vaes256rkey} instruction takes a single
 vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $256$-bit cipher key),
 computes the final two AES-192 round keys.
 The result is then written back to {\tt vrt}.
+Note that this instruction requires $\SEW=128$ when exected.
+Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
+The result is written back to \vrt with
+$\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 
-Each of these instructions requires {\tt SEW=128}
-({\tt vtype.vsew[2:0]=3'b100}).
-Executing these instructions with any other value of {\tt SEW} will cause
-an invalid opcode exception.
-The \mnemonic{vaes192rkey} and \mnemonic{vaes256rkey}
-instructions combine $2$ scalar elements together.
-
-\todo{
-What if {\tt vstart=1} and/or {\tt vl} is odd?
-Are we changing the definition of ``elements''
-to mean
-``pairs of elements''?
-}
+\todo{For the vaes192/256rkey instructions, they essentially operate on
+$256$-bit elements. Currently they are defined as needing $\SEW=128$
+and then {\em interpreting} \vrt with $\EEW=2*\SEW$.
+This keeps them consistent with the all rounds encrypt/decrypt
+instructions.
+Would it be simpler to simply require that $\SEW=256$ for these
+two instructions?}
 
 \todo{Do we need to state whether people should (not) use the equivilent
 inverse cipher transform?}
