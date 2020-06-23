@@ -70,7 +70,7 @@ RV32 base architecture.}
 
 \note{
 The SM4 (see Section \ref{sec:scalar:sm4}) and RV32 AES 
-instructions are designed to share much of their datapath, and
+instructions are designed to share much of their data-path, and
 can be implemented with much logic shared  between their SBoxes
 in particular.
 }
@@ -84,7 +84,7 @@ in particular.
 
 \begin{cryptoisa}
 saes64.ks1   rd, rs1, rcon // KeySchedule: SubBytes, Rotate, Round Const
-saes64.ks2   rd, rs1, rs2  // KeySchedule: XOR sumation
+saes64.ks2   rd, rs1, rs2  // KeySchedule: XOR summation
 saes64.imix  rd, rs1       // KeySchedule: InvMixColumns for Decrypt
 saes64.encsm rd, rs1, rs2  // Round:    ShiftRows,    SubBytes,    MixColumns
 saes64.encs  rd, rs1, rs2  // Round:    ShiftRows,    SubBytes
@@ -148,7 +148,7 @@ This proposal requires $6$ instructions per AES round:
 $2$ \mnemonic{ld} instructions to load the round key,
 $2$ \mnemonic{xor} to add the round key to the current state
 and
-$2$ of the relevent AES encrypt/decrypt instructions to perform the
+$2$ of the relevant AES encrypt/decrypt instructions to perform the
     SubBytes, ShiftRows and MixColumns round functions.
 This adds up to $76$ instructions per AES-128 block
 encryption.
@@ -178,7 +178,7 @@ instructions.
 {\tt Rout1} is given by \mnemonic{saes64.encsm rd, rs1, rs2},
 and
 {\tt Rout2}          by \mnemonic{saes64.encsm rd, rs2, rs1}.
-The {\tt [Inv]ShiftRows} blocks show how to select the relevent $8$ bytes
+The {\tt [Inv]ShiftRows} blocks show how to select the relevant $8$ bytes
 for further processing from the concatenation {\tt rs2 || \tt rs1}.
 }
 \label{fig:aes:rv64:mapping}

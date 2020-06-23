@@ -240,7 +240,7 @@ $\EEW=\SEW$ and $\EMUL=\LMUL$.
 The $192$ bit cipher keys are sourced from \vrs{1}.
 The cipher key is aligned to the least-significant
 bits of the element, and the upper bits are ignored.
-Note that all of these instructions require $\SEW=128$ when exected.
+Note that all of these instructions require $\SEW=128$ when executed.
 Hence, \vrs{1} is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The encrypted/decrypted block is written back to \vrt with
 $\EEW=\SEW$ and $\EMUL=\LMUL$.
@@ -250,7 +250,7 @@ AES $256$ encrypt/decrypt.
 The $128$-bit data block is sourced from \vrt, and is sourced with
 $\EEW=\SEW$ and $\EMUL=\LMUL$.
 The $256$ bit cipher keys are sourced from \vrs{1}.
-Note that all of these instructions require $\SEW=128$ when exected.
+Note that all of these instructions require $\SEW=128$ when executed.
 Hence, \vrs{1} is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The encrypted/decrypted block is written back to \vrt with
 $\EEW=\SEW$ and $\EMUL=\LMUL$.
@@ -292,7 +292,7 @@ vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $192$-bit cipher key),
 computes the final two AES-192 round keys.
 The result is then written back to {\tt vrt}.
-Note that this instruction requires $\SEW=128$ when exected.
+Note that this instruction requires $\SEW=128$ when executed.
 Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The result is written back to \vrt with
 $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
@@ -302,7 +302,7 @@ vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $256$-bit cipher key),
 computes the final two AES-192 round keys.
 The result is then written back to {\tt vrt}.
-Note that this instruction requires $\SEW=128$ when exected.
+Note that this instruction requires $\SEW=128$ when executed.
 Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The result is written back to \vrt with
 $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
