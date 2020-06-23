@@ -1,0 +1,63 @@
+
+
+This section describes the implementation profiles for the
+Cryptography extension.
+Some profiles are orthogonal to one-another, and some overlap.
+Where profiles overlap, implementations with both profiles must
+implement the union of both feature-sets.
+Presence of the cryptography extension in any form is indicated
+by bit $10$ of the {\tt MISA} CSR.
+i.e. Bit ``K'', because ``C'' is taken and ``K'' is for Krypto.
+
+\note{
+All of these are yet to be finalised.
+The exact mechanism for exposing the Cryptography extension features to
+software will likely be defined by the {\tt tech-config} working
+group.
+}
+
+\subsection{Scalar Profile 1}
+
+\begin{itemize}
+\item The random bit generation extension described in Section
+      \ref{sec:randombit}.
+\item All of the Bit-manipulation instructions in
+      Section \ref{sec:scalar:bitmanip}.
+\item The scalar SHA2 instructions described in Section
+      \ref{sec:scalar:sha2},
+      selecting the appropriate RV32 or RV64 variants.
+\item The scalar AES instructions described in Section
+      \ref{sec:scalar:aes},
+      selecting the appropriate RV32 or RV64 variants.
+\end{itemize}
+
+\subsection{Scalar Profile 2}
+
+\begin{itemize}
+\item The random bit generation extension described in Section
+      \ref{sec:randombit}.
+\item All of the Bit-manipulation instructions in
+      Section \ref{sec:scalar:bitmanip}.
+\item The scalar SM3 instructions described in Section \ref{sec:scalar:sm3}.
+\item The scalar SM4 instructions described in Section \ref{sec:scalar:sm4}.
+\end{itemize}
+
+\subsection{Vector Profile 1}
+
+\begin{itemize}
+\item The random bit generation extension.
+\item All of the round-based vector AES instructions in Section
+      \ref{sec:vector:aes:single-round}
+\item All of the round-based vector SHA2 instructions in Section
+      \ref{sec:vector:sha2:per-round}
+\end{itemize}
+
+\subsection{Vector Profile 2}
+
+\begin{itemize}
+\item The random bit generation extension.
+\item All of the all-round vector AES instructions in Section
+      \ref{sec:vector:aes:all-round}
+\item All of the all-round vector SHA2 instructions in Section
+      \ref{sec:vector:sha2:all-round}
+\end{itemize}
