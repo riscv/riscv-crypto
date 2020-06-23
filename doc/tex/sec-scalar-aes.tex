@@ -32,6 +32,11 @@ which byte of the input word is operated on.
 Pseudo-code for each instruction is found in figure
 \ref{fig:pseudo:aes:rv32}.
 
+These instructions use the Equivalent Inverse Cipher
+construction \cite[Section 5.3.5]{nist:fips:197}.
+This affects the computation of the KeySchedule, as shown in
+\cite[Figure 15]{nist:fips:197}.
+
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
 saes32.encs(rs1, rs2, bs):                 // SubBytes Only
@@ -159,6 +164,10 @@ saes64.encsm rd2, rs2, rs1 // identical source registers with swapped order.
 This is similar to the recommended \mnemonic{mulh}, \mnemonic{mul}
 sequence in the M extension to compute a full $32*32->64$ bit
 multiplication result \cite[Section 7.1]{riscv:spec:user}.
+
+Unlike the $32$-bit AES instructions, the $64$-bit variants
+{\em do not} use the Equivalent Inverse Cipher
+construction \cite[Section 5.3.5]{nist:fips:197}.
 
 \begin{figure}[h]
 \centering

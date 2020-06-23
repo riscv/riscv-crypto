@@ -2,6 +2,15 @@
 \subsection{Vector AES Acceleration - Per Round}
 \label{sec:vector:aes:single-round}
 
+These instructions each compute a single round of the AES forward
+or inverse cipher, or perform one KeySchedule round.
+All of the per-round AES instructions use the Equivalent Inverse Cipher
+construction \cite[Section 5.3.5]{nist:fips:197}.
+This affects the computation of the KeySchedule, and the order of the
+round transformations for {\em decryption}.
+See \cite[Figure 15]{nist:fips:197} for a pseudo-code description
+of the AES inverse cipher and KeySchedule modifications.
+
 \begin{cryptoisa}
 // Vector-Scalar
 vaese.vs        vrt, vrs1        // Encrypt
@@ -37,8 +46,7 @@ contained in {\tt vrt}.
 The Vector-Vector ({\tt *.vv}) instructions use corresponding
 round key and data elements in \vrs{1} and \vrt.
 
-All of these instructions requires $\SEW=128$
-({\tt vtype.vsew[2:0]=3'b100}).
+All of these instructions require $\SEW=128$.
 Executing these instructions with any other value of \SEW will cause
 an invalid opcode exception.
 In implementations where $\VLEN<128$, \LMUL may be used to create
@@ -69,7 +77,6 @@ from the
 {\em current} round key
 stored in \vrt,
 and writes the result back to \vrt.
-This instruction must be executed with \SEW
 
 The \mnemonic{vaes192keyi} and \mnemonic{vaes256keyi} instructions
 compute the {\em next} round key
@@ -128,10 +135,61 @@ vector register groups with enough bits to express $\SEW=128$.
 
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
-TBD
+vaese.vs    vrt, vrs1:
+    for i=vstart, i<vl, i++:
+        tmp.128  = vrt[i]
+        tmp.8[j] = AESSBox[tmp.8[j]] for i = 0..15      // SubBytes
+        tmp.128  = AESShiftRows(tmp.128)                // ShiftRows
+        tmp.128  = AESMixColumns(tmp.128)               // MixColumns
+        tmp.128  = tmp.128 ^ vrs1[i]                    // AddRoundKey
+
+vaesd.vs    vrt, vrs1:
+    for i=vstart, i<vl, i++:
+        tmp.128  = vrt[i]
+        tmp.8[j] = InvAESSBox[tmp.8[j]] for i = 0..15   // InvSubBytes
+        tmp.128  = InvAESShiftRows(tmp.128)             // InvShiftRows
+        tmp.128  = InvAESMixColumns(tmp.128)            // InvMixColumns
+        tmp.128  = tmp.128 ^ vrs1[i]                    // InvAddRoundKey
+
+vaeselast.vs    vrt, vrs1:
+    for i=vstart, i<vl, i++:
+        tmp.128  = vrt[i]
+        tmp.8[j] = AESSBox[tmp.8[j]] for i = 0..15      // SubBytes
+        tmp.128  = AESShiftRows(tmp.128)                // ShiftRows
+        tmp.128  = tmp.128 ^ vrs1[0]                    // AddRoundKey
+
+vaesdlast.vs    vrt, vrs1:
+    for i=vstart, i<vl, i++:
+        tmp.128  = vrt[i]
+        tmp.8[j] = InvAESSBox[tmp.8[j]] for j = 0..15   // InvSubBytes
+        tmp.128  = InvAESShiftRows(tmp.128)             // InvShiftRows
+        tmp.128  = tmp.128 ^ vrs1[0]                    // InvAddRoundKey
 \end{lstlisting}
-\caption{Pseudocode for the per-round vector AES instructions.}
+\caption{Pseudocode for the per-round vector-scalar AES instructions.
+The vector-vector versions are identical, save for the final
+line of each, where {\tt vrs1[0]} is replaced with {\tt vrs1[i]}.}
 \label{fig:pseudo:aes:vector:per-round}
+\end{figure}
+
+\begin{figure}[h]
+\begin{lstlisting}[language=pseudo]
+vaes128keyi     vrt, rnd:
+    for i=vstart, i<vl, i++:
+        tmp.128       = vrt[i]
+        tmp.32[0]    ^= RoundConstants[rnd]
+        t1.32         = ROTR32(tmp.32[3], 8)
+        t1.8[x]       = AESSBox[t1.8[x]] for x=0..3
+        vrt[i].32[0] ^= t1.32
+        vrt[i].32[1] ^= vrt[i].32[0]
+        vrt[i].32[2] ^= vrt[i].32[1]
+        vrt[i].32[3] ^= vrt[i].32[2]
+        if(rnd >= 1 and rnd <= 9):                      // Equivalent
+            vrt[i] = InvAESMixColumns(vrt[i])           // Inverse Cipher
+	
+// TBD - Other KeySchedule Instructions.
+\end{lstlisting}
+\caption{Pseudocode for the per-round KeySchedule AES instructions.}
+\label{fig:pseudo:aes:vector:per-round:ks}
 \end{figure}
 
 
@@ -256,9 +314,6 @@ This keeps them consistent with the all rounds encrypt/decrypt
 instructions.
 Would it be simpler to simply require that $\SEW=256$ for these
 two instructions?}
-
-\todo{Do we need to state whether people should (not) use the equivilent
-inverse cipher transform?}
 
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
