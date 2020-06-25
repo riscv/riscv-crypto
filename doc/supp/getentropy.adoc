@@ -1,9 +1,12 @@
-**INITIAL DRAFT**  For discussion.
+**DRAFT**  For discussion.
 __This document does not reflect the TG consensus yet.__
 
 May 25, 2020.   Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
 June 16, 2020.  Updated and expanded per comments from Chair and TG.
+
+June 20, 2020.  Updated with additional health check guidance.
+
 
 == GetEntropy - Baseline requirements for IID sources.
 
@@ -61,16 +64,16 @@ After the instruction, the register `rd` (usually `A0`) will contain:
 |===
 
 In order to verify that the caller has a valid 16-bit entropy seed, the
-caller must check that `FAIL==0` and `ENT16==1`. 
-All other conditions should be rejected and the contents of the reserved 
+caller must check that `FAIL==0` and `ENT16==1`.
+All other conditions should be rejected and the contents of the reserved
 bits ignored.
 
-These additional bits may convey additional information in extended 
+These additional bits may convey additional information in extended
 (non-baseline, `imm != 0`) implementations; for example indications about
 failure conditions or about availability of further entropy bits.
 
 In order to guarantee that no sensitive data is read twice and that different
-callers don't get correlated output, hardware implementations should execute 
+callers don't get correlated output, hardware implementations should execute
 *wipe-on-read* on the randomness pathway during a each succesful read.
 For the same reasons "uncooked" randomness should bever be made visible
 via GetEntropy, even when FAIL is set or ENT16 is unset.
@@ -79,7 +82,7 @@ WARNING:    We urge implementors against creating unnecessary information
 "status oracles" via the reserved bits or to allow the instruction to disable
 or affect the TNRG output in any significant way. All such information flows
 and interaction mechanisms can be potentially used in attacks. This also
-applies to the raw noise source. Section 3.2.2, <<SP800-90B>> specifically 
+applies to the raw noise source. Section 3.2.2, <<SP800-90B>> specifically
 states that "The noise source state shall be protected from adversarial
 knowledge or influence to the  __greatest extent possible__."
 
@@ -94,12 +97,11 @@ cryptographic DRBG. Implementors are urged to use AES or SHA instruction
 extensions to build such a DRBG.
 
 
-
 ====    Baseline output requirements for GetEntropy(0)
 
-*   **Entropy:** A minimum requirement is that 128 bits of "full
-    entropy" can be consistently obtained from each 256-bit GetEntropy
-    output sequence via (vetted) cryptographic conditioning algorithm
+*   **Entropy:** A minimum requirement is that 128 bits of output entropy
+    can be consistently obtained from each 256-bit (16-sample) GetEntropy
+    output sequence via (a vetted) cryptographic conditioning algorithm
     (see Section 3.1.5.1.2 in <<SP800-90B>>) such as a cryptographic hash
     (SHA-2 <<FIPS180>> or SHA-3 <<FIPS202>>). Driver developers may make
     this conservative assumption.
@@ -128,10 +130,11 @@ if a full DRBG is used as a source, it must have an internal state
 with at least 256 bits of secret entropy (e.g. a CTR_DRBG built from AES-128
 is never sufficient).
 
-====    Polling Randomness
+
+====    Polling Randomness (Guidance)
 
 In C, for an output word obtained via `x = GetEntropy(0)` the validity
-check may be implemented as  `(x >> 30) == 1` and output seed derived via 
+check may be implemented as  `(x >> 30) == 1` and output seed derived via
 `seed = x & 0xFFFF`. It is important that the validity check of two
 bits is performed with a single comparison and that the reserved bits
 are masked away and have no effect on program flow. This protects against
@@ -141,11 +144,11 @@ information in the future.
 An acceptable random number generator (DRBG) initialization sequence would
 obtain 512 bits (32 successful calls) of GetEntropy output and hash it with
 a suitable mechanism such as SHA2/3-384/512 or SHAKE256 <<FIPS180>> <<FIPS202>>
-to produce the initial seed for a DRBG -- such as CTR_DRBG built from 
+to produce the initial seed for a DRBG -- such as CTR_DRBG built from
 AES-256 <<SP800-90A>>.
 
 The instruction returns immediately, either with 16 bits of randomness
-satisfying the criteria above (>8 bits of true entropy, FAIL=0, ENT16=1) or 
+satisfying the criteria above (>8 bits of true entropy, FAIL=0, ENT16=1) or
 with nothing. We recommend that the failure takes the form FAIL=1, ENT16=0
 or simply 0x80000000.
 
@@ -160,10 +163,12 @@ be followed by a WFI before another GetEntropy instruction is issued.
 This (at least potentially) allows energy-saving sleep on MCUs and context
 switching on a higher-end CPUs.
 
-The instruction should return FAIL during its "warm-up" period. An internal
-delay counter or randomness quality monitor can be implemented for this.
-However secondary quality monitors can be implemented in the driver component
-to comply with certification requirements.
+The instruction should return FAIL during its "warm-up" and start-up
+testing period. An internal delay or randomness quality monitor is often
+implemented for this. Secondary quality monitors can be implemented in
+the driver component to comply with certification requirements.
+More permanent test failures should result in trap, halt, or other
+unavailability of the entropy source or even the entire system (see above).
 
 On systems that do not have a suitable hardware generator available,
 the instruction should not be available either; they should have negative
@@ -174,7 +179,69 @@ or `getrandom(2)` syscalls. Note that the host random number generator
 must also satisfy the 256-bit security (secret entropy) requirement.
 
 
-=== Overall RNG Architecture
+====    Health Tests (Guidance)
+
+The purpose of a cryptographic entropy source is to produce secret keying
+material. Therefore a good-quality hardware entropy source implements
+appropriate controls to guarantee unpredictability, prevent leakage, and
+deny adversarial control over the entropy output or its generation mechanism.
+These are not intended for hardware diagnostics but for detecting security
+issues. Additional "debug" mechanisms may be used if necessary, but then the
+device must be outside production use.
+
+*   **Health tests are security controls.** Health checks can take the form
+    of integrity checks, start-up tests, and on-demand tests. The tests can
+    be implemented in hardware or firmware; typically both. Several are
+    mandated by security standards such as <<FIPS140>>. The exact choice
+    of appropriate health tests depends on the certification target, system
+    architecture, the threat model, entropy source type, and other factors.
+
+*   **Attack Oracles.**  The role of the RISC-V ISA implementation is to try
+    to ensure that the hardware-software interface minimizes avenues for
+    adversarial information flow; all status information that is unnecessary
+    in normal operation should be eliminated. Out-of-band information such
+    as (health) "status bits" or even the __timing__ of on-demand health
+    checks can be considered to be potentially exploitable attack oracles.
+
+*   **On-demand testing** is usually invoked via resetting, rebooting, or
+    powering-up the hardware. Typically the implementation will just return
+    FAIL during the initial start-up self-test period; in any case, the driver
+    must wait for them to finish before starting cryptographic operations.
+    Interaction with hardware self-test mechanisms from the software side
+    should be minimal; the term "on-demand" does not mean that the end-user or
+    application program should be able to invoke them in the field.
+
+*   **Continuous tests** often maintain a state (such as counters) related to
+    noise or entropy output. This is potentially statistically correlated to
+    secret some keying material. A hardware-based continuous testing
+    mechanism must not make such state or statistical information externally
+    available, and it must be zeroized periodically or upon demand via
+    reset, power-up, or similar signal. Upon continuous testing failure, the
+    entropy source will enter a no-output, fatal error state.
+
+*   **Fault attacks.** Some hardware random generators are, by their physical
+    construction, more exposed to non-adversarial environmental and
+    manufacturing issues than purely deterministic logic components. However,
+    even such "natural" failure modes may indicate a  __fault attack__ and
+    therefore should not be addressed as a diagnostic issue but as a general
+    system integrity failure (see e.g. <<MaMo09>> <<KaScVe13>>).
+
+*   **Error states are fatal**. Since the security of most cryptographic
+    operations depends on the entropy source, a system-wide "default deny"
+    security policy approach is appropriate for most entropy source failures.
+    A hardware test failure should result in at least in instruction
+    trap but possibly or hard reset/halt. It's a show stopper: The entropy
+    source (or its cryptographic client application) must not be allowed to
+    run if its secure operation can't be guaranteed.
+
+*   **False-positives.**    The statistical nature of some tests makes
+    "type-1" false positives a possibility. Security architects will
+    understand to use permanent or hard-to-recover "security-fuse" lockdowns
+    only if the P-value threshold of a test is such that the probability of
+    false-positive is negligible over the entire device lifetime.
+
+
+=== Overall RNG Architecture (Informational)
 
 Raw output from this instruction should not be used for cryptographic
 purposes directly. Its purpose is to provide entropy for cryptographic
@@ -248,11 +315,11 @@ Some of the TRNG functions delegated to software driver component may include
     correlated state, software zeroization should be sufficient.
 
 
-===    Background: Criteria for Randomness
+==== Discussion
 
 NOTE:   While we do not require entropy source implementations to be
 certified designs, we do expect that they behave in a compatible manner and
-do not create additional security risks to users. Self-evaluation and
+do not create unnecessary security risks to users. Self-evaluation and
 testing in accordance with appropriate security standards is usually needed
 to achieve this.
 
@@ -273,7 +340,7 @@ driver development. GetEntropy has an argument parameter that can be used
 to access non-IID sources. Those are outside the scope of this specification.
 
 A conditioning component may be applied to the output from a raw
-random noise source to reduce bias and increase the entropy rate to meet 
+random noise source to reduce bias and increase the entropy rate to meet
 the criteria for seed output. Some security evaluation approaches
 will need to bypass the conditioning component and access the raw noise
 sequence directly (GetNoise function of <<SP800-90B>>). This is
@@ -332,6 +399,11 @@ M. S. Turan, E. Barker, J. Kelsey, K. A. McKay, M. L. Baish, and M. Boyle,
 "Recommendation for the Entropy Sources Used for Random Bit Generation."
 NIST SP 800-90B, January 2018.
 https://doi.org/10.6028/NIST.SP.800-90B
+
+[[SP800-90B-CODE]][SP800-90B-CODE]
+"The SP800-90B_EntropyAssessment C++ package implements the min-entropy
+assessment methods included in Special Publication 800-90B."
+https://github.com/usnistgov/SP800-90B_EntropyAssessment
 
 [[SP800-22]][SP800-22]
 L. Bassham, A. Rukhin, J. Soto, J. Nechvatal, M. Smid, E. Barker,
@@ -421,11 +493,37 @@ AMD,
 Technical Report, Advanced Micro Devices, June 2017.
 https://www.amd.com/system/files/TechDocs/amd-random-number-generator.pdf
 
+[[ARM17]][ARM17]
+ARM,
+"ARM TrustZone True Random Number Generator: Technical Reference Manual"
+ARM 100976_0000_00_en (rev. r0p0), May 2017.
+http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.100976_0000_00_en
+
+[[ARM20]][ARM20]
+ARM,
+"Arm Architecture Registers: Armv8, for Armv8-A architecture profile."
+ARM DDI 0595 (ID033020), April 2020.
+https://static.docs.arm.com/ddi0595/g/SysReg_xml_v86A-2020-03.pdf
+
 [[BaLuMi11]][BaLuMi11]
 M. Baudet, D. Lubicz, J. Micolod, and André Tassiaux,
 "On the Security of Oscillator-Based Random Number Generators."
 J. Cryptology, vol. 24, pp. 398-425, Springer, 2011.
 https://doi.org/10.1007/s00145-010-9089-3
+
+[[BeRePa14]][BeRePa14]
+G. T. Becker, F. Regazzoni, C. Paar, and W. P. Burleson,
+"Stealthy Dopant-Level Hardware Trojans: extended version."
+J. Cryptographic Engineering, vol. 4, pp. 19-31, Springer, 2014.
+https://doi.org/10.1007/s13389-013-0068-0
+
+
+[[ChMaGa16]][ChMaGa16]
+S. Checkoway, J. Maskiewicz, C. Garman, J. Friedm, S. Cohneym, M. Green,
+N. Heninger, R. Weinmann, E. Rescorla, and H. Shacham,
+"A Systematic Analysis of the Juniper Dual EC Incident."
+ACM CCS 2016, pp. 468-479, ACM, 2016.
+https://doi.org/10.1145/2976749.2978395
 
 [[Co99]][Co99]
 J. S. Coron,
@@ -450,6 +548,13 @@ V. T. Hoang and Y. Shen,
 CRYPTO 2020, To appear, 2020.
 https://eprint.iacr.org/2020/619
 
+[[KaScVe13]][KaScVe13]
+D. Karaklajić, J.-M. Schmidt, and I. Verbauwhede,
+"Hardware Designer's Guide to Fault Attacks."
+IEEE Transactions on Very Large Scale Integration (VLSI) Systems,
+vol. 21, no. 12, pp. 2295-2306, Dec. 2013,
+https://doi.org/10.1109/TVLSI.2012.2231707
+
 [[LiBaBo13]][LiBaBo13]
 J. S. Liberty, A. Barrera, D. W. Boerstler, T. B. Chadwick, S. R. Cottier, H. P. Hofstee, J. A. Rosser, and  M. L. Tsai,
 "True hardware random number generation implemented in the 32-nm SOI POWER7+ processor."
@@ -473,6 +578,12 @@ M. Raab and A. Steger,
 "“Balls into Bins” — A Simple and Tight Analysis."
 RANDOM 1998, LNCS 1518, Springer, pp. 159-170, 1999.
 https://doi.org/10.1007/3-540-49543-6_13
+
+[[RaMiR21]][RaMiRa21]
+H. Ragab, A. Milburn, K. Razavi, H. Bos, and C. Giuffrida,
+"CrossTalk : Speculative Data Leaks Across Cores Are Real."
+To appear at IEEE S&P 2021.
+https://download.vusec.net/papers/crosstalk_sp21.pdf
 
 [[ScKi02]][ScKi02]
 W. Schindler and W. Killmann,
