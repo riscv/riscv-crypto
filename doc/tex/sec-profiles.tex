@@ -1,13 +1,12 @@
 
-
-This section describes the implementation profiles for the
+Presence of the cryptography extension in any form is indicated
+by bit $10$ of the {\tt MISA} CSR.
+i.e. bit ``K'', because ``C'' is taken and ``K'' is for Krypto.
+Table \ref{tab:profiles} describes the implementation profiles for the
 Cryptography extension.
 Some profiles are orthogonal to one-another, and some overlap.
 Where profiles overlap, implementations with both profiles must
 implement the union of both feature-sets.
-Presence of the cryptography extension in any form is indicated
-by bit $10$ of the {\tt MISA} CSR.
-i.e. Bit ``K'', because ``C'' is taken and ``K'' is for Krypto.
 
 \note{
 All of these are yet to be finalised.
@@ -16,48 +15,42 @@ software will likely be defined by the {\tt tech-config} working
 group.
 }
 
-\subsection{Scalar Profile 1}
+\begin{table}[h]
+\centering
+\begin{tabular}{r|lll|lll}
+\multirow{2}{*}{Profiles:} &
+\multicolumn{3}{c|}{Scalar Profiles} &
+\multicolumn{3}{c}{Vector Profiles} \\
+                      & \#1  & \#2  & \#3 & \#1  & \#2  & \#3 \\
+\hline
+GetEntropy            &   x  &   x  &  x  &   x  &  x   &  x  \\
+Bitmanip Instructions &   x  &   x  &  x  &      &      &     \\
+Scalar SHA2           &   x  &      &  x  &      &      &     \\
+Scalar AES            &   x  &      &  x  &      &      &     \\
+Scalar SM3            &      &   x  &  x  &      &      &     \\
+Scalar SM4            &      &   x  &  x  &      &      &     \\
+\hline
+Vector AES Per-Round  &      &      &     &   x  &      &  x  \\
+Vector AES All-Round  &      &      &     &   x  &      &  x  \\
+Vector SHA2 Per-Round &      &      &     &      &  x   &  x  \\
+Vector SHA2 All-Round &      &      &     &      &  x   &  x  
+\end{tabular}
+\caption{
+Implementation profiles for the Cryptography extension.
+}
+\label{tab:profiles}
+\end{table}
 
-\begin{itemize}
-\item The random bit generation extension described in Section
-      \ref{sec:randombit}.
-\item All of the Bit-manipulation instructions in
-      Section \ref{sec:scalar:bitmanip}.
-\item The scalar SHA2 instructions described in Section
-      \ref{sec:scalar:sha2},
-      selecting the appropriate RV32 or RV64 variants.
-\item The scalar AES instructions described in Section
-      \ref{sec:scalar:aes},
-      selecting the appropriate RV32 or RV64 variants.
-\end{itemize}
+The scalar profiles all implement the GetEntropy feature and
+shared Bitmanip instructions.
+Profile $1$ includes the scalar AES/SHA2 extensions, while
+Profile $2$ includes the scalar SM3/SM4  extensions.
+These were chosen as the most likely to be mutually exclusive in final
+products.
+Profile $3$ implements all of the scalar features.
 
-\subsection{Scalar Profile 2}
-
-\begin{itemize}
-\item The random bit generation extension described in Section
-      \ref{sec:randombit}.
-\item All of the Bit-manipulation instructions in
-      Section \ref{sec:scalar:bitmanip}.
-\item The scalar SM3 instructions described in Section \ref{sec:scalar:sm3}.
-\item The scalar SM4 instructions described in Section \ref{sec:scalar:sm4}.
-\end{itemize}
-
-\subsection{Vector Profile 1}
-
-\begin{itemize}
-\item The random bit generation extension.
-\item All of the round-based vector AES instructions in Section
-      \ref{sec:vector:aes:single-round}
-\item All of the round-based vector SHA2 instructions in Section
-      \ref{sec:vector:sha2:per-round}
-\end{itemize}
-
-\subsection{Vector Profile 2}
-
-\begin{itemize}
-\item The random bit generation extension.
-\item All of the all-round vector AES instructions in Section
-      \ref{sec:vector:aes:all-round}
-\item All of the all-round vector SHA2 instructions in Section
-      \ref{sec:vector:sha2:all-round}
-\end{itemize}
+The vector profiles are split into the ``per-round'' instructions
+(Profile 1),
+the ``all-round'' instructions (Profile 2),
+or both (Profile 3).
+All vector profiles implement the GetEntropy feature.
