@@ -25,11 +25,12 @@ The main design goal is that standards-compliant random number generators can
 be built using PollEntropy and other RISC-V cryptographic instructions
 (notably AES and SHA). Common true random bit generator specification
 frameworks intended as targets for this specification include
-FIPS 140-3 <<FIPS140-3>> and NIST SP 800-90B <<SP800-90B>>, or
-BSI AIS-20/AIS-31 <<AIS20_31>>, which is often used in conjunction with
+FIPS 140-3 <<FIPS140-3>> / NIST SP 800-90B <<SP800-90B>> and
+BSI AIS-20 / AIS-31 <<AIS20_31>>, which is often used in conjunction with
 Common Criteria certifications.  See Section 7.18
 __"Entropy Estimation and Compliance with SP 800-90B"__ of
-<<FIPS140-2-IG>> for some recent certification laboratory guidance.
+<<FIPS140-2-IG>> for some certification laboratory guidance related
+to current entropy source validation processes.
 
 The purpose of this baseline requirement is to guarantee that a simple,
 device-independent driver component (e.g. in Linux kernel, embedded firmware,
