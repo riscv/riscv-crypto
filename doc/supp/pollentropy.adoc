@@ -26,10 +26,10 @@ be built using PollEntropy and other RISC-V cryptographic instructions
 (notably AES and SHA). Common true random bit generator specification
 frameworks intended as targets for this specification include
 FIPS 140-3 <<FIPS140-3>> and NIST SP 800-90B <<SP800-90B>>, or
-BSI <<AIS31>>, which is often used in conjunction with Common Criteria
-certifications.  See Section 7.18
+BSI AIS-20/AIS-31 <<AIS20_31>>, which is often used in conjunction with
+Common Criteria certifications.  See Section 7.18
 __"Entropy Estimation and Compliance with SP 800-90B"__ of
-<<FIPS140-2-IG>> for current certification laboratory guidance.
+<<FIPS140-2-IG>> for some recent certification laboratory guidance.
 
 The purpose of this baseline requirement is to guarantee that a simple,
 device-independent driver component (e.g. in Linux kernel, embedded firmware,
@@ -147,7 +147,7 @@ the state is ES16.
 NOTE:   To guarantee that no sensitive data is read twice and
 that different callers don't get correlated output, hardware
 implementations shall execute *wipe-on-read* on the randomness pathway
-during each successful read. For the same reasons, only complete and fully 
+during each successful read. For the same reasons, only complete and fully
 processed randomness words shall be made available via PollEntropy
 (no half-conditioned buffers even in WAIT state).
 
@@ -207,7 +207,8 @@ NOTE: The min-entropy assessment methodology in <<SP800-90B>> has a safety
 margin in its confidence intervals and therefore requires each 16-bit word
 to have somewhat more than 8 bits of real entropy to meet our criteria.
 In practice we recommend the distribution to be significantly
-closer to uniform to satisfy additional usability and <<AIS31>> requirements.
+closer to uniform to satisfy additional usability and <<AIS20_31>>
+requirements.
 
 NOTE: These are minimum requirements; an implementation can also output
 fully conditioned, perfectly distributed numbers. However, it is required
@@ -433,7 +434,7 @@ in 2018 <<SP800-90B>>, which complements earlier DRBG specification
 <<SP800-22>> available.
 
 German BSI (Bundesamt für Sicherheit in der Informationstechnik) has also
-published two methods, "AIS-31" and "AIS-20", for evaluating random number
+published two methods, AIS-20 and AIS-31, for evaluating random number
 generators. Their status is discussed in <<BSI-RAND>>. This methodology is
 widely used in Common Criteria (CC) evaluations.
 
@@ -442,11 +443,11 @@ Entropy Source requirements (with or without conditioning) of <<SP800-90B>>.
 The entropy requirements in the U.S. document focus on min-entropy and allow
 cryptographic conditioning of relatively low-quality random numbers as input.
 
-IID is an optional requirement in <<SP800-90B>> but is needed to prevent
-information leakage between processes using the PollEntropy instruction.
-Furthermore, it significantly simplifies certification and vendor-independent
-driver development. However this document can be expanded to non-IID sources
-later.
+IID is an optional requirement in <<SP800-90B>> but is needed to
+prevent information leakage between processes using the PollEntropy
+instruction. Furthermore, it significantly simplifies certification and
+vendor-independent driver development. However this document can be
+expanded to non-IID sources later.
 
 A conditioning component may be applied to the output from a raw
 random noise source to reduce bias and remove redundancy to meet
@@ -460,15 +461,15 @@ have restricted access for security. Any raw noise bits exported by the
 abstract GetNoise function (however implemented) shall not be used in the
 generation of any bits returned by the PollEntropy instruction.
 
-
-The methods discussed in "AIS-31" <<AIS31>> are related to physical
-random number generators (i.e. PollEntropy), while "AIS-20" <<AIS20>>
-describes deterministic random number generators. Documents <<ScKi02>>.
-<<AIS31>> specify two classes of TRNGs, P1 and P2, while <<AIS20>>
-describes four classes K1, K2, K3, and K4 of DRBGs (where K4 is the highest).
+The methods discussed in AIS-31 <<AIS31>> are related to physical
+random number generators (i.e. PollEntropy), while AIS-20 <<AIS20>>
+describes deterministic random number generators. Later the documents
+were combined into <<AIS20_31>> but the older ones were not completely
+superceded <<BSI-RAND>>. Anyway there are two classes of physical RNGs,
+P1 and P2, while there are four classes K1-K4 of DRBGs.
 There is a relationship between the two; Class P1 randomness source is
-suitable for DRBGs in classes K1 and K2, while P2 source is used for K3 and
-K4 DRBGs and higher overall security levels.
+suitable for DRBGs in classes K1 and K2, while P2 source is used for K3
+and K4 DRBGs.
 
 The requirements for the P2 source necessitate near-uniform output even from
 the "raw" entropy source. For example criteria P2.i)(vii.e) requires an entropy
@@ -578,6 +579,12 @@ W. Schindler,
 number generators."
 AIS 20, Version 2.0, BSI, December 1999.
 https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_20_Functionality_Classes_Evaluation_Methodology_DRNG_e.html
+
+[[AIS20_31]][AIS20_31]
+W. Killmann and W. Schindler,
+"A Proposal for: Functionality classes for random number generators."
+AIS 20 / AIS 31, Version 2.0, BSI, December 2011.
+https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_Functionality_classes_for_random_number_generators_e.html
 
 [[X.1709]][X.1709]
 ITU,
