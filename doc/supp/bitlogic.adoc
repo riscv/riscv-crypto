@@ -1,0 +1,469 @@
+DRAFT of 2020 May 28
+Markku-Juhani O. Saarinen <mjos@pqshield.com>
+
+== On RISC-V Logic Optimization for Cryptography
+
+Many cryptographic functions require computation of Boolean functions from 
+n bits to m bits. Sometimes these functions are large enough to have been
+traditionally implemented with table lookups, but timing side-channel
+considerations force their implementation in a bit-sliced manner.
+
+The efficiency of bit-sliced logic is affected by three main factors:
+
+. The number of instructions.
+. Compressed (16-bit) and uncompressed (32-bit) instructions.
+. Logic depth for superscalar processing.
+
+
+=== Boolean Function Primitives
+
+The truth table of any 2-input Boolean function has 2^2^=4 bits. We write
+the truth table (TT) with the result of all-zero inputs on the right
+(at "bit 0"). All arithmetic instructions in RISC-V crypto extension have
+two source operands, even if they only use one.
+
+.Sixteen two-input Boolean functions, including redundant ones.
+[cols="1,2,2,2"]
+[%autowidth]
+|===
+| TT   | C Expr         | Assembler | Type
+
+| 0000 | `+0+`          | MV ZERO   | pseudo
+| 0001 | `+~(x \| y)+`  | OR + NOT  | n/a ("NOR")
+| 0010 | `+y &~ x+`     | ANDN      | ext (b)
+| 0011 | `+~x+`         | NOT       | pseudo
+| 0100 | `+x &~ y+`     | ANDN      | ext (b)
+| 0110 | `+x ^ y+`      | XOR       | base (c)
+| 0101 | `+~y+`         | NOT       | pseudo
+| 0111 | `+~(x & y)+`   | AND + NOT | n/a ("NAND")
+| 1000 | `+x & y+`      | AND       | base (c)
+| 1001 | `+x ^~ y+`     | XNOR      | ext (b)
+| 1010 | `+y+`          | MV        | pseudo
+| 1011 | `+y \|~ x+`    | ORN       | ext (b)
+| 1100 | `+x+`          | MV        | pseudo
+| 1101 | `+x \|~ y+`    | ORN       | ext (b)
+| 1110 | `+x \| y+`     | OR        | base (c)
+| 1111 | `+~0+`         | NOT ZERO  | pseudo
+|===
+
+**Pseudo:**
+In RISC-V the register X0 is permanently set to zero. Moving the contents of
+a register to  another is performed with an `MV` pseudoinstruction, which has
+a compressed (16-bit rather than 32-bit) equivalent `C.MV` -- both are
+usually encoded as addition with zero). Single-operand one's complement `NOT`
+is implemented with immediate exclusive-or `XORI rd, rs1, -1`, which does not
+have an equivalent form in the compressed instruction set. However one may
+keep the value `~0`=`-1` in an auxiliary register, after which compressed
+C.XOR always suffices.
+
+**Base:**
+The base set instruction set provides the basic commutative Boolean logic
+operations AND, OR, XOR, each of which has compressed (half-size)
+instruction counterparts C.AND, C.OR, X.XOR respectively. Note that
+compressed forms can only be used if the destination operand is the same
+as one of the input operands (corresponding to C operators
+`+&=+`, `+|=+`, and `+^=+`.)
+
+**Extension:**
+The Bitmanip and Crypto extensions add three counterparts to these
+instructions by inverting the second operand: ANDN (`+&~+`), ORN (`+|~+`),
+and XNOR (`+^~+`). Even though grouping the NOT (`+~+`) with the main
+operation makes no difference in C syntax, we use this notation and hope
+that compiler will understand this relationship and can use the correct
+instructions. These operations have no compressed form. ANDN and ORN are
+non-commutative, so these correspond to five two-input Boolean logic
+functions.
+
+**Not available:**
+Together the trivial (6), base (3), and expanded (5) make up 14 of the
+16 possible functions. Two functions that are left out are NOR and NAND,
+which need to be constructed from two instructions.
+
+
+=== Would "NOR" and "NAND" instructions help?
+
+**Not really**, at least for bigger bitsliced functions.
+To see this, consider a bitsliced circuit (directed acyclic graph) 
+implementing an n-to-m bit Boolean function, where each gate has 
+fan-in 2 and unlimited fan-out.
+
+Out of the 16 Boolean functions, six can be eliminated trivially.
+To eliminate a NOT gate, modify all gates that it is driving
+(e.g. changing an AND into an ANDN, or vice versa). 
+
+Furthermore, any gate (except those directly driving the m output bits)
+can be changed into its inverted counterpart (fully inverted truth table)
+by modifying gates "downstream" in the circuit.
+
+Therefore it is possible to replace all (two-instruction) "NOR" functions
+`+~(x | y)+` with OR functions `+x | y+` and similarly "NAND"
+functions `+~(x & y)+` with simple AND function `+x & y+` by changing
+all gates driven by them. Starting from input and proceeding in the acyclic
+graph, we see that at most m additional output inverters are required
+after this change is applied to a circuit; the structure and size of the
+circuit remains the otherwise the same in this transformation.
+
+In fact it may be preferable to replace XNOR functions `+x ^~ y+` with plain
+XOR functions `+x ^ y+` since a compressed form (C.XOR) is available for it.
+It may also preferable to replace ORN (`+x |~ y+`, `+y |~ x+`) with its
+inverse ANDN (`+y &~ x+`, `+x &~ y+`), for portability. ANDN (also called BIC, 
+"bit clear") is available on Intel and ARM platforms while ORN is not. 
+Any circuit can be transformed to use the four-gate set XOR, AND, OR, ANDN 
+with at most "m" additinal gates (NOT gates on outputs).
+
+
+=== Three-input ("Ternary") Boolean Functions
+
+We list below optimized expressions for all 3-input Boolean functions;
+since the truth table is 2^3^=8 bits, there are 2^8^=256 such functions
+in all. There are several, sometimes contradictory optimality metrics for 
+a function, and even with those there many equivalent expressions.
+
+We used the following selection criteria in our exhaustive search.
+In order of importance, select expression with..
+
+. The smallest number of instructions (Len).
+. Smallest circuit depth (Dep, measured with longest topological path).
+. Minimum code size.
+
+Code size is measured assuming that compressed instructions C.AND, C.OR, and
+C.XOR can be used and input variables can be overwritten. Note that this is
+among all code sequences with the same length and depth.
+
+Two expressions are given; one for base instruction set (with compression)
+and another for expanded
+
+==== Example
+
+SHA-2 Algorithms utilize two main nonlinear functions, Ch and Maj,
+defined in Section 4.1 of https://doi.org/10.6028/NIST.FIPS.180-4[FIPS 180-4] as:
+
+----
+Ch(x,y,z)  = (x & y) ^ (~x & z)            // 4 insn: 2 * AND, 1 * XOR, 1 NOT
+Maj(x,y,z) = (x & y) ^ (x & z) ^ (y & z)   // 5 insn: 3 * AND, 2 * XOR
+----
+
+One can see that AND, NOT sequence `+(~x & z)+` in `Ch` can be written using
+a single ANDN instruction `+(z &~ x)+` from the extension, reducing the
+instruction count to 3. Are further optimizations possible?
+
+One can evaluate the truth tables bit-by-bit, or in "parallel" by setting
+`+x=0xAA+`, `+y=0xCC+`, `+z=0xF0+` and computing the 8-bit result.
+This yields truth tables for Ch: `0xD8, 11011000` and Maj: `0xE8, 11101000`.
+
+It appears that the expression `+Ch = ((x & y) | (z &~ x))+` is optimal if
+`&~` is a single instruction (ANDN). However the table also gives a
+three-instruction sequence that uses just the base set:
+`Ch(x,y,z) = (z ^ (x & (y ^ z)))`. One may ask why is this not the "best"
+for the extension too - it's shorter! This is because of our prioritization
+of depth over opcode length:
+
+----
+    Extended:                   Base set:
+    ((x & y) | (z &~ x))        (z ^ (x & (y ^ z)))
+
+                                    [Ch]
+                                      \
+         [Ch]                         (^)
+            \                         / \
+            (|)                      z   (&)
+           /   \                         / \
+         (&)   (&~) <-ANDN              x  (^)
+         / \   / \                         / \
+        x   y z   x                       y   z
+
+        Len=3 Dep=2                  Len=3 Dep=3
+----
+
+For Maj we obtain the same 4-instruction sequence for both base and
+extended instruction set: `+Maj(x,y,z) = (x ^ ((x ^ y) & (x ^ z)))+`. If the
+input variables can be overwritten, this sequence could be implemented
+(using pseudocode):
+
+----
+    C.XOR   z, z, x     //  z ^= x  --  rs1=rd for compressed
+    C.XOR   y, y, x     //  y ^= x
+    C.AND   y, y, z     //  y &= z
+    C.XOR   x, x, y     //  x ^= y  --  the result is in x
+----
+
+With C extension compression this sequence is 4 * 2 = 8 bytes, the size of
+two "normal" instructions. This is probably why it was chosen from the set
+of all Len=3 and Dep=3 sequences.
+
+In a typical SHA-2 implementation not all input variables can be overwritten.
+However the compressed form selection criteria has least priority (among otherwise
+equivalent candidates). It is difficult to predict the stack load/store sequence 
+so giving the Compiler a form that allows the use of compressed instructions is
+generally preferable.
+
+So, based on these considerations, and prioritizing length over depth, we
+recommend:
+----
+Ch(x,y,z)  = (z ^ (x & (y ^ z)))           // 3 insn: 1 * AND, 2 * XOR
+Maj(x,y,z) = (x ^ ((x ^ y) & (x ^ z)))     // 4 insn: 1 * AND, 3 * XOR
+----
+
+.256 three-input Boolean fuctions with expanded and base logic instructions.
+[cols="1,2,1,1,4,1,1,4"]
+[%autowidth]
+|===
+| Numb | TT   | Len | Dep | C expr (expanded)                     | Len | Dep | C expr (base set)
+
+| 0x00 | 00000000 | 0 | 0 | `+0+`                                 | 0 | 0 | `+0+`
+| 0x01 | 00000001 | 3 | 2 | `+(~x &~ (y \| z))+`                  | 3 | 3 | `+~(z \| (x \| y))+`
+| 0x02 | 00000010 | 2 | 2 | `+(x &~ (y \| z))+`                   | 3 | 3 | `+(x ^ (x & (y \| z)))+`
+| 0x03 | 00000011 | 2 | 2 | `+~(y \| z)+`                         | 2 | 2 | `+~(y \| z)+`
+| 0x04 | 00000100 | 2 | 2 | `+(y &~ (x \| z))+`                   | 3 | 3 | `+(y ^ (y & (x \| z)))+`
+| 0x05 | 00000101 | 2 | 2 | `+~(x \| z)+`                         | 2 | 2 | `+~(x \| z)+`
+| 0x06 | 00000110 | 2 | 2 | `+((x ^ y) &~ z)+`                    | 3 | 2 | `+((x \| z) ^ (y \| z))+`
+| 0x07 | 00000111 | 3 | 2 | `+(~z &~ (x & y))+`                   | 3 | 3 | `+~(z \| (x & y))+`
+| 0x08 | 00001000 | 2 | 2 | `+((x & y) &~ z)+`                    | 3 | 2 | `+((x & y) & (x ^ z))+`
+| 0x09 | 00001001 | 2 | 2 | `+((x ^~ y) &~ z)+`                   | 3 | 3 | `+~(z \| (x ^ y))+`
+| 0x0A | 00001010 | 1 | 1 | `+(x &~ z)+`                          | 2 | 2 | `+(x ^ (x & z))+`
+| 0x0B | 00001011 | 2 | 2 | `+((x \|~ y) &~ z)+`                  | 4 | 4 | `+~(z \| (y ^ (x & y)))+`
+| 0x0C | 00001100 | 1 | 1 | `+(y &~ z)+`                          | 2 | 2 | `+(y ^ (y & z))+`
+| 0x0D | 00001101 | 2 | 2 | `+((y \|~ x) &~ z)+`                  | 4 | 3 | `+(z ^ (~x \| (y \| z)))+`
+| 0x0E | 00001110 | 2 | 2 | `+((x \| y) &~ z)+`                   | 3 | 2 | `+((x \| y) & ~z)+`
+| 0x0F | 00001111 | 1 | 1 | `+~z+`                                | 1 | 1 | `+~z+`
+| 0x10 | 00010000 | 2 | 2 | `+(z &~ (x \| y))+`                   | 3 | 3 | `+(z ^ (z & (x \| y)))+`
+| 0x11 | 00010001 | 2 | 2 | `+~(x \| y)+`                         | 2 | 2 | `+~(x \| y)+`
+| 0x12 | 00010010 | 2 | 2 | `+((x ^ z) &~ y)+`                    | 3 | 2 | `+((x \| y) ^ (y \| z))+`
+| 0x13 | 00010011 | 3 | 3 | `+~(y \| (x & z))+`                   | 3 | 3 | `+~(y \| (x & z))+`
+| 0x14 | 00010100 | 2 | 2 | `+((y ^ z) &~ x)+`                    | 3 | 2 | `+((x \| y) ^ (x \| z))+`
+| 0x15 | 00010101 | 3 | 2 | `+(~x &~ (y & z))+`                   | 3 | 3 | `+~(x \| (y & z))+`
+| 0x16 | 00010110 | 4 | 3 | `+(z ^ ((x ^ y) \| (x & z)))+`        | 4 | 3 | `+(z ^ ((x ^ y) \| (x & z)))+`
+| 0x17 | 00010111 | 4 | 3 | `+(x ^~ ((x ^ y) & (x ^ z)))+`        | 5 | 4 | `+((x \| y) ^ (z \| (y ^ ~x)))+`
+| 0x18 | 00011000 | 3 | 2 | `+((x ^ z) & (y ^ z))+`               | 3 | 2 | `+((x ^ z) & (y ^ z))+`
+| 0x19 | 00011001 | 3 | 2 | `+((x ^~ y) &~ (x & z))+`             | 4 | 3 | `+(y ^ (~x \| (y & z)))+`
+| 0x1A | 00011010 | 3 | 2 | `+((x \|~ y) & (x ^ z))+`             | 3 | 3 | `+(z ^ (x \| (y & z)))+`
+| 0x1B | 00011011 | 3 | 2 | `+((x \| y) ^ (z \|~ x))+`            | 4 | 3 | `+((x \| y) ^ (z \| ~x))+`
+| 0x1C | 00011100 | 3 | 2 | `+((y \|~ x) & (y ^ z))+`             | 3 | 3 | `+(z ^ (y \| (x & z)))+`
+| 0x1D | 00011101 | 3 | 2 | `+((x \| y) ^ (z \|~ y))+`            | 4 | 3 | `+(~x ^ (y & (x ^ z)))+`
+| 0x1E | 00011110 | 2 | 2 | `+(z ^ (x \| y))+`                    | 2 | 2 | `+(z ^ (x \| y))+`
+| 0x1F | 00011111 | 3 | 2 | `+(~z \|~ (x \| y))+`                 | 3 | 3 | `+~(z & (x \| y))+`
+| 0x20 | 00100000 | 2 | 2 | `+(z & (x &~ y))+`                    | 3 | 3 | `+(z & (x ^ (x & y)))+`
+| 0x21 | 00100001 | 2 | 2 | `+((x ^~ z) &~ y)+`                   | 3 | 3 | `+~(y \| (x ^ z))+`
+| 0x22 | 00100010 | 1 | 1 | `+(x &~ y)+`                          | 2 | 2 | `+(x ^ (x & y))+`
+| 0x23 | 00100011 | 2 | 2 | `+((x \|~ z) &~ y)+`                  | 4 | 3 | `+(y ^ ((x \| y) \| ~z))+`
+| 0x24 | 00100100 | 3 | 2 | `+((x ^ y) & (y ^ z))+`               | 3 | 2 | `+((x ^ y) & (y ^ z))+`
+| 0x25 | 00100101 | 3 | 2 | `+((x ^~ z) &~ (x & y))+`             | 4 | 3 | `+(z ^ (~x \| (y & z)))+`
+| 0x26 | 00100110 | 3 | 2 | `+((x ^ y) & (x \|~ z))+`             | 3 | 3 | `+(y ^ (x \| (y & z)))+`
+| 0x27 | 00100111 | 3 | 2 | `+((x & y) ^ (x \|~ z))+`             | 4 | 3 | `+((x \| z) ^ (y \| ~x))+`
+| 0x28 | 00101000 | 2 | 2 | `+(x & (y ^ z))+`                     | 2 | 2 | `+(x & (y ^ z))+`
+| 0x29 | 00101001 | 4 | 3 | `+(z ^ ((y & z) \|~ (x ^ y)))+`       | 5 | 3 | `+((x \| ~z) & ((x ^ y) ^ ~z))+`
+| 0x2A | 00101010 | 2 | 2 | `+(x &~ (y & z))+`                    | 3 | 3 | `+(x ^ (z & (x & y)))+`
+| 0x2B | 00101011 | 4 | 3 | `+(x ^~ ((x ^ y) \| (x ^ z)))+`       | 5 | 3 | `+(~x ^ ((x ^ y) \| (x ^ z)))+`
+| 0x2C | 00101100 | 3 | 2 | `+((x \| y) & (y ^ z))+`              | 3 | 2 | `+((x \| y) & (y ^ z))+`
+| 0x2D | 00101101 | 2 | 2 | `+(z ^ (y \|~ x))+`                   | 3 | 3 | `+(z ^ (y \| ~x))+`
+| 0x2E | 00101110 | 3 | 2 | `+((x \| y) ^ (y & z))+`              | 3 | 2 | `+((x \| y) ^ (y & z))+`
+| 0x2F | 00101111 | 2 | 2 | `+((x &~ y) \|~ z)+`                  | 4 | 3 | `+((x ^ (x & y)) \| ~z)+`
+| 0x30 | 00110000 | 1 | 1 | `+(z &~ y)+`                          | 2 | 2 | `+(z ^ (y & z))+`
+| 0x31 | 00110001 | 2 | 2 | `+((z \|~ x) &~ y)+`                  | 4 | 3 | `+(y ^ (~x \| (y \| z)))+`
+| 0x32 | 00110010 | 2 | 2 | `+((x \| z) &~ y)+`                   | 3 | 3 | `+(y ^ (z \| (x \| y)))+`
+| 0x33 | 00110011 | 1 | 1 | `+~y+`                                | 1 | 1 | `+~y+`
+| 0x34 | 00110100 | 3 | 2 | `+((y ^ z) &~ (x & y))+`              | 3 | 3 | `+(y ^ (z \| (x & y)))+`
+| 0x35 | 00110101 | 3 | 3 | `+(x ^~ (z & (x ^ y)))+`              | 4 | 3 | `+(~x ^ (z & (x ^ y)))+`
+| 0x36 | 00110110 | 2 | 2 | `+(y ^ (x \| z))+`                    | 2 | 2 | `+(y ^ (x \| z))+`
+| 0x37 | 00110111 | 3 | 3 | `+~(y & (x \| z))+`                   | 3 | 3 | `+(y ^ (z \| (x \|~ y)))+`
+| 0x38 | 00111000 | 3 | 2 | `+((x \| z) & (y ^ z))+`              | 3 | 2 | `+((x \| z) & (y ^ z))+`
+| 0x39 | 00111001 | 2 | 2 | `+(y ^ (z \|~ x))+`                   | 3 | 3 | `+(y ^ (z \| ~x))+`
+| 0x3A | 00111010 | 3 | 3 | `+(y ^ (z \| (x ^ y)))+`              | 3 | 3 | `+(y ^ (z \| (x ^ y)))+`
+| 0x3B | 00111011 | 2 | 2 | `+((x &~ z) \|~ y)+`                  | 4 | 4 | `+(y ^ (z \| ~(x & y)))+`
+| 0x3C | 00111100 | 1 | 1 | `+(y ^ z)+`                           | 1 | 1 | `+(y ^ z)+`
+| 0x3D | 00111101 | 3 | 2 | `+((y ^ z) \|~ (x \| y))+`            | 4 | 3 | `+((y ^ z) \| ~(x \| y))+`
+| 0x3E | 00111110 | 3 | 2 | `+((x &~ y) \| (y ^ z))+`             | 4 | 3 | `+((y & z) ^ (z \| (x \| y)))+`
+| 0x3F | 00111111 | 2 | 2 | `+~(y & z)+`                          | 2 | 2 | `+~(y & z)+`
+| 0x40 | 01000000 | 2 | 2 | `+(z & (y &~ x))+`                    | 3 | 2 | `+((x ^ y) & (y & z))+`
+| 0x41 | 01000001 | 2 | 2 | `+((y ^~ z) &~ x)+`                   | 3 | 3 | `+~(x \| (y ^ z))+`
+| 0x42 | 01000010 | 3 | 2 | `+((x ^ y) & (x ^ z))+`               | 3 | 2 | `+((x ^ y) & (x ^ z))+`
+| 0x43 | 01000011 | 3 | 2 | `+((y ^~ z) &~ (x & y))+`             | 4 | 3 | `+~((x & y) \| (y ^ z))+`
+| 0x44 | 01000100 | 1 | 1 | `+(y &~ x)+`                          | 2 | 2 | `+(y ^ (x & y))+`
+| 0x45 | 01000101 | 2 | 2 | `+((y \|~ z) &~ x)+`                  | 4 | 3 | `+(x ^ ((x \| y) \| ~z))+`
+| 0x46 | 01000110 | 3 | 2 | `+((x ^ y) &~ (x & z))+`              | 3 | 3 | `+(x ^ (y \| (x & z)))+`
+| 0x47 | 01000111 | 3 | 2 | `+((x & y) ^ (y \|~ z))+`             | 4 | 4 | `+(x ^ (y \| (z ^ ~x)))+`
+| 0x48 | 01001000 | 2 | 2 | `+(y & (x ^ z))+`                     | 2 | 2 | `+(y & (x ^ z))+`
+| 0x49 | 01001001 | 4 | 3 | `+(z ^ ((x & z) \|~ (x ^ y)))+`       | 5 | 4 | `+(z ^ ((x & z) \| (y ^ ~x)))+`
+| 0x4A | 01001010 | 3 | 2 | `+((x \| y) & (x ^ z))+`              | 3 | 2 | `+((x \| y) & (x ^ z))+`
+| 0x4B | 01001011 | 2 | 2 | `+(z ^ (x \|~ y))+`                   | 3 | 3 | `+(z ^ (x \| ~y))+`
+| 0x4C | 01001100 | 2 | 2 | `+(y &~ (x & z))+`                    | 3 | 3 | `+(y ^ (z & (x & y)))+`
+| 0x4D | 01001101 | 4 | 3 | `+(z ^~ ((x ^ y) & (x ^ z)))+`        | 5 | 4 | `+(x ^ ((x ^ y) \| (z ^ ~x)))+`
+| 0x4E | 01001110 | 3 | 2 | `+((x \| y) ^ (x & z))+`              | 3 | 2 | `+((x \| y) ^ (x & z))+`
+| 0x4F | 01001111 | 2 | 2 | `+((y &~ x) \|~ z)+`                  | 4 | 3 | `+((y ^ (x & y)) \| ~z)+`
+| 0x50 | 01010000 | 1 | 1 | `+(z &~ x)+`                          | 2 | 2 | `+(z ^ (x & z))+`
+| 0x51 | 01010001 | 2 | 2 | `+((z \|~ y) &~ x)+`                  | 4 | 3 | `+(x ^ ((x \| z) \| ~y))+`
+| 0x52 | 01010010 | 3 | 2 | `+((x ^ z) &~ (x & y))+`              | 3 | 3 | `+(x ^ (z \| (x & y)))+`
+| 0x53 | 01010011 | 3 | 3 | `+(y ^~ (z & (x ^ y)))+`              | 4 | 4 | `+(x ^ (z \| (y ^ ~x)))+`
+| 0x54 | 01010100 | 2 | 2 | `+((y \| z) &~ x)+`                   | 3 | 2 | `+(~x & (y \| z))+`
+| 0x55 | 01010101 | 1 | 1 | `+~x+`                                | 1 | 1 | `+~x+`
+| 0x56 | 01010110 | 2 | 2 | `+(x ^ (y \| z))+`                    | 2 | 2 | `+(x ^ (y \| z))+`
+| 0x57 | 01010111 | 3 | 2 | `+(~x \|~ (y \| z))+`                 | 3 | 3 | `+~(x & (y \| z))+`
+| 0x58 | 01011000 | 3 | 2 | `+((x ^ z) & (y \| z))+`              | 3 | 2 | `+((x ^ z) & (y \| z))+`
+| 0x59 | 01011001 | 2 | 2 | `+(x ^ (z \|~ y))+`                   | 3 | 3 | `+(x ^ (z \| ~y))+`
+| 0x5A | 01011010 | 1 | 1 | `+(x ^ z)+`                           | 1 | 1 | `+(x ^ z)+`
+| 0x5B | 01011011 | 3 | 2 | `+((x ^ z) \|~ (x \| y))+`            | 4 | 3 | `+((x ^ z) \| ~(x \| y))+`
+| 0x5C | 01011100 | 3 | 3 | `+(x ^ (z \| (x ^ y)))+`              | 3 | 3 | `+(x ^ (z \| (x ^ y)))+`
+| 0x5D | 01011101 | 2 | 2 | `+((y &~ z) \|~ x)+`                  | 4 | 3 | `+(~x \| (y & (x ^ z)))+`
+| 0x5E | 01011110 | 3 | 2 | `+((y &~ x) \| (x ^ z))+`             | 4 | 3 | `+((x & z) ^ (z \| (x \| y)))+`
+| 0x5F | 01011111 | 2 | 2 | `+~(x & z)+`                          | 2 | 2 | `+~(x & z)+`
+| 0x60 | 01100000 | 2 | 2 | `+(z & (x ^ y))+`                     | 2 | 2 | `+(z & (x ^ y))+`
+| 0x61 | 01100001 | 4 | 3 | `+((x ^~ y) ^ (z \| (x & y)))+`       | 5 | 3 | `+((y ^ ~x) ^ (z \| (x & y)))+`
+| 0x62 | 01100010 | 3 | 2 | `+((x ^ y) & (x \| z))+`              | 3 | 2 | `+((x ^ y) & (x \| z))+`
+| 0x63 | 01100011 | 2 | 2 | `+(y ^ (x \|~ z))+`                   | 3 | 3 | `+(y ^ (x \| ~z))+`
+| 0x64 | 01100100 | 3 | 2 | `+((x ^ y) & (y \| z))+`              | 3 | 2 | `+((x ^ y) & (y \| z))+`
+| 0x65 | 01100101 | 2 | 2 | `+(x ^ (y \|~ z))+`                   | 3 | 3 | `+(x ^ (y \| ~z))+`
+| 0x66 | 01100110 | 1 | 1 | `+(x ^ y)+`                           | 1 | 1 | `+(x ^ y)+`
+| 0x67 | 01100111 | 3 | 2 | `+((x ^ y) \|~ (x \| z))+`            | 4 | 3 | `+((x ^ y) \| ~(x \| z))+`
+| 0x68 | 01101000 | 4 | 3 | `+((x \| y) & (z ^ (x & y)))+`        | 4 | 3 | `+((x \| y) & (z ^ (x & y)))+`
+| 0x69 | 01101001 | 2 | 2 | `+(z ^~ (x ^ y))+`                    | 3 | 2 | `+(~x ^ (y ^ z))+`
+| 0x6A | 01101010 | 2 | 2 | `+(x ^ (y & z))+`                     | 2 | 2 | `+(x ^ (y & z))+`
+| 0x6B | 01101011 | 4 | 3 | `+((x & (x ^ y)) \|~ (z ^ (x ^ y)))+` | 5 | 3 | `+((x & (x ^ y)) \| ((x ^ y) ^ ~z))+`
+| 0x6C | 01101100 | 2 | 2 | `+(y ^ (x & z))+`                     | 2 | 2 | `+(y ^ (x & z))+`
+| 0x6D | 01101101 | 4 | 3 | `+(z ^~ ((x ^ y) & (x \| z)))+`       | 5 | 3 | `+(~x ^ ((x \| z) & (y ^ z)))+`
+| 0x6E | 01101110 | 3 | 2 | `+((x ^ y) \| (x &~ z))+`             | 4 | 3 | `+((x ^ y) \| (x ^ (x & z)))+`
+| 0x6F | 01101111 | 2 | 2 | `+((x ^ y) \|~ z)+`                   | 3 | 2 | `+((x ^ y) \| ~z)+`
+| 0x70 | 01110000 | 2 | 2 | `+(z &~ (x & y))+`                    | 3 | 3 | `+(z ^ (z & (x & y)))+`
+| 0x71 | 01110001 | 4 | 3 | `+(z ^~ ((x ^ y) \| (x ^ z)))+`       | 5 | 4 | `+((x & y) ^ (z \| (y ^ ~x)))+`
+| 0x72 | 01110010 | 3 | 2 | `+((x & y) ^ (x \| z))+`              | 3 | 2 | `+((x & y) ^ (x \| z))+`
+| 0x73 | 01110011 | 2 | 2 | `+((z &~ x) \|~ y)+`                  | 4 | 3 | `+(~y \| (z & (x ^ y)))+`
+| 0x74 | 01110100 | 3 | 2 | `+((x & y) ^ (y \| z))+`              | 3 | 2 | `+((x & y) ^ (y \| z))+`
+| 0x75 | 01110101 | 2 | 2 | `+((z &~ y) \|~ x)+`                  | 4 | 3 | `+(~x \| (z & (x ^ y)))+`
+| 0x76 | 01110110 | 3 | 2 | `+((x ^ y) \| (z &~ x))+`             | 4 | 3 | `+((x ^ y) \| (z ^ (x & z)))+`
+| 0x77 | 01110111 | 2 | 2 | `+~(x & y)+`                          | 2 | 2 | `+~(x & y)+`
+| 0x78 | 01111000 | 2 | 2 | `+(z ^ (x & y))+`                     | 2 | 2 | `+(z ^ (x & y))+`
+| 0x79 | 01111001 | 4 | 3 | `+((x ^~ y) ^ (z & (x \| y)))+`       | 5 | 3 | `+(~x ^ ((x \| y) & (y ^ z)))+`
+| 0x7A | 01111010 | 3 | 2 | `+((x &~ y) \| (x ^ z))+`             | 4 | 3 | `+((x \| z) ^ (z & (x & y)))+`
+| 0x7B | 01111011 | 2 | 2 | `+((x ^ z) \|~ y)+`                   | 3 | 2 | `+((x ^ z) \| ~y)+`
+| 0x7C | 01111100 | 3 | 2 | `+((y &~ x) \| (y ^ z))+`             | 4 | 3 | `+((y \| z) ^ (z & (x & y)))+`
+| 0x7D | 01111101 | 2 | 2 | `+((y ^ z) \|~ x)+`                   | 3 | 2 | `+(~x \| (y ^ z))+`
+| 0x7E | 01111110 | 3 | 2 | `+((x ^ y) \| (x ^ z))+`              | 3 | 2 | `+((x ^ y) \| (x ^ z))+`
+| 0x7F | 01111111 | 3 | 2 | `+((x ^ z) \|~ (x & y))+`             | 3 | 3 | `+~(z & (x & y))+`
+| 0x80 | 10000000 | 2 | 2 | `+(z & (x & y))+`                     | 2 | 2 | `+(z & (x & y))+`
+| 0x81 | 10000001 | 3 | 2 | `+((x ^~ z) &~ (x ^ y))+`             | 4 | 3 | `+((y ^ ~x) & (z ^ ~x))+`
+| 0x82 | 10000010 | 2 | 2 | `+(x &~ (y ^ z))+`                    | 3 | 3 | `+(x & (z ^ (x ^ y)))+`
+| 0x83 | 10000011 | 3 | 2 | `+((x \|~ y) &~ (y ^ z))+`            | 4 | 3 | `+((x \| ~y) & (z ^ ~y))+`
+| 0x84 | 10000100 | 2 | 2 | `+(y &~ (x ^ z))+`                    | 3 | 3 | `+(y & (z ^ (x ^ y)))+`
+| 0x85 | 10000101 | 3 | 2 | `+((y \|~ x) &~ (x ^ z))+`            | 4 | 3 | `+((y \| ~x) & (z ^ ~x))+`
+| 0x86 | 10000110 | 4 | 3 | `+((x \| (x ^ y)) & (z ^ (x ^ y)))+`  | 4 | 3 | `+((x \| (x ^ y)) & (z ^ (x ^ y)))+`
+| 0x87 | 10000111 | 2 | 2 | `+(z ^~ (x & y))+`                    | 3 | 2 | `+((x & y) ^ ~z)+`
+| 0x88 | 10001000 | 1 | 1 | `+(x & y)+`                           | 1 | 1 | `+(x & y)+`
+| 0x89 | 10001001 | 3 | 2 | `+((x \|~ z) &~ (x ^ y))+`            | 4 | 4 | `+(~x ^ (y \| (z & ~x)))+`
+| 0x8A | 10001010 | 2 | 2 | `+(x & (y \|~ z))+`                   | 3 | 3 | `+(x & (y \| (x ^ z)))+`
+| 0x8B | 10001011 | 3 | 2 | `+((x & y) \|~ (y \| z))+`            | 4 | 3 | `+(~x ^ (y \| (x ^ z)))+`
+| 0x8C | 10001100 | 2 | 2 | `+(y & (x \|~ z))+`                   | 3 | 3 | `+(y & (x \| (y ^ z)))+`
+| 0x8D | 10001101 | 3 | 2 | `+((x & y) \|~ (x \| z))+`            | 4 | 3 | `+(z ^ (~x \| (y ^ z)))+`
+| 0x8E | 10001110 | 4 | 3 | `+(z ^ ((x ^ y) \| (x ^ z)))+`        | 4 | 3 | `+(z ^ ((x ^ y) \| (x ^ z)))+`
+| 0x8F | 10001111 | 2 | 2 | `+((x & y) \|~ z)+`                   | 3 | 2 | `+((x & y) \| ~z)+`
+| 0x90 | 10010000 | 2 | 2 | `+(z &~ (x ^ y))+`                    | 3 | 3 | `+(z ^ (z & (x ^ y)))+`
+| 0x91 | 10010001 | 3 | 2 | `+((z \|~ x) &~ (x ^ y))+`            | 4 | 3 | `+((y ^ ~x) & (z \| ~x))+`
+| 0x92 | 10010010 | 4 | 3 | `+((x \| z) & (z ^ (x ^ y)))+`        | 4 | 3 | `+((x \| z) & (z ^ (x ^ y)))+`
+| 0x93 | 10010011 | 2 | 2 | `+(y ^~ (x & z))+`                    | 3 | 2 | `+((x & z) ^ ~y)+`
+| 0x94 | 10010100 | 4 | 3 | `+((y \| z) & (z ^ (x ^ y)))+`        | 4 | 4 | `+((x ^ y) ^ (z \| (x & (x ^ y))))+`
+| 0x95 | 10010101 | 2 | 2 | `+(x ^~ (y & z))+`                    | 3 | 2 | `+(~x ^ (y & z))+`
+| 0x96 | 10010110 | 2 | 2 | `+(z ^ (x ^ y))+`                     | 2 | 2 | `+(z ^ (x ^ y))+`
+| 0x97 | 10010111 | 4 | 3 | `+((z ^ (x ^ y)) \|~ (x \| z))+`      | 5 | 3 | `+((z ^ (x ^ y)) \| ~(x \| z))+`
+| 0x98 | 10011000 | 3 | 2 | `+((x \| z) &~ (x ^ y))+`             | 4 | 3 | `+((x \| z) ^ ((x ^ y) & (x \| z)))+`
+| 0x99 | 10011001 | 1 | 1 | `+(x ^~ y)+`                          | 2 | 2 | `+(y ^ ~x)+`
+| 0x9A | 10011010 | 2 | 2 | `+(x ^ (z &~ y))+`                    | 3 | 2 | `+((x ^ y) ^ (y \| z))+`
+| 0x9B | 10011011 | 3 | 2 | `+((x &~ z) \|~ (x ^ y))+`            | 4 | 3 | `+~((x ^ y) & (y \| z))+`
+| 0x9C | 10011100 | 2 | 2 | `+(y ^ (z &~ x))+`                    | 3 | 2 | `+((x ^ y) ^ (x \| z))+`
+| 0x9D | 10011101 | 3 | 2 | `+((y &~ z) \|~ (x ^ y))+`            | 4 | 3 | `+(~x ^ (y & (x \| z)))+`
+| 0x9E | 10011110 | 4 | 3 | `+((x & y) \| (y ^ (x ^ z)))+`        | 4 | 3 | `+((x & y) \| (y ^ (x ^ z)))+`
+| 0x9F | 10011111 | 2 | 2 | `+((x ^~ y) \|~ z)+`                  | 3 | 3 | `+~(z & (x ^ y))+`
+| 0xA0 | 10100000 | 1 | 1 | `+(x & z)+`                           | 1 | 1 | `+(x & z)+`
+| 0xA1 | 10100001 | 3 | 2 | `+((x \|~ y) &~ (x ^ z))+`            | 4 | 4 | `+(~x ^ (z \| (y & ~x)))+`
+| 0xA2 | 10100010 | 2 | 2 | `+(x & (z \|~ y))+`                   | 3 | 3 | `+(x & (z \| (x ^ y)))+`
+| 0xA3 | 10100011 | 3 | 3 | `+(x ^~ (z \| (x ^ y)))+`             | 4 | 3 | `+(~x ^ (z \| (x ^ y)))+`
+| 0xA4 | 10100100 | 3 | 2 | `+((x \| y) &~ (x ^ z))+`             | 4 | 3 | `+((x ^ z) ^ (z \| (x \| y)))+`
+| 0xA5 | 10100101 | 1 | 1 | `+(x ^~ z)+`                          | 2 | 2 | `+(z ^ ~x)+`
+| 0xA6 | 10100110 | 2 | 2 | `+(x ^ (y &~ z))+`                    | 3 | 2 | `+((x ^ y) ^ (y & z))+`
+| 0xA7 | 10100111 | 3 | 2 | `+((x &~ y) \|~ (x ^ z))+`            | 4 | 3 | `+~((x ^ z) & (y \| z))+`
+| 0xA8 | 10101000 | 2 | 2 | `+(x & (y \| z))+`                    | 2 | 2 | `+(x & (y \| z))+`
+| 0xA9 | 10101001 | 2 | 2 | `+(x ^~ (y \| z))+`                   | 3 | 2 | `+(~x ^ (y \| z))+`
+| 0xAA | 10101010 | 0 | 0 | `+x+`                                 | 0 | 0 | `+x+`
+| 0xAB | 10101011 | 2 | 2 | `+(x \|~ (y \| z))+`                  | 3 | 3 | `+(x \| ~(y \| z))+`
+| 0xAC | 10101100 | 3 | 3 | `+(y ^ (z & (x ^ y)))+`               | 3 | 3 | `+(y ^ (z & (x ^ y)))+`
+| 0xAD | 10101101 | 3 | 2 | `+((x & y) \|~ (x ^ z))+`             | 4 | 3 | `+((x & y) \| (z ^ ~x))+`
+| 0xAE | 10101110 | 2 | 2 | `+(x \| (y &~ z))+`                   | 3 | 3 | `+(x \| (y ^ (y & z)))+`
+| 0xAF | 10101111 | 1 | 1 | `+(x \|~ z)+`                         | 2 | 2 | `+(x \| ~z)+`
+| 0xB0 | 10110000 | 2 | 2 | `+(z & (x \|~ y))+`                   | 3 | 3 | `+(z & (x \| (y ^ z)))+`
+| 0xB1 | 10110001 | 3 | 2 | `+((x \| y) ^~ (x & z))+`             | 4 | 3 | `+(y ^ (~x \| (y ^ z)))+`
+| 0xB2 | 10110010 | 4 | 3 | `+(z ^ ((x ^ y) & (x ^ z)))+`         | 4 | 3 | `+(z ^ ((x ^ y) & (x ^ z)))+`
+| 0xB3 | 10110011 | 2 | 2 | `+((x & z) \|~ y)+`                   | 3 | 2 | `+((x & z) \| ~y)+`
+| 0xB4 | 10110100 | 2 | 2 | `+(z ^ (y &~ x))+`                    | 3 | 2 | `+((x & y) ^ (y ^ z))+`
+| 0xB5 | 10110101 | 3 | 2 | `+((x ^~ z) \|~ (x \| y))+`           | 4 | 3 | `+(~x ^ (z & (x \| y)))+`
+| 0xB6 | 10110110 | 4 | 3 | `+((x & z) \| (z ^ (x ^ y)))+`        | 4 | 3 | `+((x & z) \| (z ^ (x ^ y)))+`
+| 0xB7 | 10110111 | 2 | 2 | `+((x ^~ z) \|~ y)+`                  | 3 | 3 | `+~(y & (x ^ z))+`
+| 0xB8 | 10111000 | 3 | 2 | `+((x & y) \| (z &~ y))+`             | 3 | 3 | `+(z ^ (y & (x ^ z)))+`
+| 0xB9 | 10111001 | 3 | 2 | `+((x & z) \|~ (x ^ y))+`             | 4 | 3 | `+((x & z) \| (y ^ ~x))+`
+| 0xBA | 10111010 | 2 | 2 | `+(x \| (z &~ y))+`                   | 3 | 3 | `+(x \| (z ^ (y & z)))+`
+| 0xBB | 10111011 | 1 | 1 | `+(x \|~ y)+`                         | 2 | 2 | `+(x \| ~y)+`
+| 0xBC | 10111100 | 3 | 2 | `+((x & y) \| (y ^ z))+`              | 3 | 2 | `+((x & y) \| (y ^ z))+`
+| 0xBD | 10111101 | 3 | 2 | `+((y ^ z) \|~ (x ^ y))+`             | 4 | 3 | `+((y ^ z) \| (y ^ ~x))+`
+| 0xBE | 10111110 | 2 | 2 | `+(x \| (y ^ z))+`                    | 2 | 2 | `+(x \| (y ^ z))+`
+| 0xBF | 10111111 | 2 | 2 | `+(x \|~ (y & z))+`                   | 3 | 3 | `+(x \| ~(y & z))+`
+| 0xC0 | 11000000 | 1 | 1 | `+(y & z)+`                           | 1 | 1 | `+(y & z)+`
+| 0xC1 | 11000001 | 3 | 2 | `+((y \|~ x) &~ (y ^ z))+`            | 4 | 4 | `+(~y ^ (z \| (x & ~y)))+`
+| 0xC2 | 11000010 | 3 | 2 | `+((x \| y) &~ (y ^ z))+`             | 4 | 3 | `+((y ^ z) ^ (z \| (x \| y)))+`
+| 0xC3 | 11000011 | 1 | 1 | `+(y ^~ z)+`                          | 2 | 2 | `+(z ^ ~y)+`
+| 0xC4 | 11000100 | 2 | 2 | `+(y & (z \|~ x))+`                   | 3 | 3 | `+(y & (z \| (x ^ y)))+`
+| 0xC5 | 11000101 | 3 | 3 | `+(y ^~ (z \| (x ^ y)))+`             | 4 | 4 | `+(~x ^ (z & (y ^ ~x)))+`
+| 0xC6 | 11000110 | 2 | 2 | `+(y ^ (x &~ z))+`                    | 3 | 2 | `+((x ^ y) ^ (x & z))+`
+| 0xC7 | 11000111 | 3 | 2 | `+((y &~ x) \|~ (y ^ z))+`            | 4 | 3 | `+~((x \| z) & (y ^ z))+`
+| 0xC8 | 11001000 | 2 | 2 | `+(y & (x \| z))+`                    | 2 | 2 | `+(y & (x \| z))+`
+| 0xC9 | 11001001 | 2 | 2 | `+(y ^~ (x \| z))+`                   | 3 | 2 | `+((x \| z) ^ ~y)+`
+| 0xCA | 11001010 | 3 | 3 | `+(x ^ (z & (x ^ y)))+`               | 3 | 3 | `+(x ^ (z & (x ^ y)))+`
+| 0xCB | 11001011 | 3 | 2 | `+((x & y) \|~ (y ^ z))+`             | 4 | 3 | `+(~y ^ (z \| (x & y)))+`
+| 0xCC | 11001100 | 0 | 0 | `+y+`                                 | 0 | 0 | `+y+`
+| 0xCD | 11001101 | 2 | 2 | `+(y \|~ (x \| z))+`                  | 3 | 3 | `+(y \| ~(x \| z))+`
+| 0xCE | 11001110 | 2 | 2 | `+(y \| (x &~ z))+`                   | 3 | 3 | `+(y \| (x ^ (x & z)))+`
+| 0xCF | 11001111 | 1 | 1 | `+(y \|~ z)+`                         | 2 | 2 | `+(y \| ~z)+`
+| 0xD0 | 11010000 | 2 | 2 | `+(z & (y \|~ x))+`                   | 3 | 3 | `+(z & (y \| (x ^ z)))+`
+| 0xD1 | 11010001 | 3 | 2 | `+((x \| y) ^~ (y & z))+`             | 4 | 4 | `+(~x ^ (y & (z ^ ~x)))+`
+| 0xD2 | 11010010 | 2 | 2 | `+(z ^ (x &~ y))+`                    | 3 | 2 | `+((x & y) ^ (x ^ z))+`
+| 0xD3 | 11010011 | 3 | 2 | `+((y ^~ z) \|~ (x \| y))+`           | 4 | 3 | `+(~y ^ (z & (x \| y)))+`
+| 0xD4 | 11010100 | 4 | 3 | `+(x ^ ((x ^ y) \| (x ^ z)))+`        | 4 | 3 | `+(x ^ ((x ^ y) \| (x ^ z)))+`
+| 0xD5 | 11010101 | 2 | 2 | `+((y & z) \|~ x)+`                   | 3 | 2 | `+(~x \| (y & z))+`
+| 0xD6 | 11010110 | 4 | 3 | `+((y & z) \| (z ^ (x ^ y)))+`        | 4 | 3 | `+((y & z) \| (z ^ (x ^ y)))+`
+| 0xD7 | 11010111 | 2 | 2 | `+((y ^~ z) \|~ x)+`                  | 3 | 3 | `+~(x & (y ^ z))+`
+| 0xD8 | 11011000 | 3 | 2 | `+((x & y) \| (z &~ x))+`             | 3 | 3 | `+(z ^ (x & (y ^ z)))+`
+| 0xD9 | 11011001 | 3 | 2 | `+((y & z) \|~ (x ^ y))+`             | 4 | 3 | `+((y & z) \| (y ^ ~x))+`
+| 0xDA | 11011010 | 3 | 2 | `+((x & y) \| (x ^ z))+`              | 3 | 2 | `+((x & y) \| (x ^ z))+`
+| 0xDB | 11011011 | 3 | 2 | `+((x ^ z) \|~ (x ^ y))+`             | 4 | 3 | `+((x ^ z) \| (y ^ ~x))+`
+| 0xDC | 11011100 | 2 | 2 | `+(y \| (z &~ x))+`                   | 3 | 3 | `+(y \| (z ^ (x & z)))+`
+| 0xDD | 11011101 | 1 | 1 | `+(y \|~ x)+`                         | 2 | 2 | `+(y \| ~x)+`
+| 0xDE | 11011110 | 2 | 2 | `+(y \| (x ^ z))+`                    | 2 | 2 | `+(y \| (x ^ z))+`
+| 0xDF | 11011111 | 2 | 2 | `+(y \|~ (x & z))+`                   | 3 | 3 | `+(y \| ~(x & z))+`
+| 0xE0 | 11100000 | 2 | 2 | `+(z & (x \| y))+`                    | 2 | 2 | `+(z & (x \| y))+`
+| 0xE1 | 11100001 | 2 | 2 | `+(z ^~ (x \| y))+`                   | 3 | 2 | `+((x \| y) ^ ~z)+`
+| 0xE2 | 11100010 | 3 | 2 | `+((x \| y) ^ (y &~ z))+`             | 3 | 3 | `+(x ^ (y & (x ^ z)))+`
+| 0xE3 | 11100011 | 3 | 2 | `+((x & z) \|~ (y ^ z))+`             | 4 | 3 | `+((x & z) \| (z ^ ~y))+`
+| 0xE4 | 11100100 | 3 | 2 | `+((x \| y) ^ (x &~ z))+`             | 3 | 3 | `+(y ^ (x & (y ^ z)))+`
+| 0xE5 | 11100101 | 3 | 2 | `+((y & z) \|~ (x ^ z))+`             | 4 | 3 | `+((y & z) \| (z ^ ~x))+`
+| 0xE6 | 11100110 | 3 | 2 | `+((x ^ y) \| (x & z))+`              | 3 | 2 | `+((x ^ y) \| (x & z))+`
+| 0xE7 | 11100111 | 3 | 2 | `+((x ^ y) \|~ (x ^ z))+`             | 4 | 3 | `+((x ^ y) \| (z ^ ~x))+`
+| 0xE8 | 11101000 | 4 | 3 | `+(x ^ ((x ^ y) & (x ^ z)))+`         | 4 | 3 | `+(x ^ ((x ^ y) & (x ^ z)))+`
+| 0xE9 | 11101001 | 4 | 3 | `+((x & z) \|~ (z ^ (x ^ y)))+`       | 5 | 3 | `+((x & y) \| (~x ^ (y ^ z)))+`
+| 0xEA | 11101010 | 2 | 2 | `+(x \| (y & z))+`                    | 2 | 2 | `+(x \| (y & z))+`
+| 0xEB | 11101011 | 2 | 2 | `+(x \|~ (y ^ z))+`                   | 3 | 3 | `+(x \| (z ^ ~y))+`
+| 0xEC | 11101100 | 2 | 2 | `+(y \| (x & z))+`                    | 2 | 2 | `+(y \| (x & z))+`
+| 0xED | 11101101 | 2 | 2 | `+(y \|~ (x ^ z))+`                   | 3 | 3 | `+(y \| (z ^ ~x))+`
+| 0xEE | 11101110 | 1 | 1 | `+(x \| y)+`                          | 1 | 1 | `+(x \| y)+`
+| 0xEF | 11101111 | 2 | 2 | `+((x \| y) \|~ z)+`                  | 3 | 2 | `+((x \| y) \| ~z)+`
+| 0xF0 | 11110000 | 0 | 0 | `+z+`                                 | 0 | 0 | `+z+`
+| 0xF1 | 11110001 | 2 | 2 | `+(z \|~ (x \| y))+`                  | 3 | 3 | `+(z \| ~(x \| y))+`
+| 0xF2 | 11110010 | 2 | 2 | `+(z \| (x &~ y))+`                   | 3 | 3 | `+(z \| (x ^ (x & y)))+`
+| 0xF3 | 11110011 | 1 | 1 | `+(z \|~ y)+`                         | 2 | 2 | `+(z \| ~y)+`
+| 0xF4 | 11110100 | 2 | 2 | `+(z \| (y &~ x))+`                   | 3 | 3 | `+(z \| (y ^ (x & y)))+`
+| 0xF5 | 11110101 | 1 | 1 | `+(z \|~ x)+`                         | 2 | 2 | `+(z \| ~x)+`
+| 0xF6 | 11110110 | 2 | 2 | `+(z \| (x ^ y))+`                    | 2 | 2 | `+(z \| (x ^ y))+`
+| 0xF7 | 11110111 | 2 | 2 | `+(z \|~ (x & y))+`                   | 3 | 3 | `+(z \| ~(x & y))+`
+| 0xF8 | 11111000 | 2 | 2 | `+(z \| (x & y))+`                    | 2 | 2 | `+(z \| (x & y))+`
+| 0xF9 | 11111001 | 2 | 2 | `+(z \|~ (x ^ y))+`                   | 3 | 3 | `+(z \| (y ^ ~x))+`
+| 0xFA | 11111010 | 1 | 1 | `+(x \| z)+`                          | 1 | 1 | `+(x \| z)+`
+| 0xFB | 11111011 | 2 | 2 | `+(z \| (x \|~ y))+`                  | 3 | 2 | `+((x \| z) \| ~y)+`
+| 0xFC | 11111100 | 1 | 1 | `+(y \| z)+`                          | 1 | 1 | `+(y \| z)+`
+| 0xFD | 11111101 | 2 | 2 | `+(z \| (y \|~ x))+`                  | 3 | 2 | `+(~x \| (y \| z))+`
+| 0xFE | 11111110 | 2 | 2 | `+(z \| (x \| y))+`                   | 2 | 2 | `+(z \| (x \| y))+`
+| 0xFF | 11111111 | 0 | 1 | `+~0+`                                | 0 | 1 | `+~0+`
+|===
