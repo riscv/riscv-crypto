@@ -695,7 +695,7 @@ M. Raab and A. Steger,
 RANDOM 1998, LNCS 1518, Springer, pp. 159-170, 1999.
 https://doi.org/10.1007/3-540-49543-6_13
 
-[[RaMiR21]][RaMiRa21]
+[[RaMiRa21]][RaMiRa21]
 H. Ragab, A. Milburn, K. Razavi, H. Bos, and C. Giuffrida,
 "CrossTalk : Speculative Data Leaks Across Cores Are Real."
 To appear at IEEE S&P 2021.
