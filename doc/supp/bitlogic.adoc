@@ -197,7 +197,8 @@ equivalent candidates). It is difficult to predict the stack load/store sequence
 so giving the Compiler a form that allows the use of compressed instructions is
 generally preferable.
 
-So, based on these considerations, and prioritizing length over depth, I recommend:
+So, based on these considerations, and prioritizing length over depth, we
+recommend:
 ----
 Ch(x,y,z)  = (z ^ (x & (y ^ z)))           // 3 insn: 1 * AND, 2 * XOR
 Maj(x,y,z) = (x ^ ((x ^ y) & (x ^ z)))     // 4 insn: 1 * AND, 3 * XOR
