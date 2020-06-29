@@ -451,7 +451,7 @@ The entropy requirements in the U.S. document focus on min-entropy and allow
 cryptographic conditioning of relatively low-quality random numbers as input.
 
 IID is an optional requirement in <<SP800-90B>> but is needed to
-prevent information leakage between different entities instances that 
+prevent information leakage between different entities that 
 possibly share the same entropy source. Furthermore, it significantly
 simplifies certification and vendor-independent driver development.
 However this document can be expanded to non-IID sources later.
