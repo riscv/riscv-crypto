@@ -451,10 +451,10 @@ The entropy requirements in the U.S. document focus on min-entropy and allow
 cryptographic conditioning of relatively low-quality random numbers as input.
 
 IID is an optional requirement in <<SP800-90B>> but is needed to
-prevent information leakage between processes using the PollEntropy
-instruction. Furthermore, it significantly simplifies certification and
-vendor-independent driver development. However this document can be
-expanded to non-IID sources later.
+prevent information leakage between different instances that possibly
+use the PollEntropy instruction and source. Furthermore, it significantly
+simplifies certification and vendor-independent driver development.
+However this document can be expanded to non-IID sources later.
 
 A conditioning component may be applied to the output from a raw
 random noise source to reduce bias and remove redundancy to meet
