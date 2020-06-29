@@ -196,14 +196,14 @@ and DRBGs.
     and that the construction of the physical source and sampling mechanism
     suggests nothing against the IID assumption.
 
-*   **Validity:** The instruction never returns ES16 if sufficient entropy
-    is not available and should not set any `seed` bits either. In particular
-    PollEntropy sets WAIT if called too rapidly in succession and BIST
-    immediately after startup. More detailed warm-up and continuous tests
-    may be delegated to the software or firmware component, as required
-    for certification. (Note that the hardware/software system up to and
-    including the output of the software driver is to be certified,
-    not just the hardware instruction).
+*   **Validity:** The instruction never returns the ES16 state if sufficient
+    entropy is not available. It must not make any randomness available unless
+    a full set of 16 seed bits are available (even in other states), and it
+    must make sure that given seed bits can only be polled once.
+    In particular, PollEntropy sets WAIT if randomness is not immediately
+    available, BIST only immediately after startup, and DEAD in case of a
+    permanent failure. More detailed warm-up and continuous tests may be
+    delegated to the software or firmware component, as required.
 
 NOTE: The min-entropy assessment methodology in <<SP800-90B>> has a safety
 margin in its confidence intervals and therefore requires each 16-bit word
@@ -451,7 +451,7 @@ The entropy requirements in the U.S. document focus on min-entropy and allow
 cryptographic conditioning of relatively low-quality random numbers as input.
 
 IID is an optional requirement in <<SP800-90B>> but is needed to
-prevent information leakage between different entities that 
+prevent information leakage between different entities that
 possibly share the same entropy source. Furthermore, it significantly
 simplifies certification and vendor-independent driver development.
 However this document can be expanded to non-IID sources later.
