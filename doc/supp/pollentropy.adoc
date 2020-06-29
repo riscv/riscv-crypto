@@ -1,3 +1,5 @@
+== PollEntropy - Baseline requirements for IID Entropy Sources.
+
 **DRAFT**  For discussion.
 __This document does not reflect full TG consensus yet.__
 
@@ -11,9 +13,8 @@ __This document does not reflect full TG consensus yet.__
 | 2020-06-20 |    - | Updated with additional health check guidance.
 | 2020-06-26 |  0.0 | Gaining support! Split FAIL into BIST,WAIT,DEAD. Renamed GetEntropy as PollEntropy.
 | 2020-06-27 |  0.1 | Comments and corrections from Chair (Richard Newell).
+| 2020-??-?? |  0.2 | Current working version.
 |===
-
-== PollEntropy - Baseline requirements for IID Entropy Sources.
 
 PollEntropy provides access to a hardware-based (random) Entropy Source (ES).
 It is not a general-purpose or high-bandwidth random number generator by
@@ -178,9 +179,9 @@ and DRBGs.
 ====    Baseline output requirements for PollEntropy(0)
 
 *   **Entropy:** Each 16-bit output sample (`seed`) has at least 8 bits of
-    independent, unpredictable true randomness (entropy). This
-    minimum requirement means that 128 bits of output entropy can be
-    consistently obtained from each 256-bit (16x16) PollEntropy
+    independent, unpredictable true randomness (entropy). This minimum
+    requirement is satisfied if - in an <<SP800-90B>> assesment - 128 bits of
+    output entropy can be obtained from each 256-bit (16x16) PollEntropy
     output sequence via (a vetted) cryptographic conditioning algorithm
     (see Section 3.1.5.1.2 in <<SP800-90B>>) such as a cryptographic hash
     (SHA-2 <<FIPS180>> or SHA-3 <<FIPS202>>). Driver developers may make
@@ -220,6 +221,11 @@ limits the security strength shall not reduce it to less than 256 bits.
 The generator should be able to support "LEVEL 5" post-quantum
 cryptography standards <<NISTPQC>>.
 
+NOTE: If cryptographic conditioning is not used, the random source
+(and the circuit that implements it) may have a uniquely identifiable
+hardware "signature". This may be useful in some applications (as random
+sources may exhibit PUF-like features) and undesirable in others
+(anonymized virtualized environments and enclaves).
 
 ====    Polling Randomness (Guidance)
 

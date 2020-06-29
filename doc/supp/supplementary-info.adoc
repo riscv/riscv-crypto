@@ -28,3 +28,7 @@ include::rbr-arithmetic.adoc[]
 
 include::gcm-mode-cmul.adoc[]
 
+include::bitlogic.adoc[]
+
+include::pollentropy.adoc[]
+
