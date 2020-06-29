@@ -180,7 +180,7 @@ and DRBGs.
 
 *   **Entropy:** Each 16-bit output sample (`seed`) has at least 8 bits of
     independent, unpredictable true randomness (entropy). This minimum
-    requirement is satisfied if - in an <<SP800-90B>> assesment - 128 bits of
+    requirement is satisfied if - in an <<SP800-90B>> assessment - 128 bits of
     output entropy can be obtained from each 256-bit (16x16) PollEntropy
     output sequence via (a vetted) cryptographic conditioning algorithm
     (see Section 3.1.5.1.2 in <<SP800-90B>>) such as a cryptographic hash
