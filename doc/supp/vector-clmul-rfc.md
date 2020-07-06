@@ -57,19 +57,13 @@ vclmul.vs    vrd, vrs1,  rs2, vm  // vrd[i] = vrs1[i] *  rs2    (SEW*SEW -> low 
 ## Cross cutting questions:
 
 ### Which values of `SEW` to require?
-Discussion:
 - The critical case for the vector crypto extension is `SEW=128`.
 - Requiring `SEW=128` may be burdensome and face resistance.
 - An alternative would be to require support for `SEW=XLEN`
   - This would make the vector code extremely similar to the
     [scalar code](https://github.com/mjosaarinen/lwaes_isa/blob/master/gcm_rv64b_gfmul.c#L25)
   - Implementers would be free to support `SEW >= XLEN`.
-
-Options:
-- `SEW=XLEN`
-- `SEW>=XLEN`
-- `SEW=64/32`
-- `SEW=128`
+- Options: `SEW=XLEN`, `SEW>=XLEN`, `SEW=64/32`, `SEW=128`
 
 ### Should we include carry-less multiply-add?
 
@@ -94,9 +88,9 @@ vwclmacc.vs   vrd, vrs1,  rs2, vm  // vrd[i] += vrs1[i] *  rs2
   and
   [Vector Single-Width Integer Multiply-Add Instructions](https://github.com/riscv/riscv-v-spec/blob/master/v-spec.adoc#1213-vector-single-width-integer-multiply-add-instructions).
 - Their inclusion removes the need for `vxor` instructions.
-- `xor` is very cheap to fuse into a carryless multiply (compared to integer fma).
+- `xor` is very cheap to fuse into a carry-less multiply (compared to integer fma).
 - For the multiplication part of GHASH, only the `*.vv` versions are needed?
-- For the reduction, it's would only the `*vs` versions would be used?
+- For the reduction, only the `*vs` versions would be used?
 
 ---
 
