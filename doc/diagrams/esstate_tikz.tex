@@ -1,0 +1,36 @@
+%	esstate_tikz.tex
+%	2020-06-26	Markku-Juhani O. Saarinen <mjos@pqshield.com>
+
+\begin{tikzpicture}[>=latex]
+
+\tikzset{every state/.append style={rectangle, rounded corners}}
+
+\node[align=center] (reset) at (0,-0.5) {reset};
+\node[state,fill=cyan!10] (bist) at (0,-1.5) {BIST};
+
+\node[state,fill=yellow!20] (wait) at (-1,-3) {WAIT};
+
+\node[state,fill=green!20] (es16) at (1,-3) {ES16};
+
+\node[align=center] (seed) at (2,-3) {{seed}\\{ok!}};
+
+\node[state,fill=red!20] (dead) at (0,-4.5) {DEAD};
+
+\node[align=center] (dead2) at (0,-5.5) {\em stays dead!};
+
+\draw[->] (reset) to (bist);
+\draw[->] (bist) to (wait); 
+\draw[->] (bist) to (es16); 
+
+\draw[->, bend left] (wait) to (es16); 
+\draw[->, bend left] (es16) to (wait);
+
+\draw[dashed,->] (bist) .. controls (-2.5,-2.5) and (-2.5,-3.5) .. (dead); 
+
+\draw[dashed,->] (wait) to (dead); 
+\draw[dashed,->] (es16) to (dead);
+
+\draw[->] (dead) .. controls ++(0.15,-0.85) and ++(-0.15,-0.85) .. (dead);
+
+\end{tikzpicture}
+
