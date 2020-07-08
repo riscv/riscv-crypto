@@ -1,13 +1,13 @@
 # RFC: Vector carry-less multiply instruction options.
 
 Following the TG meeting on June 2'nd 2020, these options are put forward for
-comparison. There are two broad categories:
+comparison. There are three broad categories of instructions to consider:
 - Hi/Lo instructions.
 - Widening instructions.
+- Multiply-Accumulate instructions.
 
-There are also two orthogonal questions which apply to both categories:
-- Should we include a multiply-accumulate?
-- Which values of `SEW` should the crypto extension *require* support for?
+There are also the orthogonal question of which values of `SEW` should the crypto
+extension *require* support for?
 
 Note: Much of 
 [Markku's Analysis](https://github.com/scarv/riscv-crypto/blob/master/doc/supp/gcm-mode-cmul.adoc)
@@ -47,13 +47,13 @@ vclmul.vs    vrd, vrs1,  rs2, vm  // vrd[i] = vrs1[i] *  rs2    (SEW*SEW -> low 
   - `EEW=2*SEW` for `vrd`
   - The widening instructions are used for the multiplication part of the
     GHASH operation.
-- The `vclmul.*` instructions work identically to the ones in Option 1 and are
-  used for the reduction.
+- The `vclmul.*` instructions are identical to the Hi/Lo ones and are needed for 
+  the reduction.
 - Questions:
   - Does using the widening instructions for the multiplication and non-widening
     for the reduction require a change of `SEW` value at any point?
   - When mixing widening and non-widening, do the `2*SEW` result elements of the
-    widening instructions end up in the right places to easily
+    widening instructions end up in the right places to easily perform the reduction?
 
 
 ### Carry-less Multiply Accumulate
@@ -72,11 +72,12 @@ vwclmacc.vs   vrd, vrs1,  rs2, vm  // vrd[i] += vrs1[i] *  rs2
 - These instructions work analogously to the base vector spec
   [Single-Width Integer Multiply-Add Instructions](https://github.com/riscv/riscv-v-spec/blob/master/v-spec.adoc#1213-vector-single-width-integer-multiply-add-instructions)
   and
-  [Vector Single-Width Integer Multiply-Add Instructions](https://github.com/riscv/riscv-v-spec/blob/master/v-spec.adoc#1213-vector-single-width-integer-multiply-add-instructions).
-- Their inclusion removes the need for `vxor` instructions.
-- `xor` is very cheap to fuse into a carry-less multiply (compared to integer fma).
+  [Vector Widening Integer Multiply-Add Instructions](https://github.com/riscv/riscv-v-spec/blob/master/v-spec.adoc#1214-vector-widening-integer-multiply-add-instructions).
+- Their inclusion removes the need for `vxor` instructions in both the multiplication
+  and the reduction steps.
+- `xor` is very cheap to fuse into a carry-less multiply (compared to integer FMA).
 
-## Cross cutting questions:
+## Open questions:
 
 ### Which values of `SEW` to require?
 - The critical case for the vector crypto extension is `SEW=128`.
@@ -91,8 +92,21 @@ vwclmacc.vs   vrd, vrs1,  rs2, vm  // vrd[i] += vrs1[i] *  rs2
 
 - For supported values of `SEW < 128`, the `vclmac*` instructions become
   particularly useful as they fuse summing `vxor` operations.
+  
+### What is the exact subset of instructions we should require?
 
----
+- We don't want to add work onto the base vector spec with late
+  instruction requests. Instead, we will specify the minimum set of
+  instructions needed to efficiently express GCM using the vector
+  crypto extensions, expecting that more generic variants of the
+  instructions will be included in later versions of the base
+  vector specification.
+ 
+- With that in mind, we must decide the exact subset of instructions
+  needed, hopefully guided by the example code below.
+  
+  - Particularly, we may not need vector-vector and vector-scalar
+    variants of every instruction.
 
 ## Example code
 
