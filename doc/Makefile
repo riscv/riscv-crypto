@@ -5,7 +5,7 @@ endif
 
 BUILD_DIR = $(REPO_BUILD)/spec
 
-OPCODES   = $(BUILD_DIR)/opcodes-crypto.tex
+OPCODES   = $(REPO_HOME)/doc/opcodes-crypto.tex
 
 SPEC_OUT  = $(BUILD_DIR)/riscv-crypto-spec.pdf
 SPEC_TOP  = riscv-crypto-spec.tex
@@ -19,25 +19,17 @@ $(OPCODES) : $(REPO_HOME)/tools/opcodes-crypto
 
 .PHONY: $(SPEC_COMMIT)
 $(SPEC_COMMIT):
+	@mkdir -p $(BUILD_DIR)
 	@git rev-parse --abbrev-ref HEAD > ${@}
 	@echo "@" >> ${@}
 	@git log --pretty=format:'%H' -n 1 >> ${@}
 
 $(SPEC_OUT) : $(SPEC_TEX) $(SPEC_EXTRA) $(SPEC_COMMIT)
 	@mkdir -p $(BUILD_DIR)
-	pdflatex  -output-directory $(BUILD_DIR) $(basename $(SPEC_TOP))
-	biber    --output_directory $(BUILD_DIR) $(basename $(SPEC_TOP))
-	pdflatex  -output-directory $(BUILD_DIR) $(basename $(SPEC_TOP))
-	biber    --output_directory $(BUILD_DIR) $(basename $(SPEC_TOP))
-	pdflatex  -output-directory $(BUILD_DIR) $(basename $(SPEC_TOP))
-
-aes-only : $(SPEC_TEX) $(SPEC_EXTRA) aes-only.tex
-	@mkdir -p $(BUILD_DIR)
-	pdflatex  -output-directory $(BUILD_DIR) aes-only
-	biber    --output_directory $(BUILD_DIR) aes-only
-	pdflatex  -output-directory $(BUILD_DIR) aes-only
-	biber    --output_directory $(BUILD_DIR) aes-only
-	pdflatex  -output-directory $(BUILD_DIR) aes-only
+	pdflatex $(basename $(SPEC_TOP))
+	bibtex   $(basename $(SPEC_TOP))
+	pdflatex $(basename $(SPEC_TOP))
+	pdflatex $(basename $(SPEC_TOP))
 
 spec: $(SPEC_OUT)
 
