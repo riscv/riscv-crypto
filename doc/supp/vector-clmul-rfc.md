@@ -1,4 +1,4 @@
-## RFC: Vector carry-less multiply instruction options.
+# RFC: Vector carry-less multiply instruction options.
 
 Following the TG meeting on June 2'nd 2020, these options are put forward for
 comparison. There are two broad categories:
@@ -15,7 +15,9 @@ for the scalar GCM implementation also applies here.
 Some of the example code below is based (with many apologies) on
 [Markku's scalar code](https://github.com/mjosaarinen/lwaes_isa/blob/master/gcm_rv64b_gfmul.c).
 
-### Option 1: Hi/Lo instructions
+## Instructions to consider
+
+### Hi/Lo instructions
 
 ```
 vclmul.vv   vrd, vrs1, vrs2, vm  // vrd[i] = vrs1[i] * vrs2[i] (SEW*SEW -> low  SEW)
@@ -28,7 +30,7 @@ vclmulh.vs  vrd, vrs1,  rs2, vm  // vrd[i] = vrs1[i] *  rs2    (SEW*SEW -> high 
 - The `vclmul.*` instructions compute the low `SEW` bits of the `SEW*SEW`-bit multiply
 - The `vclmulh.*` instructions compute the high `SEW` bits.
 
-### Option 2: Widening Instructions, with lo
+### Widening Instructions, with lo
 
 ```
 vwclmul.vv   vrd, vrs1, vrs2, vm  // vrd[i] = vrs1[i] * vrs2[i] (SEW*SEW -> 2*SEW)
@@ -53,23 +55,8 @@ vclmul.vs    vrd, vrs1,  rs2, vm  // vrd[i] = vrs1[i] *  rs2    (SEW*SEW -> low 
   - When mixing widening and non-widening, do the `2*SEW` result elements of the
     widening instructions end up in the right places to easily
 
-## Cross cutting questions:
 
-### Which values of `SEW` to require?
-- The critical case for the vector crypto extension is `SEW=128`.
-- Requiring `SEW=128` may be burdensome and face resistance.
-- An alternative would be to require support for `SEW=XLEN`
-  - This would make the vector code extremely similar to the
-    [scalar code](https://github.com/mjosaarinen/lwaes_isa/blob/master/gcm_rv64b_gfmul.c#L25)
-  - Implementers would be free to support `SEW >= XLEN`.
-- Options: `SEW=XLEN`, `SEW>=XLEN`, `SEW=64/32`, `SEW=128`
-
-### Should we include carry-less multiply-add?
-
-- For supported values of `SEW < 128`, the `vclmac*` instructions become
-  particularly useful as they fuse summing `vxor` operations.
-- Including multiply accumulate would add (a subset of) the following
-  instructions:
+### Carry-less Multiply Accumulate
 
 ```
 // Hi/Lo: SEW -> SEW
@@ -88,8 +75,22 @@ vwclmacc.vs   vrd, vrs1,  rs2, vm  // vrd[i] += vrs1[i] *  rs2
   [Vector Single-Width Integer Multiply-Add Instructions](https://github.com/riscv/riscv-v-spec/blob/master/v-spec.adoc#1213-vector-single-width-integer-multiply-add-instructions).
 - Their inclusion removes the need for `vxor` instructions.
 - `xor` is very cheap to fuse into a carry-less multiply (compared to integer fma).
-- For the multiplication part of GHASH, only the `*.vv` versions are needed?
-- For the reduction, only the `*vs` versions would be used?
+
+## Cross cutting questions:
+
+### Which values of `SEW` to require?
+- The critical case for the vector crypto extension is `SEW=128`.
+- Requiring `SEW=128` may be burdensome and face resistance.
+- An alternative would be to require support for `SEW=XLEN`
+  - This would make the vector code extremely similar to the
+    [scalar code](https://github.com/mjosaarinen/lwaes_isa/blob/master/gcm_rv64b_gfmul.c#L25)
+  - Implementers would be free to support `SEW >= XLEN`.
+- Options: `SEW=XLEN`, `SEW>=XLEN`, `SEW=64/32`, `SEW=128`
+
+### Should we include carry-less multiply-add?
+
+- For supported values of `SEW < 128`, the `vclmac*` instructions become
+  particularly useful as they fuse summing `vxor` operations.
 
 ---
 
