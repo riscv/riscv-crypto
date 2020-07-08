@@ -52,7 +52,6 @@ vclmul.vs    vrd, vrs1,  rs2, vm  // vrd[i] = vrs1[i] *  rs2    (SEW*SEW -> low 
     for the reduction require a change of `SEW` value at any point?
   - When mixing widening and non-widening, do the `2*SEW` result elements of the
     widening instructions end up in the right places to easily
----
 
 ## Cross cutting questions:
 
@@ -108,10 +107,9 @@ register names. It may be incorrect, any/all corrections are welcome.
 
 ### Multiplication
 
-- SEW=64
-- hi/lo vclmul
-- no widening
-- no carry-less multiply-accumulate
+SEW     | Option    |   Carry-less Multiply-accumulate
+--------|-----------|-----------------------------------
+64      | Hi/Lo     |   No
 ```
 vector_gcm_mul:
   setvli     a0, a0, e64
@@ -129,9 +127,9 @@ vector_gcm_mul:
   vxor       z1, z1, t1
 ```
 
-- SEW=64
-- hi/lo vclmul
-- with carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate
+--------|-----------|---------------------------------
+64      | Hi/Lo     | Yes
 ```
 vector_gcm_mul:
   setvli      a0, a0, e64
@@ -140,15 +138,15 @@ vector_gcm_mul:
   vclmul.vv   z1, x0, y1   // z1  = x0 * y1
   vclmacch.vv z2, x0, y1   // z2 += x0 * y1
   vclmacch.vv z2, x1, y0   // z2 += x1 * y0
-  vclmacc     z1, x1, y0   // z1 += x1 * y0
-  vclmul      z0, x0, y0   // z0  = x0 * y0
+  vclmacc.vv  z1, x1, y0   // z1 += x1 * y0
+  vclmul.vv   z0, x0, y0   // z0  = x0 * y0
   vclmacch.vv z1, x0, y0   // z1 += x0 * y0
 ```
 
 
-- SEW=64
-- widening vclmul
-- no carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate
+--------|-----------|---------------------------------
+64      | Widening  | No 
 ```
 vector_gcm_mul:
   setvli     a0, a0, e64
@@ -162,9 +160,9 @@ vector_gcm_mul:
 ```
 
 
-- SEW=64
-- widening vclmul
-- with carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate
+--------|-----------|---------------------------------
+64      | Widening  | Yes
 ```
 vector_gcm_mul:
   setvli      a0, a0, e64
@@ -175,9 +173,9 @@ vector_gcm_mul:
 ```
 
 
-- SEW=128
-- hi/lo vclmul
-- no carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate
+--------|-----------|---------------------------------
+128     | Hi/Lo     | Not Needed
 ```
 vector_gcm_mul:
   setvli     a0, a0, e128
@@ -185,21 +183,22 @@ vector_gcm_mul:
   vclmul.vv  z0, x0, y0
 ```
 
-- SEW=128
-- widening vclmul
-- no carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate
+--------|-----------|---------------------------------
+128     | Widening  | Not Needed
 ```
 vector_gcm_mul:
   setvli     a0, a0, e128
   vwclmul.vv z0, x0, y0    // z0[i] = x0[i] * y0[i]
 ```
 
+
 ### Reduction
 
 
-- SEW=64
-- hi/lo vclmul
-- no carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate    | Multiply Method
+--------|-----------|-----------------------------------|------------------
+64      | Hi/Lo     | No                                | Hi/Lo
 ```
 vector_gcm_mul:
   setvli      a0, a0, e64
@@ -214,10 +213,9 @@ vector_gcm_mul:
   vxor        z0, z0, v2    // z0 = z0 + v2
 ```
 
-- SEW=64
-- hi/lo vclmul
-- no carry-less multiply-accumulate.
-- Multiplication done with widening instructions.
+SEW     | Option    | Carry-less Multiply-accumulate    | Multiply Method
+--------|-----------|-----------------------------------|------------------
+64      | Hi/Lo     | No                                | Widening
 ```
 vector_gcm_mul:
   setvli      a0, a0, e64
@@ -225,9 +223,9 @@ vector_gcm_mul:
   // TBD
 ```
 
-- SEW=64
-- hi/lo vclmul
-- with carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate    | Multiply Method
+--------|-----------|-----------------------------------|------------------
+64      | Hi/Lo     | Yes                               | Hi/Lo
 ```
 vector_gcm_mul:
   setvli      a0, a0, e64
@@ -238,9 +236,9 @@ vector_gcm_mul:
   vclmacc.vs  z0, z2, t0    // z0 += z2 * t0
 ```
 
-- SEW=128
-- hi/lo vclmul
-- no carry-less multiply-accumulate.
+SEW     | Option    | Carry-less Multiply-accumulate    | Multiply Method
+--------|-----------|-----------------------------------|------------------
+128     | Hi/Lo     | Yes                               | Any
 ```
 vector_gcm_mul:
   setvli      a0, a0, e128
