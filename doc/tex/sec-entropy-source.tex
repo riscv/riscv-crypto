@@ -69,8 +69,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     indicates success; the low bits \verb|rd[15:0]| will have 16 bits
     of randomness which must be guaranteed to have at least 8 bits true
     entropy regardless of implementation. For example, \verb|0x4000ABCD|
-    is a valid \verb|ES16| status output, with \verb|0xABCD| being the
-    \verb|seed| value.
+    is a valid \verb|ES16| status output on RV32, with \verb|0xABCD| being
+    the \verb|seed| value.
 
     \item[10]   \underline{\tt WAIT}
     means that a sufficient amount of entropy is not yet available.
@@ -110,7 +110,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     As a minimum requirement for portable drivers, a \verb|WAIT| or
     \verb|BIST| from \mnemonic{pollentropy} should be followed by a WFI before
     another \mnemonic{pollentropy} instruction is issued. There is
-    no need to pool after a \verb|DEAD| state.
+    no need to poll after a \verb|DEAD| state.
 
     To guarantee that no sensitive data is read twice and that different
     callers don't get correlated output, it is suggested that hardware
@@ -137,7 +137,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     \item[\S E1]    {\bf Entropy Requirement.}
     Each 16-bit output sample (\verb|SEED|) must have more than 8 bits of
     independent, unpredictable entropy. This minimum requirement is
-    satisfied if - in a NIST SP 800-90B \cite{TuBaKe+18} assessment - 128
+    satisfied if (in a NIST SP 800-90B \cite{TuBaKe+18} assessment) 128
     bits of output entropy can be obtained from each 256-bit
     ($16 \times 16$-bit) \mnemonic{pollentropy} output sequence via a vetted
     cryptographic conditioning algorithm (see Section 3.1.5.1.2 in
@@ -173,11 +173,11 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     Security controls are not mandatory for RISC-V but are required for
     security certification.
-    The purpose of a cryptographic entropy source is to produce secret keying
-    material. In almost all cases a hardware entropy source must implement
-    appropriate \emph{security controls} to guarantee unpredictability,
-    prevent leakage, detect attacks, and to deny adversarial control over
-    the entropy output or ts generation mechanism.
+    The primary purpose of a cryptographic entropy source is to produce
+    secret keying material. In almost all cases a hardware entropy source
+    must implement appropriate \emph{security controls} to guarantee
+    unpredictability, prevent leakage, detect attacks, and to deny
+    adversarial control over the entropy output or ts generation mechanism.
 
     Many of the security controls built into the device are called ``health
     checks''. Health checks can take the form of
@@ -221,8 +221,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     is appropriate for most entropy source failures.
     A hardware test failure should result in at least in \verb|DEAD| state
     and possibly reset/halt. The entropy source (or its cryptographic client
-    application) must \emph{not} be
-    allowed to run if its secure operation can't be guaranteed.
+    application) \emph{must not} be allowed to run if its secure operation
+    can't be guaranteed.
 
     \end{itemize}
 
