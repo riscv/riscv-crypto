@@ -75,7 +75,7 @@
     seed material is acting as a cryptographic key; determining the seed
     from the DRBG output is as hard as breaking AES or a strong hash function.
     This also illustrates that the seed/key needs to be long enough and
-    come from a trusted Entropy Source. The DRBG can be frequently 
+    come from a trusted Entropy Source. The DRBG can be frequently
     refreshed or ``reseeded.''
 
 
@@ -216,9 +216,9 @@
 
     There may be requirements for signaling of alarms; AIS 31 specifies
     ``noise alarms'' that can go off with non-negligible probability
-	even if the device is functioning correctly; these can't be fatal
-	but can be signaled with \verb|BIST|.
-	
+    even if the device is functioning correctly; these can't be fatal
+    but can be signaled with \verb|BIST|.
+
     The state of statistical runtime health checks (such as counters)
     is potentially correlated with some secret keying material, hence
     the zeroization requirement.
@@ -398,9 +398,9 @@
     repetition count, window count, and sample count.
     Repetition count is reset every time the output sample value
     changes; if the count reaches a certain cutoff limit, a noise alarm
-    (\verb|BIST|) or failure (\verb|DEAD|) is signaled. 
-    Window counter is used to save every $W$'th output (typically 
-  	$W \in { 512, 1024 }$.) The frequency of this
+    (\verb|BIST|) or failure (\verb|DEAD|) is signaled.
+    Window counter is used to save every $W$'th output (typically
+    $W \in { 512, 1024 }$.) The frequency of this
     reference sample in the following window is counted; cutoff values
     are defined in the standard. We see that the structure of the
     mandatory tests is such that, if well implemented, no information is
@@ -425,12 +425,12 @@
     There rarely is anything that can or should be done about a non-fatal
     alarm condition in an operator-free, autonomous system. However,
     AIS 31 allows the DRBG component to keep running despite a failure in
-    its Entropy Source, so we use a prolonged WAIT (Section
-    \ref{sec:security-controls}) to signal a non-fatal statistical error
-    if such signaling is necessary for some reason related to certification.
+    its Entropy Source, so we suggest re-entering temporary \verb|BIST|
+    state (Section \ref{sec:security-controls}) to signal a non-fatal
+    statistical error if such (non-actionable) signaling is necessary.
     Drivers and applications can react to this appropriately (or simply
     log it) but it will not directly affect the availability of the TRNG.
-
+    A permanent error condition should result in \verb|DEAD| state.
 
 \subsubsection{Non-cryptographic Conditioners}
 \label{sec:noncrypto}
