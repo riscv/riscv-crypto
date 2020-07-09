@@ -61,9 +61,9 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     \item[00]   \underline{\tt BIST}
     indicates that Built-In Self-Test ``on-demand'' (BIST) statistical
     testing is being performed. In typical implementations,
-    BIST will last only a few milliseconds, up to a few hundred.
-    Any runtime unavailability caused by continuous testing after the
-    initial \verb|BIST| shall be indicated with \verb|WAIT| instead.
+    \verb|BIST| will last only a few milliseconds, up to a few hundred.
+ 	If the system returns temporarily to \verb|BIST| from any other state,
+	this signals a non-fatal (usually non-actionable) self-test alarm.
 
     \item[01]   \underline{\tt ES16}
     indicates success; the low bits \verb|rd[15:0]| will have 16 bits
@@ -83,7 +83,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     is an unrecoverable self-test error. This may indicate a hardware
     fault, a security issue, or (extremely rarely) a type-1
     statistical false positive in the continuous testing procedures.
-    Implementations do not need to implement DEAD as it may not require
+    Implementations do not need to implement \verb|DEAD| as it may not require
     an end-user notification; an immediate lock-down may be a more
     appropriate response in dedicated security devices.
 \end{itemize}
@@ -101,6 +101,24 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 \subsection{Polling Mechanism with WFI}
 \label{sec:es-polling}
 
+\begin{figure}[tb]
+    \centering
+    \input{../diagrams/esstate_tikz.tex}
+    \caption{Normally the operational state alternates between WAIT
+        (no data) and ES16, which means that 16 bits of randomness (seed)
+        has been polled. BIST (Built-in Self-Test) only occurs after reset
+        or to signal a non-fatal self-test alarm (if reached after WAIT or 
+        ES16). DEAD is an unrecoverable error state.}
+%   \Description{State diagram of the Entropy Source.}
+    \label{fig:esstate_tikz}
+\end{figure}
+
+    Figure \ref{fig:esstate_tikz} illustrates operational state
+    (\verb|OPST|) transitions. The state is usually either \verb|WAIT| or 
+    \verb|ES16|. There are no mandatory interrupts. However, the polling
+    mechanism should be implemented in a way that allows even generic
+    non-interrupt drivers to benefit from interrupts.
+
     We specifically recommend against busy-loop polling on this instruction
     as it may have relatively low bandwidth. Even though no specific interrupt
     sequence is specified, it is required that the \mnemonic{WFI} (wait for
@@ -114,13 +132,12 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     To guarantee that no sensitive data is read twice and that different
     callers don't get correlated output, it is suggested that hardware
-    implements ``wipe-on-read'' on the randomness
-    pathway during each read (successful poll). For the same reasons, only complete
-    and fully processed randomness words shall be made available via
+    implements ``wipe-on-read'' on the randomness pathway during each read
+    (successful poll). For the same reasons, only complete and fully
+    processed randomness words shall be made available via
     \mnemonic{pollentropy} (no half-conditioned buffers or even full buffers
     in \verb|WAIT| state -- even if they are to be ignored by compliant
     callers).
-
 
 \subsection{Entropy Source Requirements}
 \label{sec:req-es}
@@ -148,7 +165,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     to the desired resulting entropy.
 
     \item[\S E2]    {\bf I.I.D. Requirement.}
-    The output should be \emph{Independent and Identically Distributed}
+    The output must be \emph{Independent and Identically Distributed}
     (IID), meaning that the output distribution does not change over time
     and that output words do not convey information about each other.
     This requirement is satisfied if the construction of the physical source
@@ -207,10 +224,11 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     \item[\S T2]    {\bf Continuous checks.}
     If an error is detected in continuous tests or environmental sensors,
-    the entropy source will enter a no-output state. We define that an
-    online or noise alarm has occurred when the entropy source is in
-    WAIT mode for one second or more. Critical failures can result in DEAD
-    state immediately.
+    the entropy source will enter a no-output state. We define that a
+  	non-critical alarm is signaled if the entropy source returns
+    to \verb|BIST| state from live (\verb|WAIT| or \verb|ES16|) states.
+    Such a \verb|BIST| alarm may be polled with a single read.
+    Critical failures will result in \verb|DEAD| state immediately.
     A hardware-based continuous testing mechanism must not make statistical
     information externally available, and it must be zeroized periodically or
     upon demand via reset, power-up, or similar signal.

@@ -75,8 +75,9 @@
     seed material is acting as a cryptographic key; determining the seed
     from the DRBG output is as hard as breaking AES or a strong hash function.
     This also illustrates that the seed/key needs to be long enough and
-    come from a trusted Entropy Source. The keys can be frequently refreshed
-    or ``reseeded''.
+    come from a trusted Entropy Source. The DRBG can be frequently 
+    refreshed or ``reseeded.''
+
 
 \begin{figure}[tb]
     \centering
@@ -118,7 +119,9 @@
 
     \paragraph{(Sect. \ref{sec:es-polling}) Polling Mechanism:}
 
-    Figure \ref{fig:esstate_tikz} illustrates operational state
+
+
+    Figure \ref{fig:esstate-tikz} illustrates operational state
     (\verb|OPST|) transitions. The state is usually either WAIT or ES16.
     The baseline specification requires no additional signaling or
     interrupts to be supported by the hardware. However, the polling
@@ -127,13 +130,14 @@
 
 \begin{figure}[tb]
     \centering
+    \label{fig:esstate-tikz}
     \input{../diagrams/esstate_tikz.tex}
     \caption{Normally the operational state alternates between WAIT
         (no data) and ES16, which means that 16 bits of randomness (seed)
-        has been polled. DEAD is an unrecoverable state, while BIST
-        (Built-in Self-Test) only occurs after reset.}
+        has been polled. DEAD is an unrecoverable state. BIST
+        (Built-in Self-Test) only occurs after reset or to signal
+        a non-fatal self-test alarm (if reached after WAIT or ES16).}
 %   \Description{State diagram of the Entropy Source.}
-    \label{fig:esstate_tikz}
 \end{figure}
 
 
@@ -147,7 +151,7 @@
     Note that the min-entropy assessment methodology in SP 800-90B
     \cite{TuBaKe+18} also has a safety margin in its confidence intervals,
     and therefore there must be consistently \emph{more than} 8 bits of
-    entropy 16-bit word per byte. In practice, we recommend the
+    entropy per 16-bit word. In practice, we recommend the
     distribution to be significantly closer to uniform to satisfy
     possible additional use cases and AIS 20 / 31 \cite{KiSc11}
     requirements (if those can't be met with a software conditioner).
@@ -229,16 +233,16 @@
 
     \paragraph{(Sect. \ref{sec:security-controls}) \S T2, Continuous checks:}
     Physical attacks can occur while the device is running. The design
-    should avoid guiding suchactive attacks by revealing detailed
+    should avoid guiding such active attacks by revealing detailed
     status information. Upon detection of an attack the default action
     should be aimed at damage control -- to prevent weak crypto keys from
     being generated.
 
     There may be requirements for signaling of alarms; AIS 31 specifies
     ``noise alarms'' that can go off with non-negligible probability
-    even if the device is functioning correctly; these can't be fatal;
-    \verb|WAIT| is sufficient.
-
+	even if the device is functioning correctly; these can't be fatal
+	but can be signaled with \verb|BIST|.
+	
     The state of statistical runtime health checks (such as counters)
     is potentially correlated with some secret keying material, hence
     the zeroization requirement.
@@ -266,18 +270,16 @@
     and do not create unnecessary security risks to users. Self-evaluation
     and testing following appropriate security standards is usually needed
     to achieve this. NIST has made its SP 800-90B\cite{TuBaKe+18} min-entropy
-    estimation package freely available\footnote{EntropyAssessment:
-    \url{https://github.com/usnistgov/SP800-90B_EntropyAssessment}} and
-    similar free tools are also available\footnote{(In German)
-    AIS 31-Implementierung in JAVA:
-    \url{https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_testsuit_zip}}
-    for AIS 31 \cite{KiSc11}.
+    estimation package freely available; see
+    \url{https://github.com/usnistgov/SP800-90B_EntropyAssessment}.
+    Similar free tools are also available for AIS 31 \cite{KiSc11}:
+    \url{https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_testsuit_zip}.
+
 
 
     \paragraph{Entropy Flow}
     When considering implementation options and trade-offs one must look
     at the entire information flow since each step is interconnected.
-    All of these must be implemented:
 
     \begin{enumerate}
     \item   {\bf A Noise Source} generates private, unpredictable signals
@@ -292,7 +294,7 @@
             output, completely indistinguishable from ideal random.
     \item   {\bf DRBG} takes in $\geq 256$ bits of seed entropy as keying
             material and uses a ``one way'' cryptographic process to rapidly
-            generate bits on demand (which do not reveal the seed).
+            generate bits on demand (without revealing the seed or the state).
     \end{enumerate}
     Steps 1-4 (possibly 5) are considered to be part of the Entropy
     Source (ES) and provided by the \verb|PollEntropy| instruction.
@@ -371,7 +373,7 @@
     matches with their stochastic models. We note that this is
     usually done in a laboratory setting since NIST SP 800-90B \cite{TuBaKe+18}
     urges implementors to protect the source in production devices.
-    We are leaving access as a vendor-specific matter but we them urge to
+    We are leaving access as a vendor-specific matter but we urge them to
     protect the raw source and to make it unavailable to casual users.
 
     \underline{Rationale:}
@@ -394,9 +396,8 @@
     Building data paths to make the raw noise available through the ISA
     would be problematic as it is unclear how to ``sample''
     possibly up to several gigabits of information per second in a way
-    that is appropriately
-    representative of its properties. SP 800-90B notes that it is permitted
-    that such an interface be available only in
+    that is appropriately representative of its properties. SP 800-90B
+    notes that it is permitted that such an interface be available only in
     ``test mode'' and that it is disabled when the source is operational.
 
 
@@ -421,8 +422,9 @@
     repetition count, window count, and sample count.
     Repetition count is reset every time the output sample value
     changes; if the count reaches a certain cutoff limit, a noise alarm
-    is signaled. Window counter is used to save every $W$'th
-    output (typically $W \in { 512, 1024 }$.) The frequency of this
+    (\verb|BIST|) or failure (\verb|DEAD|) is signaled. 
+    Window counter is used to save every $W$'th output (typically 
+  	$W \in { 512, 1024 }$.) The frequency of this
     reference sample in the following window is counted; cutoff values
     are defined in the standard. We see that the structure of the
     mandatory tests is such that, if well implemented, no information is
@@ -475,8 +477,9 @@
             lends itself well to analysis and entropy estimation \cite{Da02}.
     \item   The von Neumann extractor \cite{Ne51} looks at consecutive
             pairs of bits, rejects 00 and 11, and outputs 0 or 1 for
-            01 and 10. It will cut down the number of bits to less than
-            25\% but the output is provably unbiased (assuming independence).
+            01 and 10, respectively. It will cut down the number of bits to
+            less than 25\% but the output is provably unbiased (assuming
+            independence).
     \item   Blum's extractor \cite{Bl86} can be used on sources
             whose behavior resembles $n$-state Markov chains. If its
             assumptions hold, it also removes dependencies, creating an IID
