@@ -5,6 +5,8 @@
  * This file contains the 32-bit specific cryptography extension
  * instructions.
  *
+ * This file *must not* be included in the model build if XLEN != 32
+ *
  */
 
 /*
@@ -62,25 +64,7 @@ function clause execute   (SAES32   (     bs, rs2   , rs1   , rd    , op))={
 }
 
 /*
- * Scalar Cryptography Extension - Scalar 32-bit SHA2 instructions
- * ----------------------------------------------------------------------
- */
-
-
-/*                                    TBD                                */
-
-
-/*
- * Scalar Cryptography Extension - Scalar        SM3 instructions
- * ----------------------------------------------------------------------
- */
-
-
-/*                                    TBD                                */
-
-
-/*
- * Scalar Cryptography Extension - Scalar        SM4 instructions
+ * Scalar Cryptography Extension - Scalar 32-bit SHA512 instructions
  * ----------------------------------------------------------------------
  */
 

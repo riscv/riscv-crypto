@@ -5,6 +5,8 @@
  * This file contains types, mappings and functions used across the
  * cryptography extension instructions.
  *
+ * This file must be included in the model build whatever the value of XLEN.
+ *
  */
 
 /*
