@@ -1,7 +1,7 @@
 %	rng_tikz.tex
 %	2020-06-25	Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=1.33]
 
 \draw[thick,fill=red!10] (2.0, 0.0) ellipse (1.5 and 0.3) 
 	node {\bf Noise Source};
@@ -29,7 +29,7 @@
 
 \draw[-Stealth] (2.0,-2.5) -- ++(0.0, -0.6)
         node[pos=0.5,anchor=east] {\small\em pre-proc.}
-        node[pos=0.5,anchor=west] {\small\em {Entropy}$(X) > 8$};
+        node[pos=0.5,anchor=west] {\small {Entropy}$(X) > 8$};
 
 \draw[fill=blue!10] (4.4 - 0.7, -1.7 + 0.45) rectangle ++(1.4,-0.9) 
 	node[align=center,pos=.5] {{Health}\\{Tests}};

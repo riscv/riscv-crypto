@@ -117,30 +117,6 @@
     bits ``in the same place'' on both RV32 and RV64 architectures for
     programming convenience.
 
-    \paragraph{(Sect. \ref{sec:es-polling}) Polling Mechanism:}
-
-
-
-    Figure \ref{fig:esstate-tikz} illustrates operational state
-    (\verb|OPST|) transitions. The state is usually either WAIT or ES16.
-    The baseline specification requires no additional signaling or
-    interrupts to be supported by the hardware. However, the polling
-    mechanism should be implemented in a way that allows even generic
-    non-interrupt drivers to benefit from interrupts.
-
-\begin{figure}[tb]
-    \centering
-    \label{fig:esstate-tikz}
-    \input{../diagrams/esstate_tikz.tex}
-    \caption{Normally the operational state alternates between WAIT
-        (no data) and ES16, which means that 16 bits of randomness (seed)
-        has been polled. DEAD is an unrecoverable state. BIST
-        (Built-in Self-Test) only occurs after reset or to signal
-        a non-fatal self-test alarm (if reached after WAIT or ES16).}
-%   \Description{State diagram of the Entropy Source.}
-\end{figure}
-
-
     \paragraph{(Sect. \ref{sec:req-es}) \S E1, Entropy Requirement:}
         Rather than attempting to mathematically define the properties that the
     entropy source output must satisfy, we define that it should be good
