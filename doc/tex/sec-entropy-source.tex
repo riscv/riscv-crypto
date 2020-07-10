@@ -227,7 +227,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     the entropy source will enter a no-output state. We define that a
     non-critical alarm is signaled if the entropy source returns
     to \verb|BIST| state from live (\verb|WAIT| or \verb|ES16|) states.
-    Such a \verb|BIST| alarm may be polled with a single read.
+	Such a \verb|BIST| alarm should be latched until polled at least once.    
+    
     Critical failures will result in \verb|DEAD| state immediately.
     A hardware-based continuous testing mechanism must not make statistical
     information externally available, and it must be zeroized periodically or
