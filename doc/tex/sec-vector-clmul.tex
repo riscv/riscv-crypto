@@ -1,0 +1,103 @@
+
+\subsection{Vector Carry-less Multiply}
+
+The following instructions support vectorised Carry-less multiply
+operations.
+These are essential to support the Galois/Counter Mode (GCM) \cite{nist:gcm}
+block cipher mode of operation.
+GCM is the only mandatory mode of operation in the TLS 1.3
+ciphersuite \cite[Section 9.1]{tls:1.3}.
+
+
+\subsubsection{Single-Width Carry-less Multiply}
+\label{sec:vector:clmul:hilo}
+
+\begin{cryptoisa}
+vclmul.vv   vrd, vrs1, vrs2 // vrd[i]  = vrs1[i] * vrs2[i] (low SEW-bits)
+vclmul.vs   vrd, vrs1, vrs2 // vrd[i]  = vrs1[0] * vrs2[i] (low SEW-bits)
+vclmulh.vv  vrd, vrs1, vrs2 // vrd[i]  = vrs1[i] * vrs2[i] (hi  SEW-bits)
+vclmulh.vs  vrd, vrs1, vrs2 // vrd[i]  = vrs1[0] * vrs2[i] (hi  SEW-bits)
+\end{cryptoisa}
+
+These instructions multiply corresponding \SEW-bit elements
+to produce a $2*\SEW$-bit result.
+{\tt vclmul.*} writes back the low \SEW bits of the result to the
+element in \vrd.
+{\tt vclmulh.*} writes back the high \SEW bits of the result to the
+element in \vrd.
+
+The vector-vector ({\tt *.vv}) instructions multiply corresponding
+elements in each vector.
+The vector-scalar ({\tt *.vs}) instructions multiply the zeroth
+element of \vrs{1} with the $i'th$ element of \vrs{2}.
+The results of each instruction are always written back to the $i'th$
+element of \vrd.
+
+
+\subsubsection{Single-Width Carry-less Multiply with Accumulate}
+\label{sec:vector:clmul:accumulating}
+
+\begin{cryptoisa}
+vclmacc.vv  vrd, vrs1, vrs2 // vrd[i] += vrs1[i] * vrs2[i] (low SEW-bits)
+vclmacc.vs  vrd, vrs1, vrs2 // vrd[i] += vrs1[0] * vrs2[i] (low SEW-bits)
+vclmacch.vv vrd, vrs1, vrs2 // vrd[i] += vrs1[i] * vrs2[i] (hi  SEW-bits)
+vclmacch.vs vrd, vrs1, vrs2 // vrd[i] += vrs1[0] * vrs2[i] (hi  SEW-bits)
+\end{cryptoisa}
+
+These instructions multiply \SEW-bit elements
+to produce a $2*\SEW$-bit intermediate.
+{\tt vclmul.*} adds the low \SEW bits of the intermediate to the
+\SEW-bit element \vrd, and writes the result back to \vrd.
+{\tt vclmulh.*} adds the high \SEW bits of the intermediate to the
+\SEW-bit element \vrd, and writes the result back to \vrd.
+Note that addition in this context is carry-less, and is simply an {\tt xor}
+operation.
+
+The vector-vector ({\tt *.vv}) instructions operate on corresponding
+elements in each vector.
+The vector-scalar ({\tt *.vs}) instructions operate on the zeroth
+element of \vrs{1} with the $i'th$ elements of \vrs{2} and \vrd.
+
+
+\subsubsection{Widening Carry-less Multiply}
+\label{sec:vector:clmul:widening}
+
+\begin{cryptoisa}
+vwclmul.vv  vrd, vrs1, vrs2 // vrd[i] = vrs1[i] * vrs2[i], LMUL(vrd)=2
+vwclmul.vs  vrd, vrs1, vrs2 // vrd[i] = vrs1[0] * vrs2[i], LMUL(vrd)=2
+\end{cryptoisa}
+
+These instructions multiply \SEW-bit elements
+to produce a $2*\SEW$-bit result.
+The $2*\SEW$-bit result is written back in its entirety to \vrd,
+where \vrd is treated as a double-width register such that
+$\LMUL=2$ and $\EEW(\vrd)=2*\SEW$.
+
+The vector-vector ({\tt *.vv}) instructions operate on corresponding
+elements in each vector.
+The vector-scalar ({\tt *.vs}) instructions operate on the zeroth
+element of \vrs{1} with the $i'th$ elements of \vrs{2} and \vrd.
+
+
+\subsubsection{Widening Carry-less Multiply With Accumulate}
+\label{sec:vector:clmul:widening}
+
+\begin{cryptoisa}
+vwclmacc.vv vrd, vrs1, vrs2 // vrd[i] += vrs1[i] * vrs2[i], LMUL(vrd)=2
+vwclmacc.vs vrd, vrs1, vrs2 // vrd[i] += vrs1[0] * vrs2[i], LMUL(vrd)=2
+\end{cryptoisa}
+
+These instructions multiply \SEW-bit elements
+to produce a $2*\SEW$-bit intermediate.
+The $2*\SEW$-bit intermediate is added to the $2*\SEW$-bit element in \vrd.
+The result is then written back to \vrd.
+\vrd is treated as a double-width register such that
+$\LMUL=2$ and $\EEW(\vrd)=2*\SEW$.
+Note that addition in this context is carry-less, and is simply an {\tt xor}
+operation.
+
+The vector-vector ({\tt *.vv}) instructions operate on corresponding
+elements in each vector.
+The vector-scalar ({\tt *.vs}) instructions operate on the zeroth
+element of \vrs{1} with the $i'th$ elements of \vrs{2} and \vrd.
+
