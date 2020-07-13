@@ -194,11 +194,11 @@
     be considered from an adversarial viewpoint and implemented only if they
     are truly necessary and their security impact can be fully understood.
 
-    We note that the polling interface is not \emph{constant time}.
-    However, a polling interface can be modeled as a rejection sampler.
-    The timing oracle of a rejection sampler reveals only the statistical
-    rejection criteria, which is not secret information in this case.
-
+    For example, the polling interface is often not \emph{constant time}.
+    The polling mechanism can be modeled as a
+    rejection sampler; such a timing oracle can reveal information about
+    the noise source and the rejection criteria, but usually not the random
+    output itself. Or are these related, are countermeasures necessary?
 
     \paragraph{(Sect. \ref{sec:security-controls}) \S T1, On-demand testing:}
     Interaction with hardware self-test mechanisms
@@ -475,16 +475,16 @@
     They do not require computational hardness assumptions.
 
     In some cases, an entropy source (and the circuit that implements it)
-    may have a uniquely identifiable hardware ``signature''. This may be
-    useful in some applications (as random sources may exhibit PUF-like
-    features) and undesirable in others (anonymized virtualized
-    environments and enclaves).
+    may have a uniquely identifiable hardware ``signature''. This can be
+    harmless or even useful in some applications (as random sources may
+    exhibit PUF-like features) but highly undesirable in others (anonymized
+    virtualized environments and enclaves).
+
     Such virtualized environments are probably better off just using
     \verb|/dev/urandom| of the host rather than sharing the host's
     hardware-backed Entropy Source to the guest environment. Also note the
-    source entropy requirement (Sect. \ref{sec:req-es}, Secret State)
+    source entropy requirement (Sect. \ref{sec:req-state}, Secret State)
     when sharing such generators.
-
 
 \subsubsection{Cryptographic Conditioners}
 \label{sec:crypto-cond}
