@@ -1,7 +1,7 @@
 %	esstate_tikz.tex
 %	2020-06-26	Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
-\begin{tikzpicture}[>=latex]
+\begin{tikzpicture}[>=latex,scale=1.2]
 
 \tikzset{every state/.append style={rectangle, rounded corners}}
 
@@ -25,12 +25,24 @@
 \draw[->, bend left] (wait) to (es16); 
 \draw[->, bend left] (es16) to (wait);
 
-\draw[dashed,->] (bist) .. controls (-2.5,-2.5) and (-2.5,-3.5) .. (dead); 
+\draw[color=red,dashed,->] (bist) .. controls (-2.5,-2.5) and (-2.5,-3.5) .. (dead);
 
-\draw[dashed,->] (wait) to (dead); 
-\draw[dashed,->] (es16) to (dead);
+\draw[color=red,dashed,->] (wait) to (dead); 
+\draw[color=red,dashed,->] (es16) to (dead);
 
 \draw[->] (dead) .. controls ++(0.15,-0.85) and ++(-0.15,-0.85) .. (dead);
 
-\end{tikzpicture}
+\node[color=red,align=center] at (-1.5,-4.5) {{\it fatal}\\{\it error}}; 
 
+\draw[color=cyan,densely dotted,->] (bist) .. controls ++(0.85,-0.15) 
+	and ++(0.85,+0.15) .. (bist);
+
+\draw[color=cyan,densely dotted,->] (wait) .. controls (-1.0,-2.7) 
+	and (-1.0,-2.2) .. (bist);
+
+\draw[color=cyan,densely dotted,->] (es16) .. controls (1.0,-2.7) 
+	and (1.0,-2.2) .. (bist);
+
+\node[color=cyan,align=center] at (1.5,-2.0) {{\it non-fatal}\\{\it alarm}};
+
+\end{tikzpicture}

@@ -1,7 +1,7 @@
 %	rng_tikz.tex
 %	2020-06-25	Markku-Juhani O. Saarinen <mjos@pqshield.com>
 
-\begin{tikzpicture}[scale=1.33]
+\begin{tikzpicture}[scale=1.5]
 
 \draw[thick,fill=red!10] (2.0, 0.0) ellipse (1.5 and 0.3) 
 	node {\bf Noise Source};
@@ -16,6 +16,10 @@
 \draw[-Stealth] (2.0,-1.4) -- ++(0.0, -0.6)
         node[pos=0.5,anchor=east] {\small\em raw bits};
 
+%\draw[rounded corners] (2.0+1.2, -2.0) rectangle ++(-2.4,-0.5)
+%	node[pos=.5] {Conditioning};
+
+
 \draw[thick,fill=cyan!10] (2.0+1.3,-2.0) -- ++(-2.6,-0.0) -- 
        ++(0.2,-0.5) -- ++(2.2,0.0) -- cycle;
 
@@ -24,8 +28,8 @@
 \draw[-Stealth, dashed] (2.0,-1.7) -- (4.5-0.8,-1.7);
 
 \draw[-Stealth] (2.0,-2.5) -- ++(0.0, -0.6)
-        node[pos=0.5,anchor=east] {\small\em pre-proc.}
-        node[pos=0.5,anchor=west] {\small\em $H(X) > 8$};
+        node[pos=0.5,anchor=east] {\small\em pre-processed}
+        node[pos=0.5,anchor=west] {\small {Entropy}$(X) > 8$ {bits}};
 
 \draw[fill=blue!10] (4.4 - 0.7, -1.7 + 0.45) rectangle ++(1.4,-0.9) 
 	node[align=center,pos=.5] {{Health}\\{Tests}};
@@ -52,10 +56,16 @@
         node[pos=0.5,anchor=east] {\small\em ( ES16 )}
         node[pos=0.5,anchor=west] {\small\em seed};
 
+
 \node[align=center] at (3.95,-3.6)
 	{\tiny\textcolor{red!50!black}{\underline{\em Not OK:}}};
 \node[align=center] at (3.95,-3.9)
 	{\tiny\textcolor{red!50!black}{\em ( BIST / WAIT / DEAD )} };
+
+
+%\draw[rounded corners] (2.0+1.2, -4.2) rectangle ++(-2.4,-0.5)
+%	node[pos=.5] {Hash / Pool};
+
 
 \draw[thick,dashed] (2.0+1.3,-4.2) -- ++(-2.6,-0.0) -- 
        ++(0.2,-0.5) -- ++(2.2,0.0) -- cycle;
@@ -63,8 +73,12 @@
 \node at (2.0,-4.45) {Entropy Pool};
 
 \draw[-Stealth] (2.0,-4.7) -- ++(0.0, -0.6) 
-        node[pos=0.5,anchor=east] {\small\em Processed}
+        node[pos=0.5,anchor=east] {\small\em processed}
         node[pos=0.5,anchor=west] {\small\em ``full entropy''};
+
+
+%\draw[thick] (2.0+1.1,-5.3) -- ++(-2.2,-0.0) -- 
+%       ++(-0.2,-0.5) -- ++(2.6,0.0) -- cycle;
 
 \draw[thick,fill=brown!10] (2.0+1.2, -5.3) rectangle ++(-2.4,-0.5)
 	node[pos=.5] {Crypto DRBG};
@@ -72,6 +86,7 @@
 \draw[-Stealth] (2.0,-5.8) -- ++(0.0, -0.6) 
         node[pos=0.5,anchor=east] {\small\em Library API}
         node[pos=0.5,anchor=west] {\small\em Kernel syscall};
+
 
 \draw[thick,fill=gray!20] (2.0, -6.7) ellipse (1.5 and 0.3) 
 	node {\bf Application};
