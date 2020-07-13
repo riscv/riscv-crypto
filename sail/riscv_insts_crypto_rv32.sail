@@ -14,6 +14,31 @@
  * ----------------------------------------------------------------------
  */
 
+/* Map between f5 encoding field and scalar round function instrucitons. */
+mapping encdec_saes32_op : saes_op <-> bits(5) = {
+    ENCSM   <-> 0b00000,
+    ENCS    <-> 0b00001,
+    DECSM   <-> 0b00010,
+    DECS    <-> 0b00011
+}
+
+/* Map 32-bit operations to assembly mnemonics - for disassemly */
+mapping saes32_op_to_mnemonic : saes_op <-> string = {
+    ENCSM <-> "saes32.encsm"  ,
+    ENCS  <-> "saes32.encs"   ,
+    DECSM <-> "saes32.decsm"  ,
+    DECS  <-> "saes32.decs"
+}
+
+/* Map byte shift amounts to strings - for disassemly */
+val     saes32_bs_to_str   : saes_bs <-> string
+mapping saes32_bs_to_str   : saes_bs <-> string = {
+    0b00 <-> "0",
+    0b01 <-> "1",
+    0b10 <-> "2",
+    0b11 <-> "3"
+}
+
 union    clause ast      = SAES32 : (saes_bs, regidx, regidx, regidx, saes_op)
 
 
