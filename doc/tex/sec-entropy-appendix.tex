@@ -165,7 +165,7 @@
     against real-life cryptosystems have used inconsequential-looking
     additional information, such as padding error messages \cite{BaFoKa+12}
     or timing information \cite{MoSuEi+20}. In cryptography, such
-    out-of-band information sources  are called ``oracles''.
+    out-of-band information sources  are called ``oracles.''
 
     This also applies to the raw noise source. While most developers agree
     that access to the raw noise source would be \emph{nice to have},
@@ -194,11 +194,11 @@
     be considered from an adversarial viewpoint and implemented only if they
     are truly necessary and their security impact can be fully understood.
 
-    For example, the polling interface is often not \emph{constant time}.
-    The polling mechanism can be modeled as a
-    rejection sampler; such a timing oracle can reveal information about
-    the noise source and the rejection criteria, but usually not the random
-    output itself. Or are these related, are countermeasures necessary?
+    For example, the entropy polling interface may not be ``constant time.''
+    The polling mechanism can be modeled as a rejection sampler; such a
+    timing oracle can reveal information about the noise source and the
+    rejection criteria, but usually not the random output itself.
+    Or are these correlated, and are countermeasures necessary?
 
     \paragraph{(Sect. \ref{sec:security-controls}) \S T1, On-demand testing:}
     Interaction with hardware self-test mechanisms
@@ -326,7 +326,7 @@
 
     \paragraph{Shot Noise.}
     A category of random sources consisting of discrete events
-    and modeled as a Poisson process is called ``shot noise''.
+    and modeled as a Poisson process is called ``shot noise.''
     There's a long-established precedent of certifying them; the
     AIS 31 document \cite{KiSc11} itself offers reference designs based on
     noisy diodes. Shot noise sources are often more resistant to
@@ -356,7 +356,7 @@
     Samplers can generate vast amounts of data. NIST SP 800-90B
     \cite{TuBaKe+18} defines a conceptual interface \verb|GetNoise()|
     for the raw output and also anticipates that the actual
-    interfaces ``will depend on the entropy source deployed''.
+    interfaces ``will depend on the entropy source deployed.''
 
     \begin{quote}
     \emph{``The vendor may use special methods (or devices, such as an
@@ -408,7 +408,7 @@
 
     Section 4.5 of \cite{TuBaKe+18} explicitly permits additional
     developer-defined tests and several more were defined in early
-    versions of FIPS 140-1 before being ``crossed out''. The choice
+    versions of FIPS 140-1 before being ``crossed out.'' The choice
     of additional tests depends on the nature and implementation of the
     physical source.
 
@@ -417,7 +417,7 @@
     implemented by driver software. They can also be implemented in hardware.
     For some security profiles AIS 31 mandates that their tolerances are
     set in a way that the probability of an alarm is at least $10^{-6}$
-    yearly under ``normal usage''. Such requirements are problematic
+    yearly under ``normal usage.'' Such requirements are problematic
     in modern applications since their probability is too high for
     critical systems\footnote{Currently (2020) about $10^{10}$ secure
     elements are shipped yearly, many in critical applications and with
@@ -475,7 +475,7 @@
     They do not require computational hardness assumptions.
 
     In some cases, an entropy source (and the circuit that implements it)
-    may have a uniquely identifiable hardware ``signature''. This can be
+    may have a uniquely identifiable hardware ``signature.'' This can be
     harmless or even useful in some applications (as random sources may
     exhibit PUF-like features) but highly undesirable in others (anonymized
     virtualized environments and enclaves).
@@ -493,7 +493,7 @@
     the PollEntropy ISA boundary. They may be also implemented on the
     hardware side if necessary. In any case, the PollEntropy output must
     always be compressed 2:1 (or more) before being used as keying material
-    or considered ``full entropy''.
+    or considered ``full entropy.''
 
     Examples of cryptographic conditioners include the random pool
     of the Linux operating system, secure hash functions (SHA-2/3,
