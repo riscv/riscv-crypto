@@ -1,0 +1,232 @@
+
+== Macro-op Fusion Recommendations
+
+This document contains recommendations for
+macro-op fusion in RISC-V cores that will be particularly helpful
+for cryptography.
+
+=== Scope
+
+We use the following criteria to identify recommended macro-op fusions
+and associated code sequences:
+
+- We focus on pairs of instructions to fuse. Longer sequences are
+  possible but harder to utilise.
+
+- We focus on sequences which read two register operands, and write
+  a single register operand. This constraint means that even the most
+  simple RISC-V implementation doesn't need to add ports to its register
+  file.
+
+- We focus on instructions which will appear in an RV32I, or RV64I
+  architecture, with the scalar cryptography instructions also implemented.
+
+- We separately consider cases where the compressed `C` instructions are
+  also implemented.
+
+- For modelling performance gains, we assume all integer instructions
+  have unit latency, and ignore the costs of loops.
+
+=== Background
+
+Where the `C` extension is implemented, the shortest (in bytes) possible
+fusable sequence is two instructions of two bytes each.
+The longest two instruction sequence we consider in all cases is
+eight bytes.
+The longest sequence a core can fuse is hence limited by the size of its
+instruction decode buffer.
+A simple implementation of RV32IC (or RV64IC) will have a 48-bit
+instruction buffer - primarily to handle the case of jumping onto
+a 16-bit aligned 32-bit instruction.
+Hence, fusable sequences consisting of two 16-bit instructions or
+one 16-bit and one 32-bit instruction are of particular interest.
+
+The `C` extension instructions are designed to expand into normal,
+32-bit instructions. However, they can only address a subset of the
+registers. We repeat table 16.1 from Volume 1 of the RISC-V instruction
+set manual here:
+
+.Registers addressable by compressed instructions.
+|===
+| RVC Register Number | Integer Register Number | ABI Register name
+|   0                 |   x8                    | s0
+|   1                 |   x9                    | s1
+|   2                 |   x10                   | a0
+|   3                 |   x11                   | a1
+|   4                 |   x12                   | a2
+|   5                 |   x13                   | a3
+|   6                 |   x14                   | a4
+|   7                 |   x15                   | a5
+|===
+
+
+=== Case Study 1: ChaCha20
+
+The ChaCha20 stream cipher<<RFC8439>> uses the following
+quarter round (`QR`) function:
+
+----
+#define QR(a,b,c,d)                 \
+a += b;  d ^= a;  d = ROTL(d,16);   \
+c += d;  b ^= c;  b = ROTL(b,12);   \
+a += b;  d ^= a;  d = ROTL(d, 8);   \
+c += d;  b ^= c;  b = ROTL(b, 7);   \
+----
+
+which, when displayed graphically, looks like:
+
+image::https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/ChaCha_Cipher_Quarter_Round_Function.svg/382px-ChaCha_Cipher_Quarter_Round_Function.svg.png[ChaCha20 Round Function Diagram]
+
+https://commons.wikimedia.org/w/index.php?curid=90771650[Diagram By Tony Arcieri - Own work, CC BY-SA 4.0]
+
+Squares represent the additions modulo 32, circles represent bit-wise
+XOR, and `<<<_x` is a 32-bit left rotation by `x`.
+
+A complete ChaCha20 round is then expressed as:
+
+----
+QR(x[0], x[4], x[ 8], x[12]);
+QR(x[1], x[5], x[ 9], x[13]);
+QR(x[2], x[6], x[10], x[14]);
+QR(x[3], x[7], x[11], x[15]);
+QR(x[0], x[5], x[10], x[15]);
+QR(x[1], x[6], x[11], x[12]); 
+QR(x[2], x[7], x[ 8], x[13]); 
+QR(x[3], x[4], x[ 9], x[14]); 
+----
+
+where `x` is the 16-element array of `32`-bit words representing the
+round state.
+
+When implemented on RV32I with the scalar cryptography extensions,
+the `QR` function requires 12 instructions.
+One round is hence `48` instructions.
+ChaCha20 uses 10 iterations of a double round, which gives
+`10*48*2=960` cycles, assuming `1` instruction per cycle.
+
+There is one fusable sequence which meets our criteria:
+
+----
+xor  rA, rA, rB
+rori rA, rA, imm
+----
+
+Note there is no "rotate left by immediate" instruction, so
+we use the the "rotate right by immediate" with an adjusted immediate.
+Note also that there is no 16-bit rotate instruction, but there
+is a 16-bit xor instruction which fits the `xor rA, rA, rB`  pattern.
+
+The ChaCha20 state consists of 16 32-bit words. All of which can be
+kept in the registers of an RV32I/RV64I implementation.
+However, only eight words may be kept in registers addressable by
+the compressed instructions, and so maximise the opportunities
+for fusion.
+
+Two compressed instruction registers (`s0`, `s1`) must be saved to
+the stack before being used. This will cost at minimum `6` instructions
+per call to a ChaCha20 block function: two stack adjustments, two
+stores and two loads.
+
+The `a0` and `a1` registers may also need their contents moving prior to
+entering the block round loop, since they are used to pass parameters
+to functions. For the ChaCha20 block function, this will likely be
+the input/output array pointers. This will cost two instructions to
+move them from `a0` / `a1`. If the arguments are marked as `const` in
+C code, then two more instructions are needed to put them back.
+
+A core capable of fusing this sequence when both instructions are upto
+32 bits long saves  `4` cycles per quarter round.
+An entire block operation is then `640` cycles - `33%` faster.
+
+A core capable of fusing this sequence only when the xor is 16 bits and
+the rori is 32 bits is more complex to analyse.
+Looking at the data flow graph, the fusable sequences takes their
+inputs from either variables `a` and `d`, or `b` and `c`.
+Looking at how a complete ChaCha20 round is structured, it then becomes
+clear that either state elements `x[0..4,12..15]`, or `x[4..11]`
+are the ones best placed
+in the compressed instruction registers `s0,s1,a0,...,a5`, since this
+creates the largest number of fusable 48-bit instruction sequences.
+In either case, two occurrences of sequence 1 are fusable.
+Hence a quarter round is then `10` cycles, and `10` double rounds
+becomes `800` cycles.
+
+A core which can only fuse two 16-bit instructions is incapable
+of fusing sequence 1.
+
+
+=== Case Study 2: Keccak on RV64
+
+*Note:* this section repeatedly refers to 
+https://github.com/mjosaarinen/lwsha_isa/blob/master/sha3_rv64_keccakp.c[Markku's implementation]
+of the Keccak round function on RV64.
+
+==== Sequence 1: rotate + xor
+
+The Keccak Round function uses `5` instances of the sequence
+
+----
+rori    rD, rA, imm
+xor     rD, rD, rB
+----
+
+A core capable of fusing this sequence when both instructions are
+`32` bits long will save `5` cycles per Keccak round, or `125` in
+total.
+
+==== Sequence 2: xor + rotate
+
+The Keccak Round function uses `25` instances of
+xor-then-rotate-by-immediate.
+
+----
+xor     rA, rA, rB
+rori    rA, rA, imm
+----
+
+A core capable of fusing this sequence when both instructions are
+`32` bits long with save `25` cycles per round, or `625` cycles in total.
+
+
+=== Case Study 3: Keccak on RV32
+
+*Note:* this section repeatedly refers to 
+https://github.com/mjosaarinen/lwsha_isa/blob/master/sha3_rv32_keccakp.c[Markku's implementation]
+of the Keccak round function on RV32.
+
+All of the fusion recommendations for Keccak on RV64 also apply on
+RV32 when using the bit-interleaving scheme.
+
+
+=== Recommended Fusion Sequences
+
+1. `c.xor   rA, rA, rB  ;  rori rA, rA, imm`
+2. `xor     rA, rA, rB  ;  rori rA, rA, imm`
+3. `rori    rD, rA, imm ;   xor rD, rD, rB`
+4. `rori    rD, rA, imm ; c.xor rD, rD, rB`
+
+
+=== Security Considerations
+
+These considerations are taken in the context of macro-op fusion generally,
+not just the recommendations listed in this document.
+
+Where some algorithm must compute either `A` or `B` based on the value
+of some secret `C`, it is essential that `A` and `B` take the same
+length of time to compute. Otherwise an adversary who can measure
+execution time can learn something of `C`.
+One method of doing this is control flow balancing, where
+either `A` or `B` is artificially padded with instructions such that
+they take the same time to execute. If the programmer or compiler
+does not know exactly when a core will fuse certain macro-ops, it
+is possible that `A` and `B` will become un-balanced again, because
+one path includes a fusable sequence and the other does not.
+This may be addressed by computing both `A` and `B` regardless of
+`C`, and selecting the appropriate result in a constant time fashion.
+
+
+[bibliography]
+== References
+
+- [[[RFC8439]]] RFC 8439 - ChaCha20 and Poly1305 for IETF Protocols.
+  https://tools.ietf.org/html/rfc8439
