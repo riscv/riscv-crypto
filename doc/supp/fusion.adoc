@@ -1,11 +1,13 @@
 
+**WIP:** DRAFT, July 2020 - Ben Marshall <ben.marshall@bristol.ac.uk>
+
 == Macro-op Fusion Recommendations
 
 This document contains recommendations for
 macro-op fusion in RISC-V cores that will be particularly helpful
 for cryptography.
 
-=== Scope
+=== Scope and Background
 
 We use the following criteria to identify recommended macro-op fusions
 and associated code sequences:
@@ -26,8 +28,6 @@ and associated code sequences:
 
 - For modelling performance gains, we assume all integer instructions
   have unit latency, and ignore the costs of loops.
-
-=== Background
 
 Where the `C` extension is implemented, the shortest (in bytes) possible
 fusable sequence is two instructions of two bytes each.
@@ -60,7 +60,61 @@ set manual here:
 |===
 
 
-=== Case Study 1: ChaCha20
+
+=== Recommended Fusion Sequences
+
+Note that these tables assume that the scalar Cryptography instructions
+from Bitmanip have been implemented, namely: 
+
+- `andn rD, rA, rB // rD = rA & ~rB`
+- `orn  rD, rA, rB // rD = rA | ~rB`
+- `xorn rD, rA, rB // rD = rA ^ ~rB`
+
+The Size column gives the size of the instruction sequence in bytes.
+
+.Recommended 2-instruction fusion sequences with 2 operands and 1 result.
+[cols="3,3,1,3"]
+|===
+| Instruction 1 | Instruction 2 | Size | Function
+
+| `c.xor rA, rA, rB`  | `rori  rA, rA, imm` | 6 | `rA = (rA ^ rB) >>> imm`
+| `xor   rA, rA, rB`  | `rori  rA, rA, imm` | 8 | `rA = (rA ^ rB) >>> imm`
+| `rori  rD, rA, imm` | `xor   rD, rD, rB`  | 8 | `rD = (rA >>> imm) ^ rB`
+| `rori  rD, rA, imm` | `c.xor rD, rD, rB`  | 6 | `rD = (rA >>> imm) ^ rB`
+| `c.or  rD, rD, rB`  | `xori  rD, rD, -1`  | 6 | `rD = ~(rA \| rB)`
+| `or    rD, rA, rB`  | `xori  rD, rD, -1`  | 8 | `rD = ~(rA \| rB)`
+| `c.and rD, rD, rB`  | `xori  rD, rD, -1`  | 6 | `rD = ~(rA & rB)`
+| `and   rD, rA, rB`  | `xori  rD, rD, -1`  | 8 | `rD = ~(rA & rB)`
+|===
+
+.Recommended 2-instruction fusion sequences with 2 operands and 2 results.
+[cols="3,3,1,3"]
+|===
+| Instruction 1 | Instruction 2 | Size  | Function
+
+| `clmulh rX, rA, rB`  | `clmul rY, rA, rB`  | 8 | .
+| `mulh*  rX, rA, rB`  | `mul   rY, rA, rB`  | 8 | .
+|===
+
+.Recommended 2-instruction fusion sequences with 3 operands and 1 result.
+[cols="3,3,1,3"]
+|===
+| Instruction 1 | Instruction 2 | Size  | Function
+
+| `xor rD, rA, rB`   | `xor rD, rD, rC`   | 8 | `rD  = rA ^ rB ^ rC`
+| `xor rD, rA, rB`   | `c.xor rD, rD, rC` | 6 | `rD  = rA ^ rB ^ rC`
+| `c.xor rA, rA, rB` | `c.xor rA, rA, rC` | 4 | `rA ^= rB ^ rC`
+| `andn  rD, rA, rB` | `c.xor rD, rD, rC` | 6 | `rD  = rC ^ (rA & ~rB)`
+| `andn  rD, rA, rB` | `xor rD, rD, rC`   | 8 | `rD  = rC ^ (rA & ~rB)`
+| `and   rD, rA, rB` | `xor rD, rD, rC`   | 8 | `rD  = (rA & rB) ^ rC`
+| `c.and rA, rA, rB` | `xor rA, rA, rC`   | 6 | `rA  = (rA & rB) ^ rC`
+| `c.and rA, rA, rB` | `c.xor rA, rA, rC` | 4 | `rA  = (rA & rB) ^ rC`
+| `xor   rD, rA, rB` | `and rD, rD, rC`   | 8 | `rD  = (rA ^ rB) & rC`
+| `c.xor rA, rA, rB` | `and rA, rA, rC`   | 6 | `rA  = (rA ^ rB) & rC`
+| `c.xor rA, rA, rB` | `c.and rA, rA, rC` | 4 | `rA  = (rA ^ rB) & rC`
+|===
+
+=== Case Study: ChaCha20
 
 The ChaCha20 stream cipher<<RFC8439>> uses the following
 quarter round (`QR`) function:
@@ -155,13 +209,14 @@ A core which can only fuse two 16-bit instructions is incapable
 of fusing sequence 1.
 
 
-=== Case Study 2: Keccak on RV64
+=== Case Study: Keccak
 
 *Note:* this section repeatedly refers to 
 https://github.com/mjosaarinen/lwsha_isa/blob/master/sha3_rv64_keccakp.c[Markku's implementation]
 of the Keccak round function on RV64.
+Though based on RV64, the sequences here also apply to RV32.
 
-==== Sequence 1: rotate + xor
+==== rotate + xor
 
 The Keccak Round function uses `5` instances of the sequence
 
@@ -174,7 +229,7 @@ A core capable of fusing this sequence when both instructions are
 `32` bits long will save `5` cycles per Keccak round, or `125` in
 total.
 
-==== Sequence 2: xor + rotate
+==== xor + rotate
 
 The Keccak Round function uses `25` instances of
 xor-then-rotate-by-immediate.
@@ -187,23 +242,70 @@ rori    rA, rA, imm
 A core capable of fusing this sequence when both instructions are
 `32` bits long with save `25` cycles per round, or `625` cycles in total.
 
+==== andn + xor
 
-=== Case Study 3: Keccak on RV32
+The `chi` step of the Keccak round function consists of the expression
+`x ^= (y & ~z)`. Hence the sequence:
 
-*Note:* this section repeatedly refers to 
-https://github.com/mjosaarinen/lwsha_isa/blob/master/sha3_rv32_keccakp.c[Markku's implementation]
-of the Keccak round function on RV32.
+----
+andn    rD, rA, rB
+xor     rD, rD, rC
+----
 
-All of the fusion recommendations for Keccak on RV64 also apply on
-RV32 when using the bit-interleaving scheme.
+A core capable of fusing this 8-byte sequence wil save `20` cycles per
+round, or `500` cycles in total.
 
+==== xor + xor
 
-=== Recommended Fusion Sequences
+The `theta` step of Keccak uses five `xor` reductions of five variables
+each: `tmp = A^B^C^D^E`. Being able to fuse the sequence
 
-1. `c.xor   rA, rA, rB  ;  rori rA, rA, imm`
-2. `xor     rA, rA, rB  ;  rori rA, rA, imm`
-3. `rori    rD, rA, imm ;   xor rD, rD, rB`
-4. `rori    rD, rA, imm ; c.xor rD, rD, rB`
+----
+xor     rD, rA, rB
+xor     rD, rD, rC
+----
+
+Saves two cycles per reduction, or 10 per round, which is 250 in
+total.
+
+=== Case Study: SHA2
+
+The SHA2 algorithms use two ternary non-linear functions: `Ch` and `Maj`.
+There is a discussion in the 
+https://github.com/scarv/riscv-crypto/blob/master/doc/supp/bitlogic.adoc[bitlogic]
+document on how best to implement these functions given the base instruction
+set and the Bitmanip extension.
+Here, we only discuss the relevant macro-op fusion sequences for
+the Cryptography extension.
+
+----
+Ch(x,y,z)  = z ^ (x & (y ^ z))
+Maj(x,y,z) = x ^ ((x ^ y) & (x ^ z))  
+----
+
+For the `Ch` function, we can fuse *either* the `xor+and` or the `and+xor`
+instruction pairs:
+
+----
+xor  rT, rY, rZ
+and  rT, rT, rX
+xor  rT, rT, rZ
+----
+
+Also note that the result of `Ch` cannot always overwrite its inputs, making
+it difficult to use the compressed instruction extensions.
+In the sequence above, the inputs are not overwritten, and the
+`and` and `xor` instructions *can* use the compressed forms.
+
+For the `Maj` function,the same `and/xor` fusion sequences can be used.
+The following code assumes the input variables cannot be overwritten.
+
+----
+xor rA, rX, rZ
+xor rB, rX, rY  //
+and rB, rB, rA  // Fuse the xor/and, or the and/xor.
+xor rB, rB, rX  //
+----
 
 
 === Security Considerations
