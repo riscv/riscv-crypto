@@ -809,6 +809,48 @@ def print_xcrypto_inst(n):
         print( r'\bitbox{%d}{\tt %s}%%' % (width,val))
     print( r'\bitbox{%d}{\bf\tt %s}\\%%' % ( 9,  n))
 
+
+def make_dec_wirename(instrname):
+    return "dec_%s"     % instrname.lower().replace("xc.","").replace(".","_")
+
+def make_verilog(match,mask):
+    """
+    Generate verilog for decoding all of the ISE instructions.
+    """
+
+    src_wire = "encoded"
+    ise_args = set([])
+    dec_wires= set([])
+
+    for instr in namelist:
+        wirename = make_dec_wirename(instr)
+        tw       = "wire %s = " % (wirename.ljust(15))
+        
+        tw      += "(%s & 32'h%s) == 32'h%s;" % (
+            src_wire, hex(mask[instr])[2:], hex(match[instr])[2:]
+        )
+        
+        dec_wires.add(wirename)
+
+        print(tw)
+
+        for arg in arguments[instr]:
+            ise_args.add(arg)
+
+    for field in ise_args:
+        wirename = "dec_arg_%s" % field.lower().replace(".","_")
+        wirewidth= (arglut[field][0]-arglut[field][1])
+        tw       = "wire [%d:0] %s = encoded[%d:%d];" % (
+            wirewidth,
+            wirename.ljust(15), arglut[field][0],arglut[field][1]
+        )
+        print(tw)
+
+    invalidinstr = "wire dec_invalid_opcode = !(" + \
+        " || ".join(list(dec_wires)) +  \
+        ");" 
+    print(invalidinstr)
+
 def print_inst(n):
   print_xcrypto_inst(n)
     #print_r_type(n, match[n], arguments[n])
@@ -1032,6 +1074,8 @@ if __name__ == "__main__":
     make_chisel()
   elif sys.argv[1] == '-sverilog':
     make_sverilog()
+  elif sys.argv[1] == '-verilog':
+    make_verilog(match,mask)
   elif sys.argv[1] == '-c':
     make_c(match,mask)
   elif sys.argv[1] == '-go':
