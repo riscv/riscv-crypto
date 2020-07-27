@@ -150,10 +150,8 @@ $2$ \mnemonic{xor} to add the round key to the current state
 and
 $2$ of the relevant AES encrypt/decrypt instructions to perform the
     SubBytes, ShiftRows and MixColumns round functions.
-This adds up to $76$ instructions per AES-128 block
-encryption.
-Loading the plaintext and storing the cipher text (if 8-byte aligned)
-takes $4$ instructions.
+An un-rolled AES-128 block encryption with an offline KeySchedule
+hence requires $69$ instructions in total.
 
 These instructions are amenable to macro-op fusion.
 The recommended sequences are:
