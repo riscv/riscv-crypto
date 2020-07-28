@@ -14,6 +14,17 @@ pseudos = {}
 arguments = {}
 opcodebits ={}
 
+sail_args_types = {
+    "rs1"   : "regidx",
+    "rs2"   : "regidx",
+    "rd"    : "regidx",
+    "bs"    : "bits(2)",
+    "shamtw": "bits(5)",
+    "rcon"  : "bits(4)",
+}
+
+reg_names = ["rd", "rs1", "rs2", "rs3"]
+
 acodes = {}
 acodes['bs'     ] = "w"
 acodes['rcon'   ] = "W"
@@ -852,6 +863,124 @@ def make_verilog(match,mask):
         ");" 
     print(invalidinstr)
 
+
+def get_instr_encoding_strings(instr):
+    """
+    Returns a list of tuples of the form (X,Y) where X is the start
+    of a bitfield in an instruction encoding, and Y is the value of the
+    bitfield. Note that X is the Most Significant bit of the bitfield.
+    E.g. (14, "101") indicates the func3 value.
+    """
+    imask = mask[instr]
+
+    strings = []
+    current_pos = None
+    current_str = ""
+
+    bitpos      = 31
+
+    while(bitpos >= 0):
+        while(bitpos >= 0 and ((imask >> bitpos) & 0x1) == 0):
+            bitpos -= 1
+
+        current_pos = bitpos
+        current_str = "0b"
+
+        while(bitpos>= 0 and ((imask >> bitpos) & 0x1) == 1):
+            current_str += str((match[instr] >> bitpos) & 0x1)
+            bitpos -= 1
+
+        strings.append((current_pos, current_str))
+
+    return strings
+
+
+def make_sail_encdec_pattern(instr):
+    """
+    Returns a list of strings, represnting the SAIL encdec clause
+    pattern which will decode to the supplied instruciton.
+    """
+    encoding_strings = get_instr_encoding_strings(instr)
+    args             = arguments[instr].copy()
+    args.reverse()
+
+    encdec           = []
+
+    while(len(encoding_strings) > 0 and len(args) > 0):
+        arg_hi, arg_lo = arglut[args[0]]
+        enc_hi, enc_s  = encoding_strings[0]
+
+        if(arg_hi > enc_hi):
+            encdec.append(args.pop(0))
+        else:
+            encdec.append(encoding_strings.pop(0)[1])
+
+    while(len(encoding_strings)):
+        encdec.append(encoding_strings.pop(0)[1])
+
+    return encdec
+
+
+def make_sail():
+    """
+    Generate code for the SAIL AST description.
+    Creates clauses for the ast, assembly and encdec mappings.
+    """
+    
+    encdec_clauses = []
+    ast_clauses    = []
+    asm_clauses    = []
+    exec_clauses   = []
+
+    for instr in namelist:
+        iname = instr.upper().replace(".","_")
+
+        iargs =  arguments[instr].copy()
+        iargs.reverse()
+
+        iarg_types = [sail_args_types[a] for a in iargs]
+
+        encdec_str = make_sail_encdec_pattern(instr)
+
+        clause_encdec = "mapping clause encdec = %15s   (%s) <-> %s" % (
+            iname, ",".join(iargs), " @ ".join(encdec_str)
+        )
+
+        clause_ast    = "union   clause ast    = %15s : (%s)" % (
+            iname, ",".join(iarg_types)
+        )
+        
+        asm_tokens = arguments[instr].copy()
+
+        for i in range(0,len(asm_tokens)):
+            if(asm_tokens[i] in reg_names):
+                asm_tokens[i] = "reg_name(%s)" % asm_tokens[i]
+
+        asm_str = "\"%s\" ^ spc() ^ %s" % (
+            instr, " ^ sep() ^ ".join(asm_tokens)
+        )
+
+        clause_asm    = "mapping clause assembly = %15s (%s) <-> %s" % (
+            iname, ",".join(iargs), asm_str
+        )
+
+        clause_exec   = "function clause execute (%15s (%s)) = {%s}" % (
+            iname, 
+            ",".join(iargs),
+            "\n    /* TBD, implemented as nop.*/\n    RETIRE_SUCCESS\n"
+        )
+
+        encdec_clauses.append(clause_encdec)
+        ast_clauses.append(clause_ast)
+        asm_clauses.append(clause_asm)
+        exec_clauses.append(clause_exec)
+
+    print("\n".join(ast_clauses))
+    print("\n".join(asm_clauses))
+    print("\n".join(exec_clauses))
+    print("\n".join(encdec_clauses))
+
+
 def print_inst(n):
   print_xcrypto_inst(n)
     #print_r_type(n, match[n], arguments[n])
@@ -1077,6 +1206,8 @@ if __name__ == "__main__":
     make_sverilog()
   elif sys.argv[1] == '-verilog':
     make_verilog(match,mask)
+  elif sys.argv[1] == '-sail-boilerplate':
+    make_sail()
   elif sys.argv[1] == '-c':
     make_c(match,mask)
   elif sys.argv[1] == '-go':

@@ -7,6 +7,7 @@
 
 - [About](#About)
 - [Specification](#Specification)
+- [Formal Model](#Formal-Model)
 - [Toolchain](#Toolchain)
 - [Benchmarks](#Benchmarks)
 - [Verilog RTL](#Verilog-RTL-Prototypes)
@@ -46,6 +47,20 @@ the [Github Repository](https://github.com/scarv/riscv-crypto).
 
 Source code and supplementary information is found in the
 [doc/](doc/README.md) directory.
+
+## Formal Model
+
+There is a work-in-progress formal-model implementation of the crypto
+instructions in the `sail/` directory.
+Currently, only the scalar instructions are implemented, since the
+vector instructions are blocked by the implementation of the base
+vector extension in the formal model.
+
+These files currently need to be manually added to the existing
+[sail-riscv](https://github.com/rems-project/sail-riscv)
+model. A proper integration will be done eventually.
+See [issue #20](https://github.com/scarv/riscv-crypto/issues/20)
+for more info.
 
 ## Toolchain
 
