@@ -28,8 +28,8 @@ After first checking out the `riscv-crypto` repository:
   ```
   to setup the project workspace.
 
-  - Note the values of `RISCV_ARCH` and `RISCV`. These describe the
-    target architctures, and where the toolchain will be installed too.
+  - Note the value `RISCV`, This describes where the toolchain will be
+    installed too.
 
 - Checkout the relevant repositories:
     ```sh
@@ -48,28 +48,11 @@ After first checking out the `riscv-crypto` repository:
   compilation (plus installation)
   script in turn:
 
-  - `binutils`:
+  - `gcc`/`binutils`
 
     ```sh
-    ${REPO_HOME}/tools/binutils-apply.sh
-    ${REPO_HOME}/tools/binutils-conf.sh
-    ${REPO_HOME}/tools/binutils-build.sh
-    ```
-
-  - `gcc`:
-
-    ```sh
-    ${REPO_HOME}/tools/gcc-apply.sh
-    ${REPO_HOME}/tools/gcc-conf.sh
-    ${REPO_HOME}/tools/gcc-build.sh
-    ```
-
-  - `newlib`:
-
-    ```sh
-    ${REPO_HOME}/tools/newlib-apply.sh
-    ${REPO_HOME}/tools/newlib-conf.sh
-    ${REPO_HOME}/tools/newlib-build.sh
+    ${REPO_HOME}/tools/toolchain-conf.sh
+    ${REPO_HOME}/tools/toolchain-build.sh
     ```
 
   - `pk` (the RISC-V proxy kernel):
@@ -88,10 +71,7 @@ After first checking out the `riscv-crypto` repository:
     ${REPO_HOME}/tools/spike-build.sh
     ``` 
 
-
-
-
-   - This will build `binutils`, `gcc`, `newlib`, `pk` and `spike`,
+   - This will build `binutils`, `gcc`, `pk` and `spike`,
      and place the compiled results in `${REPO_HOME}/build/toolchain/install`.
 
    - You can go and make some tea / coffee for this bit, it will take a while.
@@ -140,4 +120,26 @@ toolchain and simulator patches.
 
   - Then, run the appropriate `tools/*-update.sh` script and
     commit the change to the patch to the RISC-V Crypto repository.
+
+## Relevant Files
+
+These are the relevant files / locations which need editing when
+adding or changing instructions.
+
+### Binutils
+
+- See `extern/riscv-gnu-toolchain/riscv-binutils`.
+- `gas/config/tc-riscv.c` - Instruction assembly.
+- `include/opcode/riscv-opc.h` - Instruction encoding masks.
+- `include/opcode/riscv.h` - Instruction field masks.
+- `opcodes/riscv-dis.c` - Disassembly.
+- `opcodes/riscv-opc.c` - Instruction mnemonic and argument lists.
+
+### Spike
+
+- See `extern/riscv-isa-sim`.
+- `riscv/decode.h` - Instruction encoding field access.
+- `riscv/encoding.h` - Instruction encoding masks.
+- `riscv/riscv.mk.in` - Makefile listing included instructions.
+- `riscv/insns/*` - Instruction implementatons.
 

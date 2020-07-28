@@ -1,5 +1,5 @@
 diff --git a/gas/config/tc-riscv.c b/gas/config/tc-riscv.c
-index 9ecdcab0b6..d273fb4535 100644
+index 9ecdcab0b6..1834f7c08b 100644
 --- a/gas/config/tc-riscv.c
 +++ b/gas/config/tc-riscv.c
 @@ -680,7 +680,7 @@ validate_riscv_insn (const struct riscv_opcode *opc, int length)
@@ -20,15 +20,7 @@ index 9ecdcab0b6..d273fb4535 100644
        case 'o':
        case 'j': used_bits |= ENCODE_ITYPE_IMM (-1U); break;
        case 'a':	used_bits |= ENCODE_UJTYPE_IMM (-1U); break;
-@@ -1557,6 +1559,7 @@ riscv_ip (char *str, struct riscv_cl_insn *ip, expressionS *imm_expr,
-   unsigned int regno;
-   char save_c = 0;
-   int argnum;
-+  unsigned int rdp_hi=0;
-   const struct percent_op_match *p;
-   const char *error = "unrecognized opcode";
- 
-@@ -2000,6 +2003,27 @@ rvc_lui:
+@@ -2000,6 +2002,27 @@ rvc_lui:
  		  continue;
  		}
  	      break;
@@ -57,7 +49,7 @@ index 9ecdcab0b6..d273fb4535 100644
  	    case 'd':		/* Destination register.  */
  	    case 's':		/* Source register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..97fba50f44 100644
+index 6c750a33b1..2748204cf2 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
 @@ -343,6 +343,68 @@
@@ -65,12 +57,10 @@ index 6c750a33b1..97fba50f44 100644
  #define MATCH_GREVIW 0x6800501b
  #define MASK_GREVIW  0xfe00707f
 +// Crypto ISE - Begin
-+#define MATCH_LUT4LO 0x6000002b
-+#define MASK_LUT4LO 0xfe00707f
-+#define MATCH_LUT4HI 0x6200002b
-+#define MASK_LUT4HI 0xfe00707f
-+#define MATCH_LUT4 0x6400002b
-+#define MASK_LUT4 0xfe00707f
++#define MATCH_SSM4_ED 0x800302b
++#define MASK_SSM4_ED 0x3e00707f
++#define MATCH_SSM4_KS 0xa00302b
++#define MASK_SSM4_KS 0x3e00707f
 +#define MATCH_SAES32_ENCSM 0x202b
 +#define MASK_SAES32_ENCSM 0x3e00707f
 +#define MATCH_SAES32_ENCS 0x200202b
@@ -79,10 +69,6 @@ index 6c750a33b1..97fba50f44 100644
 +#define MASK_SAES32_DECSM 0x3e00707f
 +#define MATCH_SAES32_DECS 0x600202b
 +#define MASK_SAES32_DECS 0x3e00707f
-+#define MATCH_SSM4_ED 0x800302b
-+#define MASK_SSM4_ED 0x3e00707f
-+#define MATCH_SSM4_KS 0xa00302b
-+#define MASK_SSM4_KS 0x3e00707f
 +#define MATCH_SAES64_KS1 0x800202b
 +#define MASK_SAES64_KS1 0xff00707f
 +#define MATCH_SAES64_KS2 0xa00202b
@@ -105,6 +91,10 @@ index 6c750a33b1..97fba50f44 100644
 +#define MASK_SSHA256_SUM0 0xfff0707f
 +#define MATCH_SSHA256_SUM1 0xe30702b
 +#define MASK_SSHA256_SUM1 0xfff0707f
++#define MATCH_SSM3_P0 0xe80702b
++#define MASK_SSM3_P0 0xfff0707f
++#define MATCH_SSM3_P1 0xe90702b
++#define MASK_SSM3_P1 0xfff0707f
 +#define MATCH_SSHA512_SIG0L 0x1000702b
 +#define MASK_SSHA512_SIG0L 0xfe00707f
 +#define MATCH_SSHA512_SIG0H 0x1200702b
@@ -125,6 +115,8 @@ index 6c750a33b1..97fba50f44 100644
 +#define MASK_SSHA512_SUM0 0xfff0707f
 +#define MATCH_SSHA512_SUM1 0xe70702b
 +#define MASK_SSHA512_SUM1 0xfff0707f
++#define MATCH_POLLENTROPY 0xe05702b
++#define MASK_POLLENTROPY 0xfe0ff07f
 +// Crypto ISE - end
  #define MATCH_FSLW 0x400103b
  #define MASK_FSLW  0x600707f
@@ -170,7 +162,7 @@ index 19f10c0e55..7506f2bc80 100644
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..c421ca1c24 100644
+index e99febc823..4b94e79658 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -709,6 +709,38 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -178,36 +170,36 @@ index e99febc823..c421ca1c24 100644
  {"unzip",     0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  
 +/* Scalar Crypto Instructions */
-+{"lut4lo"              , 0, INSN_CLASS_I,    "d,s,t", MATCH_LUT4LO, MASK_LUT4LO, match_opcode, 0},
-+{"lut4hi"              , 0, INSN_CLASS_I,    "d,s,t", MATCH_LUT4HI, MASK_LUT4HI, match_opcode, 0},
-+{"lut4"                , 0, INSN_CLASS_I,    "d,s,t", MATCH_LUT4, MASK_LUT4, match_opcode, 0},
-+{"saes32.encsm"        , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_ENCSM, MASK_SAES32_ENCSM, match_opcode, 0},
-+{"saes32.encs"         , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_ENCS, MASK_SAES32_ENCS, match_opcode, 0},
-+{"saes32.decsm"        , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_DECSM, MASK_SAES32_DECSM, match_opcode, 0},
-+{"saes32.decs"         , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_DECS, MASK_SAES32_DECS, match_opcode, 0},
-+{"ssm4.ks"             , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SSM4_KS, MASK_SSM4_KS, match_opcode, 0},
-+{"ssm4.ed"             , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SSM4_ED, MASK_SSM4_ED, match_opcode, 0},
-+{"saes64.ks1"          , 0, INSN_CLASS_I,    "d,s,W", MATCH_SAES64_KS1, MASK_SAES64_KS1, match_opcode, 0},
-+{"saes64.ks2"          , 0, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_KS2, MASK_SAES64_KS2, match_opcode, 0},
-+{"saes64.imix"         , 0, INSN_CLASS_I,      "d,s", MATCH_SAES64_IMIX, MASK_SAES64_IMIX, match_opcode, 0},
-+{"saes64.encsm"        , 0, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_ENCSM, MASK_SAES64_ENCSM, match_opcode, 0},
-+{"saes64.encs"         , 0, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_ENCS, MASK_SAES64_ENCS, match_opcode, 0},
-+{"saes64.decsm"        , 0, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_DECSM, MASK_SAES64_DECSM, match_opcode, 0},
-+{"saes64.decs"         , 0, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_DECS, MASK_SAES64_DECS, match_opcode, 0},
-+{"ssha256.sig0"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SIG0, MASK_SSHA256_SIG0, match_opcode, 0},
-+{"ssha256.sig1"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SIG1, MASK_SSHA256_SIG1, match_opcode, 0},
-+{"ssha256.sum0"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SUM0, MASK_SSHA256_SUM0, match_opcode, 0},
-+{"ssha256.sum1"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SUM1, MASK_SSHA256_SUM1, match_opcode, 0},
-+{"ssha512.sig0l"       , 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG0L, MASK_SSHA512_SIG0L, match_opcode, 0},
-+{"ssha512.sig0h"       , 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG0H, MASK_SSHA512_SIG0H, match_opcode, 0},
-+{"ssha512.sig1l"       , 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG1L, MASK_SSHA512_SIG1L, match_opcode, 0},
-+{"ssha512.sig1h"       , 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG1H, MASK_SSHA512_SIG1H, match_opcode, 0},
-+{"ssha512.sum0r"       , 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SUM0R, MASK_SSHA512_SUM0R, match_opcode, 0},
-+{"ssha512.sum1r"       , 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SUM1R, MASK_SSHA512_SUM1R, match_opcode, 0},
-+{"ssha512.sig0"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SIG0, MASK_SSHA512_SIG0, match_opcode, 0},
-+{"ssha512.sig1"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SIG1, MASK_SSHA512_SIG1, match_opcode, 0},
-+{"ssha512.sum0"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SUM0, MASK_SSHA512_SUM0, match_opcode, 0},
-+{"ssha512.sum1"        , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SUM1, MASK_SSHA512_SUM1, match_opcode, 0},
++{"ssm4.ed"      , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SSM4_ED, MASK_SSM4_ED, match_opcode, 0},
++{"ssm4.ks"      , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SSM4_KS, MASK_SSM4_KS, match_opcode, 0},
++{"saes32.encsm" , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_ENCSM, MASK_SAES32_ENCSM, match_opcode, 0},
++{"saes32.encs"  , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_ENCS, MASK_SAES32_ENCS, match_opcode, 0},
++{"saes32.decsm" , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_DECSM, MASK_SAES32_DECSM, match_opcode, 0},
++{"saes32.decs"  , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SAES32_DECS, MASK_SAES32_DECS, match_opcode, 0},
++{"saes64.ks1"   ,64, INSN_CLASS_I,    "d,s,W", MATCH_SAES64_KS1, MASK_SAES64_KS1, match_opcode, 0},
++{"saes64.ks2"   ,64, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_KS2, MASK_SAES64_KS2, match_opcode, 0},
++{"saes64.imix"  ,64, INSN_CLASS_I,      "d,s", MATCH_SAES64_IMIX, MASK_SAES64_IMIX, match_opcode, 0},
++{"saes64.encsm" ,64, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_ENCSM, MASK_SAES64_ENCSM, match_opcode, 0},
++{"saes64.encs"  ,64, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_ENCS, MASK_SAES64_ENCS, match_opcode, 0},
++{"saes64.decsm" ,64, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_DECSM, MASK_SAES64_DECSM, match_opcode, 0},
++{"saes64.decs"  ,64, INSN_CLASS_I,    "d,s,t", MATCH_SAES64_DECS, MASK_SAES64_DECS, match_opcode, 0},
++{"ssha256.sig0" , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SIG0, MASK_SSHA256_SIG0, match_opcode, 0},
++{"ssha256.sig1" , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SIG1, MASK_SSHA256_SIG1, match_opcode, 0},
++{"ssha256.sum0" , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SUM0, MASK_SSHA256_SUM0, match_opcode, 0},
++{"ssha256.sum1" , 0, INSN_CLASS_I,      "d,s", MATCH_SSHA256_SUM1, MASK_SSHA256_SUM1, match_opcode, 0},
++{"ssm3.p0"      , 0, INSN_CLASS_I,      "d,s", MATCH_SSM3_P0, MASK_SSM3_P0, match_opcode, 0},
++{"ssm3.p1"      , 0, INSN_CLASS_I,      "d,s", MATCH_SSM3_P1, MASK_SSM3_P1, match_opcode, 0},
++{"ssha512.sig0l", 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG0L, MASK_SSHA512_SIG0L, match_opcode, 0},
++{"ssha512.sig0h", 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG0H, MASK_SSHA512_SIG0H, match_opcode, 0},
++{"ssha512.sig1l", 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG1L, MASK_SSHA512_SIG1L, match_opcode, 0},
++{"ssha512.sig1h", 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SIG1H, MASK_SSHA512_SIG1H, match_opcode, 0},
++{"ssha512.sum0r", 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SUM0R, MASK_SSHA512_SUM0R, match_opcode, 0},
++{"ssha512.sum1r", 0, INSN_CLASS_I,    "d,s,t", MATCH_SSHA512_SUM1R, MASK_SSHA512_SUM1R, match_opcode, 0},
++{"ssha512.sig0" ,64, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SIG0, MASK_SSHA512_SIG0, match_opcode, 0},
++{"ssha512.sig1" ,64, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SIG1, MASK_SSHA512_SIG1, match_opcode, 0},
++{"ssha512.sum0" ,64, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SUM0, MASK_SSHA512_SUM0, match_opcode, 0},
++{"ssha512.sum1" ,64, INSN_CLASS_I,      "d,s", MATCH_SSHA512_SUM1, MASK_SSHA512_SUM1, match_opcode, 0},
++{"pollentropy"  , 0, INSN_CLASS_I,      "d,>", MATCH_POLLENTROPY, MASK_POLLENTROPY, match_opcode, 0},
 +
  /* Single-precision floating-point instruction subset */
  {"frcsr",     0, INSN_CLASS_F,   "d",  MATCH_FRCSR, MASK_FRCSR, match_opcode, INSN_ALIAS },
