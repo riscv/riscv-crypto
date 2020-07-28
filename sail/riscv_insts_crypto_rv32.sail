@@ -63,29 +63,22 @@ mapping  clause assembly = SAES32   (     bs, rs2   , rs1   , rd    , op     )
  * - rs2: Source register 2 address
  * - bs : 2-bit byte shift.
  */ 
-function clause execute   (SAES32   (     bs, rs2   , rs1   , rd    , op))={
-    let rs1_val : xlenbits  = X(rs1);
-    let rs2_val : xlenbits  = X(rs2);
-    let shamt   : bits(6)   = aes_bs_to_shamt(bs);
-    let sb_in   : bits(8)   = (rs2_val >>shamt)[7..0];
-    let sb_out  : bits(8)   = 
-        if (saes_op_to_enc(op)) then aes_sbox_fwd(sb_in)
-                                else aes_sbox_inv(sb_in)
-    ;
-    let mixed   : xlenbits  =
-        if(saes_op_to_mix(op)) then
-            if(saes_op_to_enc(op)) then
-                gfmul(sb_out, 0x03) @       sb_out        @
-                      sb_out        @ gfmul(sb_out, 0x02)
-            else
-                gfmul(sb_out, 0x0b) @ gfmul(sb_out, 0x0d) @
-                gfmul(sb_out, 0x09) @ gfmul(sb_out, 0x0e)
-        else
-            0x000000 @ sb_out
-    ;
-    let rotated: xlenbits  = (mixed << shamt) ^ (mixed >> (0b100000-shamt));
-    X(rd) = rotated ^ rs1_val;
-    RETIRE_SUCCESS
+function clause execute   (SAES32 (bs, rs2, rs1, rd, op))={
+  let rs1_val : xlenbits = X(rs1);
+  let rs2_val : xlenbits = X(rs2);
+  let shamt   : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
+  let si      : bits(8)  = (rs2_val >> shamt)[7..0]; /* SBox Input */
+  let so      : bits(8)  = if (saes_op_fwd(op)) then aes_sbox_fwd(si)
+                                                else aes_sbox_inv(si);
+  let mixed   : xlenbits =
+    if(saes_op_does_mix(op)) then
+      if(saes_op_fwd(op)) then aes_mix_column_byte_fwd(so)
+                          else aes_mix_column_byte_inv(so)
+    else
+        0x000000 @ so;
+  let result  : xlenbits = rs1_val ^ (mixed << shamt) ^ (mixed >> (0b100000-shamt));
+  X(rd)       = result;
+  RETIRE_SUCCESS
 }
 
 /*
@@ -147,51 +140,51 @@ mapping clause assembly = SSHA512_SUM1R (rs2,rs1,rd) <->
  */
 
 function clause execute (  SSHA512_SIG0L (rs2,rs1,rd)) = {
-    let r1 : bits(32) = X(rs1)[31..0];
-    let r2 : bits(32) = X(rs2)[31..0];
-    X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
-             (r2 << 31) ^ (r2 << 25) ^ (r2 << 24) ;
-    RETIRE_SUCCESS
+  let r1 : bits(32) = X(rs1)[31..0];
+  let r2 : bits(32) = X(rs2)[31..0];
+  X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
+           (r2 << 31) ^ (r2 << 25) ^ (r2 << 24) ;
+  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG0H (rs2,rs1,rd)) = {
-    let r1 : bits(32) = X(rs1)[31..0];
-    let r2 : bits(32) = X(rs2)[31..0];
-    X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
-             (r2 << 31)              ^ (r2 << 24) ;
-    RETIRE_SUCCESS
+  let r1 : bits(32) = X(rs1)[31..0];
+  let r2 : bits(32) = X(rs2)[31..0];
+  X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
+           (r2 << 31)              ^ (r2 << 24) ;
+  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG1L (rs2,rs1,rd)) = {
-    let r1 : bits(32) = X(rs1)[31..0];
-    let r2 : bits(32) = X(rs2)[31..0];
-    X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
-             (r2 << 29) ^ (r2 << 26) ^ (r2 << 13) ;
-    RETIRE_SUCCESS
+  let r1 : bits(32) = X(rs1)[31..0];
+  let r2 : bits(32) = X(rs2)[31..0];
+  X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
+           (r2 << 29) ^ (r2 << 26) ^ (r2 << 13) ;
+  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG1H (rs2,rs1,rd)) = {
-    let r1 : bits(32) = X(rs1)[31..0];
-    let r2 : bits(32) = X(rs2)[31..0];
-    X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
-             (r2 << 29)              ^ (r2 << 13) ;
-    RETIRE_SUCCESS
+  let r1 : bits(32) = X(rs1)[31..0];
+  let r2 : bits(32) = X(rs2)[31..0];
+  X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
+           (r2 << 29)              ^ (r2 << 13) ;
+  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SUM0R (rs2,rs1,rd)) = {
-    let r1 : bits(32) = X(rs1)[31..0];
-    let r2 : bits(32) = X(rs2)[31..0];
-    X(rd)  = (r1 << 25) ^ (r1 << 30) ^ (r1 >> 28) ^
-             (r2 <<  7) ^ (r2 <<  2) ^ (r2 << 24) ;
-    RETIRE_SUCCESS
+  let r1 : bits(32) = X(rs1)[31..0];
+  let r2 : bits(32) = X(rs2)[31..0];
+  X(rd)  = (r1 << 25) ^ (r1 << 30) ^ (r1 >> 28) ^
+           (r2 <<  7) ^ (r2 <<  2) ^ (r2 << 24) ;
+  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SUM1R (rs2,rs1,rd)) = {
-    let r1 : bits(32) = X(rs1)[31..0];
-    let r2 : bits(32) = X(rs2)[31..0];
-    X(rd)  = (r1 << 23) ^ (r1 << 14) ^ (r1 >> 18) ^
-             (r2 <<  9) ^ (r2 << 18) ^ (r2 << 14) ;
-    RETIRE_SUCCESS
+  let r1 : bits(32) = X(rs1)[31..0];
+  let r2 : bits(32) = X(rs2)[31..0];
+  X(rd)  = (r1 << 23) ^ (r1 << 14) ^ (r1 >> 18) ^
+           (r2 <<  9) ^ (r2 << 18) ^ (r2 << 14) ;
+  RETIRE_SUCCESS
 }
 
 

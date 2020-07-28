@@ -39,7 +39,7 @@ enum            ssm4_op = {
 }
 
 /* Map scalar instruction round function ops to whether they enc or dec? */
-mapping saes_op_to_enc     : saes_op <-> bool = {
+mapping saes_op_fwd        : saes_op <-> bool = {
     ENCSM   <-> true    ,
     ENCS    <-> true    ,
     DECSM   <-> false   ,
@@ -47,7 +47,7 @@ mapping saes_op_to_enc     : saes_op <-> bool = {
 }
 
 /* Map scalar instruction round function ops to whether they perform mix? */
-mapping saes_op_to_mix     : saes_op <-> bool = {
+mapping saes_op_does_mix   : saes_op <-> bool = {
     ENCSM   <-> true    ,
     ENCS    <-> false   ,
     DECSM   <-> true    ,
@@ -93,19 +93,18 @@ function gfmul( x, y) = {
     (if(bit_to_bool(y[3])) then xt2(xt2(xt2(x))) else 0x00)
 }
 
-
-/* Multiply aes byte shift encoding by eight to get actual shift amount.
- * - Translate to 6-bit value since we need to perform "32-shamt" for
- *   the rotate operation at the end of the 32-bit instructions, and
- *   the type checker isn't happy about mixing 5/6 bit ops
- */
-val     aes_bs_to_shamt : bits(2) <-> bits(6)
-mapping aes_bs_to_shamt : bits(2) <-> bits(6) = {
-    0b00 <-> 0b000000,
-    0b01 <-> 0b001000,
-    0b10 <-> 0b010000,
-    0b11 <-> 0b011000
+/* 8-bit to 32-bit partial AES Mix Colum - forwards */
+val      aes_mix_column_byte_fwd : bits(8) -> bits(32)
+function aes_mix_column_byte_fwd (so) = {
+        gfmul(so, 0x03) @       so        @       so        @ gfmul(so, 0x02)
 }
+
+/* 8-bit to 32-bit partial AES Mix Colum - inverse*/
+val      aes_mix_column_byte_inv : bits(8) -> bits(32)
+function aes_mix_column_byte_inv (so) = {
+        gfmul(so, 0x0b) @ gfmul(so, 0x0d) @ gfmul(so, 0x09) @ gfmul(so, 0x0e)
+}
+
 
 /* AES SBox - forwards */
 let aes_sbox_fwd_table : list(bits(8)) = [|
