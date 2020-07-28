@@ -30,8 +30,8 @@ RV32:
   ssha512.sum0r rd, rs1, rs2 : rd = sll32(rs1,25) ^ sll32(rs1,30)  ^ srl32(rs1,28) ^
                                     sll32(rs2, 7) ^ sll32(rs2, 2)  ^ sll32(rs2, 4)
   
-  ssha512.sum1r rd, rs1, rs2 : rd = sll32(rs1,25) ^ sll32(rs1,30)  ^ srl32(rs1,28) ^
-                                    sll32(rs2, 7) ^ sll32(rs2, 2)  ^ sll32(rs2, 4)
+  ssha512.sum1r rd, rs1, rs2 : rd = sll32(rs1,23) ^ sll32(rs1,14)  ^ srl32(rs1,18) ^
+                                    sll32(rs2, 9) ^ sll32(rs2,18)  ^ sll32(rs2,14)
   
   ssha512.sig0l rd, rs1, rs2 : rd = srl32(rs1, 1) ^ srl32(rs1, 7) ^ srl32(rs1, 8) ^
                                     sll32(rs2,31) ^ sll32(rs2,25) ^ sll32(rs2,24)
