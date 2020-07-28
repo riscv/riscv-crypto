@@ -22,6 +22,7 @@ acodes['rdp'    ] = "(N,M)"
 acodes['rs1'    ] = "s"
 acodes['rs2'    ] = "t"
 acodes['rs3'    ] = "r"
+acodes['shamtw' ] = ">"
 
 arglut = {}
 arglut['bs']   = (31,30)

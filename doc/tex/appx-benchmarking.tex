@@ -1,0 +1,128 @@
+
+\section{Benchmarking}
+
+\subsection{AES}
+\label{sec:benchmark:aes}
+
+The source code for these benchmarks is available as part of the
+{\tt riscv-crypto} 
+\href{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_block/aes}{GitHub repository}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrr}
+AES Proposal & Instrs Enc & Instrs Dec & Instrs Ks Enc & Instrs Ks Dec & Static Code Size (Bytes) \\ \hline
+Reference   & 3260  & 6704  & 594  &  594  & 6233   \\
+TTable      & 1005  & 1012  & 625  &  1863 & 14353  \\
+V1 Latency  & 2756  & 6537  & 462  &  462  & 3575   \\
+V1 Size     & 2874  & 6681  & 510  &  510  & -      \\
+V2 Latency  & 325   & 307   & 462  &  581  & 1867   \\
+V2 Size     & 552   & 539   & 462  &  687  & -      \\
+V3.1 / RV32 & 321   & 321   & 238  &  682  & 1952   \\
+V3.2        & 480   & 470   & 238  &  826  & 2264   \\
+V4 / RV64   & 101   & 111   & 67   &  132  & 594     \\
+\end{tabular}
+\caption{
+AES instruction execution counts measured using Spike
+running {\tt rv32imcb\_Zscrypto}.
+Instruction counts are for a single AES 128 block encrypt/decrypt operation,
+or for a single encrypt/decrypt key schedule.
+V1 and V2 proposals include results for ``latency" optimised and ``size"
+optimised implementations of the underlying instructions.
+The ``latency" rows assume one cycle per instruction.
+The ``size" rows assume four cycles per instruction (corresponding to
+one implemented SBox), which is modelled by padding each AES instruction
+with 3 additional {\tt nop} instructions.
+Static code size is reported as the sum of all {\tt .text} and {\tt .data}
+sections for encrypt, decrypt and key schedule.
+}
+\label{tab:benchmarks:aes:perf}
+\end{table}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llllllll}
+AES Proposal & Longest Topological Path & NAND2 Gates \\ \hline
+V1 Latency   & 18                       & 2376        \\
+V1 Size      & 21                       & 966         \\
+V2 Latency   & 18                       & 3453        \\
+V2 Size      & 21                       & 1287        \\
+V3.1 / RV32  & 30                       & 1157        \\
+V3.2         & 23                       & 1117        \\
+V4 / RV64 Latency & 28                  & 8482        \\
+\end{tabular}
+\caption{
+AES proposal RTL implementation benchmarks.
+Measured using the Yosys simple CMOS flow.
+The V1 and V2 proposals have "Latency" and "Size" optimised versions.
+The "Latency" versions use $4$ SBox instantiations and compute their
+results in a single clock cycle.
+The "Size" versions use $1$ SBox instantiation, and compute their
+results over 4 clock cycles.
+}
+\label{tab:benchmarks:aes:impl}
+\end{table}
+
+\newpage
+\subsection{SHA2}
+\label{sec:benchmark:sha2}
+
+The source code for the
+SHA256\footnote{\url{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_hash/sha256}}
+and
+SHA512\footnote{\url{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_hash/sha512}}
+benchmarks are available as part of the {\tt riscv-crypto}
+\href{https://github.com/scarv/riscv-crypto/tree/master/benchmarks/crypto_block/aes}{GitHub repository}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+Architecture      & Static Code Size (Bytes) & Instructions Executed & Performance Gain \\ \hline
+rv32gc            & 14934                    & 78003 & 1.00x          \\
+rv32gcb           & 10086                    & 56866 & 1.37x          \\
+rv32gcb\_Zscrypto & 5938                     & 28539 & 2.73x 
+\end{tabular}
+\caption{{\bf SHA256:}
+Static code size and instructions executed comparison for
+the \mnemonic{ssha256.sx} instructions on RV32 based architectures.
+Instruction execution counts are for hashing 1024 bytes of data using
+SHA256.
+}
+\label{tab:benchmarks:sha256}
+\end{table}
+
+Area and path length estimates are calculated using a basic Yosys CMOS
+synthesis flow.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+Architecture      & Static Code Size (Bytes) & Instructions Executed & Performance Gain \\ \hline
+rv64gc            & 20490                    & 73138 & 1.00x          \\
+rv64gcb           & 14216                    & 53153 & 1.38x          \\
+rv64gcb\_Zscrypto & 8954                     & 35881 & 2.04x 
+\end{tabular}
+\caption{{\bf SHA512:}
+Static code size and instructions executed comparison for
+the \mnemonic{ssha512.sx} instructions on RV64 based architectures.
+Instruction execution counts are for hashing 1024 bytes of data
+using SHA512.
+}
+\label{tab:benchmarks:sha512}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+Instructions   & Longest Topological Path & Area (NAND2 Equivalent) \\ \hline
+ssha256.s*     & 5                        & 787                   \\
+ssha512.s*     & 6                        & 1534                  \\
+\end{tabular}
+\caption{
+Area and path length estimates are calculated using a basic Yosys CMOS
+synthesis flow.
+}
+\label{tab:benchmarks:sha2:rtl}
+\end{table}
+

@@ -10,62 +10,53 @@
 # - The expectation is that the scalar crypto instructions will be
 #   brownfield, fitting in alongside pre-existing encodings.
 #
-# - These encodings introduce a new field type: `rdp` which is a 4-bit
-#   destination register *pair* address. It overlaps the top 4 bits of the
-#   normal `rd` field. It is used to address adjacent odd/even register pairs.
 
 #
 # ------------------------------------------------------------
 
-# RV32 / RV64
-lut4lo      rd  rs1 rs2         31..25=48 14..12=0 6..2=0x0A 1..0=3
-lut4hi      rd  rs1 rs2         31..25=49 14..12=0 6..2=0x0A 1..0=3
+# Scalar SM4 - RV32, RV64
+ssm4.ed         rd rs1 rs2 bs    29..25=4            14..12=3 6..0=0x2B
+ssm4.ks         rd rs1 rs2 bs    29..25=5            14..12=3 6..0=0x2B
 
-# RV64 Only
-lut4        rd  rs1 rs2         31..25=50 14..12=0 6..2=0x0A 1..0=3
+# Scalar AES - RV32
+saes32.encsm    rd rs1 rs2 bs    29..25=0            14..12=2 6..0=0x2B
+saes32.encs     rd rs1 rs2 bs    29..25=1            14..12=2 6..0=0x2B
+saes32.decsm    rd rs1 rs2 bs    29..25=2            14..12=2 6..0=0x2B
+saes32.decs     rd rs1 rs2 bs    29..25=3            14..12=2 6..0=0x2B
 
-#
-# ------------------------------------------------------------
-    
-saes32.encsm      rd rs1 rs2 bs    29..25=0  14..12=2 6..2=0x0A 1..0=3
-saes32.encs       rd rs1 rs2 bs    29..25=1  14..12=2 6..2=0x0A 1..0=3
-saes32.decsm      rd rs1 rs2 bs    29..25=2  14..12=2 6..2=0x0A 1..0=3
-saes32.decs       rd rs1 rs2 bs    29..25=3  14..12=2 6..2=0x0A 1..0=3
+# Scalar AES - RV64
+saes64.ks1      rd rs1 rcon      31..25=4  24=0      14..12=2 6..0=0x2B
+saes64.ks2      rd rs1 rs2       31..25=5            14..12=2 6..0=0x2B
+saes64.imix     rd rs1           31..25=6  24..20=1  14..12=2 6..0=0x2B
+saes64.encsm    rd rs1 rs2       31..25=7            14..12=2 6..0=0x2B
+saes64.encs     rd rs1 rs2       31..25=8            14..12=2 6..0=0x2B
+saes64.decsm    rd rs1 rs2       31..25=9            14..12=2 6..0=0x2B
+saes64.decs     rd rs1 rs2       31..25=10           14..12=2 6..0=0x2B
 
-ssm4.ed           rd rs1 rs2 bs    29..25=4  14..12=3 6..2=0x0A 1..0=3
-ssm4.ks           rd rs1 rs2 bs    29..25=5  14..12=3 6..2=0x0A 1..0=3
+# Scalar SHA256 - RV32/RV64
+ssha256.sig0    rd rs1           31..25=7  24..20=0  14..12=7  6..0=0x2B
+ssha256.sig1    rd rs1           31..25=7  24..20=1  14..12=7  6..0=0x2B
+ssha256.sum0    rd rs1           31..25=7  24..20=2  14..12=7  6..0=0x2B
+ssha256.sum1    rd rs1           31..25=7  24..20=3  14..12=7  6..0=0x2B
 
-saes64.ks1        rd rs1 rcon 24=0 31..25=4  14..12=2 6..2=0x0A 1..0=3
-saes64.ks2        rd rs1 rs2       31..25=5  14..12=2 6..2=0x0A 1..0=3
-saes64.imix       rd rs1 24..20=1  31..25=6  14..12=2 6..2=0x0A 1..0=3
-saes64.encsm      rd rs1 rs2       31..25=7  14..12=2 6..2=0x0A 1..0=3
-saes64.encs       rd rs1 rs2       31..25=8  14..12=2 6..2=0x0A 1..0=3
-saes64.decsm      rd rs1 rs2       31..25=9  14..12=2 6..2=0x0A 1..0=3
-saes64.decs       rd rs1 rs2       31..25=10 14..12=2 6..2=0x0A 1..0=3
+# Scalar SM3 - RV32, RV64
+ssm3.p0         rd rs1           31..25=7  24..20=8  14..12=7  6..0=0x2B
+ssm3.p1         rd rs1           31..25=7  24..20=9  14..12=7  6..0=0x2B
+                                                     
+# Scalar SHA512 - RV32                                               
+ssha512.sig0l   rd rs1 rs2       31..25=8            14..12=7  6..0=0x2B
+ssha512.sig0h   rd rs1 rs2       31..25=9            14..12=7  6..0=0x2B
+ssha512.sig1l   rd rs1 rs2       31..25=10           14..12=7  6..0=0x2B
+ssha512.sig1h   rd rs1 rs2       31..25=11           14..12=7  6..0=0x2B
+ssha512.sum0r   rd rs1 rs2       31..25=12           14..12=7  6..0=0x2B
+ssha512.sum1r   rd rs1 rs2       31..25=13           14..12=7  6..0=0x2B
+                                                     
+# Scalar SHA512 - RV64                                               
+ssha512.sig0    rd rs1           31..25=7  24..20=4  14..12=7  6..0=0x2B
+ssha512.sig1    rd rs1           31..25=7  24..20=5  14..12=7  6..0=0x2B
+ssha512.sum0    rd rs1           31..25=7  24..20=6  14..12=7  6..0=0x2B
+ssha512.sum1    rd rs1           31..25=7  24..20=7  14..12=7  6..0=0x2B
 
-#
-# ------------------------------------------------------------
-
-# RV32/RV64
-ssha256.sig0  rd rs1              14..12=7 31..25=7 24..20=0  6..2=0xA 1..0=3
-ssha256.sig1  rd rs1              14..12=7 31..25=7 24..20=1  6..2=0xA 1..0=3
-ssha256.sum0  rd rs1              14..12=7 31..25=7 24..20=2  6..2=0xA 1..0=3
-ssha256.sum1  rd rs1              14..12=7 31..25=7 24..20=3  6..2=0xA 1..0=3
-
-# RV32
-ssha512.sig0l rd rs1 rs2          14..12=7 31..25=8           6..2=0xA 1..0=3
-ssha512.sig0h rd rs1 rs2          14..12=7 31..25=9           6..2=0xA 1..0=3
-ssha512.sig1l rd rs1 rs2          14..12=7 31..25=10          6..2=0xA 1..0=3
-ssha512.sig1h rd rs1 rs2          14..12=7 31..25=11          6..2=0xA 1..0=3
-ssha512.sum0r rd rs1 rs2          14..12=7 31..25=12          6..2=0xA 1..0=3
-ssha512.sum1r rd rs1 rs2          14..12=7 31..25=13          6..2=0xA 1..0=3
-
-# RV64
-ssha512.sig0  rd rs1              14..12=7 31..25=7 24..20=4  6..2=0xA 1..0=3
-ssha512.sig1  rd rs1              14..12=7 31..25=7 24..20=5  6..2=0xA 1..0=3
-ssha512.sum0  rd rs1              14..12=7 31..25=7 24..20=6  6..2=0xA 1..0=3
-ssha512.sum1  rd rs1              14..12=7 31..25=7 24..20=7  6..2=0xA 1..0=3
-
-#
-# ------------------------------------------------------------
+# Poll Entropy Instruction
+pollentropy     rd shamtw        31..25=7  19..15=10 14..12=7  6..0=0x2B
 
