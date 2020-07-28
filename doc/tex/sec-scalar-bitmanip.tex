@@ -149,7 +149,7 @@ in systems without the ternary Bitmanip {\tt cmov} instruction.
 
 Useful for:
 SHA3 Chi step,
-SHA2 Ch step
+bitsliced function implementations
 and
 software based power/EM side-channel countermeasures based on masking.
 
@@ -211,3 +211,61 @@ SPARX.
 Algorithms benefiting from packing bytes into words:
 AES, SHA2, SHA3.
 
+
+\subsubsection{Crossbar Permutation Instructions}
+
+See \cite[Section 2.2.4]{riscv:bitmanip:draft} for a complete
+description of these instructions.
+
+\begin{cryptobitmanipisa}
+RV32, RV64:                         RV64:
+    xperm.n rd, rs1, rs2                xperm.w   rd, rs1, rs2
+    xperm.b rd, rs1, rs2
+    xperm.h rd, rs1, rs2
+\end{cryptobitmanipisa}
+
+These instructions operate on nibbles, bytes, halfwords or words
+depending on the instruction suffix.
+The \rsone register contains a vector of $\XLEN/X$, $X$-bit elements, where
+$X \in \{2,4,8,16,32\}$ depending on the instruction.
+The \rstwo register contains a vector of $\XLEN/X$, $X$-bit indexes.
+The result is each element in \rstwo replaced by the indexed element
+in \rsone, or zero if the index into \rstwo is out of bounds.
+
+Together, the instructions can be used to implement aribitrary bit
+permutations.
+For cryptography, they can accelerate bit-sliced implementations,
+permutation layers of block ciphers and masking based countermeasures.
+Figure \ref{fig:example:xperm} shows example implementations of the
+$4$-bit PRINCE SBox using the instructions.
+Other lightweight block ciphers using $4$-bit SBoxes include
+PRESENT\cite{block:present},
+Rectangle\cite{block:rectangle},
+GIFT\cite{block:gift},
+Twine\cite{block:twine},
+Skinny, MANTIS\cite{block:skinny},
+Midori \cite{block:midori}.
+
+\begin{figure}[h]
+\begin{lstlisting}[style=ASM]
+prince_sbox_rv64:
+    li  t0, 0x4D5E087619CA23FB  // Load the prince block cipher SBox
+    xperm.n a0, t0, a0          // a0.4[i] = t0.4[a0.4[i]]
+    ret
+
+prince_sbox_rv32:
+    li  t0, 0x4D5E0876  // Load last  8 elements of prince sbox
+    li  t1, 0x19CA23FB  // Load first 8 elements of prince sbox
+    li  t2, 0x88888888  // Bit mask for MS bits of index nibbles.
+    xperm.n a1, t1, a0  // a1.4[i] = t1.4[a0.4[i]] if a0.4[i] < 8 else 0
+    xor     a0, a0, t2  // Toggle MS bit of each nibble in input vector
+    xperm.n a0, t0, a0  // a0.4[i] = t1.4[a0.4[i]] if a0.4[i] < 8 else 0
+    or      a0, a0, a1  // Or results together.
+    ret
+\end{lstlisting}
+\caption{
+    Example implementations of the $4$-bit PRINCE\cite{block:prince}
+    block cipher SBox using the \mnemonic{xperm.n} instruction.
+}
+\label{fig:example:xperm}
+\end{figure}

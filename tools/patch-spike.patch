@@ -13,24 +13,18 @@ index 9e03676..a76af54 100644
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..a988a37 100644
+index 3c4bf1c..714d88b 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -564,6 +564,94 @@
+@@ -564,6 +564,68 @@
  #define MASK_PACKUW  0xfe00707f
  #define MATCH_BFPW 0x4800703b
  #define MASK_BFPW  0xfe00707f
 +// Crypto ISE - Begin
-+#define MATCH_LUT4LO 0x6000002b
-+#define MASK_LUT4LO 0xfe00707f
-+#define MATCH_LUT4HI 0x6200002b
-+#define MASK_LUT4HI 0xfe00707f
-+#define MATCH_LUT4 0x6400002b
-+#define MASK_LUT4 0xfe00707f
-+#define MATCH_MMULU 0x200102b
-+#define MASK_MMULU 0x60070ff
-+#define MATCH_MACCU 0x102b
-+#define MASK_MACCU 0x60070ff
++#define MATCH_SSM4_ED 0x800302b
++#define MASK_SSM4_ED 0x3e00707f
++#define MATCH_SSM4_KS 0xa00302b
++#define MASK_SSM4_KS 0x3e00707f
 +#define MATCH_SAES32_ENCSM 0x202b
 +#define MASK_SAES32_ENCSM 0x3e00707f
 +#define MATCH_SAES32_ENCS 0x200202b
@@ -39,10 +33,6 @@ index 3c4bf1c..a988a37 100644
 +#define MASK_SAES32_DECSM 0x3e00707f
 +#define MATCH_SAES32_DECS 0x600202b
 +#define MASK_SAES32_DECS 0x3e00707f
-+#define MATCH_SSM4_ED 0x800302b
-+#define MASK_SSM4_ED 0x3e00707f
-+#define MATCH_SSM4_KS 0xa00302b
-+#define MASK_SSM4_KS 0x3e00707f
 +#define MATCH_SAES64_KS1 0x800202b
 +#define MASK_SAES64_KS1 0xff00707f
 +#define MATCH_SAES64_KS2 0xa00202b
@@ -65,6 +55,10 @@ index 3c4bf1c..a988a37 100644
 +#define MASK_SSHA256_SUM0 0xfff0707f
 +#define MATCH_SSHA256_SUM1 0xe30702b
 +#define MASK_SSHA256_SUM1 0xfff0707f
++#define MATCH_SSM3_P0 0xe80702b
++#define MASK_SSM3_P0 0xfff0707f
++#define MATCH_SSM3_P1 0xe90702b
++#define MASK_SSM3_P1 0xfff0707f
 +#define MATCH_SSHA512_SIG0L 0x1000702b
 +#define MASK_SSHA512_SIG0L 0xfe00707f
 +#define MATCH_SSHA512_SIG0H 0x1200702b
@@ -85,48 +79,23 @@ index 3c4bf1c..a988a37 100644
 +#define MASK_SSHA512_SUM0 0xfff0707f
 +#define MATCH_SSHA512_SUM1 0xe70702b
 +#define MASK_SSHA512_SUM1 0xfff0707f
-+#define MATCH_LBX 0x702b
-+#define MASK_LBX 0xfe00707f
-+#define MATCH_LHX 0x200702b
-+#define MASK_LHX 0xfe00707f
-+#define MATCH_LWX 0x400702b
-+#define MASK_LWX 0xfe00707f
-+#define MATCH_LDX 0x600702b
-+#define MASK_LDX 0xfe00707f
-+#define MATCH_LBUX 0x800702b
-+#define MASK_LBUX 0xfe00707f
-+#define MATCH_LHUX 0xa00702b
-+#define MASK_LHUX 0xfe00707f
-+#define MATCH_LWUX 0xc00702b
-+#define MASK_LWUX 0xfe00707f
-+#define MATCH_SBX 0x402b
-+#define MASK_SBX 0x6007fff
-+#define MATCH_SHX 0x40ab
-+#define MASK_SHX 0x6007fff
-+#define MATCH_SWX 0x412b
-+#define MASK_SWX 0x6007fff
-+#define MATCH_SDX 0x41ab
-+#define MASK_SDX 0x6007fff
-+// Crypto ISE - End
++#define MATCH_POLLENTROPY 0xe05702b
++#define MASK_POLLENTROPY 0xfe0ff07f
++// Crypto ISE - end
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2244,51 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2156,6 +2218,38 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
 +// Crypto ISE - Begin
-+DECLARE_INSN(lut4lo, MATCH_LUT4LO, MASK_LUT4LO)
-+DECLARE_INSN(lut4hi, MATCH_LUT4HI, MASK_LUT4HI)
-+DECLARE_INSN(lut4, MATCH_LUT4, MASK_LUT4)
-+DECLARE_INSN(mmulu, MATCH_MMULU, MASK_MMULU)
-+DECLARE_INSN(maccu, MATCH_MACCU, MASK_MACCU)
++DECLARE_INSN(ssm4_ed, MATCH_SSM4_ED, MASK_SSM4_ED)
++DECLARE_INSN(ssm4_ks, MATCH_SSM4_KS, MASK_SSM4_KS)
 +DECLARE_INSN(saes32_encsm, MATCH_SAES32_ENCSM, MASK_SAES32_ENCSM)
 +DECLARE_INSN(saes32_encs, MATCH_SAES32_ENCS, MASK_SAES32_ENCS)
 +DECLARE_INSN(saes32_decsm, MATCH_SAES32_DECSM, MASK_SAES32_DECSM)
 +DECLARE_INSN(saes32_decs, MATCH_SAES32_DECS, MASK_SAES32_DECS)
-+DECLARE_INSN(ssm4_ed, MATCH_SSM4_ED, MASK_SSM4_ED)
-+DECLARE_INSN(ssm4_ks, MATCH_SSM4_KS, MASK_SSM4_KS)
 +DECLARE_INSN(saes64_ks1, MATCH_SAES64_KS1, MASK_SAES64_KS1)
 +DECLARE_INSN(saes64_ks2, MATCH_SAES64_KS2, MASK_SAES64_KS2)
 +DECLARE_INSN(saes64_imix, MATCH_SAES64_IMIX, MASK_SAES64_IMIX)
@@ -138,6 +107,8 @@ index 3c4bf1c..a988a37 100644
 +DECLARE_INSN(ssha256_sig1, MATCH_SSHA256_SIG1, MASK_SSHA256_SIG1)
 +DECLARE_INSN(ssha256_sum0, MATCH_SSHA256_SUM0, MASK_SSHA256_SUM0)
 +DECLARE_INSN(ssha256_sum1, MATCH_SSHA256_SUM1, MASK_SSHA256_SUM1)
++DECLARE_INSN(ssm3_p0, MATCH_SSM3_P0, MASK_SSM3_P0)
++DECLARE_INSN(ssm3_p1, MATCH_SSM3_P1, MASK_SSM3_P1)
 +DECLARE_INSN(ssha512_sig0l, MATCH_SSHA512_SIG0L, MASK_SSHA512_SIG0L)
 +DECLARE_INSN(ssha512_sig0h, MATCH_SSHA512_SIG0H, MASK_SSHA512_SIG0H)
 +DECLARE_INSN(ssha512_sig1l, MATCH_SSHA512_SIG1L, MASK_SSHA512_SIG1L)
@@ -148,61 +119,21 @@ index 3c4bf1c..a988a37 100644
 +DECLARE_INSN(ssha512_sig1, MATCH_SSHA512_SIG1, MASK_SSHA512_SIG1)
 +DECLARE_INSN(ssha512_sum0, MATCH_SSHA512_SUM0, MASK_SSHA512_SUM0)
 +DECLARE_INSN(ssha512_sum1, MATCH_SSHA512_SUM1, MASK_SSHA512_SUM1)
-+DECLARE_INSN(lbx, MATCH_LBX, MASK_LBX)
-+DECLARE_INSN(lhx, MATCH_LHX, MASK_LHX)
-+DECLARE_INSN(lwx, MATCH_LWX, MASK_LWX)
-+DECLARE_INSN(ldx, MATCH_LDX, MASK_LDX)
-+DECLARE_INSN(lbux, MATCH_LBUX, MASK_LBUX)
-+DECLARE_INSN(lhux, MATCH_LHUX, MASK_LHUX)
-+DECLARE_INSN(lwux, MATCH_LWUX, MASK_LWUX)
-+DECLARE_INSN(sbx, MATCH_SBX, MASK_SBX)
-+DECLARE_INSN(shx, MATCH_SHX, MASK_SHX)
-+DECLARE_INSN(swx, MATCH_SWX, MASK_SWX)
-+DECLARE_INSN(sdx, MATCH_SDX, MASK_SDX)
++DECLARE_INSN(pollentropy, MATCH_POLLENTROPY, MASK_POLLENTROPY)
 +// Crypto ISE - End
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
-diff --git a/riscv/insns/lut4.h b/riscv/insns/lut4.h
+diff --git a/riscv/insns/pollentropy.h b/riscv/insns/pollentropy.h
 new file mode 100644
-index 0000000..891a2d4
+index 0000000..ce23097
 --- /dev/null
-+++ b/riscv/insns/lut4.h
-@@ -0,0 +1,7 @@
-+require_rv64;
-+uint64_t result = 0;
-+for(int i = 0; i < 64; i += 4) {
-+    result |= (RS2 >> (4*((RS1 >> i)&0xF)) & 0xF) << i;
-+}
-+WRITE_RD(result);
++++ b/riscv/insns/pollentropy.h
+@@ -0,0 +1,4 @@
 +
-diff --git a/riscv/insns/lut4hi.h b/riscv/insns/lut4hi.h
-new file mode 100644
-index 0000000..31c81d5
---- /dev/null
-+++ b/riscv/insns/lut4hi.h
-@@ -0,0 +1,8 @@
-+uint32_t result = 0;
-+for(int i = 0; i < 32; i += 4) {
-+    uint8_t idx =  (RS1 >> i) & 0x7;
-+    uint8_t hi  = ((RS1 >> i) & 0xF) >= 8;
-+    result     |= hi ? (RS2 >> (4*idx) & 0xF) << i : 0;
-+}
-+WRITE_RD(zext_xlen(result));
-+
-diff --git a/riscv/insns/lut4lo.h b/riscv/insns/lut4lo.h
-new file mode 100644
-index 0000000..7ae71ca
---- /dev/null
-+++ b/riscv/insns/lut4lo.h
-@@ -0,0 +1,7 @@
-+uint32_t result = 0;
-+for(int i = 0; i < 32; i += 4) {
-+    uint8_t idx =  (RS1 >> i) & 0x7;
-+    uint8_t lo  = ((RS1 >> i) & 0xF) <  8;
-+    result     |= lo ? (RS2 >> (4*idx) & 0xF) << i : 0;
-+}
-+WRITE_RD(zext_xlen(result));
++//
++// TODO
++//
 diff --git a/riscv/insns/saes32_decs.h b/riscv/insns/saes32_decs.h
 new file mode 100644
 index 0000000..9ba2e92
@@ -874,6 +805,36 @@ index 0000000..edfe15c
 +    ((uint32_t)RS2 >>  9) ^ ((uint32_t)RS2 << 18) ^ ((uint32_t)RS2 << 14);
 +
 +WRITE_RD(result);
+diff --git a/riscv/insns/ssm3_p0.h b/riscv/insns/ssm3_p0.h
+new file mode 100644
+index 0000000..f3b12d3
+--- /dev/null
++++ b/riscv/insns/ssm3_p0.h
+@@ -0,0 +1,9 @@
++
++#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
++
++WRITE_RD(
++    RS1 ^ ROL32(RS1, 15) ^ ROL32(RS1, 23)
++);
++
++#undef ROR32
++
+diff --git a/riscv/insns/ssm3_p1.h b/riscv/insns/ssm3_p1.h
+new file mode 100644
+index 0000000..d0afc3d
+--- /dev/null
++++ b/riscv/insns/ssm3_p1.h
+@@ -0,0 +1,9 @@
++
++#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
++
++WRITE_RD(
++    RS1 ^ ROL32(RS1, 9) ^ ROL32(RS1, 17)
++);
++
++#undef ROR32
++
 diff --git a/riscv/insns/ssm4_common.h b/riscv/insns/ssm4_common.h
 new file mode 100644
 index 0000000..17f129f
@@ -958,7 +919,7 @@ index 0000000..390858b
 +WRITE_RD(result);
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..102d936 100644
+index 4ee64fa..e1d1e40 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
 @@ -772,6 +772,37 @@ riscv_insn_priv = \
@@ -966,15 +927,14 @@ index 4ee64fa..102d936 100644
  	wfi \
  
 +riscv_insn_crypto = \
-+    lut4lo \
-+    lut4hi \
-+    lut4 \
 +    saes32_encsm \
 +    saes32_encs \
 +    saes32_decsm \
 +    saes32_decs \
 +    ssm4_ed \
 +    ssm4_ks \
++    ssm3_p0 \
++    ssm3_p1 \
 +    saes64_ks1 \
 +    saes64_ks2 \
 +    saes64_imix \
@@ -995,7 +955,8 @@ index 4ee64fa..102d936 100644
 +    ssha512_sig0 \
 +    ssha512_sig1 \
 +    ssha512_sum0 \
-+    ssha512_sum1
++    ssha512_sum1 \
++    pollentropy
  
  riscv_insn_list = \
  	$(riscv_insn_ext_a) \

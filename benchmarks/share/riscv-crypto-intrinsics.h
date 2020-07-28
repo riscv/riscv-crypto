@@ -83,6 +83,15 @@ static inline uint32_t _ssm4_ed (uint32_t rs1, uint32_t rs2, int bs) {uint32_t r
 #endif
 
 //
+// SM3
+//
+
+#if (defined(__ZSCRYPTO))
+static inline uint32_t _ssm3_p0 (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("ssm3.p0 %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _ssm3_p1 (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("ssm3.p1 %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+#endif
+
+//
 // Bitmanip Instruction Intrinsics
 //
 

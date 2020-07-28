@@ -7,9 +7,6 @@ This section details proposals for acceleration of
 the AES block cipher \cite{nist:fips:197} within a scalar RISC-V core,
 obeying the two-read-one-write constraint on general purpose register
 file accesses.
-Performance and RTL benchmarks for these
-instruction proposals are found in Section
-\ref{sec:benchmark:aes}.
 
 \subsubsection{RV32 Instructions}
 \label{sec:scalar:aes:rv32}
@@ -150,10 +147,8 @@ $2$ \mnemonic{xor} to add the round key to the current state
 and
 $2$ of the relevant AES encrypt/decrypt instructions to perform the
     SubBytes, ShiftRows and MixColumns round functions.
-This adds up to $76$ instructions per AES-128 block
-encryption.
-Loading the plaintext and storing the cipher text (if 8-byte aligned)
-takes $4$ instructions.
+An un-rolled AES-128 block encryption with an offline KeySchedule
+hence requires $69$ instructions in total.
 
 These instructions are amenable to macro-op fusion.
 The recommended sequences are:

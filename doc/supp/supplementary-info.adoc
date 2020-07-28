@@ -30,5 +30,5 @@ include::gcm-mode-cmul.adoc[]
 
 include::bitlogic.adoc[]
 
-include::pollentropy.adoc[]
+include::fusion.adoc[]
 

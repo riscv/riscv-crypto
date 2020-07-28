@@ -70,8 +70,8 @@ void test_aes_192(int num_tests) {
 
         printf("testnum         = %d\n",i);
 
-        printf("ref_ct          = AES.new(key).encrypt(pt    )\n");
-        printf("ref_pt          = AES.new(key).decrypt(ref_ct)\n");
+        printf("ref_ct          = AES.new(key,AES.MODE_ECB).encrypt(pt    )\n");
+        printf("ref_pt          = AES.new(key,AES.MODE_ECB).decrypt(ref_ct)\n");
         printf("if( ref_ct     != ct        ):\n");
         printf("    print(\"AES 192 Test %d encrypt failed.\")\n", i);
         printf("    print( 'key == %%s' %% ( binascii.b2a_hex( key    )))\n");

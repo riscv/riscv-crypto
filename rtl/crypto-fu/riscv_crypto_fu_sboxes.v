@@ -482,7 +482,7 @@ riscv_crypto_aes_fwd_sbox i_fwd (
 
 riscv_crypto_aes_inv_sbox i_inv (
     .in(in)     ,
-    .fx(fx_fwd)
+    .fx(fx_inv)
 );
 
 assign fx = dec ? fx_inv : fx_fwd;
