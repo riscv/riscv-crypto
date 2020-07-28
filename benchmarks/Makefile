@@ -11,6 +11,9 @@ BUILDTARGETS=
 # Simulation targets
 RUNTARGETS  = 
 
+# Configuration to use
+CONFIG     ?=rv64-zscrypto
+
 include common.mk
 
 #
