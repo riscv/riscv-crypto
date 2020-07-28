@@ -23,6 +23,8 @@ sail_args_types = {
     "rcon"  : "bits(4)",
 }
 
+reg_names = ["rd", "rs1", "rs2", "rs3"]
+
 acodes = {}
 acodes['bs'     ] = "w"
 acodes['rcon'   ] = "W"
@@ -941,18 +943,24 @@ def make_sail():
         encdec_str = make_sail_encdec_pattern(instr)
 
         clause_encdec = "mapping clause encdec = %15s   (%s) <-> %s" % (
-            iname, ",".join(iargs), " ^ ".join(encdec_str)
+            iname, ",".join(iargs), " @ ".join(encdec_str)
         )
 
         clause_ast    = "union   clause ast    = %15s : (%s)" % (
             iname, ",".join(iarg_types)
         )
+        
+        asm_tokens = arguments[instr].copy()
+
+        for i in range(0,len(asm_tokens)):
+            if(asm_tokens[i] in reg_names):
+                asm_tokens[i] = "reg_name(%s)" % asm_tokens[i]
 
         asm_str = "\"%s\" ^ spc() ^ %s" % (
-            instr, " ^ sep() ^ ".join(arguments[instr])
+            instr, " ^ sep() ^ ".join(asm_tokens)
         )
 
-        clause_asm    = "mappings clause assembly = %15s (%s) <-> %s" % (
+        clause_asm    = "mapping clause assembly = %15s (%s) <-> %s" % (
             iname, ",".join(iargs), asm_str
         )
 
@@ -1198,7 +1206,7 @@ if __name__ == "__main__":
     make_sverilog()
   elif sys.argv[1] == '-verilog':
     make_verilog(match,mask)
-  elif sys.argv[1] == '-sail':
+  elif sys.argv[1] == '-sail-boilerplate':
     make_sail()
   elif sys.argv[1] == '-c':
     make_c(match,mask)

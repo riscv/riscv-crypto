@@ -65,6 +65,11 @@ function ror32  (x, y) = {
     shift_bits_right(x,y) | shift_bits_left(x,(0b00100000-EXTZ(y)))
 }
 
+val      ror64  : (bits(64), bits(8)) -> bits(64)
+function ror64  (x, y) = {
+    shift_bits_right(x,y) | shift_bits_left(x,(0b01000000-EXTZ(y)))
+}
+
 val      rol32  : (bits(32), bits(8)) -> bits(32)
 function rol32  (x, y) = {
     shift_bits_left(x,y) | shift_bits_right(x,(0b00100000-EXTZ(y)))

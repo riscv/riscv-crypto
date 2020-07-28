@@ -94,5 +94,104 @@ function clause execute   (SAES32   (     bs, rs2   , rs1   , rd    , op))={
  */
 
 
-/*                                    TBD                                */
+/* AST clauses for the RV32 SHA512 instructions. */
+union   clause ast    = SSHA512_SIG0L : (regidx,regidx,regidx)
+union   clause ast    = SSHA512_SIG0H : (regidx,regidx,regidx)
+union   clause ast    = SSHA512_SIG1L : (regidx,regidx,regidx)
+union   clause ast    = SSHA512_SIG1H : (regidx,regidx,regidx)
+union   clause ast    = SSHA512_SUM0R : (regidx,regidx,regidx)
+union   clause ast    = SSHA512_SUM1R : (regidx,regidx,regidx)
+
+/* Encode / decode mappings for the RV32 SHA512 instructions. */
+mapping clause encdec = SSHA512_SIG0L (rs2,rs1,rd) <->
+    0b0001000 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+
+mapping clause encdec = SSHA512_SIG0H (rs2,rs1,rd) <->
+    0b0001001 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+
+mapping clause encdec = SSHA512_SIG1L (rs2,rs1,rd) <->
+    0b0001010 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+
+mapping clause encdec = SSHA512_SIG1H (rs2,rs1,rd) <->
+    0b0001011 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+
+mapping clause encdec = SSHA512_SUM0R (rs2,rs1,rd) <->
+    0b0001100 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+
+mapping clause encdec = SSHA512_SUM1R (rs2,rs1,rd) <->
+    0b0001101 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+
+
+/* Assembly string mappings for the RV32 SHA512 instructions. */
+mapping clause assembly = SSHA512_SIG0L (rs2,rs1,rd) <->
+    "ssha512.sig0l" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
+
+mapping clause assembly = SSHA512_SIG0H (rs2,rs1,rd) <->
+    "ssha512.sig0h" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
+
+mapping clause assembly = SSHA512_SIG1L (rs2,rs1,rd) <->
+    "ssha512.sig1l" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
+
+mapping clause assembly = SSHA512_SIG1H (rs2,rs1,rd) <->
+    "ssha512.sig1h" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
+
+mapping clause assembly = SSHA512_SUM0R (rs2,rs1,rd) <->
+    "ssha512.sum0r" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
+
+mapping clause assembly = SSHA512_SUM1R (rs2,rs1,rd) <->
+    "ssha512.sum1r" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
+
+
+/*
+ * Execute clauses for the 32-bit SHA512 instructions.
+ */
+
+function clause execute (  SSHA512_SIG0L (rs2,rs1,rd)) = {
+    let r1 : bits(32) = X(rs1)[31..0];
+    let r2 : bits(32) = X(rs2)[31..0];
+    X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
+             (r2 << 31) ^ (r2 << 25) ^ (r2 << 24) ;
+    RETIRE_SUCCESS
+}
+
+function clause execute (  SSHA512_SIG0H (rs2,rs1,rd)) = {
+    let r1 : bits(32) = X(rs1)[31..0];
+    let r2 : bits(32) = X(rs2)[31..0];
+    X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
+             (r2 << 31)              ^ (r2 << 24) ;
+    RETIRE_SUCCESS
+}
+
+function clause execute (  SSHA512_SIG1L (rs2,rs1,rd)) = {
+    let r1 : bits(32) = X(rs1)[31..0];
+    let r2 : bits(32) = X(rs2)[31..0];
+    X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
+             (r2 << 29) ^ (r2 << 26) ^ (r2 << 13) ;
+    RETIRE_SUCCESS
+}
+
+function clause execute (  SSHA512_SIG1H (rs2,rs1,rd)) = {
+    let r1 : bits(32) = X(rs1)[31..0];
+    let r2 : bits(32) = X(rs2)[31..0];
+    X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
+             (r2 << 29)              ^ (r2 << 13) ;
+    RETIRE_SUCCESS
+}
+
+function clause execute (  SSHA512_SUM0R (rs2,rs1,rd)) = {
+    let r1 : bits(32) = X(rs1)[31..0];
+    let r2 : bits(32) = X(rs2)[31..0];
+    X(rd)  = (r1 << 25) ^ (r1 << 30) ^ (r1 >> 28) ^
+             (r2 <<  7) ^ (r2 <<  2) ^ (r2 << 24) ;
+    RETIRE_SUCCESS
+}
+
+function clause execute (  SSHA512_SUM1R (rs2,rs1,rd)) = {
+    let r1 : bits(32) = X(rs1)[31..0];
+    let r2 : bits(32) = X(rs2)[31..0];
+    X(rd)  = (r1 << 23) ^ (r1 << 14) ^ (r1 >> 18) ^
+             (r2 <<  9) ^ (r2 << 18) ^ (r2 << 14) ;
+    RETIRE_SUCCESS
+}
+
 
