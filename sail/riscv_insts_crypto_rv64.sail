@@ -122,10 +122,10 @@ val      crypto_ssha512_rv64 : (ssha512_rv64_op, regidx, regidx) -> unit
 function crypto_ssha512_rv64   (op             , rd    , rs1   ) =  {
   let inb    : bits(64) = X(rs1)[63..0];
   let result : bits(64) = match op {
-    SHA512_SIG0 => ror64(inb ,0x01) ^ ror64(inb ,0x08) ^ (inb >> 7),
-    SHA512_SIG1 => ror64(inb ,0x13) ^ ror64(inb ,0x3D) ^ (inb >> 6),
-    SHA512_SUM0 => ror64(inb ,0x1C) ^ ror64(inb ,0x22) ^ ror64(inb ,0x27),
-    SHA512_SUM1 => ror64(inb ,0x0E) ^ ror64(inb ,0x12) ^ ror64(inb ,0x29)
+    SHA512_SIG0 => ror64(inb, 0x01) ^ ror64(inb, 0x08) ^ (inb >> 7),
+    SHA512_SIG1 => ror64(inb, 0x13) ^ ror64(inb, 0x3D) ^ (inb >> 6),
+    SHA512_SUM0 => ror64(inb, 0x1C) ^ ror64(inb, 0x22) ^ ror64(inb ,0x27),
+    SHA512_SUM1 => ror64(inb, 0x0E) ^ ror64(inb, 0x12) ^ ror64(inb ,0x29)
   };
   X(rd) = EXTZ(result);
 }

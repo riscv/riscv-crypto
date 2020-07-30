@@ -163,17 +163,33 @@ mapping clause assembly = SSM4_KS (bs,rs2,rs1,rd) <->
     reg_name(rs2) ^ sep() ^ hex_bits_2(bs)
 
 
-/* Execute clause for the ssm4.ed (encrypt/decrypt) instruction. */
-function clause execute (        SSM4_ED (bs,rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+/* Execute clause for the ssm4 instructions. */
+/* --- specification snippet begin --- */
+function clause execute (SSM4_ED (bs,rs2,rs1,rd)) = {
+  let shamt : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
+  let sb_in : bits(8)  = (X(rs2) >> shamt)[7..0];
+  let x     : bits(32) = 0x000000 @ sm4_sbox(sb_in);
+  let y     : bits(32) = x ^  (x               <<  8) ^ ( x               <<  2) ^
+                              (x               << 18) ^ ((x & 0x0000003F) << 26) ^
+                             ((x & 0x000000C0) << 10);
+  let z     : bits(32) = (y << shamt) ^ (y >> (0b100000-shamt));
+  let result: bits(32) = z ^ X(rs1)[31..0];
+  X(rd)                = EXTZ(result);
+  RETIRE_SUCCESS
 }
 
-/* Execute clause for the ssm4.ks (key schedule) instruction. */
-function clause execute (        SSM4_KS (bs,rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+function clause execute (SSM4_KS (bs,rs2,rs1,rd)) = {
+  let shamt : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
+  let sb_in : bits(8)  = (X(rs2) >> shamt)[7..0];
+  let x     : bits(32) = 0x000000 @ sm4_sbox(sb_in);
+  let y     : bits(32) = x ^ ((x & 0x00000007) << 29) ^ ((x & 0x000000FE) <<  7) ^
+                             ((x & 0x00000001) << 23) ^ ((x & 0x000000F8) << 13) ;
+  let z     : bits(32) = (y << shamt) ^ (y >> (0b100000-shamt));
+  let result: bits(32) = z ^ X(rs1)[31..0];
+  X(rd)                = EXTZ(result);
+  RETIRE_SUCCESS
 }
+/* --- specification snippet end --- */
 
 
 /*
