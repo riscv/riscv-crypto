@@ -68,7 +68,17 @@ mapping clause assembly =  SAES64_DECS (rs2,rs1,rd) <->
 
 
 function clause execute (     SAES64_KS1 (rcon,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
+    let tmp1: bits(32) = X(rs1)[63..32];
+    /* TODO:   if rcon > 0xA, RETIRE_FAIL
+    let rc    : bits(32) = aes_decode_rcon(rcon);
+    let tmp2  : bits(32) = match rcon {
+        0xA => tmp1             ,
+        _   => ror32(tmp1, 0x08) /* tmp1 >>> 8 */
+    };
+    let tmp3   : bits(32) = aes_sbox_fwd(tmp2[31..24]) @ aes_sbox_fwd(tmp2[23..16]) @
+                            aes_sbox_fwd(tmp2[15.. 8]) @ aes_sbox_fwd(tmp2[ 7.. 0]) ;
+    let result : bits(64) = (tmp3 ^ rc) @ (tmp3 ^ rc);
+    X(rd)      = EXTZ(result); */
     RETIRE_SUCCESS
 }
 function clause execute (     SAES64_KS2 (rs2,rs1,rd)) = {

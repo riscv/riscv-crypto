@@ -124,6 +124,32 @@ function aes_mix_column_byte_inv (so) = {
 }
 
 
+/*
+ * /* AES Round Constant values, used by RV64 scalar AES instructions */
+ * let aes_round_constants_table : list(bits(32)) = [|
+ * 0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
+ * 0x00000020, 0x00000040, 0x00000080, 0x0000001b, 0x00000036 
+ * |]
+ * 
+ * /* Lookup function - takes an index and a list, and retrieves the
+ *  * x'th element of that list.
+ *  */
+ * val      rcon_lookup : (bits(4), list(bits(32))) -> bits(32)
+ * function rcon_lookup (x, table) = {
+ *     match (x, table) {
+ *         (0x0 , t0::tn) => t0,
+ *         ( y  , t0::tn) => rcon_lookup(x - 0x1,tn),
+ *         (0x0 , _     ) => 0x00000000 /* Return 0 if out of bounds */
+ *     }
+ * }
+ * 
+ * val         aes_decode_rcon : bits(4) -> bits(32)
+ * function    aes_decode_rcon (r) = {
+ *     if(r==0xA) then 0x00000000 else rcon_lookup(r, aes_round_constants_table)
+ * }
+*/
+
+
 /* AES SBox - forwards */
 let aes_sbox_fwd_table : list(bits(8)) = [|
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b,
