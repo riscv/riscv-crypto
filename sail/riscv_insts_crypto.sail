@@ -41,29 +41,38 @@ mapping clause assembly = SSHA256_SIG1 (rs1,rd) <-> "ssha256.sig1" ^ spc() ^ reg
 mapping clause assembly = SSHA256_SUM0 (rs1,rd) <-> "ssha256.sum0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 mapping clause assembly = SSHA256_SUM1 (rs1,rd) <-> "ssha256.sum1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
+/* --- specification snippet begin --- */
+val      crypto_ssha256 : (ssha256_op, regidx, regidx) -> unit
+function crypto_ssha256   (op        , rd    , rs1   ) =  {
+  let inb    : bits(32) = X(rs1)[31..0];
+  let result : bits(32) = match op {
+    SHA256_SIG0 => ror32(inb ,0x07) ^ ror32(inb ,0x12) ^ (inb >> 0x03),
+    SHA256_SIG1 => ror32(inb ,0x11) ^ ror32(inb ,0x13) ^ (inb >> 0x0A),
+    SHA256_SUM0 => ror32(inb ,0x02) ^ ror32(inb, 0x0D) ^ ror32(inb,0x16),
+    SHA256_SUM1 => ror32(inb ,0x06) ^ ror32(inb, 0x0B) ^ ror32(inb,0x19)
+  };
+  X(rd) = EXTZ(result);
+}
+/* --- specification snippet end --- */
 
 /* Execution clauses for the SHA256 instructions. */
 function clause execute (SSHA256_SIG0 (rs1,rd)) = {
-    let rs1v : bits(32) = X(rs1)[31..0];
-    X(rd)    = EXTZ(ror32(rs1v ,0x07) ^ ror32(rs1v ,0x12) ^ (rs1v >> 0x03));
+    crypto_ssha256(SHA256_SIG0, rd, rs1);
     RETIRE_SUCCESS
 }
 
 function clause execute (SSHA256_SIG1 (rs1,rd)) = {
-    let rs1v : bits(32) = X(rs1)[31..0];
-    X(rd)    = EXTZ(ror32(rs1v ,0x11) ^ ror32(rs1v ,0x13) ^ (rs1v >> 0x0A));
+    crypto_ssha256(SHA256_SIG1, rd, rs1);
     RETIRE_SUCCESS
 }
 
 function clause execute (SSHA256_SUM0 (rs1,rd)) = {
-    let rs1v : bits(32) = X(rs1)[31..0];
-    X(rd)    = EXTZ(ror32(rs1v ,0x02) ^ ror32(rs1v,0x0D) ^ ror32(rs1v,0x16));
+    crypto_ssha256(SHA256_SUM0, rd, rs1);
     RETIRE_SUCCESS
 }
 
 function clause execute (SSHA256_SUM1 (rs1,rd)) = {
-    let rs1v : bits(32) = X(rs1)[31..0];
-    X(rd)    = EXTZ(ror32(rs1v ,0x06) ^ ror32(rs1v,0x0B) ^ ror32(rs1v,0x19));
+    crypto_ssha256(SHA256_SUM1, rd, rs1);
     RETIRE_SUCCESS
 }
 
@@ -95,19 +104,28 @@ mapping clause assembly =  SSM3_P1 (rs1,rd) <->
     "ssm3.p1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
 
+/* --- specification snippet begin --- */
+val      crypto_sm3 : (ssm3_op, regidx, regidx) -> unit
+function crypto_sm3   (op     , rd    , rs1   ) =  {
+  let r1    : bits(32) = X(rs1)[31..0];
+  let result  : bits(32) = match op {
+    P0  => r1 ^ rol32(r1 ,0x09) ^ rol32(r1 ,0x11),
+    P1  => r1 ^ rol32(r1 ,0x0E) ^ rol32(r1 ,0x17)
+  };
+  X(rd)       = EXTZ(result);
+}
+/* --- specification snippet end --- */
+
+
 /* Execute clause for ssm3.p0 */
 function clause execute ( SSM3_P0 (rs1,rd)) = {
-  let rs1v    : bits(32) = X(rs1)[31..0];
-  let result  : bits(32) = rs1v ^ rol32(rs1v ,0x09) ^ rol32(rs1v ,0x11);
-  X(rd)       = EXTZ(result);
+  crypto_sm3(P0, rd, rs1);
   RETIRE_SUCCESS
 }
 
 /* Execute clause for ssm3.p1 */
 function clause execute ( SSM3_P1 (rs1,rd)) = {
-  let rs1v    : bits(32) = X(rs1)[31..0];
-  let result  : bits(32) = rs1v ^ rol32(rs1v ,0x0E) ^ rol32(rs1v ,0x17);
-  X(rd)       = EXTZ(result);
+  crypto_sm3(P1, rd, rs1);
   RETIRE_SUCCESS
 }
 

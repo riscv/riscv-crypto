@@ -27,7 +27,7 @@ per-byte results then accumulated.
 The {\tt bs} immediate operand is a 2-bit {\em Byte Select}, and indicates
 which byte of the input word is operated on.
 SAIL Model code for each instruction is found in figure
-\ref{fig:pseudo:aes:rv32}.
+\ref{fig:sail:aes:rv32}.
 
 These instructions use the Equivalent Inverse Cipher
 construction \cite[Section 5.3.5]{nist:fips:197}.
@@ -35,10 +35,10 @@ This affects the computation of the KeySchedule, as shown in
 \cite[Figure 15]{nist:fips:197}.
 
 \begin{figure}[h]
-\lstinputlisting[language=sail,firstline=66,lastline=82]{../sail/riscv_insts_crypto_rv32.sail}
+\lstinputlisting[language=sail,firstline=67,lastline=83]{../sail/riscv_insts_crypto_rv32.sail}
 \caption{SAIL specification for the lightweight AES instructions targeting the
 RV32 base architecture.}
-\label{fig:pseudo:aes:rv32}
+\label{fig:sail:aes:rv32}
 \end{figure}
 
 \note{

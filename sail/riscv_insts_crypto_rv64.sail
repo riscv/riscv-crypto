@@ -106,37 +106,49 @@ union   clause ast    =    SSHA512_SIG1 : (regidx,regidx)
 union   clause ast    =    SSHA512_SUM0 : (regidx,regidx)
 union   clause ast    =    SSHA512_SUM1 : (regidx,regidx)
 
+mapping clause encdec =    SSHA512_SIG0   (rs1,rd) <-> 0b000011100100 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =    SSHA512_SIG1   (rs1,rd) <-> 0b000011100101 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =    SSHA512_SUM0   (rs1,rd) <-> 0b000011100110 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =    SSHA512_SUM1   (rs1,rd) <-> 0b000011100111 @ rs1 @ 0b111 @ rd @ 0b0101011
+
 mapping clause assembly =    SSHA512_SIG0 (rs1,rd) <-> "ssha512.sig0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 mapping clause assembly =    SSHA512_SIG1 (rs1,rd) <-> "ssha512.sig1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 mapping clause assembly =    SSHA512_SUM0 (rs1,rd) <-> "ssha512.sum0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 mapping clause assembly =    SSHA512_SUM1 (rs1,rd) <-> "ssha512.sum1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
+
+/* --- specification snippet begin --- */
+val      crypto_ssha512_rv64 : (ssha512_rv64_op, regidx, regidx) -> unit
+function crypto_ssha512_rv64   (op             , rd    , rs1   ) =  {
+  let inb    : bits(64) = X(rs1)[63..0];
+  let result : bits(64) = match op {
+    SHA512_SIG0 => ror64(inb ,0x01) ^ ror64(inb ,0x08) ^ (inb >> 7),
+    SHA512_SIG1 => ror64(inb ,0x13) ^ ror64(inb ,0x3D) ^ (inb >> 6),
+    SHA512_SUM0 => ror64(inb ,0x1C) ^ ror64(inb ,0x22) ^ ror64(inb ,0x27),
+    SHA512_SUM1 => ror64(inb ,0x0E) ^ ror64(inb ,0x12) ^ ror64(inb ,0x29)
+  };
+  X(rd) = EXTZ(result);
+}
+/* --- specification snippet end --- */
+
+
 function clause execute (   SSHA512_SIG0 (rs1,rd)) = {
-    let rs1v : bits(64) = X(rs1)[63..0];
-    X(rd)    = EXTZ(ror64(rs1v ,0x01) ^ ror64(rs1v ,0x08) ^ (rs1v >> 7));
+    crypto_ssha512_rv64(SHA512_SIG0, rd, rs1);
     RETIRE_SUCCESS
 }
 
 function clause execute (   SSHA512_SIG1 (rs1,rd)) = {
-    let rs1v : bits(64) = X(rs1)[63..0];
-    X(rd)    = EXTZ(ror64(rs1v ,0x13) ^ ror64(rs1v ,0x3D) ^ (rs1v >> 6));
+    crypto_ssha512_rv64(SHA512_SIG1, rd, rs1);
     RETIRE_SUCCESS
 }
 
 function clause execute (   SSHA512_SUM0 (rs1,rd)) = {
-    let rs1v : bits(64) = X(rs1)[63..0];
-    X(rd)    = EXTZ(ror64(rs1v ,0x1C) ^ ror64(rs1v ,0x22) ^ ror64(rs1v ,0x27));
+    crypto_ssha512_rv64(SHA512_SUM0, rd, rs1);
     RETIRE_SUCCESS
 }
 
 function clause execute (   SSHA512_SUM1 (rs1,rd)) = {
-    let rs1v : bits(64) = X(rs1)[63..0];
-    X(rd)    = EXTZ(ror64(rs1v ,0x0E) ^ ror64(rs1v ,0x12) ^ ror64(rs1v ,0x29));
+    crypto_ssha512_rv64(SHA512_SUM1, rd, rs1);
     RETIRE_SUCCESS
 }
-
-mapping clause encdec =    SSHA512_SIG0   (rs1,rd) <-> 0b000011100100 @ rs1 @ 0b111 @ rd @ 0b0101011
-mapping clause encdec =    SSHA512_SIG1   (rs1,rd) <-> 0b000011100101 @ rs1 @ 0b111 @ rd @ 0b0101011
-mapping clause encdec =    SSHA512_SUM0   (rs1,rd) <-> 0b000011100110 @ rs1 @ 0b111 @ rd @ 0b0101011
-mapping clause encdec =    SSHA512_SUM1   (rs1,rd) <-> 0b000011100111 @ rs1 @ 0b111 @ rd @ 0b0101011
 

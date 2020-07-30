@@ -63,6 +63,7 @@ mapping  clause assembly = SAES32   (     bs, rs2   , rs1   , rd    , op     )
  * - rs2: Source register 2 address
  * - bs : 2-bit byte shift.
  */ 
+/* --- specification snippet begin --- */
 function clause execute   (SAES32 (bs, rs2, rs1, rd, op))={
   let rs1_val : xlenbits = X(rs1);
   let rs2_val : xlenbits = X(rs2);
@@ -80,6 +81,8 @@ function clause execute   (SAES32 (bs, rs2, rs1, rd, op))={
   X(rd)       = result;
   RETIRE_SUCCESS
 }
+/* --- specification snippet end --- */
+
 
 /*
  * Scalar Cryptography Extension - Scalar 32-bit SHA512 instructions
@@ -135,55 +138,55 @@ mapping clause assembly = SSHA512_SUM1R (rs2,rs1,rd) <->
     "ssha512.sum1r" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
 
+/* --- specification snippet begin --- */
+val      crypto_ssha512_rv32 :(ssha512_rv32_op, regidx, regidx, regidx) -> unit
+function crypto_ssha512_rv32  (op             , rd    , rs1   , rs2   ) = {
+  let r1     : bits(32) = X(rs1)[31..0];
+  let r2     : bits(32) = X(rs2)[31..0];
+  let result : bits(32) = match op {
+    SHA512_SIG0L => (r1>> 1) ^ (r1>> 7) ^ (r1>> 8) ^ (r2<<31) ^(r2<<25) ^(r2<<24),
+    SHA512_SIG0H => (r1>> 1) ^ (r1>> 7) ^ (r1>> 8) ^ (r2<<31)           ^(r2<<24),
+    SHA512_SIG1L => (r1>> 3) ^ (r1>> 6) ^ (r1>>19) ^ (r2<<29) ^(r2<<26) ^(r2<<13),
+    SHA512_SIG1H => (r1>> 3) ^ (r1>> 6) ^ (r1>>19) ^ (r2<<29)           ^(r2<<13),
+    SHA512_SUM0R => (r1<<25) ^ (r1<<30) ^ (r1>>28) ^ (r2<< 7) ^(r2<< 2) ^(r2<<24),
+    SHA512_SUM1R => (r1<<23) ^ (r1<<14) ^ (r1>>18) ^ (r2<< 9) ^(r2<<18) ^(r2<<14)
+  };
+  X(rd) = EXTZ(result);
+}
+/* --- specification snippet end --- */
+
+
 /*
  * Execute clauses for the 32-bit SHA512 instructions.
  */
 
 function clause execute (  SSHA512_SIG0L (rs2,rs1,rd)) = {
-  let r1 : bits(32) = X(rs1)[31..0];
-  let r2 : bits(32) = X(rs2)[31..0];
-  X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
-           (r2 << 31) ^ (r2 << 25) ^ (r2 << 24) ;
+  crypto_ssha512_rv32(SHA512_SIG0L, rd, rs1, rs2);
   RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG0H (rs2,rs1,rd)) = {
-  let r1 : bits(32) = X(rs1)[31..0];
-  let r2 : bits(32) = X(rs2)[31..0];
-  X(rd)  = (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^
-           (r2 << 31)              ^ (r2 << 24) ;
+  crypto_ssha512_rv32(SHA512_SIG0H, rd, rs1, rs2);
   RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG1L (rs2,rs1,rd)) = {
-  let r1 : bits(32) = X(rs1)[31..0];
-  let r2 : bits(32) = X(rs2)[31..0];
-  X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
-           (r2 << 29) ^ (r2 << 26) ^ (r2 << 13) ;
+  crypto_ssha512_rv32(SHA512_SIG1L, rd, rs1, rs2);
   RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG1H (rs2,rs1,rd)) = {
-  let r1 : bits(32) = X(rs1)[31..0];
-  let r2 : bits(32) = X(rs2)[31..0];
-  X(rd)  = (r1 >>  3) ^ (r1 >>  6) ^ (r1 >> 19) ^
-           (r2 << 29)              ^ (r2 << 13) ;
+  crypto_ssha512_rv32(SHA512_SIG1H, rd, rs1, rs2);
   RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SUM0R (rs2,rs1,rd)) = {
-  let r1 : bits(32) = X(rs1)[31..0];
-  let r2 : bits(32) = X(rs2)[31..0];
-  X(rd)  = (r1 << 25) ^ (r1 << 30) ^ (r1 >> 28) ^
-           (r2 <<  7) ^ (r2 <<  2) ^ (r2 << 24) ;
+  crypto_ssha512_rv32(SHA512_SUM0R, rd, rs1, rs2);
   RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SUM1R (rs2,rs1,rd)) = {
-  let r1 : bits(32) = X(rs1)[31..0];
-  let r2 : bits(32) = X(rs2)[31..0];
-  X(rd)  = (r1 << 23) ^ (r1 << 14) ^ (r1 >> 18) ^
-           (r2 <<  9) ^ (r2 << 18) ^ (r2 << 14) ;
+  crypto_ssha512_rv32(SHA512_SUM1R, rd, rs1, rs2);
   RETIRE_SUCCESS
 }
 
