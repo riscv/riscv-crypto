@@ -36,7 +36,8 @@
   of Bristol Cryptography Group on scalar cryptography extensions
   to RISC-V.
 
-- There is a rough [Todo List](todo.md).
+- See the [project board](https://github.com/scarv/riscv-crypto/projects/1)
+   for a list of on-going  / open issues.
 
 ## Specification
 
