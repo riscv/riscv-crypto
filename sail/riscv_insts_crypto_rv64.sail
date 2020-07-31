@@ -67,42 +67,65 @@ mapping clause assembly =  SAES64_DECS (rs2,rs1,rd) <->
     "saes64.decs" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
 
-function clause execute (     SAES64_KS1 (rcon,rs1,rd)) = {
-    let tmp1: bits(32) = X(rs1)[63..32];
-    /* TODO:   if rcon > 0xA, RETIRE_FAIL
+/* --- specification snippet begin --- */
+val      crypto_saes64 : (regidx, regidx, regidx, bool, bool) -> unit
+function crypto_saes64   (rd    , rs1   , rs2   , enc , mix )  = {
+  let sr : bits(128) = match enc {
+    true  => aes_shift_rows_fwd(X(rs2)[63..0] @ X(rs1)[63..0]), /* Encrypt */
+    false => aes_shift_rows_inv(X(rs2)[63..0] @ X(rs1)[63..0])  /* Decrypt */
+  };
+  let wd : bits( 64) = sr[63..0];
+  let sb : bits( 64) = match enc {
+    true  => aes_apply_fwd_sbox_to_each_byte(wd),               /* Encrypt */
+    false => aes_apply_inv_sbox_to_each_byte(wd)                /* Decrypt */
+  };
+  X(rd)  = match (mix, enc) {
+    (true,true ) => aes_mixcolumn_fwd(sb[63..32]) @ aes_mixcolumn_fwd(sb[31..0]),
+    (true,false) => aes_mixcolumn_inv(sb[63..32]) @ aes_mixcolumn_inv(sb[31..0]),
+    (false, _  ) => sb
+  }
+}
+
+function clause execute (SAES64_KS1 (rcon,rs1,rd)) = {
+    let tmp1  : bits(32) = X(rs1)[63..32];
     let rc    : bits(32) = aes_decode_rcon(rcon);
-    let tmp2  : bits(32) = match rcon {
-        0xA => tmp1             ,
-        _   => ror32(tmp1, 0x08) /* tmp1 >>> 8 */
-    };
-    let tmp3   : bits(32) = aes_sbox_fwd(tmp2[31..24]) @ aes_sbox_fwd(tmp2[23..16]) @
-                            aes_sbox_fwd(tmp2[15.. 8]) @ aes_sbox_fwd(tmp2[ 7.. 0]) ;
+    let tmp2  : bits(32) = if rcon==0xA then tmp1 else ror32(tmp1, 0x08);
+    let tmp3  : bits(32) = aes_sbox_fwd(tmp2[31..24]) @ aes_sbox_fwd(tmp2[23..16]) @
+                           aes_sbox_fwd(tmp2[15.. 8]) @ aes_sbox_fwd(tmp2[ 7.. 0]) ;
     let result : bits(64) = (tmp3 ^ rc) @ (tmp3 ^ rc);
-    X(rd)      = EXTZ(result); */
+    X(rd)      = EXTZ(result); RETIRE_SUCCESS
+}
+
+function clause execute (SAES64_KS2 (rs2,rs1,rd)) = {
+    let w0 : bits(32) = X(rs1)[63..32] ^ X(rs2)[31..0];
+    let w1 : bits(32) = X(rs1)[63..32] ^ X(rs2)[31..0] ^ X(rs2)[63..32];
+    X(rd)  = w1 @ w0; RETIRE_SUCCESS
+}
+
+function clause execute (SAES64_IMIX (rs1,rd)) = {
+    let w0 : bits(32) = aes_mixcolumn_inv(X(rs1)[31.. 0]);
+    let w1 : bits(32) = aes_mixcolumn_inv(X(rs1)[63..32]);
+    X(rd)  = w1 @ w0; RETIRE_SUCCESS
+}
+/* --- specification snippet begin --- */
+
+function clause execute (SAES64_ENCSM (rs2,rs1,rd)) = {
+    crypto_saes64(rd, rs1, rs2, true, true);
     RETIRE_SUCCESS
 }
-function clause execute (     SAES64_KS2 (rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
+
+function clause execute (SAES64_ENCS (rs2,rs1,rd)) = {
+    crypto_saes64(rd, rs1, rs2, true, false);
     RETIRE_SUCCESS
 }
-function clause execute (    SAES64_IMIX (rs1,rd)) = {
-    /* TBD, implemented as nop.*/
+
+function clause execute (SAES64_DECSM (rs2,rs1,rd)) = {
+    crypto_saes64(rd, rs1, rs2, false, true);
     RETIRE_SUCCESS
 }
-function clause execute (   SAES64_ENCSM (rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
-}
-function clause execute (    SAES64_ENCS (rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
-}
-function clause execute (   SAES64_DECSM (rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
-}
-function clause execute (    SAES64_DECS (rs2,rs1,rd)) = {
-    /* TBD, implemented as nop.*/
+
+function clause execute (SAES64_DECS (rs2,rs1,rd)) = {
+    crypto_saes64(rd, rs1, rs2, false, false);
     RETIRE_SUCCESS
 }
 

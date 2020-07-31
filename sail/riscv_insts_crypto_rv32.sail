@@ -73,8 +73,8 @@ function clause execute   (SAES32 (bs, rs2, rs1, rd, op))={
                                                 else aes_sbox_inv(si);
   let mixed   : xlenbits =
     if(saes_op_does_mix(op)) then
-      if(saes_op_fwd(op)) then aes_mix_column_byte_fwd(so)
-                          else aes_mix_column_byte_inv(so)
+      if(saes_op_fwd(op)) then aes_mixcolumn_byte_fwd(so)
+                          else aes_mixcolumn_byte_inv(so)
     else
         0x000000 @ so;
   let result  : xlenbits = rs1_val ^ (mixed << shamt) ^ (mixed >> (0b100000-shamt));

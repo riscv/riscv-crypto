@@ -158,41 +158,9 @@ for further processing from the concatenation {\tt rs2 || \tt rs1}.
 \end{figure}
 
 \begin{figure}[h!]
-\begin{lstlisting}[language=pseudo]
-saes64.ks1(rs1,enc_rcon):      // KeySchedule: SubBytes, Rotate, Round Const
-    temp.32   = rs1.32[1]
-    rcon      = 0x0
-    if(enc_rcon != 0xA):
-        temp.32 = ROTR32(temp.32, 8)
-        rcon    = AESRoundConstants.8[enc_rcon]
-    temp.8[i] = AESSBox(temp.8[i])  for i=0..3
-    temp.8[0] = temp.8[i  ] ^ rcon
-    rd.64     = {temp.32, temp.32}
-
-saes64.ks2(rs1,rs2):           // KeySchedule: XOR
-    rd.32[0]  = rs1.32[1] ^ rs2.32[0]
-    rd.32[1]  = rs1.32[1] ^ rs2.32[0] ^ rs2.32[1]
-
-saes64.imix(rs1):              // Inverse MixColumns
-    rd.32[0]  = InvAESMixColumn(rs1.32[0])
-    rd.32[1]  = InvAESMixColumn(rs1.32[1])
-
-saes64.enc(rs1, rs2, mix):     // SubBytes, ShiftRows, MixColumns
-    t1.128    = AESShiftRows(rs2 || rs1)
-    t2.64     = t1.64[0]
-    t3.8[i]   = AESSBox(t2.8[i]) for i=0..7
-    rd.32[0]  = AESMixColumn(t3.32[0]) if mix else t3.32[0]
-    rd.32[1]  = AESMixColumn(t3.32[1]) if mix else t3.32[1]
-
-saes64.dec(rs1, rs2, mix):     // InvSubBytes, InvShiftRows, InvMixColumns
-    t1.128    = InvAESShiftRows(rs2 || rs1)
-    t2.64     = t1.64[0]
-    t3.8[i]   = InvAESSBox(t2.8[i]) for i=0..7
-    rd.32[0]  = InvAESMixColumn(t3.32[0]) if mix else t3.32[0]
-    rd.32[1]  = InvAESMixColumn(t3.32[1]) if mix else t3.32[1]
-\end{lstlisting}
+\lstinputlisting[language=sail,firstline=71,lastline=109]{../sail/riscv_insts_crypto_rv64.sail}
 \caption{
-RV64 AES instruction pseudocode.
+SAIL specification for the RV64 AES instructions.
 }
 \label{fig:pesudo:aes:rv64}
 \end{figure}

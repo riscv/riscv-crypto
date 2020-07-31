@@ -112,42 +112,83 @@ function gfmul( x, y) = {
 }
 
 /* 8-bit to 32-bit partial AES Mix Colum - forwards */
-val      aes_mix_column_byte_fwd : bits(8) -> bits(32)
-function aes_mix_column_byte_fwd (so) = {
+val      aes_mixcolumn_byte_fwd : bits(8) -> bits(32)
+function aes_mixcolumn_byte_fwd (so) = {
         gfmul(so, 0x03) @       so        @       so        @ gfmul(so, 0x02)
 }
 
 /* 8-bit to 32-bit partial AES Mix Colum - inverse*/
-val      aes_mix_column_byte_inv : bits(8) -> bits(32)
-function aes_mix_column_byte_inv (so) = {
+val      aes_mixcolumn_byte_inv : bits(8) -> bits(32)
+function aes_mixcolumn_byte_inv (so) = {
         gfmul(so, 0x0b) @ gfmul(so, 0x0d) @ gfmul(so, 0x09) @ gfmul(so, 0x0e)
 }
 
+/* 32-bit to 32-bit AES forward MixColumn */
+val      aes_mixcolumn_fwd : bits(32) -> bits(32)
+function aes_mixcolumn_fwd (x) = {
+    x /* TODO */
+}
 
-/*
- * /* AES Round Constant values, used by RV64 scalar AES instructions */
- * let aes_round_constants_table : list(bits(32)) = [|
- * 0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
- * 0x00000020, 0x00000040, 0x00000080, 0x0000001b, 0x00000036 
- * |]
- * 
- * /* Lookup function - takes an index and a list, and retrieves the
- *  * x'th element of that list.
- *  */
- * val      rcon_lookup : (bits(4), list(bits(32))) -> bits(32)
- * function rcon_lookup (x, table) = {
- *     match (x, table) {
- *         (0x0 , t0::tn) => t0,
- *         ( y  , t0::tn) => rcon_lookup(x - 0x1,tn),
- *         (0x0 , _     ) => 0x00000000 /* Return 0 if out of bounds */
- *     }
- * }
- * 
- * val         aes_decode_rcon : bits(4) -> bits(32)
- * function    aes_decode_rcon (r) = {
- *     if(r==0xA) then 0x00000000 else rcon_lookup(r, aes_round_constants_table)
- * }
-*/
+/* 32-bit to 32-bit AES inverse MixColumn */
+val      aes_mixcolumn_inv : bits(32) -> bits(32)
+function aes_mixcolumn_inv (x) = {
+    x /* TODO */
+}
+
+
+/* 128-bit to 128-bit implementation of the forward AES ShiftRows transform. */
+val      aes_shift_rows_fwd : bits(128) -> bits(128)
+function aes_shift_rows_fwd (x) = {
+    x /* TODO */
+}
+
+
+/* 128-bit to 128-bit implementation of the inverse AES ShiftRows transform. */
+val      aes_shift_rows_inv : bits(128) -> bits(128)
+function aes_shift_rows_inv (x) = {
+    x /* TODO */
+}
+
+
+/* 64-bit to 64-bit function which applies the AES forward sbox to each byte
+ * in a 64-bit word.
+ */
+val      aes_apply_fwd_sbox_to_each_byte : bits(64) -> bits(64)
+function aes_apply_fwd_sbox_to_each_byte  (x) = {
+    x /* TODO */
+}
+
+
+/* 64-bit to 64-bit function which applies the AES inverse sbox to each byte
+ * in a 64-bit word. 
+ */
+val      aes_apply_inv_sbox_to_each_byte : bits(64) -> bits(64)
+function aes_apply_inv_sbox_to_each_byte  (x) = {
+    x /* TODO */
+}
+
+
+val         aes_decode_rcon : bits(4) -> bits(32)
+function    aes_decode_rcon (r) = {
+  match r {
+    0x0 => 0x00000001,
+    0x1 => 0x00000002,
+    0x2 => 0x00000004,
+    0x3 => 0x00000008,
+    0x4 => 0x00000010,
+    0x5 => 0x00000020,
+    0x6 => 0x00000040,
+    0x7 => 0x00000080,
+    0x8 => 0x0000001b,
+    0x9 => 0x00000036,
+    0xA => 0x00000000,
+    0xB => 0x00000000,
+    0xC => 0x00000000,
+    0xD => 0x00000000,
+    0xE => 0x00000000,
+    0xF => 0x00000000
+  }
+}
 
 
 /* AES SBox - forwards */
