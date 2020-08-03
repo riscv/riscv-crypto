@@ -1,0 +1,47 @@
+
+\subsection{Vector GREV}
+
+These instructions are vectorised versions of the Bitmanip
+\mnemonic{grevi} instruction described in
+Section \ref{sec:scalar:bitmanip:grev}.\footnote{
+See \url{https://github.com/AndyGlew/Ri5-stuff/wiki/VGREV---Vector-Generalized-Reverse}
+for the initial design discussion around vector \mnemonic{grev}.
+}
+
+\begin{cryptoisa}
+vgrev.vi     vd, vs2, uimm, vm  // Vector-Immediate
+    vd.eew[i] = vm[i] ? generalised_reverse(EEW, vs2.eew[i], uimm) : vs2[i]
+\end{cryptoisa}
+
+For each \EEW-bit wide element in \vrs{2}, if the corresponding $\vm[i]$
+bit is clear, then the destination element in \vrd is {\em zeroed}.
+If the $\vm[i]$ bit is set, then we apply the
+\texttt{generalised\_reverse} operation to the \EEW-bit element, using the
+$6$-bit \texttt{uimm} immediate as the control variable.
+For a complete specification of the \texttt{generalised\_reverse}
+operation, see 
+\cite[Section 2.2.2, Generalized Reverse]{riscv:bitmanip:draft}.
+
+For the Cryptography Extension,
+Implementations must support an \EEW upto and including $64$-bits.
+Executing the instruction with an un-supported \EEW results in an
+Invalid Opcode Exception.
+Only the values of \texttt{uimm} listed in table \ref{tab:vgrev:uimm}
+are required by the Cryptography Extension.
+An un-supported value of \texttt{uimm} results in an
+Invalid Opcode Exception.
+
+\begin{table}
+\centering
+\begin{tabular}{ll}
+\texttt{uimm} Value & Operation                         \\
+\hline
+\texttt{0b000111}   & Reverse bits within bytes         \\
+\texttt{0b011000}   & Reverse bytes within 32-bit words \\
+\texttt{0b111000}   & Reverse bytes within 64-bit words \\
+\hline
+\end{tabular}
+\caption{Required values of \texttt{uimm} which Cryptography Extensions
+of \texttt{vgrev.vi} must support.}
+\label{tab:vgrev:uimm}
+\end{table}

@@ -1,0 +1,39 @@
+
+\subsection{Vector Rotation}
+
+These instructions provide bitwise rotation support for the
+Vector Extension, analogous to the scalar rotation instructions
+in Section \ref{sec:scalar:bitmanip:rotate}.\footnote{
+See \url{https://github.com/AndyGlew/Ri5-stuff/wiki/VROT---Vector-Rotate}
+for the initial design discussion around vector rotations.
+}
+
+\begin{cryptoisa}
+vrot.vv     vd, vs2, vs1, vm        // Vector-Vector
+    vd.eew[i] = vm[i] ? rotate(EEW,vs2[i], vs1[i]) : vs2[i]
+\end{cryptoisa}
+
+The vector-vector variant splits \vrd, \vrs{1} and \vrs{2} into
+EEW-bit wide elments.
+If the cooresponding mask bit in \vm is set,
+the EEW-bit element in \vrs{2} is rotated
+{\em right} by the value in \vrs{1}.
+Only the low $log_2(EEW)$ bits of \vrs{1} are used as the rotation
+amount; all other bits are {\em ignored}.
+If the mask bit in \vm is clear, then the element of \vrd is zeroed.
+
+\question{The zeroing v.s. leave-unmodified semantics of the vector
+mask registers are an implementation option. Which should we specify?}
+
+Vector-vector rotation is extremely important to Keccak-based algorithms 
+SHA3 and SHAKE.
+It is also important to the ChaCha20 stream cipher.
+
+Other forms of rotate instruction include:
+vector-scalar (\texttt{.vs}),
+vector-immediate (\texttt{.vi})
+and
+vector-xreg (\texttt{.vx}).
+Presently, the vector-vector variant is the most important from a
+cryptographic perspective.
+We defer requiring other forms until they are required.
