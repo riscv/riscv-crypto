@@ -67,8 +67,8 @@ mapping clause assembly =  SAES64_DECS (rs2,rs1,rd) <->
     "saes64.decs" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
 
+val      crypto_saes64 : (regidx, regidx, regidx, bool, bool) -> Retired effect {escape, rreg, wreg}
 /* --- specification snippet begin --- */
-val      crypto_saes64 : (regidx, regidx, regidx, bool, bool) -> unit
 function crypto_saes64   (rd    , rs1   , rs2   , enc , mix )  = {
   let sr : bits(128) = match enc {
     true  => aes_shift_rows_fwd(X(rs2)[63..0] @ X(rs1)[63..0]), /* Encrypt */
@@ -83,7 +83,8 @@ function crypto_saes64   (rd    , rs1   , rs2   , enc , mix )  = {
     (true,true ) => aes_mixcolumn_fwd(sb[63..32]) @ aes_mixcolumn_fwd(sb[31..0]),
     (true,false) => aes_mixcolumn_inv(sb[63..32]) @ aes_mixcolumn_inv(sb[31..0]),
     (false, _  ) => sb
-  }
+  };
+  RETIRE_SUCCESS
 }
 
 function clause execute (SAES64_KS1 (rcon,rs1,rd)) = {
@@ -111,22 +112,18 @@ function clause execute (SAES64_IMIX (rs1,rd)) = {
 
 function clause execute (SAES64_ENCSM (rs2,rs1,rd)) = {
     crypto_saes64(rd, rs1, rs2, true, true);
-    RETIRE_SUCCESS
 }
 
 function clause execute (SAES64_ENCS (rs2,rs1,rd)) = {
     crypto_saes64(rd, rs1, rs2, true, false);
-    RETIRE_SUCCESS
 }
 
 function clause execute (SAES64_DECSM (rs2,rs1,rd)) = {
     crypto_saes64(rd, rs1, rs2, false, true);
-    RETIRE_SUCCESS
 }
 
 function clause execute (SAES64_DECS (rs2,rs1,rd)) = {
     crypto_saes64(rd, rs1, rs2, false, false);
-    RETIRE_SUCCESS
 }
 
 /*
@@ -150,8 +147,8 @@ mapping clause assembly =    SSHA512_SUM0 (rs1,rd) <-> "ssha512.sum0" ^ spc() ^ 
 mapping clause assembly =    SSHA512_SUM1 (rs1,rd) <-> "ssha512.sum1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
 
+val      crypto_ssha512_rv64 : (ssha512_rv64_op, regidx, regidx) -> Retired effect {escape, rreg, wreg}
 /* --- specification snippet begin --- */
-val      crypto_ssha512_rv64 : (ssha512_rv64_op, regidx, regidx) -> unit
 function crypto_ssha512_rv64   (op             , rd    , rs1   ) =  {
   let inb    : bits(64) = X(rs1)[63..0];
   let result : bits(64) = match op {
@@ -161,27 +158,24 @@ function crypto_ssha512_rv64   (op             , rd    , rs1   ) =  {
     SHA512_SUM1 => ror64(inb, 0x0E) ^ ror64(inb, 0x12) ^ ror64(inb ,0x29)
   };
   X(rd) = EXTZ(result);
+  RETIRE_SUCCESS
 }
 /* --- specification snippet end --- */
 
 
 function clause execute (   SSHA512_SIG0 (rs1,rd)) = {
     crypto_ssha512_rv64(SHA512_SIG0, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 function clause execute (   SSHA512_SIG1 (rs1,rd)) = {
     crypto_ssha512_rv64(SHA512_SIG1, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 function clause execute (   SSHA512_SUM0 (rs1,rd)) = {
     crypto_ssha512_rv64(SHA512_SUM0, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 function clause execute (   SSHA512_SUM1 (rs1,rd)) = {
     crypto_ssha512_rv64(SHA512_SUM1, rd, rs1);
-    RETIRE_SUCCESS
 }
 

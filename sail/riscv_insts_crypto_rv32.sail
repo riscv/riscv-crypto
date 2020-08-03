@@ -138,8 +138,8 @@ mapping clause assembly = SSHA512_SUM1R (rs2,rs1,rd) <->
     "ssha512.sum1r" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
 
+val      crypto_ssha512_rv32 :(ssha512_rv32_op, regidx, regidx, regidx) -> Retired effect {escape, rreg, wreg}
 /* --- specification snippet begin --- */
-val      crypto_ssha512_rv32 :(ssha512_rv32_op, regidx, regidx, regidx) -> unit
 function crypto_ssha512_rv32  (op             , rd    , rs1   , rs2   ) = {
   let r1     : bits(32) = X(rs1)[31..0];
   let r2     : bits(32) = X(rs2)[31..0];
@@ -152,6 +152,7 @@ function crypto_ssha512_rv32  (op             , rd    , rs1   , rs2   ) = {
     SHA512_SUM1R => (r1<<23) ^ (r1<<14) ^ (r1>>18) ^ (r2<< 9) ^(r2<<18) ^(r2<<14)
   };
   X(rd) = EXTZ(result);
+  RETIRE_SUCCESS
 }
 /* --- specification snippet end --- */
 
@@ -162,32 +163,26 @@ function crypto_ssha512_rv32  (op             , rd    , rs1   , rs2   ) = {
 
 function clause execute (  SSHA512_SIG0L (rs2,rs1,rd)) = {
   crypto_ssha512_rv32(SHA512_SIG0L, rd, rs1, rs2);
-  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG0H (rs2,rs1,rd)) = {
   crypto_ssha512_rv32(SHA512_SIG0H, rd, rs1, rs2);
-  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG1L (rs2,rs1,rd)) = {
   crypto_ssha512_rv32(SHA512_SIG1L, rd, rs1, rs2);
-  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SIG1H (rs2,rs1,rd)) = {
   crypto_ssha512_rv32(SHA512_SIG1H, rd, rs1, rs2);
-  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SUM0R (rs2,rs1,rd)) = {
   crypto_ssha512_rv32(SHA512_SUM0R, rd, rs1, rs2);
-  RETIRE_SUCCESS
 }
 
 function clause execute (  SSHA512_SUM1R (rs2,rs1,rd)) = {
   crypto_ssha512_rv32(SHA512_SUM1R, rd, rs1, rs2);
-  RETIRE_SUCCESS
 }
 
 

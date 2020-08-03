@@ -41,8 +41,8 @@ mapping clause assembly = SSHA256_SIG1 (rs1,rd) <-> "ssha256.sig1" ^ spc() ^ reg
 mapping clause assembly = SSHA256_SUM0 (rs1,rd) <-> "ssha256.sum0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 mapping clause assembly = SSHA256_SUM1 (rs1,rd) <-> "ssha256.sum1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
+val      crypto_ssha256 : (ssha256_op, regidx, regidx) -> Retired effect {escape,rreg,wreg}
 /* --- specification snippet begin --- */
-val      crypto_ssha256 : (ssha256_op, regidx, regidx) -> unit
 function crypto_ssha256   (op        , rd    , rs1   ) =  {
   let inb    : bits(32) = X(rs1)[31..0];
   let result : bits(32) = match op {
@@ -52,28 +52,25 @@ function crypto_ssha256   (op        , rd    , rs1   ) =  {
     SHA256_SUM1 => ror32(inb ,0x06) ^ ror32(inb, 0x0B) ^ ror32(inb,0x19)
   };
   X(rd) = EXTZ(result);
+  RETIRE_SUCCESS
 }
 /* --- specification snippet end --- */
 
 /* Execution clauses for the SHA256 instructions. */
 function clause execute (SSHA256_SIG0 (rs1,rd)) = {
     crypto_ssha256(SHA256_SIG0, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 function clause execute (SSHA256_SIG1 (rs1,rd)) = {
     crypto_ssha256(SHA256_SIG1, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 function clause execute (SSHA256_SUM0 (rs1,rd)) = {
     crypto_ssha256(SHA256_SUM0, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 function clause execute (SSHA256_SUM1 (rs1,rd)) = {
     crypto_ssha256(SHA256_SUM1, rd, rs1);
-    RETIRE_SUCCESS
 }
 
 /*
@@ -104,8 +101,8 @@ mapping clause assembly =  SSM3_P1 (rs1,rd) <->
     "ssm3.p1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
 
+val      crypto_sm3 : (ssm3_op, regidx, regidx) -> Retired effect {escape,rreg,wreg}
 /* --- specification snippet begin --- */
-val      crypto_sm3 : (ssm3_op, regidx, regidx) -> unit
 function crypto_sm3   (op     , rd    , rs1   ) =  {
   let r1    : bits(32) = X(rs1)[31..0];
   let result  : bits(32) = match op {
@@ -113,6 +110,7 @@ function crypto_sm3   (op     , rd    , rs1   ) =  {
     P1  => r1 ^ rol32(r1 ,0x0E) ^ rol32(r1 ,0x17)
   };
   X(rd)       = EXTZ(result);
+  RETIRE_SUCCESS
 }
 /* --- specification snippet end --- */
 
@@ -120,13 +118,11 @@ function crypto_sm3   (op     , rd    , rs1   ) =  {
 /* Execute clause for ssm3.p0 */
 function clause execute ( SSM3_P0 (rs1,rd)) = {
   crypto_sm3(P0, rd, rs1);
-  RETIRE_SUCCESS
 }
 
 /* Execute clause for ssm3.p1 */
 function clause execute ( SSM3_P1 (rs1,rd)) = {
   crypto_sm3(P1, rd, rs1);
-  RETIRE_SUCCESS
 }
 
 
