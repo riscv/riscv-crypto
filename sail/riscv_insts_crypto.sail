@@ -106,8 +106,8 @@ val      crypto_sm3 : (ssm3_op, regidx, regidx) -> Retired effect {escape,rreg,w
 function crypto_sm3   (op     , rd    , rs1   ) =  {
   let r1    : bits(32) = X(rs1)[31..0];
   let result  : bits(32) = match op {
-    P0  => r1 ^ rol32(r1 ,0x09) ^ rol32(r1 ,0x11),
-    P1  => r1 ^ rol32(r1 ,0x0E) ^ rol32(r1 ,0x17)
+    P0  => r1 ^ rol32(r1 ,0x09) ^ rol32(r1 ,0x11)
+    P1  => r1 ^ rol32(r1 ,0x0E) ^ rol32(r1 ,0x17),
   };
   X(rd)       = EXTZ(result);
   RETIRE_SUCCESS

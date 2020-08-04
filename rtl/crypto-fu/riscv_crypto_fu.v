@@ -304,7 +304,7 @@ end endgenerate // SSHA512_EN
 // ------------------------------------------------------------
 
 wire        ssm3_valid   ;
-wire [31:0] ssm3_rs1     = `GATE_INPUTS(32, ssm4_valid, rs1);
+wire [31:0] ssm3_rs1     = `GATE_INPUTS(32, ssm3_valid, rs1);
 wire        ssm3_ready   ;
 wire [XL:0] ssm3_result  ;
 

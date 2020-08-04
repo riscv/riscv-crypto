@@ -807,7 +807,7 @@ index 0000000..edfe15c
 +WRITE_RD(result);
 diff --git a/riscv/insns/ssm3_p0.h b/riscv/insns/ssm3_p0.h
 new file mode 100644
-index 0000000..f3b12d3
+index 0000000..d0afc3d
 --- /dev/null
 +++ b/riscv/insns/ssm3_p0.h
 @@ -0,0 +1,9 @@
@@ -815,14 +815,14 @@ index 0000000..f3b12d3
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
 +WRITE_RD(
-+    RS1 ^ ROL32(RS1, 15) ^ ROL32(RS1, 23)
++    RS1 ^ ROL32(RS1, 9) ^ ROL32(RS1, 17)
 +);
 +
 +#undef ROR32
 +
 diff --git a/riscv/insns/ssm3_p1.h b/riscv/insns/ssm3_p1.h
 new file mode 100644
-index 0000000..d0afc3d
+index 0000000..f3b12d3
 --- /dev/null
 +++ b/riscv/insns/ssm3_p1.h
 @@ -0,0 +1,9 @@
@@ -830,7 +830,7 @@ index 0000000..d0afc3d
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
 +WRITE_RD(
-+    RS1 ^ ROL32(RS1, 9) ^ ROL32(RS1, 17)
++    RS1 ^ ROL32(RS1, 15) ^ ROL32(RS1, 23)
 +);
 +
 +#undef ROR32
