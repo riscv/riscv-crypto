@@ -155,8 +155,6 @@ round state.
 When implemented on RV32I with the scalar cryptography extensions,
 the `QR` function requires 12 instructions.
 One round is hence `48` instructions.
-ChaCha20 uses 10 iterations of a double round, which gives
-`10*48*2=960` cycles, assuming `1` instruction per cycle.
 
 There is one fusable sequence which meets our criteria:
 
@@ -190,7 +188,6 @@ C code, then two more instructions are needed to put them back.
 
 A core capable of fusing this sequence when both instructions are upto
 32 bits long saves  `4` cycles per quarter round.
-An entire block operation is then `640` cycles - `33%` faster.
 
 A core capable of fusing this sequence only when the xor is 16 bits and
 the rori is 32 bits is more complex to analyse.
@@ -202,8 +199,7 @@ are the ones best placed
 in the compressed instruction registers `s0,s1,a0,...,a5`, since this
 creates the largest number of fusable 48-bit instruction sequences.
 In either case, two occurrences of sequence 1 are fusable.
-Hence a quarter round is then `10` cycles, and `10` double rounds
-becomes `800` cycles.
+Hence a quarter round is then `10` cycles and a round `40` cycles.
 
 A core which can only fuse two 16-bit instructions is incapable
 of fusing sequence 1.
