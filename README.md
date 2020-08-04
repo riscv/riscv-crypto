@@ -14,13 +14,13 @@
 
 ## About
 
+This repository is used to develop standardisation proposals for
+scalar cryptographic instruction set extensions for the RISC-V
+architecture.
+
 - **Note:** See the
    [dev/next-release](https://github.com/scarv/riscv-crypto/tree/dev/next-release)
    branch for the most up to date version.
-
-- This repository is used to develop standardisation proposals for
-  scalar cryptographic instruction set extensions for the RISC-V
-  architecture.
 
 - **Note:** These instructions are a work in progress. Their specifications
   will to change before being accepted as part of the RISC-V standard.  While
@@ -31,14 +31,14 @@
 - The Scalar Cryptography extension proposals overlap significantly
   with the [Bitmanip extension](https://github.com/riscv/riscv-bitmanip).
   Hence, we are experimenting with *sharing* opcodes between extensions.
+  
+- See the [project board](https://github.com/scarv/riscv-crypto/projects/1)
+  for a list of on-going  / open issues.
 
 - Some of the proposals in this repository are based on work done as part of
   the [XCrypto](https://github.com/scarv/xcrypto) project by the University
   of Bristol Cryptography Group on scalar cryptography extensions
   to RISC-V.
-
-- See the [project board](https://github.com/scarv/riscv-crypto/projects/1)
-   for a list of on-going  / open issues.
 
 ## Specification
 
@@ -61,7 +61,9 @@ These files currently need to be manually added to the existing
 [sail-riscv](https://github.com/rems-project/sail-riscv)
 model. A proper integration will be done eventually.
 See [issue #20](https://github.com/scarv/riscv-crypto/issues/20)
-for more info.
+for what is left to be implemented.
+A log of open questions about SAIL is being kept in
+[issue #22](https://github.com/scarv/riscv-crypto/issues/22).
 
 ## Toolchain
 
