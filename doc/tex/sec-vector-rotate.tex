@@ -10,12 +10,12 @@ for the initial design discussion around vector rotations.
 
 \begin{cryptoisa}
 vrot.vv     vd, vs2, vs1, vm        // Vector-Vector
-    vd.eew[i] = vm[i] ? rotate(EEW,vs2[i], vs1[i]) : vs2[i]
+    vd.eew[i] = vm[i] ? rotate(EEW,vs2[i], vs1[i]) : 0
 \end{cryptoisa}
 
 The vector-vector variant splits \vrd, \vrs{1} and \vrs{2} into
-EEW-bit wide elments.
-If the cooresponding mask bit in \vm is set,
+EEW-bit wide elements.
+If the corresponding mask bit in \vm is set,
 the EEW-bit element in \vrs{2} is rotated
 {\em right} by the value in \vrs{1}.
 Only the low $log_2(EEW)$ bits of \vrs{1} are used as the rotation

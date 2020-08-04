@@ -10,7 +10,7 @@ for the initial design discussion around vector \mnemonic{grev}.
 
 \begin{cryptoisa}
 vgrev.vi     vd, vs2, uimm, vm  // Vector-Immediate
-    vd.eew[i] = vm[i] ? generalised_reverse(EEW, vs2.eew[i], uimm) : vs2[i]
+    vd.eew[i] = vm[i] ? generalised_reverse(EEW, vs2.eew[i], uimm) : 0
 \end{cryptoisa}
 
 For each \EEW-bit wide element in \vrs{2}, if the corresponding $\vm[i]$
