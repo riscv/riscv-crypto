@@ -105,7 +105,7 @@ if(RV64) begin  : rv64_ssha512
 end else begin  : rv32_ssha512
 
     wire [XL:0] ssha512_sum0r = `SLL32(rs1,25)^`SLL32(rs1,30)^`SRL32(rs1,28)^
-                                `SLL32(rs2, 7)^`SLL32(rs2, 2)^`SLL32(rs2, 4);
+                                `SLL32(rs2, 7)^`SLL32(rs2, 2)^`SLL32(rs2,24);
     
     wire [XL:0] ssha512_sum1r = `SLL32(rs1,23)^`SLL32(rs1,14)^`SRL32(rs1,18)^
                                 `SLL32(rs2, 9)^`SLL32(rs2,18)^`SLL32(rs2,14);
