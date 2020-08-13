@@ -35,6 +35,8 @@ architecture.
 - See the [project board](https://github.com/riscv/riscv-crypto/projects/1)
   for a list of on-going  / open issues.
 
+  - ["How Can I Help?"](https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+
 - Some of the proposals in this repository are based on work done as part of
   the [XCrypto](https://github.com/scarv/xcrypto) project by the University
   of Bristol Cryptography Group on scalar cryptography extensions
