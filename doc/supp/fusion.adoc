@@ -268,7 +268,7 @@ total.
 
 The SHA2 algorithms use two ternary non-linear functions: `Ch` and `Maj`.
 There is a discussion in the 
-https://github.com/scarv/riscv-crypto/blob/master/doc/supp/bitlogic.adoc[bitlogic]
+https://github.com/riscv/riscv-crypto/blob/master/doc/supp/bitlogic.adoc[bitlogic]
 document on how best to implement these functions given the base instruction
 set and the Bitmanip extension.
 Here, we only discuss the relevant macro-op fusion sequences for

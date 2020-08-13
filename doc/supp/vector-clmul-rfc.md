@@ -10,7 +10,7 @@ There are also the orthogonal question of which values of `SEW` should the crypt
 extension *require* support for?
 
 Note: Much of 
-[Markku's Analysis](https://github.com/scarv/riscv-crypto/blob/master/doc/supp/gcm-mode-cmul.adoc)
+[Markku's Analysis](https://github.com/riscv/riscv-crypto/blob/master/doc/supp/gcm-mode-cmul.adoc)
 for the scalar GCM implementation also applies here.
 Some of the example code below is based (with many apologies) on
 [Markku's scalar code](https://github.com/mjosaarinen/lwaes_isa/blob/master/gcm_rv64b_gfmul.c).
