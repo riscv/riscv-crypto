@@ -140,8 +140,8 @@ function vaes_asserts () = {
 /* AES Single Mid-Round Encrypt - Vector-Scalar */
 function clause execute (       VAESE_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
+        let key   : bits(128) = vGetElement128(vs1, 0);
         foreach (i from 0 to vGetVL()) {
-            let key   : bits(128) = vGetElement128(vs1, 0);
             let state : bits(128) = vGetElement128(vt , i);
             let result: bits(128) = vaes_round_fwd(false, state, key);
             vSetElement128(vt, i, result);
@@ -155,8 +155,8 @@ function clause execute (       VAESE_VS (vt,vs1)) = {
 /* AES Single Last-Round Encrypt - Vector-Scalar*/
 function clause execute (   VAESELAST_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
+        let key   : bits(128) = vGetElement128(vs1, 0);
         foreach (i from 0 to vGetVL()) {
-            let key   : bits(128) = vGetElement128(vs1, 0);
             let state : bits(128) = vGetElement128(vt , i);
             let result: bits(128) = vaes_round_fwd(true, state, key);
             vSetElement128(vt, i, result);
@@ -170,8 +170,8 @@ function clause execute (   VAESELAST_VS (vt,vs1)) = {
 /* AES Single Mid-Round Decrypt - Vector-Scalar */
 function clause execute (       VAESD_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
+        let key   : bits(128) = vGetElement128(vs1, 0);
         foreach (i from 0 to vGetVL()) {
-            let key   : bits(128) = vGetElement128(vs1, 0);
             let state : bits(128) = vGetElement128(vt , i);
             let result: bits(128) = vaes_round_inv(false, state, key);
             vSetElement128(vt, i, result);
@@ -185,8 +185,8 @@ function clause execute (       VAESD_VS (vt,vs1)) = {
 /* AES Single Last-Round Decrypt - Vector-Scalar */
 function clause execute (   VAESDLAST_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
+        let key   : bits(128) = vGetElement128(vs1, 0);
         foreach (i from 0 to vGetVL()) {
-            let key   : bits(128) = vGetElement128(vs1, 0);
             let state : bits(128) = vGetElement128(vt , i);
             let result: bits(128) = vaes_round_inv(true, state, key);
             vSetElement128(vt, i, result);
@@ -261,22 +261,27 @@ function clause execute (    VAES128KEYI (vt,rnd)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
 function clause execute ( VAES128INVKEYI (vt,rnd)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
 function clause execute (    VAES192KEYI (vt,rnd,vs2)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
 function clause execute ( VAES192INVKEYI (vt,rnd,vs2)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
 function clause execute (    VAES256KEYI (vt,rnd,vs2)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
 function clause execute ( VAES256INVKEYI (vt,rnd,vs2)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
