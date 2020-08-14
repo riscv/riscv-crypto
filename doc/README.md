@@ -18,7 +18,7 @@ This directory contains two types of information:
 
   Alternatively, pre-built versions corresponding to draft releases
   can be found on the
-  [releases](https://github.com/scarv/riscv-crypto/releases)
+  [releases](https://github.com/riscv/riscv-crypto/releases)
   page.
 
 

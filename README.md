@@ -19,7 +19,7 @@ scalar cryptographic instruction set extensions for the RISC-V
 architecture.
 
 - **Note:** See the
-   [dev/next-release](https://github.com/scarv/riscv-crypto/tree/dev/next-release)
+   [dev/next-release](https://github.com/riscv/riscv-crypto/tree/dev/next-release)
    branch for the most up to date version.
 
 - **Note:** These instructions are a work in progress. Their specifications
@@ -32,8 +32,9 @@ architecture.
   with the [Bitmanip extension](https://github.com/riscv/riscv-bitmanip).
   Hence, we are experimenting with *sharing* opcodes between extensions.
   
-- See the [project board](https://github.com/scarv/riscv-crypto/projects/1)
+- See the [project board](https://github.com/riscv/riscv-crypto/projects/1)
   for a list of on-going  / open issues.
+  ["How Can I Help?"](https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 
 - Some of the proposals in this repository are based on work done as part of
   the [XCrypto](https://github.com/scarv/xcrypto) project by the University
@@ -43,8 +44,8 @@ architecture.
 ## Specification
 
 To see the latest draft release of the proposals, look at the
-[Releases](https://github.com/scarv/riscv-crypto/releases) tab of
-the [Github Repository](https://github.com/scarv/riscv-crypto).
+[Releases](https://github.com/riscv/riscv-crypto/releases) tab of
+the [Github Repository](https://github.com/riscv/riscv-crypto).
 
 Source code and supplementary information is found in the
 [doc/](doc/README.md) directory.
@@ -60,10 +61,10 @@ vector extension in the formal model.
 These files currently need to be manually added to the existing
 [sail-riscv](https://github.com/rems-project/sail-riscv)
 model. A proper integration will be done eventually.
-See [issue #20](https://github.com/scarv/riscv-crypto/issues/20)
+See [issue #20](https://github.com/riscv/riscv-crypto/issues/20)
 for what is left to be implemented.
 A log of open questions about SAIL is being kept in
-[issue #22](https://github.com/scarv/riscv-crypto/issues/22).
+[issue #22](https://github.com/riscv/riscv-crypto/issues/22).
 
 ## Toolchain
 
