@@ -126,45 +126,55 @@ function aes_mixcolumn_byte_inv (so) = {
 /* 32-bit to 32-bit AES forward MixColumn */
 val      aes_mixcolumn_fwd : bits(32) -> bits(32)
 function aes_mixcolumn_fwd (x) = {
-    x /* TODO */
+    aes_mixcolumn_byte_fwd(x[31..24]) ^
+    aes_mixcolumn_byte_fwd(x[23..16]) ^
+    aes_mixcolumn_byte_fwd(x[15.. 8]) ^
+    aes_mixcolumn_byte_fwd(x[ 7.. 0])
 }
 
 /* 32-bit to 32-bit AES inverse MixColumn */
 val      aes_mixcolumn_inv : bits(32) -> bits(32)
 function aes_mixcolumn_inv (x) = {
-    x /* TODO */
+    aes_mixcolumn_byte_inv(x[31..24]) ^
+    aes_mixcolumn_byte_inv(x[23..16]) ^
+    aes_mixcolumn_byte_inv(x[15.. 8]) ^
+    aes_mixcolumn_byte_inv(x[ 7.. 0])
 }
 
 
-/* 128-bit to 128-bit implementation of the forward AES ShiftRows transform. */
+/* 128-bit to 128-bit implementation of the forward AES ShiftRows transform. 
+ * Byte 0 of state is input column 0, bits  7..0.
+ * Byte 5 of state is input column 1, bits 15..8.
+ */
 val      aes_shift_rows_fwd : bits(128) -> bits(128)
 function aes_shift_rows_fwd (x) = {
-    x /* TODO */
+  let ic3 : bits(32) = x[127..96]; 
+  let ic2 : bits(32) = x[ 95..64]; 
+  let ic1 : bits(32) = x[ 63..32]; 
+  let ic0 : bits(32) = x[ 31.. 0]; 
+  let oc0 : bits(32) = ic0[ 7.. 0] @ ic1[15.. 8] @ ic2[23..16] @ ic3[31..24];
+  let oc1 : bits(32) = ic1[ 7.. 0] @ ic2[15.. 8] @ ic3[23..16] @ ic0[31..24];
+  let oc2 : bits(32) = ic2[ 7.. 0] @ ic3[15.. 8] @ ic0[23..16] @ ic1[31..24];
+  let oc3 : bits(32) = ic3[ 7.. 0] @ ic0[15.. 8] @ ic1[23..16] @ ic2[31..24];
+  (oc3 @ oc2 @ oc1 @ oc0) /* Return value */
 }
 
 
-/* 128-bit to 128-bit implementation of the inverse AES ShiftRows transform. */
+/* 128-bit to 128-bit implementation of the inverse AES ShiftRows transform.
+ * Byte 0 of state is input column 0, bits  7..0.
+ * Byte 5 of state is input column 1, bits 15..8.
+ */
 val      aes_shift_rows_inv : bits(128) -> bits(128)
 function aes_shift_rows_inv (x) = {
-    x /* TODO */
-}
-
-
-/* 64-bit to 64-bit function which applies the AES forward sbox to each byte
- * in a 64-bit word.
- */
-val      aes_apply_fwd_sbox_to_each_byte : bits(64) -> bits(64)
-function aes_apply_fwd_sbox_to_each_byte  (x) = {
-    x /* TODO */
-}
-
-
-/* 64-bit to 64-bit function which applies the AES inverse sbox to each byte
- * in a 64-bit word. 
- */
-val      aes_apply_inv_sbox_to_each_byte : bits(64) -> bits(64)
-function aes_apply_inv_sbox_to_each_byte  (x) = {
-    x /* TODO */
+  let ic3 : bits(32) = x[127..96]; /* In column 3 */
+  let ic2 : bits(32) = x[ 95..64]; 
+  let ic1 : bits(32) = x[ 63..32]; 
+  let ic0 : bits(32) = x[ 31.. 0]; 
+  let oc0 : bits(32) = ic0[ 7.. 0] @ ic3[15.. 8] @ ic2[23..16] @ ic1[31..24];
+  let oc1 : bits(32) = ic1[ 7.. 0] @ ic0[15.. 8] @ ic3[23..16] @ ic2[31..24];
+  let oc2 : bits(32) = ic2[ 7.. 0] @ ic1[15.. 8] @ ic0[23..16] @ ic3[31..24];
+  let oc3 : bits(32) = ic3[ 7.. 0] @ ic2[15.. 8] @ ic1[23..16] @ ic0[31..24];
+  (oc3 @ oc2 @ oc1 @ oc0) /* Return value */
 }
 
 
@@ -293,4 +303,36 @@ function aes_sbox_inv (x) = {
 val      sm4_sbox : bits(8) -> bits(8)
 function sm4_sbox (x) = {
     sbox_lookup(x, sm4_sbox_table)
+}
+
+
+/* 64-bit to 64-bit function which applies the AES forward sbox to each byte
+ * in a 64-bit word.
+ */
+val      aes_apply_fwd_sbox_to_each_byte : bits(64) -> bits(64)
+function aes_apply_fwd_sbox_to_each_byte  (x) = {
+    aes_sbox_fwd(x[63..56]) @
+    aes_sbox_fwd(x[55..48]) @
+    aes_sbox_fwd(x[47..40]) @
+    aes_sbox_fwd(x[39..32]) @
+    aes_sbox_fwd(x[31..24]) @
+    aes_sbox_fwd(x[23..16]) @
+    aes_sbox_fwd(x[15.. 8]) @
+    aes_sbox_fwd(x[ 7.. 0])
+}
+
+
+/* 64-bit to 64-bit function which applies the AES inverse sbox to each byte
+ * in a 64-bit word. 
+ */
+val      aes_apply_inv_sbox_to_each_byte : bits(64) -> bits(64)
+function aes_apply_inv_sbox_to_each_byte  (x) = {
+    aes_sbox_inv(x[63..56]) @
+    aes_sbox_inv(x[55..48]) @
+    aes_sbox_inv(x[47..40]) @
+    aes_sbox_inv(x[39..32]) @
+    aes_sbox_inv(x[31..24]) @
+    aes_sbox_inv(x[23..16]) @
+    aes_sbox_inv(x[15.. 8]) @
+    aes_sbox_inv(x[ 7.. 0])
 }
