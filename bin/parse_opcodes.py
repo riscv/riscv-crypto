@@ -21,10 +21,19 @@ sail_args_types = {
     "bs"    : "bits(2)",
     "shamtw": "bits(5)",
     "rcon"  : "bits(4)",
+    "vs1"   : "bits(5)",
+    "vs2"   : "bits(5)",
+    "vt"    : "bits(5)",
+    "vd"    : "bits(5)",
+    "rnd"   : "bits(4)",
+    "vm"    : "bits(1)",
+    "simm5" : "bits(5)"
 }
 
 reg_names = ["rd", "rs1", "rs2", "rs3"]
 
+#
+# Binutils argument codes
 acodes = {}
 acodes['bs'     ] = "w"
 acodes['rcon'   ] = "W"
@@ -34,6 +43,13 @@ acodes['rs1'    ] = "s"
 acodes['rs2'    ] = "t"
 acodes['rs3'    ] = "r"
 acodes['shamtw' ] = ">"
+acodes['vs1'    ] = "?" # Where ? appears, need to go look in binutils for
+acodes['vs2'    ] = "?" # the right code.
+acodes['vt'     ] = "?"
+acodes['vd'     ] = "?"
+acodes['rnd'    ] = "?"
+acodes['vm'     ] = "?"
+acodes['simm5'  ] = "?"
 
 arglut = {}
 arglut['bs']   = (31,30)
@@ -62,6 +78,7 @@ arglut['shamt'] = (25,20)
 arglut['shamtw'] = (24,20)
 
 # for vectors
+arglut['vt'] = (11,7)
 arglut['vd'] = (11,7)
 arglut['vs3'] = (11,7)
 arglut['vs1'] = (19,15)
@@ -71,6 +88,7 @@ arglut['wd'] = (26,26)
 arglut['amoop'] = (31,27)
 arglut['nf'] = (31,29)
 arglut['simm5'] = (19,15)
+arglut['rnd'  ] = (18,15)
 arglut['zimm11'] = (30,20)
 
 

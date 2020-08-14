@@ -1,0 +1,75 @@
+
+#
+# This file contains *experimental* opcode specifications for the RISC-V
+# Vector Cryptographic instruction set extension.
+#
+# - Currently all of the instructions occupy the "custom2" space.
+#   This is to ensure they do not collide with other instructions during
+#   development.
+#
+# - The expectation is that the vector crypto instructions will be
+#   brownfield fitting in alongside pre-existing encodings.
+#
+
+#
+# ------------------------------------------------------------
+
+#              31       26  25   24..20      19..15   14..12
+vaese.vs       31..26=0x00 25=0  24..20=0x00 vs1      14..12=0b000 vt 6..0=0x5b
+vaeselast.vs   31..26=0x00 25=0  24..20=0x01 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd.vs       31..26=0x00 25=0  24..20=0x02 vs1      14..12=0b000 vt 6..0=0x5b
+vaesdlast.vs   31..26=0x00 25=0  24..20=0x03 vs1      14..12=0b000 vt 6..0=0x5b
+vaese.vv       31..26=0x00 25=0  24..20=0x04 vs1      14..12=0b000 vt 6..0=0x5b
+vaeselast.vv   31..26=0x00 25=0  24..20=0x05 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd.vv       31..26=0x00 25=0  24..20=0x06 vs1      14..12=0b000 vt 6..0=0x5b
+vaesdlast.vv   31..26=0x00 25=0  24..20=0x07 vs1      14..12=0b000 vt 6..0=0x5b
+vaes128keyi    31..26=0x00 25=0  24..20=0x08 19=0 rnd 14..12=0b000 vt 6..0=0x5b
+vaes128invkeyi 31..26=0x00 25=0  24..20=0x08 19=1 rnd 14..12=0b000 vt 6..0=0x5b
+vaes192keyi    31..26=0x01 25=0  vs2         19=0 rnd 14..12=0b000 vt 6..0=0x5b
+vaes192invkeyi 31..26=0x01 25=0  vs2         19=1 rnd 14..12=0b000 vt 6..0=0x5b
+vaes256keyi    31..26=0x01 25=1  vs2         19=0 rnd 14..12=0b000 vt 6..0=0x5b
+vaes256invkeyi 31..26=0x01 25=1  vs2         19=1 rnd 14..12=0b000 vt 6..0=0x5b
+
+vaese128.vs    31..26=0x02 25=0  24..20=0x00 vs1      14..12=0b000 vt 6..0=0x5b
+vaese192.vs    31..26=0x02 25=0  24..20=0x01 vs1      14..12=0b000 vt 6..0=0x5b
+vaese256.vs    31..26=0x02 25=0  24..20=0x02 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd128.vs    31..26=0x02 25=0  24..20=0x03 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd192.vs    31..26=0x02 25=0  24..20=0x04 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd256.vs    31..26=0x02 25=0  24..20=0x05 vs1      14..12=0b000 vt 6..0=0x5b
+vaese128.vv    31..26=0x02 25=0  24..20=0x06 vs1      14..12=0b000 vt 6..0=0x5b
+vaese192.vv    31..26=0x02 25=0  24..20=0x07 vs1      14..12=0b000 vt 6..0=0x5b
+vaese256.vv    31..26=0x02 25=0  24..20=0x08 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd128.vv    31..26=0x02 25=0  24..20=0x09 vs1      14..12=0b000 vt 6..0=0x5b
+vaesd192.vv    31..26=0x02 25=0  24..20=0x0A vs1      14..12=0b000 vt 6..0=0x5b
+vaesd256.vv    31..26=0x02 25=0  24..20=0x0B vs1      14..12=0b000 vt 6..0=0x5b
+vaes128rkey    31..26=0x02 25=0  24..20=0x0C 19..15=0 14..12=0b000 vt 6..0=0x5b
+vaes192rkey    31..26=0x02 25=0  24..20=0x0C 19..15=1 14..12=0b000 vt 6..0=0x5b
+vaes256rkey    31..26=0x02 25=0  24..20=0x0C 19..15=2 14..12=0b000 vt 6..0=0x5b
+
+vsha2.ws       31..26=0x03 25=0  vs2         19=0 rnd 14..12=0b000 vt 6..0=0x5b
+vsha2.ms       31..26=0x03 25=1  24..20=0x00 vs1      14..12=0b000 vd 6..0=0x5b
+vsha2.hs       31..26=0x03 25=1  24..20=0x01 vs1      14..12=0b000 vt 6..0=0x5b
+
+vclmul.vv      31..26=0x10  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmul.vs      31..26=0x11  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmulh.vv     31..26=0x12  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmulh.vs     31..26=0x13  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmacc.vv     31..26=0x14  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmacc.vs     31..26=0x15  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmacch.vv    31..26=0x16  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vclmacch.vs    31..26=0x17  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vwclmul.vv     31..26=0x18  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vwclmul.vs     31..26=0x19  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vwclmacc.vv    31..26=0x1A  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vwclmacc.vs    31..26=0x1B  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+
+vrot.vv        31..26=0x20  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vrot.vs        31..26=0x21  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vrot.vi        31..26=0x22  vm   vs2         simm5    14..12=0b011 vd 6..0=0x5b
+vrot.vx        31..26=0x23  vm   vs2         rs1      14..12=0b100 vd 6..0=0x5b
+
+vgrev.vv       31..26=0x24  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vgrev.vs       31..26=0x25  vm   vs2         vs1      14..12=0b000 vd 6..0=0x5b
+vgrev.vi       31..26=0x26  vm   vs2         simm5    14..12=0b011 vd 6..0=0x5b
+vgrev.vx       31..26=0x27  vm   vs2         rs1      14..12=0b100 vd 6..0=0x5b
+
