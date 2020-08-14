@@ -128,6 +128,59 @@ function vaes_round_inv   (last, state    , rkey     ) = {
 }
 
 
+/*
+ *
+ */
+val      vaes128_keystep_fwd : (bits(128), bits(4)) -> bits(128)
+function vaes128_keystep_fwd   (current  , rnd    ) = {
+    current /* TODO */
+}
+
+
+/*
+ *
+ */
+val      vaes192_keystep_fwd : (bits(128), bits(128), bits(4)) -> bits(128)
+function vaes192_keystep_fwd   (prev     , current  , rnd    ) = {
+    current /* TODO */
+}
+
+
+/*
+ *
+ */
+val      vaes256_keystep_fwd : (bits(128), bits(128), bits(4)) -> bits(128)
+function vaes256_keystep_fwd   (prev     , current  , rnd    ) = {
+    current /* TODO */
+}
+
+/*
+ *
+ */
+val      vaes128_keystep_inv : (bits(128), bits(4)) -> bits(128)
+function vaes128_keystep_inv   (current  , rnd    ) = {
+    current /* TODO */
+}
+
+
+/*
+ *
+ */
+val      vaes192_keystep_inv : (bits(128), bits(128), bits(4)) -> bits(128)
+function vaes192_keystep_inv   (prev     , current  , rnd    ) = {
+    current /* TODO */
+}
+
+
+/*
+ *
+ */
+val      vaes256_keystep_inv : (bits(128), bits(128), bits(4)) -> bits(128)
+function vaes256_keystep_inv   (prev     , current  , rnd    ) = {
+    current /* TODO */
+}
+
+
 /* Input checks for vector AES instructions. If fail, raise invalid opcode. */
 val      vaes_asserts : unit -> bool
 function vaes_asserts () = {
@@ -258,33 +311,79 @@ function clause execute (   VAESDLAST_VV (vt,vs1)) = {
 
 
 function clause execute (    VAES128KEYI (vt,rnd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 0 to vGetVL()) {
+            let current : bits(128) = vGetElement128(vt, i);
+            let result  : bits(128) = vaes128_keystep_fwd(current, rnd);
+            vSetElement128(vt, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
 function clause execute ( VAES128INVKEYI (vt,rnd)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 0 to vGetVL()) {
+            let current : bits(128) = vGetElement128(vt, i);
+            let result  : bits(128) = vaes128_keystep_inv(current, rnd);
+            vSetElement128(vt, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
 function clause execute (    VAES192KEYI (vt,rnd,vs2)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 0 to vGetVL()) {
+            let prev    : bits(128) = vGetElement128(vt , i);
+            let current : bits(128) = vGetElement128(vs2, i);
+            let result  : bits(128) = vaes192_keystep_fwd(prev, current, rnd);
+            vSetElement128(vt, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
 function clause execute ( VAES192INVKEYI (vt,rnd,vs2)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 0 to vGetVL()) {
+            let prev    : bits(128) = vGetElement128(vt , i);
+            let current : bits(128) = vGetElement128(vs2, i);
+            let result  : bits(128) = vaes192_keystep_inv(prev, current, rnd);
+            vSetElement128(vt, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
 function clause execute (    VAES256KEYI (vt,rnd,vs2)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 0 to vGetVL()) {
+            let prev    : bits(128) = vGetElement128(vt , i);
+            let current : bits(128) = vGetElement128(vs2, i);
+            let result  : bits(128) = vaes256_keystep_fwd(prev, current, rnd);
+            vSetElement128(vt, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
 function clause execute ( VAES256INVKEYI (vt,rnd,vs2)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 0 to vGetVL()) {
+            let prev    : bits(128) = vGetElement128(vt , i);
+            let current : bits(128) = vGetElement128(vs2, i);
+            let result  : bits(128) = vaes256_keystep_inv(prev, current, rnd);
+            vSetElement128(vt, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
 
