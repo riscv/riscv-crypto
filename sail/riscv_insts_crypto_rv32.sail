@@ -5,7 +5,7 @@
  * This file contains the 32-bit specific cryptography extension
  * instructions.
  *
- * This file *must not* be included in the model build if XLEN != 32
+ * This file must be included in the model build if XLEN=32
  *
  */
 
