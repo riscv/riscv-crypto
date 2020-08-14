@@ -10,6 +10,95 @@
  */
 
 /*
+ * Mocked up types.
+ * TODO: These will be replaced eventually by actual code!
+ * ----------------------------------------------------------------------
+ */
+
+/* Type definition for a vector register index. */
+type    vregidx = bits(5)
+
+val     vm_name : bits(1) <-> string
+mapping vm_name = {
+    0b0 <-> "v0",
+    0b1 <-> "v1"
+}
+
+/* Dummy functon to return a vector register name. */
+val     vreg_name : bits(5) <-> string
+mapping vreg_name = {
+    0b00000 <-> "v0",
+    0b00001 <-> "v1",
+    0b00010 <-> "v2",
+    0b00011 <-> "v3",
+    0b00100 <-> "v4",
+    0b00101 <-> "v5",
+    0b00110 <-> "v6",
+    0b00111 <-> "v7",
+    0b01000 <-> "v8",
+    0b01001 <-> "v9",
+    0b01010 <-> "v10",
+    0b01011 <-> "v11",
+    0b01100 <-> "v12",
+    0b01101 <-> "v13",
+    0b01110 <-> "v14",
+    0b01111 <-> "v15",
+    0b10000 <-> "v16",
+    0b10001 <-> "v17",
+    0b10010 <-> "v18",
+    0b10011 <-> "v19",
+    0b10100 <-> "v20",
+    0b10101 <-> "v21",
+    0b10110 <-> "v22",
+    0b10111 <-> "v23",
+    0b11000 <-> "v24",
+    0b11001 <-> "v25",
+    0b11010 <-> "v26",
+    0b11011 <-> "v27",
+    0b11100 <-> "v28",
+    0b11101 <-> "v29",
+    0b11110 <-> "v30",
+    0b11111 <-> "v31"
+}
+
+/* Dummy function for getting the current value of SEW */
+val      vGetSEW : unit -> int
+function vGetSEW () = {
+    128
+}
+
+/* Dummy function for getting the current value of LMUL*/
+val      vGetLMUL : unit -> int
+function vGetLMUL () = {
+    128
+}
+
+/* Dummy function for getting the current effective element width */
+val      vGetEEW  : unit -> int
+function vGetEEW  () = {
+    128
+}
+
+/* Dummy function for getting the number of elements to update. */
+val      vGetVL : unit -> int
+function vGetVL () = {
+    4
+}
+
+/* Dummy function to get the i'th 128-bit element of a vector register */
+val      vGetElement128 : (vregidx, int) -> bits(128) effect {rreg, escape}
+function vGetElement128 (ridx, elem) = {
+    0x00000000000000000000000000000000
+}
+
+/* Dummy function to set the i'th 128-bit element of a vector register */
+val      vSetElement128 : (vregidx, int, bits(128)) -> unit effect {wreg, escape}
+function vSetElement128 (ridx, elem, value) = {
+    assert(true,"TODO")
+}
+
+
+/*
  * Cryptography extension types.
  * ----------------------------------------------------------------------
  */
