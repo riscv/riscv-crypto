@@ -13,7 +13,7 @@ SPEC_TEX  = $(SPEC_TOP) $(wildcard $(REPO_HOME)/doc/tex/*)
 SPEC_EXTRA= riscv-crypto-spec.sty $(OPCODES)
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
-$(OPCODES) : $(REPO_HOME)/tools/opcodes-crypto
+$(OPCODES) : $(REPO_HOME)/tools/opcodes-crypto-scalar
 	@mkdir -p $(dir $(OPCODES))
 	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -tex > $@
 
