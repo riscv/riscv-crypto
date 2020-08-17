@@ -91,6 +91,12 @@ function vGetElement128 (ridx, elem) = {
     0x00000000000000000000000000000000
 }
 
+/* Dummy function to get the i'th 256-bit element of a vector register */
+val      vGetElement256 : (vregidx, int) -> bits(256) effect {rreg, escape}
+function vGetElement256 (ridx, elem) = {
+    0x0000000000000000000000000000000000000000000000000000000000000000
+}
+
 /* Dummy function to set the i'th 128-bit element of a vector register */
 val      vSetElement128 : (vregidx, int, bits(128)) -> unit effect {wreg, escape}
 function vSetElement128 (ridx, elem, value) = {

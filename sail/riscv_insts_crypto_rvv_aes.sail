@@ -140,18 +140,18 @@ function vaes128_keystep_fwd   (current  , rnd    ) = {
 /*
  *
  */
-val      vaes192_keystep_fwd : (bits(128), bits(128), bits(4)) -> bits(128)
-function vaes192_keystep_fwd   (prev     , current  , rnd    ) = {
-    current /* TODO */
+val      vaes192_keystep_fwd : (bits(192), bits(4)) -> bits(128)
+function vaes192_keystep_fwd   (current  , rnd    ) = {
+    current[127..0] /* TODO */
 }
 
 
 /*
  *
  */
-val      vaes256_keystep_fwd : (bits(128), bits(128), bits(4)) -> bits(128)
-function vaes256_keystep_fwd   (prev     , current  , rnd    ) = {
-    current /* TODO */
+val      vaes256_keystep_fwd : (bits(256), bits(4)) -> bits(128)
+function vaes256_keystep_fwd   (current  , rnd    ) = {
+    current[127..0] /* TODO */
 }
 
 /*
@@ -166,18 +166,18 @@ function vaes128_keystep_inv   (current  , rnd    ) = {
 /*
  *
  */
-val      vaes192_keystep_inv : (bits(128), bits(128), bits(4)) -> bits(128)
-function vaes192_keystep_inv   (prev     , current  , rnd    ) = {
-    current /* TODO */
+val      vaes192_keystep_inv : (bits(192), bits(4)) -> bits(128)
+function vaes192_keystep_inv   (current  , rnd    ) = {
+    current[127..0] /* TODO */
 }
 
 
 /*
  *
  */
-val      vaes256_keystep_inv : (bits(128), bits(128), bits(4)) -> bits(128)
-function vaes256_keystep_inv   (prev     , current  , rnd    ) = {
-    current /* TODO */
+val      vaes256_keystep_inv : (bits(256), bits(4)) -> bits(128)
+function vaes256_keystep_inv   (current  , rnd    ) = {
+    current[127..0] /* TODO */
 }
 
 
@@ -310,6 +310,7 @@ function clause execute (   VAESDLAST_VV (vt,vs1)) = {
 }
 
 
+/* AES 128 Single round key schedule - forwards */
 function clause execute (    VAES128KEYI (vt,rnd)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
@@ -322,6 +323,7 @@ function clause execute (    VAES128KEYI (vt,rnd)) = {
         RETIRE_FAIL
 }
 
+/* AES 128 Single round key schedule - inverse */
 function clause execute ( VAES128INVKEYI (vt,rnd)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
@@ -334,12 +336,15 @@ function clause execute ( VAES128INVKEYI (vt,rnd)) = {
         RETIRE_FAIL
 }
 
+
+/* AES 192 Single round key schedule - forwards */
 function clause execute (    VAES192KEYI (vt,rnd,vs2)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            let prev    : bits(128) = vGetElement128(vt , i);
-            let current : bits(128) = vGetElement128(vs2, i);
-            let result  : bits(128) = vaes192_keystep_fwd(prev, current, rnd);
+            let words_54: bits( 64) = vGetElement128(vt , i)[63..0];
+            let words_30: bits(128) = vGetElement128(vs2, i);
+            let keys    : bits(192) = words_54 @ words_30;
+            let result  : bits(128) = vaes192_keystep_fwd(keys, rnd);
             vSetElement128(vt, i, result);
         };
         RETIRE_SUCCESS
@@ -347,12 +352,14 @@ function clause execute (    VAES192KEYI (vt,rnd,vs2)) = {
         RETIRE_FAIL
 }
 
+/* AES 192 Single round key schedule - inverse */
 function clause execute ( VAES192INVKEYI (vt,rnd,vs2)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            let prev    : bits(128) = vGetElement128(vt , i);
-            let current : bits(128) = vGetElement128(vs2, i);
-            let result  : bits(128) = vaes192_keystep_inv(prev, current, rnd);
+            let words_30: bits(128) = vGetElement128(vs2, i);
+            let words_54: bits( 64) = vGetElement128(vt , i)[63..0];
+            let keys    : bits(192) = words_54 @ words_30;
+            let result  : bits(128) = vaes192_keystep_inv(keys, rnd);
             vSetElement128(vt, i, result);
         };
         RETIRE_SUCCESS
@@ -360,12 +367,15 @@ function clause execute ( VAES192INVKEYI (vt,rnd,vs2)) = {
         RETIRE_FAIL
 }
 
+
+/* AES 256 Single round key schedule - forwards */
 function clause execute (    VAES256KEYI (vt,rnd,vs2)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
             let prev    : bits(128) = vGetElement128(vt , i);
             let current : bits(128) = vGetElement128(vs2, i);
-            let result  : bits(128) = vaes256_keystep_fwd(prev, current, rnd);
+            let keys    : bits(256) = current @ prev;
+            let result  : bits(128) = vaes256_keystep_fwd(keys, rnd);
             vSetElement128(vt, i, result);
         };
         RETIRE_SUCCESS
@@ -373,12 +383,14 @@ function clause execute (    VAES256KEYI (vt,rnd,vs2)) = {
         RETIRE_FAIL
 }
 
+/* AES 256 Single round key schedule - inverse */
 function clause execute ( VAES256INVKEYI (vt,rnd,vs2)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
             let prev    : bits(128) = vGetElement128(vt , i);
             let current : bits(128) = vGetElement128(vs2, i);
-            let result  : bits(128) = vaes256_keystep_inv(prev, current, rnd);
+            let keys    : bits(256) = current @ prev;
+            let result  : bits(128) = vaes256_keystep_inv(keys, rnd);
             vSetElement128(vt, i, result);
         };
         RETIRE_SUCCESS
@@ -387,66 +399,291 @@ function clause execute ( VAES256INVKEYI (vt,rnd,vs2)) = {
 }
 
 
+/*
+ * Vector-Scalar All Rounds AES Encrypt
+ * ------------------------------------------------------------
+ */
+
+
+/* AES 128 All Rounds Encrypt - Vector-Scalar */
 function clause execute (    VAESE128_VS (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            rkey    : bits(128) = vGetElement128(vs1, 0); /* Vector-Scalar */
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 10) {
+                state = vaes_round_fwd(false, state, rkey);
+                rkey  = vaes128_keystep_fwd(rkey, rnd);
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_fwd(true, state, rkey);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
+
+/* AES 192 All Rounds Encrypt - Vector-Scalar */
 function clause execute (    VAESE192_VS (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(192) = vGetElement256(vs1, 0)[191..0];
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 12) {
+                state = vaes_round_fwd(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_fwd(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
+
+/* AES 256 All Rounds Encrypt - Vector-Scalar */
 function clause execute (    VAESE256_VS (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(256) = vGetElement256(vs1, 0);
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 14) {
+                state = vaes_round_fwd(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_fwd(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
+/*
+ * Vector-Scalar All Rounds AES Decrypt
+ * ------------------------------------------------------------
+ */
+
+
+/* AES 128 All Rounds Decrypt - Vector-Scalar */
 function clause execute (    VAESD128_VS (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            rkey    : bits(128) = vGetElement128(vs1, 0); /* Vector-Scalar */
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 10) {
+                state = vaes_round_inv(false, state, rkey);
+                rkey  = vaes128_keystep_inv(rkey, rnd);
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_inv(true, state, rkey);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
+
+/* AES 192 All Rounds Decrypt - Vector-Scalar */
 function clause execute (    VAESD192_VS (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(192) = vGetElement256(vs1, 0)[191..0];
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 12) {
+                state = vaes_round_inv(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_inv(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
+/* AES 256 All Rounds Decrypt - Vector-Scalar */
 function clause execute (    VAESD256_VS (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(256) = vGetElement256(vs1, 0);
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 14) {
+                state = vaes_round_inv(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_inv(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
+/*
+ * Vector-Vector All Rounds AES Encrypt
+ * ------------------------------------------------------------
+ */
+
+/* AES 128 All Rounds Encrypt - Vector-Scalar */
 function clause execute (    VAESE128_VV (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            rkey    : bits(128) = vGetElement128(vs1, i); /* Vector-Vector */
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 10) {
+                state = vaes_round_fwd(false, state, rkey);
+                rkey  = vaes128_keystep_fwd(rkey, rnd);
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_fwd(true, state, rkey);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
+
+/* AES 192 All Rounds Encrypt - Vector-Scalar */
 function clause execute (    VAESE192_VV (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(192) = vGetElement256(vs1, i)[191..0];
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 12) {
+                state = vaes_round_fwd(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_fwd(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
+
+/* AES 256 All Rounds Encrypt - Vector-Scalar */
 function clause execute (    VAESE256_VV (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(256) = vGetElement256(vs1, i);
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 14) {
+                state = vaes_round_fwd(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_fwd(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
+/*
+ * Vector-Vector All Rounds AES Decrypt
+ * ------------------------------------------------------------
+ */
+
+/* AES 128 All Rounds Decrypt - Vector-Scalar */
 function clause execute (    VAESD128_VV (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
-}
-function clause execute (    VAESD192_VV (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
-}
-function clause execute (    VAESD256_VV (vt,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            rkey    : bits(128) = vGetElement128(vs1, i); /* Vector-Scalar */
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 10) {
+                state = vaes_round_inv(false, state, rkey);
+                rkey  = vaes128_keystep_inv(rkey, rnd);
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_inv(true, state, rkey);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
 
+
+/* AES 192 All Rounds Decrypt - Vector-Scalar */
+function clause execute (    VAESD192_VV (vt,vs1)) = {
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(192) = vGetElement256(vs1, i)[191..0];
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 12) {
+                state = vaes_round_inv(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_inv(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
+}
+
+/* AES 256 All Rounds Decrypt - Vector-Scalar */
+function clause execute (    VAESD256_VV (vt,vs1)) = {
+    if(vaes_asserts()) then {
+        foreach (i from 1 to vGetVL()) {
+            rnd     : bits(4)   = 0x0;
+            ekey    : bits(256) = vGetElement256(vs1, i);
+            state   : bits(128) = vGetElement128(vt , i);
+            foreach(i from 1 to 14) {
+                state = vaes_round_inv(false, state, ekey[127..0]);
+                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
+                rnd   = rnd + 1;
+            };
+            state = vaes_round_inv(true, state, ekey[127..0]);
+            vSetElement128(vt, i, state);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
+}
+
+
+
+/* AES 128 Get final decryption key from encryption key. */
 function clause execute (    VAES128RKEY (vt)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
+
+/* AES 192 Get final decryption key from encryption key. */
 function clause execute (    VAES192RKEY (vt)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
+
+/* AES 256 Get final decryption key from encryption key. */
 function clause execute (    VAES256RKEY (vt)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
