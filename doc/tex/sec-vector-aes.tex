@@ -55,12 +55,12 @@ E.g. an implementation with $\VLEN=64$ may set $\LMUL=2$ and $\SEW=128$.
 
 \begin{cryptoisa}
 vaes128keyi     vrt,       rnd    // 1  <= rnd <= 10
-vaes192keyi     vrt, vrs1, rnd    // 1  <= rnd <= 12
-vaes256keyi     vrt, vrs1, rnd    // 2  <= rnd <= 14
+vaes192keyi     vrt, vrs2, rnd    // 1  <= rnd <= 12
+vaes256keyi     vrt, vrs2, rnd    // 2  <= rnd <= 14
 
 vaes128invkeyi  vrt,       rnd    // 9  => rnd =>  0
-vaes192invkeyi  vrt, vrs1, rnd    // 10 => rnd =>  0
-vaes256invkeyi  vrt, vrs1, rnd    // 12 => rnd =>  0
+vaes192invkeyi  vrt, vrs2, rnd    // 10 => rnd =>  0
+vaes256invkeyi  vrt, vrs2, rnd    // 12 => rnd =>  0
 \end{cryptoisa}
 
 The \mnemonic{vaes*keyi} instructions
@@ -81,8 +81,8 @@ and writes the result back to \vrt.
 The \mnemonic{vaes192keyi} and \mnemonic{vaes256keyi} instructions
 compute the {\em next} round key
 from the
-{\em current} round key stored in \vrt {\em and}
-the {\em previous} round key stored in \vrs{1}.
+{\em current} round key stored in \vrs{1} {\em and}
+the {\em previous} round key stored in \vrt.
 The {\em next} round key is written back to \vrt.
 
 Each of these instructions requires $\SEW=128$.
