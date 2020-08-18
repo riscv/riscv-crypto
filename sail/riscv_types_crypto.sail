@@ -100,7 +100,13 @@ function vGetElement256 (ridx, elem) = {
 /* Dummy function to set the i'th 128-bit element of a vector register */
 val      vSetElement128 : (vregidx, int, bits(128)) -> unit effect {wreg, escape}
 function vSetElement128 (ridx, elem, value) = {
-    assert(true,"TODO")
+    assert(true,"TODO: vSetElement128")
+}
+
+/* Dummy function to set the i'th 256-bit element of a vector register */
+val      vSetElement256 : (vregidx, int, bits(256)) -> unit effect {wreg, escape}
+function vSetElement256 (ridx, elem, value) = {
+    assert(true,"TODO: vSetElement256")
 }
 
 
@@ -240,16 +246,16 @@ function aes_mixcolumn_inv (x) = {
 val         aes_decode_rcon : bits(4) -> bits(32)
 function    aes_decode_rcon (r) = {
   match r {
-    0x0 => 0x00000001,
-    0x1 => 0x00000002,
-    0x2 => 0x00000004,
-    0x3 => 0x00000008,
-    0x4 => 0x00000010,
-    0x5 => 0x00000020,
-    0x6 => 0x00000040,
-    0x7 => 0x00000080,
-    0x8 => 0x0000001b,
-    0x9 => 0x00000036,
+    0x0 => 0x01000000,
+    0x1 => 0x02000000,
+    0x2 => 0x04000000,
+    0x3 => 0x08000000,
+    0x4 => 0x10000000,
+    0x5 => 0x20000000,
+    0x6 => 0x40000000,
+    0x7 => 0x80000000,
+    0x8 => 0x1b000000,
+    0x9 => 0x36000000,
     0xA => 0x00000000,
     0xB => 0x00000000,
     0xC => 0x00000000,
@@ -355,6 +361,17 @@ function aes_sbox_fwd (x) = {
 val      aes_sbox_inv : bits(8) -> bits(8)
 function aes_sbox_inv (x) = {
     sbox_lookup(x, aes_sbox_inv_table)
+}
+
+/* AES SubWord function used in the key expansion
+ * - Applies the forward sbox to each byte in the input word.
+ */
+val      aes_subword  : bits(32) -> bits(32)
+function aes_subword  (x) = {
+    aes_sbox_fwd(x[31..24]) @
+    aes_sbox_fwd(x[23..16]) @
+    aes_sbox_fwd(x[15.. 8]) @
+    aes_sbox_fwd(x[ 7.. 0])  
 }
 
 
