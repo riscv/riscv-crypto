@@ -108,9 +108,9 @@ mapping clause assembly =     VAES256RKEY (vt) <-> "vaes256rkey" ^ spc() ^ vreg_
 val      vaes_round_fwd : (bool, bits(128), bits(128)) -> bits(128)
 function vaes_round_fwd   (last, state    , rkey     ) = {
     let ark: bits(128) = state ^ rkey;
-    let sr : bits(128) = aes_shift_rows_fwd(ark  );
-    let sb : bits(128) = aes_subbytes_fwd  (sr   );
-    if(last) then sb else aes_mixcolumns_fwd(sb)
+    let sb : bits(128) = aes_subbytes_fwd  (ark  );
+    let sr : bits(128) = aes_shift_rows_fwd(sb   );
+    if(last) then sr else aes_mixcolumns_fwd(sr)
 }
 
 
@@ -139,7 +139,7 @@ function vaes128_keystep_fwd   (current  , rnd    ) = {
   let wi2 : bits(32) = current[ 95..64];
   let wi3 : bits(32) = current[127..96];
   let rcon: bits(32) = aes_decode_rcon(rnd);
-  let temp: bits(32) = aes_subword(ror32(wi3,to_bits(8,24))) ^ rcon;
+  let temp: bits(32) = aes_subword_fwd(ror32(wi3,to_bits(8,24))) ^ rcon;
   let wo0 : bits(32) = wi0 ^ temp;
   let wo1 : bits(32) = wi1 ^ wo0;
   let wo2 : bits(32) = wi2 ^ wo1;
@@ -160,7 +160,6 @@ function vaes192_keystep_fwd   (current  , rnd    ) = {
 /*
  * Given the previous two 128-bit round keys, compute the next
  * 128-bit round key.
- * TODO: vaes256_keystep_fwd is broken
  */
 val      vaes256_keystep_fwd : (bits(128), bits(128), bits(4)) -> bits(128)
 function vaes256_keystep_fwd   (prev     , current  , rnd    ) = {
@@ -172,16 +171,16 @@ function vaes256_keystep_fwd   (prev     , current  , rnd    ) = {
   let wi5 : bits(32) = current[ 63.. 32];
   let wi6 : bits(32) = current[ 95.. 64];
   let wi7 : bits(32) = current[127.. 96];
-  let rcon: bits(32) = aes_decode_rcon(rnd);
-  let temp: bits(32) = aes_subword(ror32(wi7,to_bits(8,24))) ^ rcon;
+  let rcon: bits(32) = aes_decode_rcon(rnd>>1);
+  let temp: bits(32) = aes_subword_fwd(ror32(wi7,to_bits(8,24))) ^ rcon;
   let wo0 : bits(32) = wi0 ^ temp;
   let wo1 : bits(32) = wi1 ^ wo0;
   let wo2 : bits(32) = wi2 ^ wo1;
   let wo3 : bits(32) = wi3 ^ wo2;
-  if(bit_to_bool(rnd[0])) then {
+  if(bit_to_bool(rnd[0]) == false) then {
     wo3 @ wo2 @ wo1 @ wo0                   /* Return round key N */
   } else {
-    let wo4 : bits(32) = wi4 ^ aes_subword(wo3);
+    let wo4 : bits(32) = wi4 ^ aes_subword_fwd(wo3);
     let wo5 : bits(32) = wi5 ^ wo4;
     let wo6 : bits(32) = wi6 ^ wo5;
     let wo7 : bits(32) = wi7 ^ wo6;
@@ -213,6 +212,49 @@ function vaes192_keystep_inv   (current  , rnd    ) = {
 val      vaes256_keystep_inv : (bits(256), bits(4)) -> bits(128)
 function vaes256_keystep_inv   (current  , rnd    ) = {
     current[127..0] /* TODO: vaes256_keystep_inv */
+}
+
+
+/* 
+ * Perform an AES-128 block encryption using the given key and message.
+ */
+val      vaes128_block_enc : (bits(128), bits(128)) -> bits(128)
+function vaes128_block_enc   (msg      , key      ) = {
+    rkey  : bits(128) = key;
+    state : bits(128) = msg;
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x0);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x1);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x2);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x3);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x4);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x5);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x6);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x7);
+    state = vaes_round_fwd(false, state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x8);
+    state = vaes_round_fwd(true , state, rkey);
+    rkey  = vaes128_keystep_fwd(rkey, 0x9);
+    state ^ rkey
+}
+
+/* 
+ * Perform an AES-256 block encryption using the given key and message.
+ */
+val      vaes256_block_enc : (bits(128), bits(256)) -> bits(128)
+function vaes256_block_enc   (msg      , key      ) = {
+    rkey0 : bits(128) = key[127..  0];
+    rkey1 : bits(128) = key[255..128];
+    state : bits(128) = msg;
+    /* TODO: vaes256_block_enc */
+    state
 }
 
 
@@ -444,14 +486,9 @@ function clause execute (    VAESE128_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
             rnd     : bits(4)   = 0x0;
-            rkey    : bits(128) = vGetElement128(vs1, 0); /* Vector-Scalar */
+            key     : bits(128) = vGetElement128(vs1, 0); /* Vector-Scalar */
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 10) {
-                state = vaes_round_fwd(false, state, rkey);
-                rkey  = vaes128_keystep_fwd(rkey, rnd);
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_fwd(true, state, rkey);
+            state   = vaes128_block_enc(state, key);
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -467,12 +504,7 @@ function clause execute (    VAESE192_VS (vt,vs1)) = {
             rnd     : bits(4)   = 0x0;
             ekey    : bits(192) = vGetElement256(vs1, 0)[191..0];
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 12) {
-                state = vaes_round_fwd(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_fwd(true, state, ekey[127..0]);
+            /* TODO: vaes192 all rounds encrypto vector scalar */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -485,15 +517,9 @@ function clause execute (    VAESE192_VS (vt,vs1)) = {
 function clause execute (    VAESE256_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
-            ekey    : bits(256) = vGetElement256(vs1, 0);
-            state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 14) {
-                state = vaes_round_fwd(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_fwd(true, state, ekey[127..0]);
+            ekey  : bits(256) = vGetElement256(vs1, 0);
+            state : bits(128) = vGetElement128(vt , i);
+            state = vaes256_block_enc(state, ekey);
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -511,15 +537,9 @@ function clause execute (    VAESE256_VS (vt,vs1)) = {
 function clause execute (    VAESD128_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             rkey    : bits(128) = vGetElement128(vs1, 0); /* Vector-Scalar */
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 10) {
-                state = vaes_round_inv(false, state, rkey);
-                rkey  = vaes128_keystep_inv(rkey, rnd);
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_inv(true, state, rkey);
+            /* TODO: vaes128_block_decrypt vector scalar; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -532,15 +552,9 @@ function clause execute (    VAESD128_VS (vt,vs1)) = {
 function clause execute (    VAESD192_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             ekey    : bits(192) = vGetElement256(vs1, 0)[191..0];
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 12) {
-                state = vaes_round_inv(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_inv(true, state, ekey[127..0]);
+            /* TODO: vaes192_block_decrypt vector scalar; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -552,15 +566,9 @@ function clause execute (    VAESD192_VS (vt,vs1)) = {
 function clause execute (    VAESD256_VS (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             ekey    : bits(256) = vGetElement256(vs1, 0);
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 14) {
-                state = vaes_round_inv(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_inv(true, state, ekey[127..0]);
+            /* TODO: vaes256_block_decrypt vector scalar; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -577,15 +585,9 @@ function clause execute (    VAESD256_VS (vt,vs1)) = {
 function clause execute (    VAESE128_VV (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             rkey    : bits(128) = vGetElement128(vs1, i); /* Vector-Vector */
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 10) {
-                state = vaes_round_fwd(false, state, rkey);
-                rkey  = vaes128_keystep_fwd(rkey, rnd);
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_fwd(true, state, rkey);
+            state   = vaes128_block_enc(state, rkey);
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -598,15 +600,9 @@ function clause execute (    VAESE128_VV (vt,vs1)) = {
 function clause execute (    VAESE192_VV (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             ekey    : bits(192) = vGetElement256(vs1, i)[191..0];
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 12) {
-                state = vaes_round_fwd(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_fwd(true, state, ekey[127..0]);
+            /* TODO: vaes192 all rounds encrypt vector-scalar; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -619,15 +615,9 @@ function clause execute (    VAESE192_VV (vt,vs1)) = {
 function clause execute (    VAESE256_VV (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             ekey    : bits(256) = vGetElement256(vs1, i);
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 14) {
-                state = vaes_round_fwd(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_fwd(true, state, ekey[127..0]);
+            state = vaes256_block_enc(state, ekey);
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -644,15 +634,9 @@ function clause execute (    VAESE256_VV (vt,vs1)) = {
 function clause execute (    VAESD128_VV (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             rkey    : bits(128) = vGetElement128(vs1, i); /* Vector-Vector */
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 10) {
-                state = vaes_round_inv(false, state, rkey);
-                rkey  = vaes128_keystep_inv(rkey, rnd);
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_inv(true, state, rkey);
+            /* TODO: vaes128 all rounds decrypt vector-vector; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -665,15 +649,9 @@ function clause execute (    VAESD128_VV (vt,vs1)) = {
 function clause execute (    VAESD192_VV (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             ekey    : bits(192) = vGetElement256(vs1, i)[191..0];
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 12) {
-                state = vaes_round_inv(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes192_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_inv(true, state, ekey[127..0]);
+            /* TODO: vaes192 all rounds decrypt vector-vector; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -685,15 +663,9 @@ function clause execute (    VAESD192_VV (vt,vs1)) = {
 function clause execute (    VAESD256_VV (vt,vs1)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd     : bits(4)   = 0x0;
             ekey    : bits(256) = vGetElement256(vs1, i);
             state   : bits(128) = vGetElement128(vt , i);
-            foreach(i from 1 to 14) {
-                state = vaes_round_inv(false, state, ekey[127..0]);
-                /* TODO: rkey  = vaes256_keystep_fwd(rkey, rnd); */
-                rnd   = rnd + 1;
-            };
-            state = vaes_round_inv(true, state, ekey[127..0]);
+            /* TODO: vaes256 all rounds decrypt vector-vector; */
             vSetElement128(vt, i, state);
         };
         RETIRE_SUCCESS
@@ -713,9 +685,8 @@ function clause execute (    VAES128RKEY (vt)) = {
         foreach (i from 0 to vGetVL()) {
             rnd     : bits(4)   = 0x0;
             rkey    : bits(128) = vGetElement128(vt, i);
-            foreach(i from 1 to 10) {
-                rkey  = vaes128_keystep_fwd(rkey, rnd);
-                rnd   = rnd + 1;
+            foreach(i from 0 to 10) {
+                rkey    = vaes128_keystep_fwd(rkey, to_bits(4,i));
             };
             vSetElement128(vt, i, rkey);
         };
@@ -727,7 +698,7 @@ function clause execute (    VAES128RKEY (vt)) = {
 
 /* AES 192 Get final decryption key from encryption key. */
 function clause execute (    VAES192RKEY (vt)) = {
-    /* TBD, implemented as nop.*/
+    /* TODO: vaes192 get decrypt key; */
     RETIRE_SUCCESS
 }
 
@@ -736,16 +707,10 @@ function clause execute (    VAES192RKEY (vt)) = {
 function clause execute (    VAES256RKEY (vt)) = {
     if(vaes_asserts()) then {
         foreach (i from 0 to vGetVL()) {
-            rnd  : bits(4)   = 0x0;
-            rkey : bits(256) = vGetElement256(vt, i);
-            prev : bits(128) = rkey[127..  0];
-            curr : bits(128) = rkey[255..128];
-            foreach(i from 1 to 7) { /* Two steps at a time */
-                prev = vaes256_keystep_fwd(prev, curr, rnd+0);
-                curr = vaes256_keystep_fwd(curr, prev, rnd+1);
-                rnd  = rnd + 2;
-            };
-            vSetElement256(vt, i, curr @ prev);
+            rnd   : bits(4)   = 0x0;
+            ekey  : bits(256) = vGetElement256(vt, i);
+    /* TODO: vaes256 get decrypt key; */
+            vSetElement256(vt, i, ekey);
         };
         RETIRE_SUCCESS
     } else
