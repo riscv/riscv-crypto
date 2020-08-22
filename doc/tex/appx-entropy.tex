@@ -191,7 +191,7 @@
     flow; all status information that is unnecessary in normal operation
     should be eliminated. We specifically urge implementors against creating
     unnecessary information flows (``status oracles'') via the custom bits
-    or to allow the instruction to disable or affect the TNRG output in any
+    or to allow the instruction to disable or affect the TRNG output in any
     significant way. All information flows and interaction mechanisms must
     be considered from an adversarial viewpoint and implemented only if they
     are truly necessary and their security impact can be fully understood.
@@ -414,7 +414,7 @@
     of additional tests depends on the nature and implementation of the
     physical source.
 
-    Especially if a non-cryptographic a conditioner is used in hardware,
+    Especially if a non-cryptographic conditioner is used in hardware,
     it is possible that the AIS 31 \cite{KiSc11} online tests are
     implemented by driver software. They can also be implemented in hardware.
     For some security profiles AIS 31 mandates that their tolerances are
@@ -574,7 +574,7 @@
     cryptographic statistical requirements \cite{HuHe20}. Hence they should
     perhaps be considered to be entropy sources instead.
 
-    Relatively little research has gone into QNRG implementation security,
+    Relatively little research has gone into QRNG implementation security,
     but many QRNG designs are arguably more susceptible to leakage than
     classical generators (such as ring oscillators) as they tend to employ
     external components and mixed materials.
