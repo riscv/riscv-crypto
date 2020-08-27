@@ -4,7 +4,15 @@
  * functions used by multiple crypto extension instructions give the correct
  * results given known inputs.
  */
+/*                                        |      ||      ||      ||      |  */
+let crypto_test_aes128_key: bits(128) = 0x09cf4f3cabf7158828aed2a62b7e1516
+let crypto_test_aes128_pt : bits(128) = 0xe0370734313198a2885a308d3243f6a8
+let crypto_test_aes128_ct : bits(128) = 0x196A0B32DC11859702DC09FB3925841D
 
+let crypto_test_aes256_key: bits(256) = 0x1c1d1e1f18191a1b1415161710111213
+                                      @ 0x0c0d0e0f08090a0b0405060700010203
+let crypto_test_aes256_pt : bits(128) = 0xccddeeff8899aabb4455667700112233
+let crypto_test_aes256_ct : bits(128) = 0x4b496089eafc4990516745bf8ea2b7ca
 
 /*
  * Simple KAT test for the AES 128 forward keystep function.
@@ -12,7 +20,7 @@
  */
 val      crypto_test_vaes_128_keystep_fwd : unit -> bool effect{escape}
 function crypto_test_vaes_128_keystep_fwd () = {
-  let input   : bits(128) = 0x09cf4f3cabf7158828aed2a62b7e1516;
+  let input   : bits(128) = crypto_test_aes128_key;
   let grm_out1: bits(128) = 0x2A6C760523A3393988542CB1A0FAFE17;
   let dut_out1: bits(128) = vaes128_keystep_fwd(input, 0x0);
   assert(dut_out1 == grm_out1);
@@ -50,9 +58,137 @@ function crypto_test_vaes_256_keystep_fwd () = {
   true
 }
 
+
+/* 
+ * Make sure we can calulate the correct final round key for AES 128
+ */
+val      crypto_test_vaes_128_get_final_round_key : unit -> bool effect{escape}
+function crypto_test_vaes_128_get_final_round_key() = {
+    let ck : bits(128) = crypto_test_aes128_key;
+    let rk : bits(128) = vaes128_get_last_round_key(ck);
+    assert(rk == 0xb6630ca6e13f0cc8c9ee2589d014f9a8);
+    true
+}
+
+/* 
+ * Make sure we can calulate the correct final round key for AES 256
+ */
+val      crypto_test_vaes_256_get_final_round_key : unit -> bool effect{escape}
+function crypto_test_vaes_256_get_final_round_key() = {
+    let ck : bits(256) = crypto_test_aes256_key;
+    let rk : bits(256) = vaes256_get_last_round_key(ck);
+    assert(rk ==0x6D68DE36371AC23CBF0979E924FC79CCCDF8CDEA7E572BAAA9F24FE04E5A6699);
+    true
+}
+
+
 /*
-0x3243f6a8 0x885a308d 0x313198a2 0xe0370734
-0xe0370734 0x313198a2 0x885a308d 0x3243f6a8 
-0xe0370734313198a2885a308d3243f6a8 
-*/
+ * Are shift rows and inv shift rows the inverse of one another?
+ */
+val      crypto_test_aes_shiftrows_complement : unit -> bool effect{escape}
+function crypto_test_aes_shiftrows_complement () = {
+    let input : bits(128) = 0x857d77812b73aef015ca71be603deb10;
+    let fwd   : bits(128) = aes_shift_rows_fwd(input);
+    let inv   : bits(128) = aes_shift_rows_inv(fwd);
+    assert(inv == input);
+    true
+}
+
+/*
+ * Are subbytes and inv subbytes the inverse of one another?
+ */
+val      crypto_test_aes_subbytes_complement : unit -> bool effect{escape}
+function crypto_test_aes_subbytes_complement () = {
+    let input : bits(128) = 0x857d77812b73aef015ca71be603deb10;
+    let fwd   : bits(128) = aes_subbytes_fwd(input);
+    let inv   : bits(128) = aes_subbytes_inv(fwd);
+    assert(inv == input);
+    true
+}
+
+/*
+ * Are MixCols and inv MixCols the inverse of one another?
+ */
+val      crypto_test_aes_mixcolumns_complement : unit -> bool effect{escape}
+function crypto_test_aes_mixcolumns_complement () = {
+    let input : bits(128) = 0x857d77812b73aef015ca71be603deb10;
+    let fwd   : bits(128) = aes_mixcolumns_fwd(input);
+    let inv   : bits(128) = aes_mixcolumns_inv(fwd  );
+    assert(inv == input);
+    true
+}
+
+/*
+ * Is vaes_round_fwd correct for a non-final round transform?
+ */
+val      crypto_test_aes_enc_round_fwd: unit -> bool effect{escape}
+function crypto_test_aes_enc_round_fwd() = {
+    let pt : bits(128) = 0xe9f848089ac68d2aa0f4e22b193de3be;
+    let key: bits(128) = 0x2a6c760523a3393988542cb1a0fafe17;
+    let e1 : bits(128) = vaes_round_fwd(false, pt, key);
+    assert(e1 == 0x026a50496b5bea43689f352ba49c7ff2);
+    true
+}
+
+/*
+ * Is vaes_round_inv correct for a non-final round transform?
+ * TODO: crypto_test_aes_enc_round_inv
+ */
+val      crypto_test_aes_enc_round_inv: unit -> bool effect{escape}
+function crypto_test_aes_enc_round_inv() = {
+    let pt : bits(128) = 0x026a50496b5bea43689f352ba49c7ff2;
+    let key: bits(128) = 0x2a6c760523a3393988542cb1a0fafe17;
+    let e1 : bits(128) = vaes_round_inv(false, pt, key);
+    assert(e1 == 0xe9f848089ac68d2aa0f4e22b193de3be);
+    true
+}
+
+
+/*
+ * Does the AES 128 block encrypt function work properly for a single KAT test?
+ * Test values taken from FIPS 197, Appendix B, Page 33
+ */
+val      crypto_test_aes128_enc_block : unit -> bool effect{escape}
+function crypto_test_aes128_enc_block () = {
+    let pt : bits(128) = crypto_test_aes128_pt;
+    let key: bits(128) = crypto_test_aes128_key;
+    let ct : bits(128) = vaes128_block_enc(pt, key);
+    assert(ct == crypto_test_aes128_ct);
+    true
+}
+
+
+/*
+ * Does the AES 256 block encrypt function work properly for a single KAT test?
+ * Test values taken from FIPS 197, Appendix C.3
+ */
+val      crypto_test_aes256_enc_block : unit -> bool effect{escape}
+function crypto_test_aes256_enc_block () = {
+    let pt : bits(128) = crypto_test_aes256_pt;
+    let key: bits(256) = crypto_test_aes256_key;
+    let ct : bits(128) = vaes256_block_enc(pt, key);
+    assert(ct == crypto_test_aes256_ct);
+    true
+}
+
+
+
+/*
+ * Run all of the crypto smoke tests.
+ */
+val      crypto_smoke_tests   : unit -> bool effect {escape}
+function crypto_smoke_tests() = {
+    ret: bool = crypto_test_aes_shiftrows_complement();
+    ret: bool = crypto_test_aes_subbytes_complement();
+    ret: bool = crypto_test_aes_mixcolumns_complement();
+    ret: bool = crypto_test_vaes_128_keystep_fwd();
+    ret: bool = crypto_test_vaes_256_keystep_fwd();
+    ret: bool = crypto_test_vaes_128_get_final_round_key();
+    ret: bool = crypto_test_vaes_256_get_final_round_key();
+    ret: bool = crypto_test_aes_enc_round_fwd();
+    ret: bool = crypto_test_aes128_enc_block();
+    ret: bool = crypto_test_aes256_enc_block();
+    ret
+}
+
 
