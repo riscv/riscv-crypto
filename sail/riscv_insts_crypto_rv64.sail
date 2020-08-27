@@ -90,7 +90,7 @@ function crypto_saes64   (rd    , rs1   , rs2   , enc , mix )  = {
 function clause execute (SAES64_KS1 (rcon,rs1,rd)) = {
     let tmp1  : bits(32) = X(rs1)[63..32];
     let rc    : bits(32) = aes_decode_rcon(rcon);
-    let tmp2  : bits(32) = if rcon==0xA then tmp1 else ror32(tmp1, 0x08);
+    let tmp2  : bits(32) = if rcon==0xA then tmp1 else ror32(tmp1, 8);
     let tmp3  : bits(32) = aes_sbox_fwd(tmp2[31..24]) @ aes_sbox_fwd(tmp2[23..16]) @
                            aes_sbox_fwd(tmp2[15.. 8]) @ aes_sbox_fwd(tmp2[ 7.. 0]) ;
     let result : bits(64) = (tmp3 ^ rc) @ (tmp3 ^ rc);
@@ -152,10 +152,10 @@ val      crypto_ssha512_rv64 : (ssha512_rv64_op, regidx, regidx) -> Retired effe
 function crypto_ssha512_rv64   (op             , rd    , rs1   ) =  {
   let inb    : bits(64) = X(rs1)[63..0];
   let result : bits(64) = match op {
-    SHA512_SIG0 => ror64(inb, 0x01) ^ ror64(inb, 0x08) ^ (inb >> 7),
-    SHA512_SIG1 => ror64(inb, 0x13) ^ ror64(inb, 0x3D) ^ (inb >> 6),
-    SHA512_SUM0 => ror64(inb, 0x1C) ^ ror64(inb, 0x22) ^ ror64(inb ,0x27),
-    SHA512_SUM1 => ror64(inb, 0x0E) ^ ror64(inb, 0x12) ^ ror64(inb ,0x29)
+    SHA512_SIG0 => ror64(inb,  1) ^ ror64(inb,  8) ^ (inb >> 7),
+    SHA512_SIG1 => ror64(inb, 19) ^ ror64(inb, 61) ^ (inb >> 6),
+    SHA512_SUM0 => ror64(inb, 28) ^ ror64(inb, 34) ^ ror64(inb ,39),
+    SHA512_SUM1 => ror64(inb, 14) ^ ror64(inb, 18) ^ ror64(inb ,41)
   };
   X(rd) = EXTZ(result);
   RETIRE_SUCCESS

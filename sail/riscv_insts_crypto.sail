@@ -46,10 +46,10 @@ val      crypto_ssha256 : (ssha256_op, regidx, regidx) -> Retired effect {escape
 function crypto_ssha256   (op        , rd    , rs1   ) =  {
   let inb    : bits(32) = X(rs1)[31..0];
   let result : bits(32) = match op {
-    SHA256_SIG0 => ror32(inb ,0x07) ^ ror32(inb ,0x12) ^ (inb >> 0x03),
-    SHA256_SIG1 => ror32(inb ,0x11) ^ ror32(inb ,0x13) ^ (inb >> 0x0A),
-    SHA256_SUM0 => ror32(inb ,0x02) ^ ror32(inb, 0x0D) ^ ror32(inb,0x16),
-    SHA256_SUM1 => ror32(inb ,0x06) ^ ror32(inb, 0x0B) ^ ror32(inb,0x19)
+    SHA256_SIG0 => ror32(inb ,07) ^ ror32(inb ,18) ^ (inb >>  3),
+    SHA256_SIG1 => ror32(inb ,17) ^ ror32(inb ,19) ^ (inb >> 10),
+    SHA256_SUM0 => ror32(inb , 2) ^ ror32(inb, 13) ^ ror32(inb,22),
+    SHA256_SUM1 => ror32(inb , 6) ^ ror32(inb, 11) ^ ror32(inb,27)
   };
   X(rd) = EXTZ(result);
   RETIRE_SUCCESS
@@ -106,8 +106,8 @@ val      crypto_sm3 : (ssm3_op, regidx, regidx) -> Retired effect {escape,rreg,w
 function crypto_sm3   (op     , rd    , rs1   ) =  {
   let r1    : bits(32) = X(rs1)[31..0];
   let result  : bits(32) = match op {
-    P0  => r1 ^ rol32(r1 ,0x09) ^ rol32(r1 ,0x11),
-    P1  => r1 ^ rol32(r1 ,0x0E) ^ rol32(r1 ,0x17)
+    P0  => r1 ^ rol32(r1 , 9) ^ rol32(r1 ,17),
+    P1  => r1 ^ rol32(r1 ,14) ^ rol32(r1 ,23)
   };
   X(rd)       = EXTZ(result);
   RETIRE_SUCCESS

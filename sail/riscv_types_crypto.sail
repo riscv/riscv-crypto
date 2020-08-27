@@ -97,6 +97,22 @@ function vGetElement256 (ridx, elem) = {
     0x0000000000000000000000000000000000000000000000000000000000000000
 }
 
+/* Dummy function to get the i'th 512-bit element of a vector register */
+val      vGetElement512 : (vregidx, int) -> bits(512) effect {rreg, escape}
+function vGetElement512 (ridx, elem) = {
+    0x0000000000000000000000000000000000000000000000000000000000000000 @
+    0x0000000000000000000000000000000000000000000000000000000000000000
+}
+
+/* Dummy function to get the i'th 1024-bit element of a vector register */
+val      vGetElement1024 : (vregidx, int) -> bits(1024) effect {rreg, escape}
+function vGetElement1024 (ridx, elem) = {
+    0x0000000000000000000000000000000000000000000000000000000000000000 @
+    0x0000000000000000000000000000000000000000000000000000000000000000 @
+    0x0000000000000000000000000000000000000000000000000000000000000000 @
+    0x0000000000000000000000000000000000000000000000000000000000000000
+}
+
 /* Dummy function to set the i'th 128-bit element of a vector register */
 val      vSetElement128 : (vregidx, int, bits(128)) -> unit effect {wreg, escape}
 function vSetElement128 (ridx, elem, value) = {
@@ -107,6 +123,18 @@ function vSetElement128 (ridx, elem, value) = {
 val      vSetElement256 : (vregidx, int, bits(256)) -> unit effect {wreg, escape}
 function vSetElement256 (ridx, elem, value) = {
     assert(true,"TODO: vSetElement256")
+}
+
+/* Dummy function to set the i'th 512-bit element of a vector register */
+val      vSetElement512 : (vregidx, int, bits(512)) -> unit effect {wreg, escape}
+function vSetElement512 (ridx, elem, value) = {
+    assert(true,"TODO: vSetElement512")
+}
+
+/* Dummy function to set the i'th 1024-bit element of a vector register */
+val      vSetElement1024 : (vregidx, int, bits(1024)) -> unit effect {wreg, escape}
+function vSetElement1024 (ridx, elem, value) = {
+    assert(true,"TODO: vSetElement1024")
 }
 
 
@@ -179,19 +207,19 @@ mapping saes_op_does_mix   : saes_op <-> bool = {
  * ----------------------------------------------------------------------
  */
 
-val      ror32  : (bits(32), bits(8)) -> bits(32)
+val      ror32  : (bits(32), int) -> bits(32)
 function ror32  (x, y) = {
-    shift_bits_right(x,y) | shift_bits_left(x,(0b00100000-EXTZ(y)))
+    (x>>to_bits(5,y)) | (x<<to_bits(5,32-y))
 }
 
-val      ror64  : (bits(64), bits(8)) -> bits(64)
+val      ror64  : (bits(64), int) -> bits(64)
 function ror64  (x, y) = {
-    shift_bits_right(x,y) | shift_bits_left(x,(0b01000000-EXTZ(y)))
+    (x>>to_bits(6,y)) | (x<<to_bits(6,64-y))
 }
 
-val      rol32  : (bits(32), bits(8)) -> bits(32)
+val      rol32  : (bits(32), int) -> bits(32)
 function rol32  (x, y) = {
-    shift_bits_left(x,y) | shift_bits_right(x,(0b00100000-EXTZ(y)))
+    (x<<to_bits(5,y)) | (x>>to_bits(5,32-y))
 }
 
 /* Auxiliary function for performing GF multiplicaiton */
