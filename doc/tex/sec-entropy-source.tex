@@ -17,7 +17,7 @@
 \label{sec:es-pollentropy}
 
     The ISA-level interface consists of a single instruction,
-    \verb|PollEntropy| that returns a 32/64-bit value in a CPU register.
+    \mnemonic{pollentropy} that returns a 32/64-bit value in a CPU register.
     It is invoked in {\bf Machine Mode} (which may be the only mode) as
     follows:
 
@@ -34,8 +34,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     \verb|ES16| (01), indicating successful polling, or with {\bf no}
     entropy and one of three polling failure statuses \verb|BIST| (00),
     \verb|WAIT| (10), or \verb|DEAD| (11), discussed below.
-    See Tables \ref{tab:rdbits} and \ref{tab:opstbits} for further
-    information.
+%    See Tables \ref{tab:rdbits} and \ref{tab:opstbits} for further
+%    information.
 
     The sixteen bits of randomness in \verb|rd[15:0]|=\verb|seed| polled
     with \verb|ES16| status {\bf must be cryptographically conditioned}
@@ -87,8 +87,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     means that a sufficient amount of entropy is not yet available.
     This is not an error condition and may (in fact) be more frequent than
     ES16, since true entropy sources may not have very high bandwidth.
-    If polling in a loop, we suggest calling WFI (wait for interrupt)
-    before the next poll.
+    If polling in a loop, we suggest calling \mnemonic{wfi} (wait for 
+    interrupt) before the next poll.
 
     \item[11]   \underline{\tt DEAD}
     is an unrecoverable self-test error. This may indicate a hardware
@@ -132,21 +132,21 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     We specifically recommend against busy-loop polling on this instruction
     as it may have relatively low bandwidth. Even though no specific interrupt
-    sequence is specified, it is required that the \verb|WFI| (wait for
+    sequence is specified, it is required that the \mnemonic{wfi} (wait for
     interrupt) instruction is available and does not trap on systems that
-    implement \verb|PollEntropy|. The RISC-V ISA allows \verb|WFI| to be
+    implement \mnemonic{pollentropy}. The RISC-V ISA allows \mnemonic{wfi} to be
     implemented as a \verb|NOP|.
     As a minimum requirement for portable drivers, a \verb|WAIT| or
-    \verb|BIST| from \verb|PollEntropy| should be followed by a WFI before
-    another \verb|PollEntropy| instruction is issued. There is
-    no need to poll after a \verb|DEAD| state.
+    \verb|BIST| from \mnemonic{pollentropy} should be followed by a 
+    \mnemonic{wfi} before another \mnemonic{pollentropy} instruction is 
+    issued. There is no need to poll after a \verb|DEAD| state.
 
     To guarantee that no sensitive data is read twice and that different
     callers don't get correlated output, it is suggested that hardware
     implements ``wipe-on-read'' on the randomness
     pathway during each read (successful poll). For the same reasons, only complete
     and fully processed randomness words shall be made available via
-    \verb|PollEntropy| (no half-conditioned buffers or even full buffers
+    \mnemonic{pollentropy} (no half-conditioned buffers or even full buffers
     in \verb|WAIT| state -- even if they are to be ignored by compliant
     callers).
 
@@ -156,7 +156,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 \label{sec:req-iid}
 \label{sec:req-state}
 
-    Output \verb|SEED| from \verb|PollEntropy| is not necessarily fully
+    Output \verb|SEED| from \mnemonic{pollentropy} is not necessarily fully
     conditioned randomness due to hardware limitations of smaller,
     low-powered implementations. However minimum requirements are
     defined. Therefore a caller should not use the output directly but poll
@@ -170,7 +170,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     independent, unpredictable entropy. This minimum requirement is
     satisfied if (in a NIST SP 800-90B \cite{TuBaKe+18} assessment) 128
     bits of output entropy can be obtained from each 256-bit
-    ($16 \times 16$-bit) \verb|PollEntropy| output sequence via a vetted
+    ($16 \times 16$-bit) \mnemonic{pollentropy} output sequence via a vetted
     cryptographic conditioning algorithm (see Section 3.1.5.1.2 in
     \cite{TuBaKe+18}).
 
@@ -188,11 +188,11 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     consistently passed.
 
     \item[\S E3]    {\bf Secret State Size Requirement.}
-    A \verb|PollEntropy| implementation can also output fully conditioned,
+    A \mnemonic{pollentropy} implementation can also output fully conditioned,
     perfectly distributed numbers. However, it is required that if a DRBG is
     used as a source, it must have an internal state with at least 256 bits
     of secret entropy (Example: a CTR\_DRBG built from AES-128 is never
-    sufficient). In general, any implementation of \verb|PollEntropy| that
+    sufficient). In general, any implementation of \mnemonic{pollentropy} that
     limits the security strength shall not reduce it to less than 256 bits.
 
     \end{itemize}

@@ -32,7 +32,7 @@
     \ref{fig:rng_tikz}.
 
 
-    \paragraph{Entropy Source (ES)}
+    \subsubsection{Entropy Source (ES)}
     \label{sec:intro-es}
     Physical sources of true randomness are called Entropy Sources (ES)
     \cite{TuBaKe+18}. They are built by sampling and processing data
@@ -43,7 +43,7 @@
     sources. See Section \ref{sec:security-controls} for a discussion about
     such security controls.
 
-    \paragraph{Conditioning}
+    \subsubsection{Conditioning}
     \label{sec:intro-cond}
     Raw physical randomness (noise) sources are rarely statistically
     perfect and some generate very large amounts of bits, which need to be
@@ -61,7 +61,7 @@
     are therefore inherently more future proof. See Section
     \ref{sec:noncrypto} for a more detailed discussion.
 
-    \paragraph{Pseudorandom Number Generator (PRNG)}
+    \subsubsection{Pseudorandom Number Generator (PRNG)}
     \label{sec:intro-prng}
     Pseudorandom Number Generators (PRNGs) use deterministic mathematical
     formulas to create a large amount of random numbers from a smaller
@@ -77,7 +77,7 @@
     from it. This is a security problem since knowledge of the state
     allows the attacker to compute future or past outputs.
 
-    \paragraph{Deterministic Random Bit Generator (DRBG)}
+    \subsubsection{Deterministic Random Bit Generator (DRBG)}
     \label{sec:intro-drbg}
     Cryptographic PRNGs are also known as Deterministic Random Bit
     Generators (DRBGs), a term used by SP 800-90A \cite{BaKe15}. A strong
@@ -111,7 +111,7 @@
     purposes of forward security.
 
     Without a polling-style mechanism the entropy source could hang for
-    thousands of cycles under some circumstances. The \verb|WFI| mechanism
+    thousands of cycles under some circumstances. The \mnemonic{wfi} mechanism
     (at least potentially) allows energy-saving sleep on MCUs and context
     switching on a higher-end CPUs.
 
@@ -155,7 +155,7 @@
     is needed to prevent information leakage between different entities that
     possibly share the same entropy source. It also significantly
     simplifies certification and vendor-independent driver development.
-    The \verb|PollEntropy| instruction itself can be later expanded
+    The \mnemonic{pollentropy} instruction itself can be later expanded
     to support non-IID sources (e.g. via a different immediate constant).
 
     \paragraph{(Sect. \ref{sec:req-es}) \S E3, Secret State Requirement:}
@@ -279,7 +279,7 @@
             generate bits on demand (without revealing the seed/state).
     \end{enumerate}
     Steps 1-4 (possibly 5) are considered to be part of the Entropy
-    Source (ES) and provided by the \verb|PollEntropy| instruction.
+    Source (ES) and provided by the \mnemonic{pollentropy} instruction.
     Adding the software-side cryptographic steps 5-6 and control logic
     complements it into a True Random Number Generator (TRNG).
 %   This information flow is illustrated by Figure \ref{fig:rng_tikz}.
@@ -310,7 +310,7 @@
     We will give some examples of common noise sources that can be
     implemented in the processor itself (using standard cells).
 
-    \paragraph{Ring Oscillators}
+    \paragraph{Ring Oscillators.}
     The most common entropy source type in production use today is
     based on ``free running'' ring oscillators and their timing jitter.
     Here, an odd number of inverters is connected into a loop from which
@@ -321,7 +321,7 @@
 
     AMD \cite{AM17}, ARM \cite{AR17}, and IBM \cite{LiBaBo+13} are
     examples of ring oscillator TRNGs intended for high-security
-    applications (see Section \ref{sec:case-previous}.)
+    applications.
 
     There are related metastability-based generator designs such as
     Transition Effect Ring Oscillator (TERO) \cite{VaDr10}.
@@ -348,7 +348,7 @@
     Countermeasures are related to circuit design; environmental sensors,
     electrical filters, and usage of a differential oscillator may help.
 
-    \paragraph{Shot Noise}
+    \paragraph{Shot Noise.}
     A category of random sources consisting of discrete events
     and modeled as a Poisson process is called ``shot noise.''
     There's a long-established precedent of certifying them; the
@@ -359,7 +359,7 @@
     cells (The Rambus / Inside Secure generic TRNG IP \cite{Ra20} is
     described as a Shot Noise generator).
 
-    \paragraph{Other types of noise}
+    \paragraph{Other types of noise.}
     It may be possible to certify more exotic noise sources and designs,
     although their stochastic model needs to be equally well understood
     and their CPU interfaces must be secure.
@@ -533,7 +533,7 @@
     For many low-power targets constructions such as Intel's
     \cite{Me18} and AMD's \cite{AM17} hardware AES CBC-MAC conditioner
     would be too complex and expensive to implement solely to serve
-    \verb|PollEntropy|. On the other hand, simpler non-cryptographic
+    \mnemonic{pollentropy}. On the other hand, simpler non-cryptographic
     conditioners may be too wasteful on input entropy if very high-quality
     random output is required -- ARM TrustZone TRBG \cite{AR17} outputs
     only 10Kbit/sec at 200 MHz. Hence a resource-saving compromise is
