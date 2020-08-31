@@ -135,7 +135,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     sequence is specified, it is required that the \mnemonic{wfi} (wait for
     interrupt) instruction is available and does not trap on systems that
     implement \mnemonic{pollentropy}. The RISC-V ISA allows \mnemonic{wfi} to be
-    implemented as a \verb|NOP|.
+    implemented as a \mnemonic{nop}.
     As a minimum requirement for portable drivers, a \verb|WAIT| or
     \verb|BIST| from \mnemonic{pollentropy} should be followed by a 
     \mnemonic{wfi} before another \mnemonic{pollentropy} instruction is 
