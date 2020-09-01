@@ -146,10 +146,8 @@ function sha256_message_schedule(x) = {
 /*
  * Compute a single round of the SHA256 hash function.
  */
-val      sha256_round : (bits(256), bits(32), int) -> bits(256) effect{escape}
+val      sha256_round : (bits(256), bits(32), int) -> bits(256)
 function sha256_round   (ws       , Wt      , rnd) = {
-  assert(rnd >= 0);
-  assert(rnd < 64);
   a  : bits(32) = (ws>>(to_bits(8,0*32)))[31..0];
   b  : bits(32) = (ws>>(to_bits(8,1*32)))[31..0];
   c  : bits(32) = (ws>>(to_bits(8,2*32)))[31..0];
@@ -269,18 +267,95 @@ function sha512_rc   (x) = {
     sha512_rc_lookup(x, sha512_rc_table)
 }
 
+val      sha512_word : (bits(1024), int) -> bits(64)
+function sha512_word   (x        , i  ) = {
+    (x >>(to_bits(9,64*i)))[63..0]
+}
+
+/*
+ * Update the SHA512 message schedule. Compute the next 16 values of W_t.
+ */
+val      sha512_message_schedule : bits(1024) -> bits(1024)
+function sha512_message_schedule(x) = {
+  w0  : bits(64) = sha512_word(x,  0);
+  w1  : bits(64) = sha512_word(x,  1);
+  w2  : bits(64) = sha512_word(x,  2);
+  w3  : bits(64) = sha512_word(x,  3);
+  w4  : bits(64) = sha512_word(x,  4);
+  w5  : bits(64) = sha512_word(x,  5);
+  w6  : bits(64) = sha512_word(x,  6);
+  w7  : bits(64) = sha512_word(x,  7);
+  w8  : bits(64) = sha512_word(x,  8);
+  w9  : bits(64) = sha512_word(x,  9);
+  w10 : bits(64) = sha512_word(x, 10);
+  w11 : bits(64) = sha512_word(x, 11);
+  w12 : bits(64) = sha512_word(x, 12);
+  w13 : bits(64) = sha512_word(x, 13);
+  w14 : bits(64) = sha512_word(x, 14);
+  w15 : bits(64) = sha512_word(x, 15);
+  w16 : bits(64) = sha512_sig1(w14) + w9  + sha512_sig0(w1 ) + w0 ;
+  w17 : bits(64) = sha512_sig1(w15) + w10 + sha512_sig0(w2 ) + w1 ;
+  w18 : bits(64) = sha512_sig1(w16) + w11 + sha512_sig0(w3 ) + w2 ;
+  w19 : bits(64) = sha512_sig1(w17) + w12 + sha512_sig0(w4 ) + w3 ;
+  w20 : bits(64) = sha512_sig1(w18) + w13 + sha512_sig0(w5 ) + w4 ;
+  w21 : bits(64) = sha512_sig1(w19) + w14 + sha512_sig0(w6 ) + w5 ;
+  w22 : bits(64) = sha512_sig1(w20) + w15 + sha512_sig0(w7 ) + w6 ;
+  w23 : bits(64) = sha512_sig1(w21) + w16 + sha512_sig0(w8 ) + w7 ;
+  w24 : bits(64) = sha512_sig1(w22) + w17 + sha512_sig0(w9 ) + w8 ;
+  w25 : bits(64) = sha512_sig1(w23) + w18 + sha512_sig0(w10) + w9 ;
+  w26 : bits(64) = sha512_sig1(w24) + w19 + sha512_sig0(w11) + w10;
+  w27 : bits(64) = sha512_sig1(w25) + w20 + sha512_sig0(w12) + w11;
+  w28 : bits(64) = sha512_sig1(w26) + w21 + sha512_sig0(w13) + w12;
+  w29 : bits(64) = sha512_sig1(w27) + w22 + sha512_sig0(w14) + w13;
+  w30 : bits(64) = sha512_sig1(w28) + w23 + sha512_sig0(w15) + w14;
+  w31 : bits(64) = sha512_sig1(w29) + w24 + sha512_sig0(w16) + w15;
+  w31 @ w30 @ w29 @ w28 @ w27 @ w26 @ w25 @ w24 @
+  w23 @ w22 @ w21 @ w20 @ w19 @ w18 @ w17 @ w16
+}
+
+
+/*
+ * Compute a single round of the SHA512 hash function.
+ */
+val      sha512_round : (bits(512), bits(64), int) -> bits(512)
+function sha512_round   (ws       , Wt      , rnd) = {
+  a  : bits(64) = (ws>>(to_bits(8,0*64)))[63..0];
+  b  : bits(64) = (ws>>(to_bits(8,1*64)))[63..0];
+  c  : bits(64) = (ws>>(to_bits(8,2*64)))[63..0];
+  d  : bits(64) = (ws>>(to_bits(8,3*64)))[63..0];
+  e  : bits(64) = (ws>>(to_bits(8,4*64)))[63..0];
+  f  : bits(64) = (ws>>(to_bits(8,5*64)))[63..0];
+  g  : bits(64) = (ws>>(to_bits(8,6*64)))[63..0];
+  h  : bits(64) = (ws>>(to_bits(8,7*64)))[63..0];
+  Kt : bits(64) = sha512_rc(rnd);
+  t1 : bits(64) = h + sha512_sum1(e) + sha512_ch (e,f,g) + Kt + Wt;  
+  t2 : bits(64) =     sha512_sum0(a) + sha512_maj(a,b,c)          ;
+  h  = g;
+  g  = f;
+  f  = e;
+  e  = d + t1;
+  d  = c;
+  c  = b;
+  b  = a;
+  a  = t1 + t2;
+  (h @ g @ f @ e @ d @ c @ b @ a)
+}
 
 /*
  * Compute 16 rounds of the SHA512 hash function.
  * - ws : Current working state
  * - ms : Current message schedule
  * - rnd: Initial round number in {0,16,32,48,64}
- * TODO: sha512_16_rounds
  */
 val      sha512_16_rounds : (bits(512), bits(1024), int) -> bits(512) effect{escape}
 function sha512_16_rounds   (ws       , ms       , rnd) = {
     assert((rnd == 0) | (rnd == 16) | (rnd == 32) | (rnd==48) | (rnd==64));
-    ws
+    state : bits(512) = ws;
+    foreach(i from rnd to (rnd+16)) {
+        Wt    = sha512_word(ms, i%16); /* Select word from message schedule */
+        state = sha512_round(state, Wt, i);
+    };
+    state
 }
 
 /*
@@ -310,10 +385,27 @@ function clause execute (       VSHA2_WS (vt,rnd,vs2)) = {
     } else
         RETIRE_FAIL
 }
+
 function clause execute (       VSHA2_MS (vd,vs1)) = {
-    /* TBD, implemented as nop.*/
-    RETIRE_SUCCESS
+    let r : int = 0;
+    if(vGetSEW() == 256) then {
+        foreach (i from 0 to vGetVL()) {
+            let ms    : bits(512) = vGetElement512(vs1, i);
+            let result: bits(512) = sha256_message_schedule(ms);
+            vSetElement512(vd, i, result);
+        };
+        RETIRE_SUCCESS
+    } else if(vGetSEW() == 512) then {
+        foreach (i from 0 to vGetVL()) {
+            let ms    : bits(1024) = vGetElement1024(vs1, i);
+            let result: bits(1024) = sha512_message_schedule(ms);
+            vSetElement1024(vd, i, result);
+        };
+        RETIRE_SUCCESS
+    } else
+        RETIRE_FAIL
 }
+
 function clause execute (       VSHA2_HS (vt,vs1)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
