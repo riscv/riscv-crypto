@@ -23,7 +23,7 @@ group.
 \multicolumn{3}{c}{Vector Profiles} \\
                       & \#1  & \#2  & \#3 & \#1  & \#2  & \#3 \\
 \hline
-GetEntropy            &   x  &   x  &  x  &   x  &  x   &  x  \\
+PollEntropy            &   x  &   x  &  x  &   x  &  x   &  x  \\
 Bitmanip Instructions &   x  &   x  &  x  &      &      &     \\
 Scalar SHA2           &   x  &      &  x  &      &      &     \\
 Scalar AES            &   x  &      &  x  &      &      &     \\
@@ -41,7 +41,7 @@ Implementation profiles for the Cryptography extension.
 \label{tab:profiles}
 \end{table}
 
-The scalar profiles all implement the GetEntropy feature and
+The scalar profiles all implement the PollEntropy feature and
 shared Bitmanip instructions.
 Profile $1$ includes the scalar AES/SHA2 extensions, while
 Profile $2$ includes the scalar SM3/SM4  extensions.
@@ -53,4 +53,4 @@ The vector profiles are split into the ``per-round'' instructions
 (Profile 1),
 the ``all-round'' instructions (Profile 2),
 or both (Profile 3).
-All vector profiles implement the GetEntropy feature.
+All vector profiles implement the PollEntropy feature.

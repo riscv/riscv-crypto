@@ -34,4 +34,5 @@ $(SPEC_OUT) : $(SPEC_TEX) $(SPEC_EXTRA) $(SPEC_COMMIT)
 spec: $(SPEC_OUT)
 
 clean:
-	rm -r $(BUILD_DIR)/*
+	rm -rf $(BUILD_DIR)/* $(OPCODES) \
+		*.aux *.bbl *.blg *.log *.out *.pdf *.run.xml *-blx.bib *.toc

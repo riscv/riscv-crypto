@@ -1,26 +1,25 @@
 %\section{The Entropy Source Interface}
 \label{sec:entropy-source}
 
-    The RISC-V True Random Number Generator (TRNG) ISA Extension is primarily
-    an Entropy Source (ES) interface. A valid implementation should satisfy
-    properties that allow it to be used to \emph{seed} standard and
-    nonstandard cryptographic DRBGs of virtually any state size and security
-    level.
+    The proposed RISC-V TRNG ISA is primarily an Entropy Source (ES)
+    interface. A valid implementation should satisfy properties that allow
+    it to be used to \emph{seed} standard and nonstandard cryptographic
+    DRBGs of virtually any state size and security level.
 
     The purpose of this baseline specification is to guarantee that a simple,
     device-independent driver component (e.g. in Linux kernel, embedded
-    firmware, or a cryptographic library) can use the instruction to
+    firmware, or a cryptographic library) can use the ISA instruction to
     generate truly random bits. See Appendix \ref{sec:entropy-appendix} for
     rationale and further discussion. This section is also supported by
-    \cite{cryptoeprint:2020:866}.
+    \cite{SaNeMa20}.
 
 \subsection{PollEntropy Instruction}
 \label{sec:es-pollentropy}
 
-
     The ISA-level interface consists of a single instruction,
     \mnemonic{pollentropy} that returns a 32/64-bit value in a CPU register.
-    It is invoked in {\bf Machine Mode}.
+    It is invoked in {\bf Machine Mode} (which may be the only mode) as
+    follows:
 
 \begin{cryptoisa}
 pollentropy      rd, imm          // Get randomness. imm=0 for baseline operation
@@ -35,6 +34,17 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     \verb|ES16| (01), indicating successful polling, or with {\bf no}
     entropy and one of three polling failure statuses \verb|BIST| (00),
     \verb|WAIT| (10), or \verb|DEAD| (11), discussed below.
+%    See Tables \ref{tab:rdbits} and \ref{tab:opstbits} for further
+%    information.
+
+    The sixteen bits of randomness in \verb|rd[15:0]|=\verb|seed| polled
+    with \verb|ES16| status {\bf must be cryptographically conditioned}
+    before they can be used as (up to 8 bits of) keying material. See Section
+    \ref{sec:req-es}.
+
+    For the purposes of interoperable, baseline functionality, \verb|imm = 0|.
+    Nonzero values of \verb|imm| are reserved for future use; the behavior
+    described here may not apply when \verb|imm| $\neq$ 0.
 
     \begin{center}
     \begin{tabular}{ccl}
@@ -77,8 +87,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     means that a sufficient amount of entropy is not yet available.
     This is not an error condition and may (in fact) be more frequent than
     ES16, since true entropy sources may not have very high bandwidth.
-    If polling in a loop, we suggest calling WFI (wait for interrupt)
-    before the next poll.
+    If polling in a loop, we suggest calling \mnemonic{wfi} (wait for 
+    interrupt) before the next poll.
 
     \item[11]   \underline{\tt DEAD}
     is an unrecoverable self-test error. This may indicate a hardware
@@ -122,26 +132,29 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     We specifically recommend against busy-loop polling on this instruction
     as it may have relatively low bandwidth. Even though no specific interrupt
-    sequence is specified, it is required that the \mnemonic{WFI} (wait for
+    sequence is specified, it is required that the \mnemonic{wfi} (wait for
     interrupt) instruction is available and does not trap on systems that
-    implement \mnemonic{pollentropy}. The RISC-V ISA allows \mnemonic{WFI} to be
-    implemented as a \mnemonic{NOP}.
+    implement \mnemonic{pollentropy}. The RISC-V ISA allows \mnemonic{wfi} to be
+    implemented as a \mnemonic{nop}.
     As a minimum requirement for portable drivers, a \verb|WAIT| or
-    \verb|BIST| from \mnemonic{pollentropy} should be followed by a WFI before
-    another \mnemonic{pollentropy} instruction is issued. There is
-    no need to poll after a \verb|DEAD| state.
+    \verb|BIST| from \mnemonic{pollentropy} should be followed by a 
+    \mnemonic{wfi} before another \mnemonic{pollentropy} instruction is 
+    issued. There is no need to poll after a \verb|DEAD| state.
 
     To guarantee that no sensitive data is read twice and that different
     callers don't get correlated output, it is suggested that hardware
-    implements ``wipe-on-read'' on the randomness pathway during each read
-    (successful poll). For the same reasons, only complete and fully
-    processed randomness words shall be made available via
+    implements ``wipe-on-read'' on the randomness
+    pathway during each read (successful poll). For the same reasons, only complete
+    and fully processed randomness words shall be made available via
     \mnemonic{pollentropy} (no half-conditioned buffers or even full buffers
     in \verb|WAIT| state -- even if they are to be ignored by compliant
     callers).
 
 \subsection{Entropy Source Requirements}
 \label{sec:req-es}
+\label{sec:req-entropy}
+\label{sec:req-iid}
+\label{sec:req-state}
 
     Output \verb|SEED| from \mnemonic{pollentropy} is not necessarily fully
     conditioned randomness due to hardware limitations of smaller,
@@ -167,8 +180,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     \item[\S E2]    {\bf I.I.D. Requirement.}
     The output must be \emph{Independent and Identically Distributed}
-    (IID), meaning that the output distribution does not change over time
-    and that output words do not convey information about each other.
+    (IID), meaning that the output distribution does not deteriorate over
+    time and that output words do not convey information about each other.
     This requirement is satisfied if the construction of the physical source
     and sampling mechanism suggests nothing against the IID assumption
     and the IID tests in Section 5 of NIST SP 800-90B \cite{TuBaKe+18} are
@@ -178,12 +191,11 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     A \mnemonic{pollentropy} implementation can also output fully conditioned,
     perfectly distributed numbers. However, it is required that if a DRBG is
     used as a source, it must have an internal state with at least 256 bits
-    of secret entropy. In general, any implementation of \mnemonic{pollentropy}
-    that limits the security strength shall not reduce it to less than
-    256 bits.
+    of secret entropy (Example: a CTR\_DRBG built from AES-128 is never
+    sufficient). In general, any implementation of \mnemonic{pollentropy} that
+    limits the security strength shall not reduce it to less than 256 bits.
 
     \end{itemize}
-
 
 
 \subsection{Security Controls (Tests)}
@@ -198,7 +210,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     adversarial control over the entropy output or ts generation mechanism.
 
     Many of the security controls built into the device are called ``health
-    checks''. Health checks can take the form of
+    checks.'' Health checks can take the form of
     integrity checks, start-up tests, and on-demand tests. These tests can
     be implemented in hardware or firmware; typically both. Several are
     mandated by standards such as NIST SP 800-90B \cite{NI19}. The choice
@@ -209,9 +221,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     Health checks are not intended for hardware diagnostics but for
     detecting security issues -- hence the default action should be aimed
     at damage control (prevent weak crypto keys from being
-    generated). Additional ``debug'' mechanisms for raw noise sources
-    or additional control may be implemented if necessary, but those should
-    not be available when the device is in production use.
+    generated). Additional ``debug'' mechanisms may be implemented if
+    necessary, but then the device must be outside production use.
 
     \begin{itemize}
 
@@ -225,11 +236,10 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     \item[\S T2]    {\bf Continuous checks.}
     If an error is detected in continuous tests or environmental sensors,
-    the entropy source will enter a no-output state. We define that a
+    the entropy source will enter a no-output state.  We define that a
     non-critical alarm is signaled if the entropy source returns
     to \verb|BIST| state from live (\verb|WAIT| or \verb|ES16|) states.
-	Such a \verb|BIST| alarm should be latched until polled at least once.    
-    
+    Such a \verb|BIST| alarm should be latched until polled at least once.
     Critical failures will result in \verb|DEAD| state immediately.
     A hardware-based continuous testing mechanism must not make statistical
     information externally available, and it must be zeroized periodically or
@@ -239,18 +249,18 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     Since the security of most cryptographic operations depends on the
     entropy source, a system-wide ``default deny'' security policy approach
     is appropriate for most entropy source failures.
-    A hardware test failure should result in at least in \verb|DEAD| state
-    and possibly reset/halt. The entropy source (or its cryptographic client
-    application) \emph{must not} be allowed to run if its secure operation
-    can't be guaranteed.
+    A hardware test failure should at least result in the \verb|DEAD|
+    state and possibly reset/halt. It's a show stopper: The entropy
+    source (or its cryptographic client application) \emph{must not} be
+    allowed to run if its secure operation can't be guaranteed.
 
     \end{itemize}
 
-    The statistical nature of some tests makes ``type-1'' false
-    positives a possibility. Security architects will understand to use
-    permanent or hard-to-recover ``security-fuse'' lockdowns only if the
-    threshold of a test is such that the probability of false-positive is
-    negligible over the entire device lifetime.
+%    The statistical nature of some tests makes ``type-1'' false
+%    positives a possibility. Security architects will understand to use
+%    permanent or hard-to-recover ``security-fuse'' lockdowns only if the
+%    threshold of a test is such that the probability of false-positive is
+%    negligible over the entire device lifetime.
 
 
 
