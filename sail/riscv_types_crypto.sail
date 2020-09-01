@@ -79,10 +79,37 @@ function vGetEEW  () = {
     128
 }
 
+val      vSupportedEEW : list(int) -> bool
+function vSupportedEEW (supported) = {
+    match(supported) {
+        x :: xs => if(x == vGetEEW()) then true else vSupportedEEW(xs),
+        [||]    => false
+    }
+}
+
 /* Dummy function for getting the number of elements to update. */
 val      vGetVL : unit -> int
 function vGetVL () = {
     4
+}
+
+/* Dummy function to check if a vector element is masked out.
+ * Returns True if the element should be processed, false otherwise */
+val      vElemMasked : (bits(1), int) -> bool effect {rreg}
+function vElemMasked (vm, i) = {
+    true
+}
+
+/* Dummy function to get the i'th 32-bit element of a vector register */
+val      vGetElement32  : (vregidx, int) -> bits(32) effect {rreg, escape}
+function vGetElement32  (ridx, elem) = {
+    0x00000000
+}
+
+/* Dummy function to get the i'th 64-bit element of a vector register */
+val      vGetElement64  : (vregidx, int) -> bits(64) effect {rreg, escape}
+function vGetElement64  (ridx, elem) = {
+    0x0000000000000000
 }
 
 /* Dummy function to get the i'th 128-bit element of a vector register */
@@ -111,6 +138,18 @@ function vGetElement1024 (ridx, elem) = {
     0x0000000000000000000000000000000000000000000000000000000000000000 @
     0x0000000000000000000000000000000000000000000000000000000000000000 @
     0x0000000000000000000000000000000000000000000000000000000000000000
+}
+
+/* Dummy function to set the i'th 32-bit element of a vector register */
+val      vSetElement32 : (vregidx, int, bits(32)) -> unit effect {wreg, escape}
+function vSetElement32 (ridx, elem, value) = {
+    assert(true,"TODO: vSetElement32")
+}
+
+/* Dummy function to set the i'th 64-bit element of a vector register */
+val      vSetElement64 : (vregidx, int, bits(64)) -> unit effect {wreg, escape}
+function vSetElement64 (ridx, elem, value) = {
+    assert(true,"TODO: vSetElement64")
 }
 
 /* Dummy function to set the i'th 128-bit element of a vector register */

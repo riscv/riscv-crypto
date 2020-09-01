@@ -75,6 +75,11 @@ mapping clause encdec =        VGREV_VI   (vd,simm5,vs2,vm) <-> 0b100110 @ 0b011
 mapping clause encdec =        VGREV_VX   (vd,rs1,vs2,vm) <-> 0b100111 @ 0b100 @ vd @ rs1 @ vs2 @ vm @ 0b1011011
 
 
+/*
+ * Vector Carryless Multiplys
+ * ------------------------------------------------------------
+ */
+
 function clause execute (      VCLMUL_VV (vd,vs1,vs2,vm)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
@@ -123,22 +128,113 @@ function clause execute (    VWCLMACC_VS (vd,vs1,vs2,vm)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
+
+/*
+ * Vector Rotations
+ * ------------------------------------------------------------
+ */
+
+/* Vector - Vector right rotate */
 function clause execute (        VROT_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let eval    : bits(32) = vGetElement32(vs2, i);
+          let ramt    : bits( 5) = vGetElement32(vs1, i)[4..0];
+          let result  : bits(32) = ((eval @ eval) >> ramt)[31..0];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let eval    : bits(64) = vGetElement64(vs2, i);
+          let ramt    : bits( 6) = vGetElement64(vs1, i)[5..0];
+          let result  : bits(64) = ((eval @ eval) >> ramt)[63..0];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector - Scalar right rotate */
 function clause execute (        VROT_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let eval    : bits(32) = vGetElement32(vs2, i);
+          let ramt    : bits( 5) = vGetElement32(vs1, 0)[4..0];
+          let result  : bits(32) = ((eval @ eval) >> ramt)[31..0];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let eval    : bits(64) = vGetElement64(vs2, i);
+          let ramt    : bits( 6) = vGetElement64(vs1, 0)[5..0];
+          let result  : bits(64) = ((eval @ eval) >> ramt)[63..0];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector - Immediate right rotate */
 function clause execute (        VROT_VI (vd,simm5,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let eval    : bits(32) = vGetElement32(vs2, i);
+          let ramt    : bits( 5) = simm5;
+          let result  : bits(32) = ((eval @ eval) >> ramt)[31..0];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let eval    : bits(64) = vGetElement64(vs2, i);
+          let ramt    : bits( 6) = 0b0 @ simm5;
+          let result  : bits(64) = ((eval @ eval) >> ramt)[63..0];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector - X Register right rotate */
 function clause execute (        VROT_VX (vd,rs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let eval    : bits(32) = vGetElement32(vs2, i);
+          let ramt    : bits( 5) = X(rs1)[4..0];
+          let result  : bits(32) = ((eval @ eval) >> ramt)[31..0];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let eval    : bits(64) = vGetElement64(vs2, i);
+          let ramt    : bits( 6) = X(rs1)[5..0];
+          let result  : bits(64) = ((eval @ eval) >> ramt)[63..0];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/*
+ * Vector GREV
+ * ------------------------------------------------------------
+ */
+
 function clause execute (       VGREV_VV (vd,vs1,vs2,vm)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
