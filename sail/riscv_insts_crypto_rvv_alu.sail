@@ -235,19 +235,121 @@ function clause execute (        VROT_VX (vd,rs1,vs2,vm)) = {
  * ------------------------------------------------------------
  */
 
+val      vgrev_32bit : (bits(32), bits(5)) -> bits(32) effect{escape}
+function vgrev_32bit   (input   , mask   ) = {
+  x : bits(32) = input;
+  if(bit_to_bool(mask[0])) then x = ((x & 0x55555555) <<  1) | ((x & 0xAAAAAAAA) >>  1);
+  if(bit_to_bool(mask[1])) then x = ((x & 0x33333333) <<  2) | ((x & 0xCCCCCCCC) >>  2);
+  if(bit_to_bool(mask[2])) then x = ((x & 0x0F0F0F0F) <<  4) | ((x & 0xF0F0F0F0) >>  4);
+  if(bit_to_bool(mask[3])) then x = ((x & 0x00FF00FF) <<  8) | ((x & 0xFF00FF00) >>  8);
+  if(bit_to_bool(mask[4])) then x = ((x & 0x0000FFFF) << 16) | ((x & 0xFFFF0000) >> 16);
+  x
+}
+
+val      vgrev_64bit : (bits(64), bits(6)) -> bits(64) effect{escape}
+function vgrev_64bit   (input   , mask   ) = {
+  x : bits(64) = input;
+  if(bit_to_bool(mask[0])) then x = ((x & 0x5555555555555555) <<  1) | ((x & 0xAAAAAAAAAAAAAAAA) >>  1);
+  if(bit_to_bool(mask[1])) then x = ((x & 0x3333333333333333) <<  2) | ((x & 0xCCCCCCCCCCCCCCCC) >>  2);
+  if(bit_to_bool(mask[2])) then x = ((x & 0x0F0F0F0F0F0F0F0F) <<  4) | ((x & 0xF0F0F0F0F0F0F0F0) >>  4);
+  if(bit_to_bool(mask[3])) then x = ((x & 0x00FF00FF00FF00FF) <<  8) | ((x & 0xFF00FF00FF00FF00) >>  8);
+  if(bit_to_bool(mask[4])) then x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
+  if(bit_to_bool(mask[5])) then x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
+  x
+}
+
+/* Vector-Vector - Mask from i'th element of VS1 */
 function clause execute (       VGREV_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let input   : bits(32) = vGetElement32(vs2, i);
+          let mask    : bits( 5) = vGetElement32(vs1, i)[4..0];
+          let result  : bits(32) = vgrev_32bit(input, mask);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let input   : bits(64) = vGetElement64(vs2, i);
+          let mask    : bits( 6) = vGetElement64(vs1, i)[5..0];
+          let result  : bits(64) = vgrev_64bit(input, mask);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Scalar - Mask from 0'th element of VS1 */
 function clause execute (       VGREV_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let input   : bits(32) = vGetElement32(vs2, i);
+          let mask    : bits( 5) = vGetElement32(vs1, 0)[4..0];
+          let result  : bits(32) = vgrev_32bit(input, mask);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let input   : bits(64) = vGetElement64(vs2, i);
+          let mask    : bits( 6) = vGetElement64(vs1, 0)[5..0];
+          let result  : bits(64) = vgrev_64bit(input, mask);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Immediate - Mask from simm5 */
 function clause execute (       VGREV_VI (vd,simm5,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let input   : bits(32) = vGetElement32(vs2, i);
+          let mask    : bits( 5) = simm5;
+          let result  : bits(32) = vgrev_32bit(input, mask);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let input   : bits(64) = vGetElement64(vs2, i);
+          let mask    : bits( 6) = 0b0 @ simm5;
+          let result  : bits(64) = vgrev_64bit(input, mask);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-XReg - Mask from X Register*/
 function clause execute (       VGREV_VX (vd,rs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|]) == false) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let input   : bits(32) = vGetElement32(vs2, i);
+          let mask    : bits( 5) = X(rs1)[4..0];
+          let result  : bits(32) = vgrev_32bit(input, mask);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let input   : bits(64) = vGetElement64(vs2, i);
+          let mask    : bits( 6) = X(rs1)[5..0];
+          let result  : bits(64) = vgrev_64bit(input, mask);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
