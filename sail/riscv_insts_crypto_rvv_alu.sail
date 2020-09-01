@@ -23,10 +23,12 @@ union   clause ast    =      VWCLMUL_VV : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =      VWCLMUL_VS : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =     VWCLMACC_VV : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =     VWCLMACC_VS : (vregidx,vregidx,vregidx,bits(1))
+
 union   clause ast    =         VROT_VV : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =         VROT_VS : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =         VROT_VI : (vregidx,bits(5),vregidx,bits(1))
 union   clause ast    =         VROT_VX : (vregidx,regidx,vregidx,bits(1))
+
 union   clause ast    =        VGREV_VV : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =        VGREV_VS : (vregidx,vregidx,vregidx,bits(1))
 union   clause ast    =        VGREV_VI : (vregidx,bits(5),vregidx,bits(1))
@@ -80,53 +82,317 @@ mapping clause encdec =        VGREV_VX   (vd,rs1,vs2,vm) <-> 0b100111 @ 0b100 @
  * ------------------------------------------------------------
  */
 
+/* A generic 64x64->128 bit carry-less multiply function.
+ */
+val      clmul64 : (bits(64), bits(64)) -> bits(128)
+function clmul64   (x       , y       ) = {
+    accumulator     : bits(128) = EXTZ(0x0);
+    multiplicand    : bits(128) = EXTZ(  x);
+    foreach(i from 0 to 63) {
+        if(bit_to_bool(y[i])) then accumulator = accumulator ^ multiplicand;
+        multiplicand = multiplicand << 1;
+    };
+    accumulator
+}
+
+/* Vector-Vector - RHS is i'th element of vs1 */
 function clause execute (      VCLMUL_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, i);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[31..0];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, i);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63..0];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Scalar - RHS is 0'th element of vs1 */
 function clause execute (      VCLMUL_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, 0);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[31..0];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, 0);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63..0];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-vector. RHS is i'th element of vs1. High half of result. */
 function clause execute (     VCLMULH_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, i);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[63..32];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, i);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..64];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Scalar. RHS is 0'th element of vs1. High half of result. */
 function clause execute (     VCLMULH_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, 0);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[63..32];
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, 0);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..64];
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-vector. RHS is i'th element of vs1. Accumulate with vd. */
 function clause execute (     VCLMACC_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, i);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[31.. 0] ^
+                                   vGetElement32(vd , i);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, i);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63.. 0] ^
+                                   vGetElement64(vd , i);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Scalar. RHS is 0'th element of vs1. Accumulate with vd. */
 function clause execute (     VCLMACC_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, 0);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[31.. 0] ^
+                                   vGetElement32(vd , i);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, 0);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63.. 0] ^
+                                   vGetElement64(vd , i);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-vector. RHS is i'th element of vs1. Accumulate with vd. High half */
 function clause execute (    VCLMACCH_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, i);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[63..32] ^
+                                   vGetElement32(vd , i);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, i);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..64] ^
+                                   vGetElement64(vd , i);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Scalar. RHS is 0'th element of vs1. Accumulate with vd. High half */
 function clause execute (    VCLMACCH_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, 0);
+          let result  : bits(32) = clmul64(EXTZ(lhs), EXTZ(rhs))[63..32] ^
+                                   vGetElement32(vd , i);
+          vSetElement32(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, 0);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..64] ^
+                                   vGetElement64(vd , i);
+          vSetElement64(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-vector. RHS is i'th element of vs1. Accumulate with vd. Widening. */
 function clause execute (     VWCLMUL_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, i);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63.. 0];
+          vSetElement64(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, i);
+          let result  : bits(128) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..0];
+          vSetElement128(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Scalar. RHS is 0'th element of vs1. Accumulate with vd. Widening. */
 function clause execute (     VWCLMUL_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, 0);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63.. 0];
+          vSetElement64(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, 0);
+          let result  : bits(128) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..0];
+          vSetElement128(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Vector. RHS is i'th element of vs1. Accumulate with vd. Widening. accumulate */
 function clause execute (    VWCLMACC_VV (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, i);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63.. 0] ^
+                                   vGetElement64(vd, i);
+          vSetElement64(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, i);
+          let result  : bits(128) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..0] ^
+                                   vGetElement128(vd, i);
+          vSetElement128(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
+
+/* Vector-Vector. RHS is 0'th element of vs1. Accumulate with vd. Widening. accumulate */
 function clause execute (    VWCLMACC_VS (vd,vs1,vs2,vm)) = {
-    /* TBD, implemented as nop.*/
+  if(vSupportedEEW([|32,64|])) then {
+    foreach(i from 0 to vGetVL()) {
+      if(vElemMasked(vm, i)) then {
+        if(vGetEEW() == 32) then {
+          let lhs     : bits(32) = vGetElement32(vs2, i);
+          let rhs     : bits(32) = vGetElement32(vs1, 0);
+          let result  : bits(64) = clmul64(EXTZ(lhs), EXTZ(rhs))[63.. 0] ^
+                                   vGetElement64(vd, i);
+          vSetElement64(vd, i, result);
+        } else if(vGetEEW() == 64) then {
+          let lhs     : bits(64) = vGetElement64(vs2, i);
+          let rhs     : bits(64) = vGetElement64(vs1, 0);
+          let result  : bits(128) = clmul64(EXTZ(lhs), EXTZ(rhs))[127..0] ^
+                                   vGetElement128(vd, i);
+          vSetElement128(vd, i, result);
+        }
+      }
+    };
     RETIRE_SUCCESS
+  } else {
+    RETIRE_FAIL
+  }
 }
 
 /*
@@ -136,7 +402,7 @@ function clause execute (    VWCLMACC_VS (vd,vs1,vs2,vm)) = {
 
 /* Vector - Vector right rotate */
 function clause execute (        VROT_VV (vd,vs1,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -160,7 +426,7 @@ function clause execute (        VROT_VV (vd,vs1,vs2,vm)) = {
 
 /* Vector - Scalar right rotate */
 function clause execute (        VROT_VS (vd,vs1,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -184,7 +450,7 @@ function clause execute (        VROT_VS (vd,vs1,vs2,vm)) = {
 
 /* Vector - Immediate right rotate */
 function clause execute (        VROT_VI (vd,simm5,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -208,7 +474,7 @@ function clause execute (        VROT_VI (vd,simm5,vs2,vm)) = {
 
 /* Vector - X Register right rotate */
 function clause execute (        VROT_VX (vd,rs1,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -260,7 +526,7 @@ function vgrev_64bit   (input   , mask   ) = {
 
 /* Vector-Vector - Mask from i'th element of VS1 */
 function clause execute (       VGREV_VV (vd,vs1,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -284,7 +550,7 @@ function clause execute (       VGREV_VV (vd,vs1,vs2,vm)) = {
 
 /* Vector-Scalar - Mask from 0'th element of VS1 */
 function clause execute (       VGREV_VS (vd,vs1,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -308,7 +574,7 @@ function clause execute (       VGREV_VS (vd,vs1,vs2,vm)) = {
 
 /* Vector-Immediate - Mask from simm5 */
 function clause execute (       VGREV_VI (vd,simm5,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
@@ -332,7 +598,7 @@ function clause execute (       VGREV_VI (vd,simm5,vs2,vm)) = {
 
 /* Vector-XReg - Mask from X Register*/
 function clause execute (       VGREV_VX (vd,rs1,vs2,vm)) = {
-  if(vSupportedEEW([|32,64|]) == false) then {
+  if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
       if(vElemMasked(vm, i)) then {
         if(vGetEEW() == 32) then {
