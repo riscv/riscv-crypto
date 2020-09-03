@@ -79,7 +79,7 @@ index 3c4bf1c..714d88b 100644
 +#define MASK_SSHA512_SUM0 0xfff0707f
 +#define MATCH_SSHA512_SUM1 0xe70702b
 +#define MASK_SSHA512_SUM1 0xfff0707f
-+#define MATCH_POLLENTROPY 0xe05702b
++#define MATCH_POLLENTROPY 0x1e05702b
 +#define MASK_POLLENTROPY 0xfe0ff07f
 +// Crypto ISE - end
  #define MATCH_AMOADD_W 0x202f

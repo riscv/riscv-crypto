@@ -198,7 +198,7 @@ union   clause ast      = POLLENTROPY : (bits(5),regidx)
 
 /* Encode / decode mapping for pollentropy */
 mapping clause encdec   = POLLENTROPY (shamtw,rd) <->
-    0b0000111 @ shamtw @ 0b01010111 @ rd @ 0b0101011
+    0b0001111 @ shamtw @ 0b01010111 @ rd @ 0b0101011
 
 /* Assembly string mapping for pollentropy */
 mapping clause assembly = POLLENTROPY (shamtw,rd) <-> 
