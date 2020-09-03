@@ -217,24 +217,20 @@ AES, SHA2, SHA3.
 \subsubsection{Crossbar Permutation Instructions}
 
 See \cite[Section 2.2.4]{riscv:bitmanip:draft} for a complete
-description of these instructions.
+description of this instruction.
 
 \begin{cryptobitmanipisa}
-RV32, RV64:                         RV64:
-    xperm.n rd, rs1, rs2                xperm.w   rd, rs1, rs2
-    xperm.b rd, rs1, rs2
-    xperm.h rd, rs1, rs2
+RV32, RV64:
+    xperm.n rd, rs1, rs2
 \end{cryptobitmanipisa}
 
-These instructions operate on nibbles, bytes, halfwords or words
-depending on the instruction suffix.
-The \rsone register contains a vector of $\XLEN/X$, $X$-bit elements, where
-$X \in \{2,4,8,16,32\}$ depending on the instruction.
-The \rstwo register contains a vector of $\XLEN/X$, $X$-bit indexes.
+These instruction operates on nibbles.
+The \rsone register contains a vector of $4$-bit elements.
+The \rstwo register contains a vector of $8$, $4$-bit indexes.
 The result is each element in \rstwo replaced by the indexed element
 in \rsone, or zero if the index into \rstwo is out of bounds.
 
-Together, the instructions can be used to implement aribitrary bit
+The instruction can be used to implement aribitrary bit
 permutations.
 For cryptography, they can accelerate bit-sliced implementations,
 permutation layers of block ciphers and masking based countermeasures.
