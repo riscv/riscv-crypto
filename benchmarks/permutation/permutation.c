@@ -1,4 +1,11 @@
 
+/*
+ * Some demonstrations of using the Bitmanip permutation instructions
+ * to perform useful cryptographic operations.
+ * Examples re-produced from Claire's SVN repository:
+ * - http://svn.clairexen.net/handicraft/2020/lut4perm/
+ */
+
 #include "permutation.h"
 
 #if __riscv_xlen == 64
@@ -29,6 +36,19 @@ uint_xlen_t xperm_h(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,4);}
 uint_xlen_t xperm_w(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,5);}
 
 
+uint64_t rv32_xpermb(uint64_t rs1, uint64_t rs2) {
+    uint32_t r1_h = rs1 >> 32;
+    uint32_t r1_l = rs1      ;
+    uint32_t r2_h = rs2 >> 32;
+    uint32_t r2_l = rs2      ;
+    uint32_t rd_h = xperm_b(r1_l, r2_h              ) |
+                    xperm_b(r1_h, r2_h ^ 0x80808080 ) ;
+    uint32_t rd_l = xperm_b(r1_l, r2_h              ) |
+                    xperm_b(r1_h, r2_h ^ 0x80808080 ) ;
+    return ((uint64_t)rd_h) << 32 | rd_l;
+}
+
+
 #if __riscv_xlen == 64
 
 uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
@@ -56,3 +76,71 @@ uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
 #else
 #error Unknown XLEN
 #endif
+
+
+void     pack_8bit_sbox(sbox_8bit_t * out, uint8_t * in) {
+
+    for(int i = 0 ; i < 256; i += 8) {
+        
+        uint64_t dw = 
+            (((uint64_t)(in[i + 0])) <<  0) |
+            (((uint64_t)(in[i + 1])) <<  8) |
+            (((uint64_t)(in[i + 2])) << 16) |
+            (((uint64_t)(in[i + 3])) << 24) |
+            (((uint64_t)(in[i + 4])) << 32) |
+            (((uint64_t)(in[i + 5])) << 40) |
+            (((uint64_t)(in[i + 6])) << 48) |
+            (((uint64_t)(in[i + 7])) << 56) ;
+
+        out -> packed[i/8] = dw;
+
+    }
+
+}
+
+
+//! Apply the given sbox to each byte in the supplied 64-bit word.
+uint64_t sbox_8bit     (sbox_8bit_t * sbox, uint64_t in) {
+
+    uint64_t        rd   = 0   ;
+    uint64_t        mask = 0   ;
+
+    for(int i = 0; i < 32; i ++) {
+        uint64_t sb_i = sbox -> packed[i];
+        rd   |= xperm_b(sb_i, in ^ mask);
+        mask += 0x0808080808080808LL;
+    }
+
+    return rd;
+}
+
+
+/*
+@details
+On RV64:
+-  8 instructions per loop iteration.
+- 32 loop iterations
+- 32*8 = 256 instructions total.
+- 16 bytes processed ->  256/16 = 16 instructions / byte.
+*/
+void     sbox_8bit_x4  (
+    uint64_t        out[2]  ,
+    sbox_8bit_t *   sbox    ,
+    uint64_t        in [2]
+){
+
+    uint64_t        rd0  = 0   ;
+    uint64_t        rd1  = 0   ;
+    uint64_t        mask = 0   ;
+
+    for(int i = 0; i < 32; i ++) {
+        uint64_t sb_i = sbox -> packed[i];          // 1 instr
+        rd0  |= xperm_b(sb_i, in[0] ^ mask);        // 3 instr
+        rd1  |= xperm_b(sb_i, in[1] ^ mask);        // 3 instr
+        mask += 0x0808080808080808LL;               // 1 instr
+    }
+
+    out[0] = rd0;
+    out[1] = rd1;
+}
+
