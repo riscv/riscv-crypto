@@ -1,0 +1,8 @@
+
+PERMUTATION_FILES = \
+    permutation/permutation.c
+
+$(eval $(call add_lib_target,permutation,$(PERMUTATION_FILES)))
+
+
+
