@@ -51,12 +51,21 @@ uint64_t rv32_xpermb(uint64_t rs1, uint64_t rs2) {
 
 #if __riscv_xlen == 64
 
+/*
+@details 64-bit 4-bit SBox. Apply 4-bit SBox to each nibble in "in" and
+return the new value.
+*/
 uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
     return xperm_n(sbox, in); // 1 instruction.
 }
 
 #elif __riscv_xlen == 32
 
+/*
+@details 32-bit 4-bit sbox. Functionally identical to 64-bit variant, but
+requires extra instructions to handle the narrower register-width.
+Does a hi-32 lo-32 approach.
+*/
 uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
     uint32_t sbox_h = sbox >> 32;                    // All arguments
     uint32_t sbox_l = sbox      ;                    // passed in a0-3
