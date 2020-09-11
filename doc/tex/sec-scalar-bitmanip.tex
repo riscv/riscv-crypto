@@ -235,24 +235,33 @@ AES, SHA2, SHA3.
 \subsubsection{Crossbar Permutation Instructions}
 \label{sec:xperm}
 
-See \cite[Section 2.2.4]{riscv:bitmanip:draft} for a complete
-description of this instruction.
-
 \begin{cryptobitmanipisa}
 RV32, RV64:
     xperm.n rd, rs1, rs2
+    xperm.b rd, rs1, rs2
 \end{cryptobitmanipisa}
 
-These instruction operates on nibbles.
-The \rsone register contains a vector of $4$-bit elements.
-The \rstwo register contains a vector of $8$, $4$-bit indexes.
+See \cite[Section 2.2.4]{riscv:bitmanip:draft} for a complete
+description of this instruction.
+
+The {\tt xperm.n} instruction operates on nibbles.
+The \rsone register contains a vector of $\XLEN/4$ $4$-bit elements.
+The \rstwo register contains a vector of $\XLEN/4$ $4$-bit indexes.
+The result is each element in \rstwo replaced by the indexed element
+in \rsone, or zero if the index into \rstwo is out of bounds.
+
+The {\tt xperm.b} instruction operates on bytes.
+The \rsone register contains a vector of $\XLEN/8$ $8$-bit elements.
+The \rstwo register contains a vector of $\XLEN/8$ $8$-bit indexes.
 The result is each element in \rstwo replaced by the indexed element
 in \rsone, or zero if the index into \rstwo is out of bounds.
 
 The instruction can be used to implement aribitrary bit
 permutations.
 For cryptography, they can accelerate bit-sliced implementations,
-permutation layers of block ciphers and masking based countermeasures.
+permutation layers of block ciphers, masking based countermeasures
+and SBox operations.
+
 Figure \ref{fig:example:xperm} shows example implementations of the
 $4$-bit PRINCE SBox using the instructions.
 Other lightweight block ciphers using $4$-bit SBoxes include
@@ -262,6 +271,19 @@ GIFT\cite{block:gift},
 Twine\cite{block:twine},
 Skinny, MANTIS\cite{block:skinny},
 Midori \cite{block:midori}.
+
+National ciphers using $8$-bit SBoxes include
+Camellia\cite{block:camellia} (Japan), 
+Aria\cite{block:aria} (Korea),
+AES\cite{nist:fips:197} (USA, Belgium),
+SM4\cite{block:sm4:1} (China)
+and Kuznyechik (Russia).
+All of these SBoxes can be implemented efficiently, in constant
+time, using the {\tt xperm.b} instruction\footnote{
+    \url{http://svn.clairexen.net/handicraft/2020/lut4perm/demo02.cc}
+}.
+Note that this technique is also suitable for masking based
+side-channel countermeasures.
 
 \begin{figure}[h]
 \begin{lstlisting}[style=ASM]
