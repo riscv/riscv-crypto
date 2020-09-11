@@ -63,7 +63,7 @@ SHA256, AES (Shift Rows), ChaCha20, SM3.
 Algorithms making use of 64-bit rotations:
 SHA512, SHA3.
 
-\subsubsection{Other Permutations: {\tt grev} and {\tt shfl}}
+\subsubsection{Other Permutations: {\tt grev}, {\tt gorc} and {\tt shfl}}
 \label{sec:scalar:bitmanip:grev}
 
 \begin{cryptobitmanipisa}
@@ -84,9 +84,27 @@ standardised endianness which may be different from the natural machine
 endianness.
 This instruction is also useful for getting data into the right form
 for being posted to a dedicated accelerator.
+The full specification of these instrucitons is available in
+\cite[Section 2.2.2]{riscv:bitmanip:draft}.
 
 \begin{cryptobitmanipisa}
-RV32, RV64:                         RV64:
+RV32, RV64:                         RV64 only:
+    gorc    rd, rs1, rs2                gorcw   rd, rs1, rs2
+    gorci   rd, rs1, imm                gorciw  rd, rs1, imm
+\end{cryptobitmanipisa}
+
+The Generalized Or Combine ({\tt gorc}) instructions are very similar
+to {\tt grev}, but instead of swapping bit pairs, it or's them together,
+and writes the result to both bit positions.
+It is useful for aribitrary bit permutations, and can be used in
+conjunction with the Crossbar Permutation Instrucitons
+(Section \ref{sec:xperm}) to implement aribtrary bit permutations
+very efficiently.
+The full specification of these instrucitons is available in
+\cite[Section 2.3]{riscv:bitmanip:draft}.
+
+\begin{cryptobitmanipisa}
+RV32, RV64:                         RV64 only:
     shfl    rd, rs1, rs2                shflw   rd, rs1, rs2
     unshfl  rd, rs1, rs2                unshflw rd, rs1, rs2
     shfli   rd, rs1, rs2
@@ -215,6 +233,7 @@ AES, SHA2, SHA3.
 
 
 \subsubsection{Crossbar Permutation Instructions}
+\label{sec:xperm}
 
 See \cite[Section 2.2.4]{riscv:bitmanip:draft} for a complete
 description of this instruction.
