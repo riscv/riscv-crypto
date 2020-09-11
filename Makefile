@@ -4,7 +4,7 @@ ifndef REPO_HOME
 endif
 
 spec:
-	$(MAKE) -C $(REPO_HOME)/doc/ spec
+	$(MAKE) -C $(REPO_HOME)/doc/ specs
 
 
 tests-assembler:

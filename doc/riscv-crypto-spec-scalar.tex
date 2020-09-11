@@ -1,0 +1,68 @@
+\documentclass[11pt]{article}
+\usepackage{riscv-crypto-spec}
+
+\title{RISC-V Cryptographic Extension Proposals\\Volume I: Scalar \& Entropy Source Instructions}
+\author{Editor: Ben Marshall\\ben.marshall@bristol.ac.uk}
+\date{Version $0.7.0$ (\today) \\
+\medskip
+\url{\repourl{}} \\
+\href{\repourl{}}{
+{\small \tt git:\import{../build/spec/}{spec.commit}}}
+}
+
+\begin{document}
+
+% ============================================================================
+
+\maketitle
+
+\import{./tex/}{contributors.tex}
+
+\tableofcontents
+
+% ============================================================================
+
+\newpage
+\section{Introduction}
+\label{sec:intro}
+\import{./tex/}{sec-scalar-intro.tex}
+
+\newpage
+\section{Implementation Profiles}
+\label{sec:profiles}
+\import{./tex/}{sec-scalar-profiles.tex}
+
+\newpage
+\section{Scalar Extension}
+\label{sec:scalar}
+\import{./tex/}{sec-scalar.tex}
+
+\newpage
+\section{Entropy Source Extension}
+\label{sec:randombit}
+\import{./tex/}{sec-entropy-source.tex}
+
+% ============================================================================
+
+\newpage
+\printbibliography
+
+% ============================================================================
+
+%
+% Appendix items with annotations, benchmarking and experimental
+% evidence etc.
+%
+
+\newpage
+\begin{appendices}
+\label{sec:appendix}
+\import{./tex/}{appx-scalar-encodings.tex}
+\import{./tex/}{appx-entropy.tex}
+\import{./tex/}{appx-materials.tex}
+\end{appendices}
+
+% ============================================================================
+
+\end{document}
+

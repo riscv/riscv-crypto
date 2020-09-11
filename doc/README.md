@@ -8,15 +8,25 @@
 This directory contains two types of information:
 
 - The official draft specification, in LaTeX form.
-  This can be built by running:
+  The specification is split into two components: Scalar+Entropy Source and
+  Vector.
+
+  Both can be build by running:
   
   ```sh
   source bin/conf.sh
-  make spec
+  make specs
   ```
   from the root project of the directory.
 
-  Alternatively, pre-built versions corresponding to draft releases
+  Individual versions can be built by running:
+
+  ```sh
+  make -C doc/ spec-scalar
+  make -C doc/ spec-vector
+  ```
+
+- Alternatively, pre-built versions corresponding to draft releases
   can be found on the
   [releases](https://github.com/riscv/riscv-crypto/releases)
   page.
