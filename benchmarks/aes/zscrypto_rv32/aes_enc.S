@@ -61,25 +61,25 @@ aes_ecb_encrypt:                                // a2 - uint32_t  * rk,
         lw      U2, 24(RK)
         lw      U3, 28(RK)
 
-        saes32.encsm   U0, U0, T0, 0            // Even Round
-        saes32.encsm   U0, U0, T1, 1
-        saes32.encsm   U0, U0, T2, 2
-        saes32.encsm   U0, U0, T3, 3
+        aes32esmi   U0, U0, T0, 0            // Even Round
+        aes32esmi   U0, U0, T1, 1
+        aes32esmi   U0, U0, T2, 2
+        aes32esmi   U0, U0, T3, 3
                                  
-        saes32.encsm   U1, U1, T1, 0
-        saes32.encsm   U1, U1, T2, 1
-        saes32.encsm   U1, U1, T3, 2
-        saes32.encsm   U1, U1, T0, 3
+        aes32esmi   U1, U1, T1, 0
+        aes32esmi   U1, U1, T2, 1
+        aes32esmi   U1, U1, T3, 2
+        aes32esmi   U1, U1, T0, 3
                                  
-        saes32.encsm   U2, U2, T2, 0
-        saes32.encsm   U2, U2, T3, 1
-        saes32.encsm   U2, U2, T0, 2
-        saes32.encsm   U2, U2, T1, 3
+        aes32esmi   U2, U2, T2, 0
+        aes32esmi   U2, U2, T3, 1
+        aes32esmi   U2, U2, T0, 2
+        aes32esmi   U2, U2, T1, 3
                                  
-        saes32.encsm   U3, U3, T3, 0
-        saes32.encsm   U3, U3, T0, 1
-        saes32.encsm   U3, U3, T1, 2
-        saes32.encsm   U3, U3, T2, 3            // U* contains new state
+        aes32esmi   U3, U3, T3, 0
+        aes32esmi   U3, U3, T0, 1
+        aes32esmi   U3, U3, T1, 2
+        aes32esmi   U3, U3, T2, 3            // U* contains new state
 
         lw      T0, 32(RK)                      // Load Round Key
         lw      T1, 36(RK)
@@ -89,49 +89,49 @@ aes_ecb_encrypt:                                // a2 - uint32_t  * rk,
         addi    RK, RK, 32                      // Step Key pointer
         beq     RK, KP, .aes_enc_block_l_finish // Break from loop
         
-        saes32.encsm   T0, T0, U0, 0            // Odd Round
-        saes32.encsm   T0, T0, U1, 1
-        saes32.encsm   T0, T0, U2, 2
-        saes32.encsm   T0, T0, U3, 3
+        aes32esmi   T0, T0, U0, 0            // Odd Round
+        aes32esmi   T0, T0, U1, 1
+        aes32esmi   T0, T0, U2, 2
+        aes32esmi   T0, T0, U3, 3
                                  
-        saes32.encsm   T1, T1, U1, 0
-        saes32.encsm   T1, T1, U2, 1
-        saes32.encsm   T1, T1, U3, 2
-        saes32.encsm   T1, T1, U0, 3
+        aes32esmi   T1, T1, U1, 0
+        aes32esmi   T1, T1, U2, 1
+        aes32esmi   T1, T1, U3, 2
+        aes32esmi   T1, T1, U0, 3
                                  
-        saes32.encsm   T2, T2, U2, 0
-        saes32.encsm   T2, T2, U3, 1
-        saes32.encsm   T2, T2, U0, 2
-        saes32.encsm   T2, T2, U1, 3
+        aes32esmi   T2, T2, U2, 0
+        aes32esmi   T2, T2, U3, 1
+        aes32esmi   T2, T2, U0, 2
+        aes32esmi   T2, T2, U1, 3
                                  
-        saes32.encsm   T3, T3, U3, 0
-        saes32.encsm   T3, T3, U0, 1
-        saes32.encsm   T3, T3, U1, 2
-        saes32.encsm   T3, T3, U2, 3            // T* contains new state
+        aes32esmi   T3, T3, U3, 0
+        aes32esmi   T3, T3, U0, 1
+        aes32esmi   T3, T3, U1, 2
+        aes32esmi   T3, T3, U2, 3            // T* contains new state
 
     j .aes_enc_block_l0                         // repeat loop
 
 .aes_enc_block_l_finish:
     
-    saes32.encs    T0, T0, U0, 0                // Final round. No MixColumn.
-    saes32.encs    T0, T0, U1, 1
-    saes32.encs    T0, T0, U2, 2
-    saes32.encs    T0, T0, U3, 3
+    aes32esi    T0, T0, U0, 0                // Final round. No MixColumn.
+    aes32esi    T0, T0, U1, 1
+    aes32esi    T0, T0, U2, 2
+    aes32esi    T0, T0, U3, 3
                              
-    saes32.encs    T1, T1, U1, 0
-    saes32.encs    T1, T1, U2, 1
-    saes32.encs    T1, T1, U3, 2
-    saes32.encs    T1, T1, U0, 3
+    aes32esi    T1, T1, U1, 0
+    aes32esi    T1, T1, U2, 1
+    aes32esi    T1, T1, U3, 2
+    aes32esi    T1, T1, U0, 3
                              
-    saes32.encs    T2, T2, U2, 0
-    saes32.encs    T2, T2, U3, 1
-    saes32.encs    T2, T2, U0, 2
-    saes32.encs    T2, T2, U1, 3
+    aes32esi    T2, T2, U2, 0
+    aes32esi    T2, T2, U3, 1
+    aes32esi    T2, T2, U0, 2
+    aes32esi    T2, T2, U1, 3
                              
-    saes32.encs    T3, T3, U3, 0
-    saes32.encs    T3, T3, U0, 1
-    saes32.encs    T3, T3, U1, 2
-    saes32.encs    T3, T3, U2, 3               // T* contains new state
+    aes32esi    T3, T3, U3, 0
+    aes32esi    T3, T3, U0, 1
+    aes32esi    T3, T3, U1, 2
+    aes32esi    T3, T3, U2, 3               // T* contains new state
 
     AES_DUMP_STATE  T0, T1, T2, T3, CT
 

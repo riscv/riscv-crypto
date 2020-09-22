@@ -48,11 +48,11 @@ static inline void sha256_hash_init (
 #define CH(X,Y,Z)  ((X&Y)^(~X&Z))
 #define MAJ(X,Y,Z) ((X&Y)^(X&Z)^(Y&Z))
 
-#define SUM_0(X)   (_ssha256_sum0(X))
-#define SUM_1(X)   (_ssha256_sum1(X))
+#define SUM_0(X)   (_sha256sum0(X))
+#define SUM_1(X)   (_sha256sum1(X))
 
-#define SIGMA_0(X) (_ssha256_sig0(X))
-#define SIGMA_1(X) (_ssha256_sig1(X))
+#define SIGMA_0(X) (_sha256sig0(X))
+#define SIGMA_1(X) (_sha256sig1(X))
 
 #define ROUND(A,B,C,D,E,F,G,H,K,W) { \
     H  = H + SUM_1(E) + CH(E,F,G) + K + W   ; \

@@ -6,10 +6,10 @@
 \subsubsection{SHA-256 Instructions}
 
 \begin{cryptoisa}
-ssha256.sig0 rd, rs1
-ssha256.sig1 rd, rs1
-ssha256.sum0 rd, rs1
-ssha256.sum1 rd, rs1
+sha256sig0 rd, rs1
+sha256sig1 rd, rs1
+sha256sum0 rd, rs1
+sha256sum1 rd, rs1
 \end{cryptoisa}
 
 The {\tt ssha256.*}
@@ -23,27 +23,27 @@ Though named for SHA256, the instructions work for both the
 SHA-224 and SHA-256 parameterisations as described in
 \cite{nist:fips:180:4}.
 SAIL Model code for each instruction is found in figure
-\ref{fig:sail:ssha256}.
+\ref{fig:sail:sha256}.
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=46,lastline=56]{../sail/riscv_insts_crypto.sail}
 \caption{SAIL specification for the scalar RV32/RV64 SHA256 instructions.}
-\label{fig:sail:ssha256}
+\label{fig:sail:sha256}
 \end{figure}
 
 \subsubsection{SHA-512 Instructions}
 
 \begin{cryptoisa}
 RV32:                                       RV64:
-  ssha512.sum0r rd, rs1, rs2                  ssha512.sig0 rd, rs1
-  ssha512.sum1r rd, rs1, rs2                  ssha512.sig1 rd, rs1
-  ssha512.sig0l rd, rs1, rs2                  ssha512.sum0 rd, rs1
-  ssha512.sig0h rd, rs1, rs2                  ssha512.sum1 rd, rs1
-  ssha512.sig1l rd, rs1, rs2 
-  ssha512.sig1h rd, rs1, rs2 
+  sha512sum0r rd, rs1, rs2                    sha512sig0 rd, rs1
+  sha512sum1r rd, rs1, rs2                    sha512sig1 rd, rs1
+  sha512sig0l rd, rs1, rs2                    sha512sum0 rd, rs1
+  sha512sig0h rd, rs1, rs2                    sha512sum1 rd, rs1
+  sha512sig1l rd, rs1, rs2 
+  sha512sig1h rd, rs1, rs2 
 \end{cryptoisa}
 
-The \mnemonic{ssha512.*}
+The \mnemonic{sha512.*}
 instructions implement the four $\sigma$ and $\sum$ functions used in
 the SHA512 hash function \cite[Section 4.1.3]{nist:fips:180:4}.
 
@@ -52,11 +52,11 @@ The RV32 instructions work by concatenating the two 32-bit {\tt rs1} and
 The high or low 32-bits of the full 64-bit function result are then
 written to the destination register depending on the instruction.
 
-For the \mnemonic{ssha512.sum*r} instructions, the operation is based
+For the \mnemonic{sha512sum*r} instructions, the operation is based
 purely on rotations;
 the high or low 32-bits of the result can be selected by swapping
 the input source registers to the instruction.
-For the \mnemonic{sha512.sig*[l|h]} instructions, which include shifts,
+For the \mnemonic{sha512sig*[l|h]} instructions, which include shifts,
 the {\tt *l} instruction writes the {\em low} 32-bits of the $\sigma$
 transform, and the {\tt *h} instruction writes the {\em high} 32-bits.
 
@@ -68,9 +68,9 @@ can be used for all of the SHA-384, SHA-512, SHA-512/224 and SHA-512/256
 parameterisations as described in \cite{nist:fips:180:4}.
 
 SAIL Model code for the RV32 and RV64 instructions can be found in
-Figure \ref{fig:sail:ssha512:rv32}
+Figure \ref{fig:sail:sha512:rv32}
 and
-Figure \ref{fig:sail:ssha512:rv64}
+Figure \ref{fig:sail:sha512:rv64}
 respectivley.
 
 \note{
@@ -88,11 +88,11 @@ such a specialist use-case.
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=143,lastline=156]{../sail/riscv_insts_crypto_rv32.sail}
 \caption{SAIL specification for the scalar RV32 SHA512 instructions.}
-\label{fig:sail:ssha512:rv32}
+\label{fig:sail:sha512:rv32}
 \end{figure}
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=152,lastline=162]{../sail/riscv_insts_crypto_rv64.sail}
 \caption{SAIL specification for the scalar RV64 SHA512 instructions.}
-\label{fig:sail:ssha512:rv64}
+\label{fig:sail:sha512:rv64}
 \end{figure}

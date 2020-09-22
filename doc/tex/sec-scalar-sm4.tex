@@ -8,8 +8,8 @@ the SM4 block cipher\cite{block:sm4:1, ietf:sm4}.
 
 \begin{cryptoisa}
 RV32 / RV64:
-    ssm4.ed     rd, rs1, rs2, bs
-    ssm4.ks     rd, rs1, rs2, bs
+    sm4ed     rd, rs1, rs2, bs
+    sm4ks     rd, rs1, rs2, bs
 \end{cryptoisa}
 
 The instructions are taken from proposals found in \cite{MJS:LWAES:20}.
@@ -19,9 +19,9 @@ minimal area requirements, and resemble a TTables-esq
 software implementation.
 
 \begin{itemize}
-\item \mnemonic{ssm4.ed} - Encrypt/Decrypt instruction. Applies the
+\item \mnemonic{sm4ed} - Encrypt/Decrypt instruction. Applies the
     SBox and $L$ transformations as part of the round function.
-\item \mnemonic{ssm4.ks} - KeySchedule instruction. Applies the
+\item \mnemonic{sm4ks} - KeySchedule instruction. Applies the
     SBox and $L'$ transformations as part of the KeySchedule.
 \end{itemize}
 

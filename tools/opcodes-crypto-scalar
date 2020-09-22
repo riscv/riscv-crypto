@@ -15,48 +15,48 @@
 # ------------------------------------------------------------
 
 # Scalar SM4 - RV32, RV64
-ssm4.ed         rd rs1 rs2 bs    29..25=4            14..12=3 6..0=0x2B
-ssm4.ks         rd rs1 rs2 bs    29..25=5            14..12=3 6..0=0x2B
+sm4ed         rd rs1 rs2 bs    29..25=4            14..12=3 6..0=0x2B
+sm4ks         rd rs1 rs2 bs    29..25=5            14..12=3 6..0=0x2B
 
 # Scalar AES - RV32
-saes32.encsm    rd rs1 rs2 bs    29..25=0            14..12=2 6..0=0x2B
-saes32.encs     rd rs1 rs2 bs    29..25=1            14..12=2 6..0=0x2B
-saes32.decsm    rd rs1 rs2 bs    29..25=2            14..12=2 6..0=0x2B
-saes32.decs     rd rs1 rs2 bs    29..25=3            14..12=2 6..0=0x2B
+aes32esmi     rd rs1 rs2 bs    29..25=0            14..12=2 6..0=0x2B
+aes32esi      rd rs1 rs2 bs    29..25=1            14..12=2 6..0=0x2B
+aes32dsmi     rd rs1 rs2 bs    29..25=2            14..12=2 6..0=0x2B
+aes32dsi      rd rs1 rs2 bs    29..25=3            14..12=2 6..0=0x2B
 
 # Scalar AES - RV64
-saes64.ks1      rd rs1 rcon      31..25=4  24=0      14..12=2 6..0=0x2B
-saes64.ks2      rd rs1 rs2       31..25=5            14..12=2 6..0=0x2B
-saes64.imix     rd rs1           31..25=6  24..20=1  14..12=2 6..0=0x2B
-saes64.encsm    rd rs1 rs2       31..25=7            14..12=2 6..0=0x2B
-saes64.encs     rd rs1 rs2       31..25=8            14..12=2 6..0=0x2B
-saes64.decsm    rd rs1 rs2       31..25=9            14..12=2 6..0=0x2B
-saes64.decs     rd rs1 rs2       31..25=10           14..12=2 6..0=0x2B
+aes64ks1i     rd rs1 rcon      31..25=4  24=0      14..12=2 6..0=0x2B
+aes64ks2      rd rs1 rs2       31..25=5            14..12=2 6..0=0x2B
+aes64im       rd rs1           31..25=6  24..20=1  14..12=2 6..0=0x2B
+aes64esm      rd rs1 rs2       31..25=7            14..12=2 6..0=0x2B
+aes64es       rd rs1 rs2       31..25=8            14..12=2 6..0=0x2B
+aes64dsm      rd rs1 rs2       31..25=9            14..12=2 6..0=0x2B
+aes64ds       rd rs1 rs2       31..25=10           14..12=2 6..0=0x2B
 
 # Scalar SHA256 - RV32/RV64
-ssha256.sig0    rd rs1           31..25=7  24..20=0  14..12=7  6..0=0x2B
-ssha256.sig1    rd rs1           31..25=7  24..20=1  14..12=7  6..0=0x2B
-ssha256.sum0    rd rs1           31..25=7  24..20=2  14..12=7  6..0=0x2B
-ssha256.sum1    rd rs1           31..25=7  24..20=3  14..12=7  6..0=0x2B
+sha256sig0    rd rs1           31..25=7  24..20=0  14..12=7  6..0=0x2B
+sha256sig1    rd rs1           31..25=7  24..20=1  14..12=7  6..0=0x2B
+sha256sum0    rd rs1           31..25=7  24..20=2  14..12=7  6..0=0x2B
+sha256sum1    rd rs1           31..25=7  24..20=3  14..12=7  6..0=0x2B
 
 # Scalar SM3 - RV32, RV64
-ssm3.p0         rd rs1           31..25=7  24..20=8  14..12=7  6..0=0x2B
-ssm3.p1         rd rs1           31..25=7  24..20=9  14..12=7  6..0=0x2B
+sm3p0         rd rs1           31..25=7  24..20=8  14..12=7  6..0=0x2B
+sm3p1         rd rs1           31..25=7  24..20=9  14..12=7  6..0=0x2B
                                                      
 # Scalar SHA512 - RV32                                               
-ssha512.sig0l   rd rs1 rs2       31..25=8            14..12=7  6..0=0x2B
-ssha512.sig0h   rd rs1 rs2       31..25=9            14..12=7  6..0=0x2B
-ssha512.sig1l   rd rs1 rs2       31..25=10           14..12=7  6..0=0x2B
-ssha512.sig1h   rd rs1 rs2       31..25=11           14..12=7  6..0=0x2B
-ssha512.sum0r   rd rs1 rs2       31..25=12           14..12=7  6..0=0x2B
-ssha512.sum1r   rd rs1 rs2       31..25=13           14..12=7  6..0=0x2B
+sha512sig0l   rd rs1 rs2       31..25=8            14..12=7  6..0=0x2B
+sha512sig0h   rd rs1 rs2       31..25=9            14..12=7  6..0=0x2B
+sha512sig1l   rd rs1 rs2       31..25=10           14..12=7  6..0=0x2B
+sha512sig1h   rd rs1 rs2       31..25=11           14..12=7  6..0=0x2B
+sha512sum0r   rd rs1 rs2       31..25=12           14..12=7  6..0=0x2B
+sha512sum1r   rd rs1 rs2       31..25=13           14..12=7  6..0=0x2B
                                                      
 # Scalar SHA512 - RV64                                               
-ssha512.sig0    rd rs1           31..25=7  24..20=4  14..12=7  6..0=0x2B
-ssha512.sig1    rd rs1           31..25=7  24..20=5  14..12=7  6..0=0x2B
-ssha512.sum0    rd rs1           31..25=7  24..20=6  14..12=7  6..0=0x2B
-ssha512.sum1    rd rs1           31..25=7  24..20=7  14..12=7  6..0=0x2B
+sha512sig0    rd rs1           31..25=7  24..20=4  14..12=7  6..0=0x2B
+sha512sig1    rd rs1           31..25=7  24..20=5  14..12=7  6..0=0x2B
+sha512sum0    rd rs1           31..25=7  24..20=6  14..12=7  6..0=0x2B
+sha512sum1    rd rs1           31..25=7  24..20=7  14..12=7  6..0=0x2B
 
 # Poll Entropy Instruction
-pollentropy     rd shamtw        31..25=15 19..15=10 14..12=7  6..0=0x2B
+pollentropyi    rd shamtw        31..25=15 19..15=10 14..12=7  6..0=0x2B
 

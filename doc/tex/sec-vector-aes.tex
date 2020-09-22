@@ -54,16 +54,16 @@ vector register groups with enough bits to express $\SEW=128$.
 E.g. an implementation with $\VLEN=64$ may set $\LMUL=2$ and $\SEW=128$.
 
 \begin{cryptoisa}
-vaes128keyi     vrt,       rnd    // 1  <= rnd <= 10
-vaes192keyi     vrt, vrs2, rnd    // 1  <= rnd <= 12
-vaes256keyi     vrt, vrs2, rnd    // 2  <= rnd <= 14
+vaes128keyi.vv    vrt,       rnd    // 1  <= rnd <= 10
+vaes192keyi.vv    vrt, vrs2, rnd    // 1  <= rnd <= 12
+vaes256keyi.vv    vrt, vrs2, rnd    // 2  <= rnd <= 14
 
-vaes128invkeyi  vrt,       rnd    // 9  => rnd =>  0
-vaes192invkeyi  vrt, vrs2, rnd    // 10 => rnd =>  0
-vaes256invkeyi  vrt, vrs2, rnd    // 12 => rnd =>  0
+vaes128invkeyi.vv vrt,       rnd    // 9  => rnd =>  0
+vaes192invkeyi.vv vrt, vrs2, rnd    // 10 => rnd =>  0
+vaes256invkeyi.vv vrt, vrs2, rnd    // 12 => rnd =>  0
 \end{cryptoisa}
 
-The \mnemonic{vaes*keyi} instructions
+The \mnemonic{vaes*keyi.vv} instructions
 are used to compute the {\em next} AES round key for encryption
 or decryption.
 In the round number is supplied by the $4$-bit {\tt rnd} immediate.
@@ -71,14 +71,14 @@ These instructions are all vector-vector instructions.
 Setting {\tt vl=1, vstart=0} will cause the instruction to work on only a
 single vector element.
 
-The \mnemonic{vaes128keyi} instruction computes
+The \mnemonic{vaes128keyi.vv} instruction computes
 the {\em next} round key
 from the
 {\em current} round key
 stored in \vrt,
 and writes the result back to \vrt.
 
-The \mnemonic{vaes192keyi} and \mnemonic{vaes256keyi} instructions
+The \mnemonic{vaes192keyi.vv} and \mnemonic{vaes256keyi.vv} instructions
 compute the {\em next} round key
 from the
 {\em current} round key stored in \vrs{1} {\em and}
@@ -173,7 +173,7 @@ line of each, where {\tt vrs1[0]} is replaced with {\tt vrs1[i]}.}
 
 \begin{figure}[h]
 \begin{lstlisting}[language=pseudo]
-vaes128keyi     vrt, rnd:
+vaes128keyi.vv  vrt, rnd:
     for i=vstart, i<vl, i++:
         tmp.128       = vrt[i]
         tmp.32[0]    ^= RoundConstants[rnd]
@@ -265,9 +265,9 @@ The vector-vector ({\tt *.vv}) instructions use corresponding elements
 of \vrs{1} and \vrt to perform encryption/decryption.
 
 \begin{cryptoisa}
-vaes128rkey vrt    // Compute final round key from cipher key.
-vaes192rkey vrt    // Compute final two round keys from cipher key.
-vaes256rkey vrt    // Compute final two round keys from cipher key.
+vaes128rkey.vv vrt    // Compute final round key from cipher key.
+vaes192rkey.vv vrt    // Compute final two round keys from cipher key.
+vaes256rkey.vv vrt    // Compute final two round keys from cipher key.
 \end{cryptoisa}
 
 These instructions are used to quickly derive the final round key(s)
@@ -282,12 +282,12 @@ Each of these instructions requires $\SEW=128$
 Executing these instructions with any other value of \SEW will cause
 an invalid opcode exception.
 
-The \mnemonic{vaes128rkey} instruction takes a single
+The \mnemonic{vaes128rkey.vv} instruction takes a single
 vector source register \vrt, and for each $128$-bit element, computes
 the final AES-128 round key.
 The result is then written back to {\tt vrt}.
 
-The \mnemonic{vaes192rkey} instruction takes a single
+The \mnemonic{vaes192rkey.vv} instruction takes a single
 vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $192$-bit cipher key),
 computes the final two AES-192 round keys.
@@ -297,7 +297,7 @@ Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The result is written back to \vrt with
 $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 
-The \mnemonic{vaes256rkey} instruction takes a single
+The \mnemonic{vaes256rkey.vv} instruction takes a single
 vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $256$-bit cipher key),
 computes the final two AES-192 round keys.
@@ -307,7 +307,7 @@ Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The result is written back to \vrt with
 $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 
-\todo{For the vaes192/256rkey instructions, they essentially operate on
+\todo{For the vaes192/256rkey.vv instructions, they essentially operate on
 $256$-bit elements. Currently they are defined as needing $\SEW=128$
 and then {\em interpreting} \vrt with $\EEW=2*\SEW$.
 This keeps them consistent with the all rounds encrypt/decrypt

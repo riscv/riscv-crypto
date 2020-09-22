@@ -192,35 +192,35 @@ enum            saes_op = {
 
 
 /* Scalar SHA256 instruction operations. Used for 32,64-bit versions. */
-enum            ssha256_op = {
-    SHA256_SIG0,
-    SHA256_SIG1,
-    SHA256_SUM0,
-    SHA256_SUM1
+enum            sha256_op = {
+    OP_SHA256_SIG0,
+    OP_SHA256_SIG1,
+    OP_SHA256_SUM0,
+    OP_SHA256_SUM1
 }
 
 /* Scalar SHA512 RV64 instruction operations */
-enum            ssha512_rv64_op = {
-    SHA512_SIG0,
-    SHA512_SIG1,
-    SHA512_SUM0,
-    SHA512_SUM1
+enum            sha512_rv64_op = {
+    OP_SHA512_SIG0,
+    OP_SHA512_SIG1,
+    OP_SHA512_SUM0,
+    OP_SHA512_SUM1
 }
 
 /* Scalar SHA512 RV32 instruction operations.*/
-enum            ssha512_rv32_op = {
-    SHA512_SIG0L, SHA512_SIG0H,
-    SHA512_SIG1L, SHA512_SIG1H,
-    SHA512_SUM0R, SHA512_SUM1R
+enum            sha512_rv32_op = {
+    OP_SHA512_SIG0L, OP_SHA512_SIG0H,
+    OP_SHA512_SIG1L, OP_SHA512_SIG1H,
+    OP_SHA512_SUM0R, OP_SHA512_SUM1R
 }
 
 /* Scalar SM3 instruction operations. Used for 32,64-bit versions. */
-enum            ssm3_op = {
+enum            sm3_op = {
     P0, P1
 }
 
 /* Scalar SM4 instruction operations. Used for 32,64-bit versions. */
-enum            ssm4_op = {
+enum            sm4_op = {
     KS, ED
 }
 

@@ -9,9 +9,9 @@
 //
 // Computes 1 round key per invocation.
 .macro AES_128_KEY_ROUND RK_LO, RK_HI, RK, TMP1, TMP2, OFFSET, RCON
-    saes64.ks1      \TMP1 , \RK_HI, \RCON
-    saes64.ks2      \RK_LO, \TMP1 , \RK_LO
-    saes64.ks2      \RK_HI, \RK_LO, \RK_HI
+    aes64ks1i     \TMP1 , \RK_HI, \RCON
+    aes64ks2      \RK_LO, \TMP1 , \RK_LO
+    aes64ks2      \RK_HI, \RK_LO, \RK_HI
     AES_DUMP_STATE  \RK_LO, \RK_HI, \RK   , \TMP1, \TMP2, \OFFSET
 .endm
 

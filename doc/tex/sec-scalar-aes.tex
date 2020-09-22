@@ -14,10 +14,10 @@ these instructions can be found in \cite{cryptoeprint:2020:930}.
 \label{sec:scalar:aes:rv32}
 
 \begin{cryptoisa}
-saes32.encs      rd, rs1, rs2, bs // Encrypt: SubBytes
-saes32.encsm     rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
-saes32.decs      rd, rs1, rs2, bs // Decrypt: SubBytes
-saes32.decsm     rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
+aes32esi     rd, rs1, rs2, bs // Encrypt: SubBytes
+aes32esmi    rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
+aes32dsi     rd, rs1, rs2, bs // Decrypt: SubBytes
+aes32dsmi    rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
 \end{cryptoisa}
 
 These instructions are a very lightweight proposal, derived from
@@ -58,13 +58,13 @@ in particular.
 \label{sec:scalar:aes:rv64}
 
 \begin{cryptoisa}
-saes64.ks1   rd, rs1, rcon // KeySchedule: SubBytes, Rotate, Round Const
-saes64.ks2   rd, rs1, rs2  // KeySchedule: XOR summation
-saes64.imix  rd, rs1       // KeySchedule: InvMixColumns for Decrypt
-saes64.encsm rd, rs1, rs2  // Round:    ShiftRows,    SubBytes,    MixColumns
-saes64.encs  rd, rs1, rs2  // Round:    ShiftRows,    SubBytes
-saes64.decsm rd, rs1, rs2  // Round: InvShiftRows, InvSubBytes, InvMixColumns
-saes64.decs  rd, rs1, rs2  // Round: InvShiftRows, InvSubBytes
+aes64ks1i  rd, rs1, rcon // KeySchedule: SubBytes, Rotate, Round Const
+aes64ks2   rd, rs1, rs2  // KeySchedule: XOR summation
+aes64im    rd, rs1       // KeySchedule: InvMixColumns for Decrypt
+aes64esm   rd, rs1, rs2  // Round:    ShiftRows,    SubBytes,    MixColumns
+aes64es    rd, rs1, rs2  // Round:    ShiftRows,    SubBytes
+aes64dsm   rd, rs1, rs2  // Round: InvShiftRows, InvSubBytes, InvMixColumns
+aes64ds    rd, rs1, rs2  // Round: InvShiftRows, InvSubBytes
 \end{cryptoisa}
 
 These instructions are for RV64 only.
@@ -81,15 +81,15 @@ Pseudocode for the instructions is illustrated in
 
 \item
 The
-\mnemonic{saes64.ks1}/\mnemonic{saes64.ks2}
+\mnemonic{aes64ks1i}/\mnemonic{aes64ks2}
 instructions are used in the encrypt KeySchedule.
-\mnemonic{saes64.ks1} implements the rotation, SubBytes and Round Constant
+\mnemonic{aes64ks1i} implements the rotation, SubBytes and Round Constant
 addition steps.
-\mnemonic{saes64.ks2} implements the remaining {\tt xor} operations.
+\mnemonic{aes64ks2} implements the remaining {\tt xor} operations.
 
 \item
 The
-\mnemonic{saes64.imix}
+\mnemonic{aes64im}
 instruction applies the inverse MixColumns
 transformation to two columns of the state array, packed into a single
 64-bit register.
@@ -98,11 +98,11 @@ the equivalent inverse cipher construction in
 \cite[Page 23, Section 5.3.5]{nist:fips:197}.
 
 \item
-The \mnemonic{saes64.encsm}/\mnemonic{saes64.decsm} instructions perform the
+The \mnemonic{aes64esm}/\mnemonic{aes64dsm} instructions perform the
 (Inverse) SubBytes, ShiftRows and MixColumns Transformations.
 
 \item
-The \mnemonic{saes64.encs}/\mnemonic{saes64.decs} instructions perform the
+The \mnemonic{aes64es}/\mnemonic{aes64ds} instructions perform the
 (Inverse) SubBytes and ShiftRows Transformations.
 They are used for the last round only.
 
@@ -114,8 +114,8 @@ The following code snippet shows one round of the AES block encryption.
 {\tt t0} and {\tt t1} hold the current round state.
 {\tt t2} and {\tt t3} hold the next round state.
 \begin{lstlisting}
-saes64.encsm t2, t0, t1 // ShiftRows, SubBytes, MixColumns bytes 0..7
-saes64.encsm t3, t1, t0 // "          "         "          "     8..15
+aes64esm t2, t0, t1 // ShiftRows, SubBytes, MixColumns bytes 0..7
+aes64esm t3, t1, t0 // "          "         "          "     8..15
 \end{lstlisting}
 \end{itemize}
 
@@ -131,8 +131,8 @@ hence requires $69$ instructions in total.
 These instructions are amenable to macro-op fusion.
 The recommended sequences are:
 \begin{lstlisting}[language=pseudo]
-saes64.encsm rd1, rs1, rs2 // Different destination registers,
-saes64.encsm rd2, rs2, rs1 // identical source registers with swapped order.
+aes64esm rd1, rs1, rs2 // Different destination registers,
+aes64esm rd2, rs2, rs1 // identical source registers with swapped order.
 \end{lstlisting}
 This is similar to the recommended \mnemonic{mulh}, \mnemonic{mul}
 sequence in the M extension to compute a full $32*32->64$ bit
@@ -148,9 +148,9 @@ construction \cite[Section 5.3.5]{nist:fips:197}.
 \caption{
 Mapping of AES state between input and output registers for the round
 instructions.
-{\tt Rout1} is given by \mnemonic{saes64.encsm rd, rs1, rs2},
+{\tt Rout1} is given by \mnemonic{aes64esm rd, rs1, rs2},
 and
-{\tt Rout2}          by \mnemonic{saes64.encsm rd, rs2, rs1}.
+{\tt Rout2}          by \mnemonic{aes64esm rd, rs2, rs1}.
 The {\tt [Inv]ShiftRows} blocks show how to select the relevant $8$ bytes
 for further processing from the concatenation {\tt rs2 || \tt rs1}.
 }

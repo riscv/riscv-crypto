@@ -10,8 +10,8 @@ aes_ks_dec_invmc:           // a0 - uint64_t * ks
         ld          a2, 0(a0)
         ld          a3, 8(a0)
         
-        saes64.imix a2, a2
-        saes64.imix a3, a3
+        aes64im a2, a2
+        aes64im a3, a3
 
         sd          a2, 0(a0)
         sd          a3, 8(a0)

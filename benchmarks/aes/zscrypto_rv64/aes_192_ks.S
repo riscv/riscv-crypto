@@ -11,10 +11,10 @@
     sd          \RK0, ( 0+(24*\I))(\RKP)
     sd          \RK1, ( 8+(24*\I))(\RKP)
     sd          \RK2, (16+(24*\I))(\RKP)
-    saes64.ks1  \T0 , \RK2 , \I
-    saes64.ks2  \RK0, \T0  , \RK0
-    saes64.ks2  \RK1, \RK0 , \RK1
-    saes64.ks2  \RK2, \RK1 , \RK2
+    aes64ks1i \T0 , \RK2 , \I
+    aes64ks2  \RK0, \T0  , \RK0
+    aes64ks2  \RK1, \RK0 , \RK1
+    aes64ks2  \RK2, \RK1 , \RK2
 .endm
 
 .func   aes_192_enc_key_schedule
@@ -45,9 +45,9 @@ aes_192_enc_key_schedule:       // a0 - uint32_t rk [AES_192_RK_WORDS]
     sd  RK1, ( 8+(24*7))(RKP)
     sd  RK2, (16+(24*7))(RKP)
     
-    saes64.ks1  T0 , RK2 , 7
-    saes64.ks2  RK0, T0  , RK0
-    saes64.ks2  RK1, RK0 , RK1
+    aes64ks1i T0 , RK2 , 7
+    aes64ks2  RK0, T0  , RK0
+    aes64ks2  RK1, RK0 , RK1
     
     sd  RK0, ( 0+(24*8))(RKP)
     sd  RK1, ( 8+(24*8))(RKP)

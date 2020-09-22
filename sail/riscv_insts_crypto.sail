@@ -15,41 +15,41 @@
  */
 
 /* AST clauses for the SHA256 instructions. */
-union   clause ast    =    SSHA256_SIG0 : (regidx,regidx)
-union   clause ast    =    SSHA256_SIG1 : (regidx,regidx)
-union   clause ast    =    SSHA256_SUM0 : (regidx,regidx)
-union   clause ast    =    SSHA256_SUM1 : (regidx,regidx)
+union   clause ast    =    SHA256_SIG0 : (regidx,regidx)
+union   clause ast    =    SHA256_SIG1 : (regidx,regidx)
+union   clause ast    =    SHA256_SUM0 : (regidx,regidx)
+union   clause ast    =    SHA256_SUM1 : (regidx,regidx)
 
 
 /* Encode/decode mappings for the SHA256 instructions. */
-mapping clause encdec =    SSHA256_SIG0   (rs1,rd) <->
+mapping clause encdec =    SHA256_SIG0   (rs1,rd) <->
     0b000011100000 @ rs1 @ 0b111 @ rd @ 0b0101011
 
-mapping clause encdec =    SSHA256_SIG1   (rs1,rd) <->
+mapping clause encdec =    SHA256_SIG1   (rs1,rd) <->
     0b000011100001 @ rs1 @ 0b111 @ rd @ 0b0101011
 
-mapping clause encdec =    SSHA256_SUM0   (rs1,rd) <->
+mapping clause encdec =    SHA256_SUM0   (rs1,rd) <->
     0b000011100010 @ rs1 @ 0b111 @ rd @ 0b0101011
 
-mapping clause encdec =    SSHA256_SUM1   (rs1,rd) <->
+mapping clause encdec =    SHA256_SUM1   (rs1,rd) <->
     0b000011100011 @ rs1 @ 0b111 @ rd @ 0b0101011
 
 
 /* Assembly string mappings for the SHA256 instructions. */
-mapping clause assembly = SSHA256_SIG0 (rs1,rd) <-> "ssha256.sig0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
-mapping clause assembly = SSHA256_SIG1 (rs1,rd) <-> "ssha256.sig1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
-mapping clause assembly = SSHA256_SUM0 (rs1,rd) <-> "ssha256.sum0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
-mapping clause assembly = SSHA256_SUM1 (rs1,rd) <-> "ssha256.sum1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
+mapping clause assembly = SHA256_SIG0 (rs1,rd) <-> "sha256sig0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
+mapping clause assembly = SHA256_SIG1 (rs1,rd) <-> "sha256sig1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
+mapping clause assembly = SHA256_SUM0 (rs1,rd) <-> "sha256sum0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
+mapping clause assembly = SHA256_SUM1 (rs1,rd) <-> "sha256sum1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
-val      crypto_ssha256 : (ssha256_op, regidx, regidx) -> Retired effect {escape,rreg,wreg}
+val      crypto_sha256 : (sha256_op, regidx, regidx) -> Retired effect {escape,rreg,wreg}
 /* --- specification snippet begin --- */
-function crypto_ssha256   (op        , rd    , rs1   ) =  {
+function crypto_sha256   (op        , rd    , rs1   ) =  {
   let inb    : bits(32) = X(rs1)[31..0];
   let result : bits(32) = match op {
-    SHA256_SIG0 => ror32(inb ,07) ^ ror32(inb ,18) ^ (inb >>  3),
-    SHA256_SIG1 => ror32(inb ,17) ^ ror32(inb ,19) ^ (inb >> 10),
-    SHA256_SUM0 => ror32(inb , 2) ^ ror32(inb, 13) ^ ror32(inb,22),
-    SHA256_SUM1 => ror32(inb , 6) ^ ror32(inb, 11) ^ ror32(inb,27)
+    OP_SHA256_SIG0 => ror32(inb ,07) ^ ror32(inb ,18) ^ (inb >>  3),
+    OP_SHA256_SIG1 => ror32(inb ,17) ^ ror32(inb ,19) ^ (inb >> 10),
+    OP_SHA256_SUM0 => ror32(inb , 2) ^ ror32(inb, 13) ^ ror32(inb,22),
+    OP_SHA256_SUM1 => ror32(inb , 6) ^ ror32(inb, 11) ^ ror32(inb,27)
   };
   X(rd) = EXTZ(result);
   RETIRE_SUCCESS
@@ -57,20 +57,20 @@ function crypto_ssha256   (op        , rd    , rs1   ) =  {
 /* --- specification snippet end --- */
 
 /* Execution clauses for the SHA256 instructions. */
-function clause execute (SSHA256_SIG0 (rs1,rd)) = {
-    crypto_ssha256(SHA256_SIG0, rd, rs1);
+function clause execute (SHA256_SIG0 (rs1,rd)) = {
+    crypto_sha256(OP_SHA256_SIG0, rd, rs1);
 }
 
-function clause execute (SSHA256_SIG1 (rs1,rd)) = {
-    crypto_ssha256(SHA256_SIG1, rd, rs1);
+function clause execute (SHA256_SIG1 (rs1,rd)) = {
+    crypto_sha256(OP_SHA256_SIG1, rd, rs1);
 }
 
-function clause execute (SSHA256_SUM0 (rs1,rd)) = {
-    crypto_ssha256(SHA256_SUM0, rd, rs1);
+function clause execute (SHA256_SUM0 (rs1,rd)) = {
+    crypto_sha256(OP_SHA256_SUM0, rd, rs1);
 }
 
-function clause execute (SSHA256_SUM1 (rs1,rd)) = {
-    crypto_ssha256(SHA256_SUM1, rd, rs1);
+function clause execute (SHA256_SUM1 (rs1,rd)) = {
+    crypto_sha256(OP_SHA256_SUM1, rd, rs1);
 }
 
 /*
@@ -79,29 +79,29 @@ function clause execute (SSHA256_SUM1 (rs1,rd)) = {
  */
 
 
-/* AST Types for SSM3.p0/1 */
-union   clause ast      =  SSM3_P0 : (regidx,regidx)
-union   clause ast      =  SSM3_P1 : (regidx,regidx)
+/* AST Types for SM3.p0/1 */
+union   clause ast      =  SM3_P0 : (regidx,regidx)
+union   clause ast      =  SM3_P1 : (regidx,regidx)
 
-/* Decode clause for ssm3.p0 */
-mapping clause encdec   =  SSM3_P0   (rs1,rd) <->
+/* Decode clause for sm3.p0 */
+mapping clause encdec   =  SM3_P0   (rs1,rd) <->
     0b000011101000 @ rs1 @ 0b111 @ rd @ 0b0101011
 
-/* Decode clause for ssm3.p1 */
-mapping clause encdec   =  SSM3_P1   (rs1,rd) <->
+/* Decode clause for sm3.p1 */
+mapping clause encdec   =  SM3_P1   (rs1,rd) <->
     0b000011101001 @ rs1 @ 0b111 @ rd @ 0b0101011
 
 
-/* Asssembly code mapping for ssm3.p0 */
-mapping clause assembly =  SSM3_P0 (rs1,rd) <->
-    "ssm3.p0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
+/* Asssembly code mapping for sm3.p0 */
+mapping clause assembly =  SM3_P0 (rs1,rd) <->
+    "sm3.p0" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
-/* Asssembly code mapping for ssm3.p1 */
-mapping clause assembly =  SSM3_P1 (rs1,rd) <->
-    "ssm3.p1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
+/* Asssembly code mapping for sm3.p1 */
+mapping clause assembly =  SM3_P1 (rs1,rd) <->
+    "sm3.p1" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1)
 
 
-val      crypto_sm3 : (ssm3_op, regidx, regidx) -> Retired effect {escape,rreg,wreg}
+val      crypto_sm3 : (sm3_op, regidx, regidx) -> Retired effect {escape,rreg,wreg}
 /* --- specification snippet begin --- */
 function crypto_sm3   (op     , rd    , rs1   ) =  {
   let r1    : bits(32) = X(rs1)[31..0];
@@ -115,13 +115,13 @@ function crypto_sm3   (op     , rd    , rs1   ) =  {
 /* --- specification snippet end --- */
 
 
-/* Execute clause for ssm3.p0 */
-function clause execute ( SSM3_P0 (rs1,rd)) = {
+/* Execute clause for sm3.p0 */
+function clause execute ( SM3_P0 (rs1,rd)) = {
   crypto_sm3(P0, rd, rs1);
 }
 
-/* Execute clause for ssm3.p1 */
-function clause execute ( SSM3_P1 (rs1,rd)) = {
+/* Execute clause for sm3.p1 */
+function clause execute ( SM3_P1 (rs1,rd)) = {
   crypto_sm3(P1, rd, rs1);
 }
 
@@ -133,35 +133,35 @@ function clause execute ( SSM3_P1 (rs1,rd)) = {
 
 
 /* AST clauses for the SM4 instructions. */
-union   clause ast      = SSM4_ED : (bits(2),regidx,regidx,regidx)
-union   clause ast      = SSM4_KS : (bits(2),regidx,regidx,regidx)
+union   clause ast      = SM4_ED : (bits(2),regidx,regidx,regidx)
+union   clause ast      = SM4_KS : (bits(2),regidx,regidx,regidx)
 
 
 /* Encode / decode mappings for the SM4 instructions. */
-mapping clause encdec   = SSM4_ED   (bs,rs2,rs1,rd) <->
+mapping clause encdec   = SM4_ED   (bs,rs2,rs1,rd) <->
     bs @ 0b00100 @ rs2 @ rs1 @ 0b011 @ rd @ 0b0101011
 
-mapping clause encdec   = SSM4_KS   (bs,rs2,rs1,rd) <->
+mapping clause encdec   = SM4_KS   (bs,rs2,rs1,rd) <->
     bs @ 0b00101 @ rs2 @ rs1 @ 0b011 @ rd @ 0b0101011
 
 
 /* Assembly string mappings for the SM4 instructions. */
-mapping clause assembly = SSM4_ED (bs,rs2,rs1,rd) <->
-    "ssm4.ed"     ^ spc() ^ 
+mapping clause assembly = SM4_ED (bs,rs2,rs1,rd) <->
+    "sm4.ed"     ^ spc() ^ 
     reg_name(rd)  ^ sep() ^
     reg_name(rs1) ^ sep() ^
     reg_name(rs2) ^ sep() ^ hex_bits_2(bs)
 
-mapping clause assembly = SSM4_KS (bs,rs2,rs1,rd) <->
-    "ssm4.ks"     ^ spc() ^
+mapping clause assembly = SM4_KS (bs,rs2,rs1,rd) <->
+    "sm4.ks"     ^ spc() ^
     reg_name(rd)  ^ sep() ^
     reg_name(rs1) ^ sep() ^
     reg_name(rs2) ^ sep() ^ hex_bits_2(bs)
 
 
-/* Execute clause for the ssm4 instructions. */
+/* Execute clause for the sm4 instructions. */
 /* --- specification snippet begin --- */
-function clause execute (SSM4_ED (bs,rs2,rs1,rd)) = {
+function clause execute (SM4_ED (bs,rs2,rs1,rd)) = {
   let shamt : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
   let sb_in : bits(8)  = (X(rs2) >> shamt)[7..0];
   let x     : bits(32) = 0x000000 @ sm4_sbox(sb_in);
@@ -174,7 +174,7 @@ function clause execute (SSM4_ED (bs,rs2,rs1,rd)) = {
   RETIRE_SUCCESS
 }
 
-function clause execute (SSM4_KS (bs,rs2,rs1,rd)) = {
+function clause execute (SM4_KS (bs,rs2,rs1,rd)) = {
   let shamt : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
   let sb_in : bits(8)  = (X(rs2) >> shamt)[7..0];
   let x     : bits(32) = 0x000000 @ sm4_sbox(sb_in);
@@ -189,23 +189,23 @@ function clause execute (SSM4_KS (bs,rs2,rs1,rd)) = {
 
 
 /*
- * Scalar Cryptography Extension - Scalar        pollentropy instruciton.
+ * Scalar Cryptography Extension - Scalar        pollentropyi instruciton.
  * ----------------------------------------------------------------------
  */
 
-/* AST type for pollentropy instruction */
-union   clause ast      = POLLENTROPY : (bits(5),regidx)
+/* AST type for pollentropyi instruction */
+union   clause ast      = POLLENTROPYI : (bits(5),regidx)
 
-/* Encode / decode mapping for pollentropy */
-mapping clause encdec   = POLLENTROPY (shamtw,rd) <->
+/* Encode / decode mapping for pollentropyi */
+mapping clause encdec   = POLLENTROPYI (shamtw,rd) <->
     0b0001111 @ shamtw @ 0b01010111 @ rd @ 0b0101011
 
-/* Assembly string mapping for pollentropy */
-mapping clause assembly = POLLENTROPY (shamtw,rd) <-> 
-    "pollentropy" ^ spc() ^ reg_name(rd) ^ sep() ^ hex_bits_5(shamtw)
+/* Assembly string mapping for pollentropyi */
+mapping clause assembly = POLLENTROPYI (shamtw,rd) <-> 
+    "pollentropyi" ^ spc() ^ reg_name(rd) ^ sep() ^ hex_bits_5(shamtw)
 
-/* Execute clause for pollentropy */
-function clause execute (    POLLENTROPY (shamtw,rd)) = {
+/* Execute clause for pollentropyi */
+function clause execute (    POLLENTROPYI (shamtw,rd)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }

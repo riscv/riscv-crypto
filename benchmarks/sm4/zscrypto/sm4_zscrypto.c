@@ -25,18 +25,18 @@ const uint32_t CK [32] = {
 };
 
 static inline uint32_t ssm4_ks4(uint32_t rs1, uint32_t rs2) {
-    rs1 = _ssm4_ks(rs1, rs2, 0);
-    rs1 = _ssm4_ks(rs1, rs2, 1);
-    rs1 = _ssm4_ks(rs1, rs2, 2);
-    rs1 = _ssm4_ks(rs1, rs2, 3);
+    rs1 = _sm4ks(rs1, rs2, 0);
+    rs1 = _sm4ks(rs1, rs2, 1);
+    rs1 = _sm4ks(rs1, rs2, 2);
+    rs1 = _sm4ks(rs1, rs2, 3);
     return rs1;
 }
 
 static inline uint32_t ssm4_ed4(uint32_t rs1, uint32_t rs2) {
-    rs1 = _ssm4_ed(rs1, rs2, 0);
-    rs1 = _ssm4_ed(rs1, rs2, 1);
-    rs1 = _ssm4_ed(rs1, rs2, 2);
-    rs1 = _ssm4_ed(rs1, rs2, 3);
+    rs1 = _sm4ed(rs1, rs2, 0);
+    rs1 = _sm4ed(rs1, rs2, 1);
+    rs1 = _sm4ed(rs1, rs2, 2);
+    rs1 = _sm4ed(rs1, rs2, 3);
     return rs1;
 }
 
