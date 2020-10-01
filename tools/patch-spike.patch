@@ -827,30 +827,36 @@ index 0000000..698780e
 +WRITE_RD(result);
 diff --git a/riscv/insns/sm3p0.h b/riscv/insns/sm3p0.h
 new file mode 100644
-index 0000000..04bff19
+index 0000000..276d47a
 --- /dev/null
 +++ b/riscv/insns/sm3p0.h
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,12 @@
 +
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
++uint32_t src    = RS1;
++uint32_t result = src ^ ROL32(src, 9) ^ ROL32(src, 17);
++
 +WRITE_RD(
-+    zext_xlen(RS1 ^ ROL32(RS1, 9) ^ ROL32(RS1, 17))
++    zext_xlen(result)
 +);
 +
 +#undef ROR32
 +
 diff --git a/riscv/insns/sm3p1.h b/riscv/insns/sm3p1.h
 new file mode 100644
-index 0000000..075fbd8
+index 0000000..4c0a82e
 --- /dev/null
 +++ b/riscv/insns/sm3p1.h
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,12 @@
 +
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
++uint32_t src    = RS1;
++uint32_t result = src ^ ROL32(src, 15) ^ ROL32(src, 23);
++
 +WRITE_RD(
-+    zext_xlen(RS1 ^ ROL32(RS1, 15) ^ ROL32(RS1, 23))
++    zext_xlen(result)
 +);
 +
 +#undef ROR32
