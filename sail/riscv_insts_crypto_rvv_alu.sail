@@ -401,6 +401,7 @@ function clause execute (    VWCLMACC_VS (vd,vs1,vs2,vm)) = {
  */
 
 /* Vector - Vector right rotate */
+/* --- specification snippet begin --- */
 function clause execute (        VROT_VV (vd,vs1,vs2,vm)) = {
   if(vSupportedEEW([|32,64|])) then {
     foreach(i from 0 to vGetVL()) {
@@ -423,6 +424,7 @@ function clause execute (        VROT_VV (vd,vs1,vs2,vm)) = {
     RETIRE_FAIL
   }
 }
+/* --- specification snippet begin --- */
 
 /* Vector - Scalar right rotate */
 function clause execute (        VROT_VS (vd,vs1,vs2,vm)) = {
@@ -501,6 +503,7 @@ function clause execute (        VROT_VX (vd,rs1,vs2,vm)) = {
  * ------------------------------------------------------------
  */
 
+/* --- specification snippet begin --- */
 val      vgrev_32bit : (bits(32), bits(5)) -> bits(32) effect{escape}
 function vgrev_32bit   (input   , mask   ) = {
   x : bits(32) = input;
@@ -547,6 +550,7 @@ function clause execute (       VGREV_VV (vd,vs1,vs2,vm)) = {
     RETIRE_FAIL
   }
 }
+/* --- specification snippet begin --- */
 
 /* Vector-Scalar - Mask from 0'th element of VS1 */
 function clause execute (       VGREV_VS (vd,vs1,vs2,vm)) = {

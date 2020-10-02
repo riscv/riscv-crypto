@@ -1,4 +1,4 @@
-
+\clearpage
 \subsection{Vector GREV}
 
 These instructions are vectorised versions of the Bitmanip
@@ -8,9 +8,21 @@ for the initial design discussion around vector \mnemonic{grev}.
 }.
 
 \begin{cryptoisa}
+vgrev.vv     vd, vs2, vs1 , vm  // Vector-Vector
+vgrev.vs     vd, vs2, vs1 , vm  // Vector-Scalar
 vgrev.vi     vd, vs2, uimm, vm  // Vector-Immediate
-    vd.eew[i] = vm[i] ? generalised_reverse(EEW, vs2.eew[i], uimm) : 0
+vgrev.vx     vd, vs2, rs1 , vm  // Vector-XReg
 \end{cryptoisa}
+
+\begin{figure}[h]
+\lstinputlisting[language=sail,firstline=531,lastline=553]{../sail/riscv_insts_crypto_rvv_alu.sail}
+\caption{
+SAIL specification for the vector-vector generalised reverse operation.
+Other variants such as vector-scalar and vector-immediate can be seen in
+the SAIL model code.
+}
+\label{fig:sail:vgrev}
+\end{figure}
 
 For each \EEW-bit wide element in \vrs{2}, if the corresponding $\vm[i]$
 bit is clear, then the destination element in \vrd is {\em zeroed}.
