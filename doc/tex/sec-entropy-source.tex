@@ -45,6 +45,8 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     For the purposes of interoperable, baseline functionality, \verb|imm = 0|.
     Nonzero values of \verb|imm| are reserved for future use; the behavior
     described here may not apply when \verb|imm| $\neq$ 0.
+    Standard software should set \verb|imm| to $0$
+    and hardware implementations should raise an Illegal Opcode Exception.
 
     \begin{center}
     \begin{tabular}{ccl}
