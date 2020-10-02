@@ -126,12 +126,14 @@ index 3c4bf1c..10e864f 100644
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
 diff --git a/riscv/insns/aes32dsi.h b/riscv/insns/aes32dsi.h
 new file mode 100644
-index 0000000..7e76822
+index 0000000..c752526
 --- /dev/null
 +++ b/riscv/insns/aes32dsi.h
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,16 @@
 +
 +#include "aes_common.h"
++
++require_rv32;
 +
 +uint8_t     bs = insn.bs();
 +
@@ -146,12 +148,14 @@ index 0000000..7e76822
 +
 diff --git a/riscv/insns/aes32dsmi.h b/riscv/insns/aes32dsmi.h
 new file mode 100644
-index 0000000..96b4654
+index 0000000..50a0738
 --- /dev/null
 +++ b/riscv/insns/aes32dsmi.h
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,23 @@
 +
 +#include "aes_common.h"
++
++require_rv32;
 +
 +uint8_t     bs = insn.bs();
 +
@@ -173,12 +177,14 @@ index 0000000..96b4654
 +
 diff --git a/riscv/insns/aes32esi.h b/riscv/insns/aes32esi.h
 new file mode 100644
-index 0000000..fa05961
+index 0000000..59d3d7e
 --- /dev/null
 +++ b/riscv/insns/aes32esi.h
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,16 @@
 +
 +#include "aes_common.h"
++
++require_rv32;
 +
 +uint8_t     bs = insn.bs();
 +
@@ -193,12 +199,14 @@ index 0000000..fa05961
 +
 diff --git a/riscv/insns/aes32esmi.h b/riscv/insns/aes32esmi.h
 new file mode 100644
-index 0000000..bb7d086
+index 0000000..ba96939
 --- /dev/null
 +++ b/riscv/insns/aes32esmi.h
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,20 @@
 +
 +#include "aes_common.h"
++
++require_rv32;
 +
 +uint8_t     bs = insn.bs();
 +
@@ -681,10 +689,12 @@ index 0000000..0b490b0
 +
 diff --git a/riscv/insns/sha512sig0h.h b/riscv/insns/sha512sig0h.h
 new file mode 100644
-index 0000000..f6bf249
+index 0000000..f2b8b8d
 --- /dev/null
 +++ b/riscv/insns/sha512sig0h.h
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,8 @@
++
++require_rv32;
 +
 +uint32_t result =
 +    ((uint32_t)RS1 >>  1) ^ ((uint32_t)RS1 >>  7) ^ ((uint32_t)RS1 >>  8) ^
@@ -693,10 +703,12 @@ index 0000000..f6bf249
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sig0l.h b/riscv/insns/sha512sig0l.h
 new file mode 100644
-index 0000000..eb3bd0e
+index 0000000..d7a855e
 --- /dev/null
 +++ b/riscv/insns/sha512sig0l.h
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,8 @@
++
++require_rv32;
 +
 +uint32_t result =
 +    ((uint32_t)RS1 >>  1) ^ ((uint32_t)RS1 >>  7) ^ ((uint32_t)RS1 >>  8) ^
@@ -723,10 +735,12 @@ index 0000000..ab66c6a
 +
 diff --git a/riscv/insns/sha512sig1h.h b/riscv/insns/sha512sig1h.h
 new file mode 100644
-index 0000000..4171156
+index 0000000..78e7d2a
 --- /dev/null
 +++ b/riscv/insns/sha512sig1h.h
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,8 @@
++
++require_rv32;
 +
 +uint32_t result =
 +    ((uint32_t)RS1 <<  3) ^ ((uint32_t)RS1 >>  6) ^ ((uint32_t)RS1 >> 19) ^
@@ -735,10 +749,12 @@ index 0000000..4171156
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sig1l.h b/riscv/insns/sha512sig1l.h
 new file mode 100644
-index 0000000..b47affd
+index 0000000..87569e8
 --- /dev/null
 +++ b/riscv/insns/sha512sig1l.h
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,8 @@
++
++require_rv32;
 +
 +uint32_t result =
 +    ((uint32_t)RS1 <<  3) ^ ((uint32_t)RS1 >>  6) ^ ((uint32_t)RS1 >> 19) ^
@@ -765,10 +781,12 @@ index 0000000..ad2dc89
 +
 diff --git a/riscv/insns/sha512sum0r.h b/riscv/insns/sha512sum0r.h
 new file mode 100644
-index 0000000..87a055b
+index 0000000..4294c3c
 --- /dev/null
 +++ b/riscv/insns/sha512sum0r.h
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,8 @@
++
++require_rv32;
 +
 +uint32_t result =
 +    ((uint32_t)RS1 << 25) ^ ((uint32_t)RS1 << 30) ^ ((uint32_t)RS1 >> 28) ^
@@ -795,10 +813,12 @@ index 0000000..a2e555b
 +
 diff --git a/riscv/insns/sha512sum1r.h b/riscv/insns/sha512sum1r.h
 new file mode 100644
-index 0000000..edfe15c
+index 0000000..698780e
 --- /dev/null
 +++ b/riscv/insns/sha512sum1r.h
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,8 @@
++
++require_rv32;
 +
 +uint32_t result =
 +    ((uint32_t)RS1 << 23) ^ ((uint32_t)RS1 >> 14) ^ ((uint32_t)RS1 >> 18) ^
@@ -807,30 +827,36 @@ index 0000000..edfe15c
 +WRITE_RD(result);
 diff --git a/riscv/insns/sm3p0.h b/riscv/insns/sm3p0.h
 new file mode 100644
-index 0000000..d0afc3d
+index 0000000..276d47a
 --- /dev/null
 +++ b/riscv/insns/sm3p0.h
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,12 @@
 +
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
++uint32_t src    = RS1;
++uint32_t result = src ^ ROL32(src, 9) ^ ROL32(src, 17);
++
 +WRITE_RD(
-+    RS1 ^ ROL32(RS1, 9) ^ ROL32(RS1, 17)
++    zext_xlen(result)
 +);
 +
 +#undef ROR32
 +
 diff --git a/riscv/insns/sm3p1.h b/riscv/insns/sm3p1.h
 new file mode 100644
-index 0000000..f3b12d3
+index 0000000..4c0a82e
 --- /dev/null
 +++ b/riscv/insns/sm3p1.h
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,12 @@
 +
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
++uint32_t src    = RS1;
++uint32_t result = src ^ ROL32(src, 15) ^ ROL32(src, 23);
++
 +WRITE_RD(
-+    RS1 ^ ROL32(RS1, 15) ^ ROL32(RS1, 23)
++    zext_xlen(result)
 +);
 +
 +#undef ROR32
@@ -870,7 +896,7 @@ index 0000000..17f129f
 +
 diff --git a/riscv/insns/sm4ed.h b/riscv/insns/sm4ed.h
 new file mode 100644
-index 0000000..55e811d
+index 0000000..8ce8651
 --- /dev/null
 +++ b/riscv/insns/sm4ed.h
 @@ -0,0 +1,20 @@
@@ -892,11 +918,11 @@ index 0000000..55e811d
 +
 +uint32_t result = rotl ^ RS1;
 +
-+WRITE_RD(result);
++WRITE_RD(zext_xlen(result));
 +
 diff --git a/riscv/insns/sm4ks.h b/riscv/insns/sm4ks.h
 new file mode 100644
-index 0000000..e95b735
+index 0000000..e638a31
 --- /dev/null
 +++ b/riscv/insns/sm4ks.h
 @@ -0,0 +1,18 @@
@@ -916,7 +942,7 @@ index 0000000..e95b735
 +
 +uint32_t result = rotl ^ RS1;
 +
-+WRITE_RD(result);
++WRITE_RD(zext_xlen(result));
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
 index 4ee64fa..a7aa11d 100644
