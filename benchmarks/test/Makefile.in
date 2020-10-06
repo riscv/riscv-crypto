@@ -22,6 +22,8 @@ $(eval $(call add_test_elf_target,test/test_hash_sha256.c,sha256_zscrypto,sha256
 
 $(eval $(call add_test_elf_target,test/test_block_sm4.c,sm4_zscrypto,sm4_zscrypto))
 
+$(eval $(call add_test_elf_target,test/test_pollentropy.c,,pollentropy))
+
 ifeq ($(XLEN),32)
 
 $(eval $(call add_test_elf_target,test/test_block_aes_128.c,aes_zscrypto_rv32,aes_128_zscrypto_rv32))

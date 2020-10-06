@@ -189,23 +189,23 @@ function clause execute (SM4_KS (bs,rs2,rs1,rd)) = {
 
 
 /*
- * Scalar Cryptography Extension - Scalar        pollentropyi instruciton.
+ * Scalar Cryptography Extension - Scalar        pollentropy instruciton.
  * ----------------------------------------------------------------------
  */
 
-/* AST type for pollentropyi instruction */
-union   clause ast      = POLLENTROPYI : (bits(5),regidx)
+/* AST type for pollentropy instruction */
+union   clause ast      = POLLENTROPY : (regidx)
 
-/* Encode / decode mapping for pollentropyi */
-mapping clause encdec   = POLLENTROPYI (shamtw,rd) <->
-    0b0001111 @ shamtw @ 0b01010111 @ rd @ 0b0101011
+/* Encode / decode mapping for pollentropy */
+mapping clause encdec   = POLLENTROPY (shamtw,rd) <->
+    0b0001111 @ 0b00000 @ 0b01010111 @ rd @ 0b0101011
 
-/* Assembly string mapping for pollentropyi */
-mapping clause assembly = POLLENTROPYI (shamtw,rd) <-> 
-    "pollentropyi" ^ spc() ^ reg_name(rd) ^ sep() ^ hex_bits_5(shamtw)
+/* Assembly string mapping for pollentropy */
+mapping clause assembly = POLLENTROPY (rd) <-> 
+    "pollentropy" ^ spc() ^ reg_name(rd) 
 
-/* Execute clause for pollentropyi */
-function clause execute (    POLLENTROPYI (shamtw,rd)) = {
+/* Execute clause for pollentropy */
+function clause execute (    POLLENTROPY (shamtw,rd)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }

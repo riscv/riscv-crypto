@@ -13,7 +13,7 @@ index 9e03676..a76af54 100644
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..10e864f 100644
+index 3c4bf1c..e41008f 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
 @@ -564,6 +564,68 @@
@@ -79,8 +79,8 @@ index 3c4bf1c..10e864f 100644
 +#define MASK_SHA512SUM0 0xfff0707f
 +#define MATCH_SHA512SUM1 0xe70702b
 +#define MASK_SHA512SUM1 0xfff0707f
-+#define MATCH_POLLENTROPYI 0x1e05702b
-+#define MASK_POLLENTROPYI 0xfe0ff07f
++#define MATCH_POLLENTROPY 0x1e05702b
++#define MASK_POLLENTROPY 0xfffff07f
 +// Crypto ISE - end
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
@@ -119,11 +119,21 @@ index 3c4bf1c..10e864f 100644
 +DECLARE_INSN(sha512sig1, MATCH_SHA512SIG1, MASK_SHA512SIG1)
 +DECLARE_INSN(sha512sum0, MATCH_SHA512SUM0, MASK_SHA512SUM0)
 +DECLARE_INSN(sha512sum1, MATCH_SHA512SUM1, MASK_SHA512SUM1)
-+DECLARE_INSN(pollentropyi, MATCH_POLLENTROPYI, MASK_POLLENTROPYI)
++DECLARE_INSN(pollentropy, MATCH_POLLENTROPY, MASK_POLLENTROPY)
 +// Crypto ISE - End
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
+diff --git a/riscv/insn_template.h b/riscv/insn_template.h
+index 3c36d10..feaa10a 100644
+--- a/riscv/insn_template.h
++++ b/riscv/insn_template.h
+@@ -7,3 +7,5 @@
+ #include "specialize.h"
+ #include "tracer.h"
+ #include <assert.h>
++#include <iostream>
++#include <fstream>
 diff --git a/riscv/insns/aes32dsi.h b/riscv/insns/aes32dsi.h
 new file mode 100644
 index 0000000..c752526
@@ -591,16 +601,51 @@ index 0000000..9cc353c
 +    AES_INVMIXBYTE(COL,0,1,2,3) <<  0   \
 +)
 +
-diff --git a/riscv/insns/pollentropyi.h b/riscv/insns/pollentropyi.h
+diff --git a/riscv/insns/pollentropy.h b/riscv/insns/pollentropy.h
 new file mode 100644
-index 0000000..ce23097
+index 0000000..7bb7682
 --- /dev/null
-+++ b/riscv/insns/pollentropyi.h
-@@ -0,0 +1,4 @@
++++ b/riscv/insns/pollentropy.h
+@@ -0,0 +1,39 @@
 +
-+//
-+// TODO
-+//
++// The return status codes, which will occupy bits 31:30 in the return value.
++const uint32_t OPST_BIST = 0x0 << 30;
++const uint32_t OPST_ES16 = 0x1 << 30;
++const uint32_t OPST_WAIT = 0x2 << 30;
++const uint32_t OPST_DEAD = 0x3 << 30;
++
++// A file to get our randomness from.
++std::string    randomness_source = "/dev/urandom";
++
++std::ifstream   fh(randomness_source, std::ios::binary);
++
++if(fh.is_open()) {
++
++    uint16_t random_bytes;
++
++    fh.read((char*)(&random_bytes), 2);
++
++    fh.close();
++
++    uint32_t result;
++
++    // Currently, always return ES16 (i.e. good randomness) .
++    // In the future, we can more realistically model things like
++    // WAIT states, BIST warm up and maybe scriptable entry into the DEAD
++    // state, but until then, this is the bare minimum.
++    result = OPST_ES16 | random_bytes;
++
++    // Result is sign-extended on RV64.
++    WRITE_RD(sext_xlen(result));
++
++} else {
++
++    fprintf(stderr, "Could not open randomness source file:\n\t");
++    fprintf(stderr, "%s", randomness_source.c_str());
++    abort();
++
++}
++
 diff --git a/riscv/insns/sha256sig0.h b/riscv/insns/sha256sig0.h
 new file mode 100644
 index 0000000..af3d413
@@ -945,7 +990,7 @@ index 0000000..e638a31
 +WRITE_RD(zext_xlen(result));
 +
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..a7aa11d 100644
+index 4ee64fa..eea7f63 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
 @@ -772,6 +772,37 @@ riscv_insn_priv = \
@@ -982,7 +1027,7 @@ index 4ee64fa..a7aa11d 100644
 +    sha512sig1 \
 +    sha512sum0 \
 +    sha512sum1 \
-+    pollentropyi
++    pollentropy
  
  riscv_insn_list = \
  	$(riscv_insn_ext_a) \

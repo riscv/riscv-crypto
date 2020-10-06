@@ -88,6 +88,14 @@ static inline uint32_t _sm3p1 (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__
 #endif
 
 //
+// pollentropy
+//
+
+#if (defined(__ZSCRYPTO))
+static inline volatile uint32_t _pollentropy() {uint32_t rd; __asm__ volatile ("pollentropy %0" : "=r"(rd)); return rd;}
+#endif
+
+//
 // Bitmanip Instruction Intrinsics
 //
 

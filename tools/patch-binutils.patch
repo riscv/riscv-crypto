@@ -49,7 +49,7 @@ index 9ecdcab0b6..1834f7c08b 100644
  	    case 'd':		/* Destination register.  */
  	    case 's':		/* Source register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..6ea5d43e7a 100644
+index 6c750a33b1..5c3a6c4518 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
 @@ -343,6 +343,68 @@
@@ -115,8 +115,8 @@ index 6c750a33b1..6ea5d43e7a 100644
 +#define MASK_SHA512SUM0 0xfff0707f
 +#define MATCH_SHA512SUM1 0xe70702b
 +#define MASK_SHA512SUM1 0xfff0707f
-+#define MATCH_POLLENTROPYI 0x1e05702b
-+#define MASK_POLLENTROPYI 0xfe0ff07f
++#define MATCH_POLLENTROPY 0x1e05702b
++#define MASK_POLLENTROPY 0xfffff07f
 +// Crypto ISE - end
  #define MATCH_FSLW 0x400103b
  #define MASK_FSLW  0x600707f
@@ -162,7 +162,7 @@ index 19f10c0e55..7506f2bc80 100644
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..f60c7df9bf 100644
+index e99febc823..9925b7a631 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -496,27 +496,27 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -290,7 +290,7 @@ index e99febc823..f60c7df9bf 100644
 +{"sha512sig1"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SIG1, MASK_SHA512SIG1, match_opcode, 0},
 +{"sha512sum0"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SUM0, MASK_SHA512SUM0, match_opcode, 0},
 +{"sha512sum1"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SUM1, MASK_SHA512SUM1, match_opcode, 0},
-+{"pollentropyi" , 0, INSN_CLASS_I,      "d,>", MATCH_POLLENTROPYI, MASK_POLLENTROPYI, match_opcode, 0},
++{"pollentropy"  , 0, INSN_CLASS_I,      "d"  , MATCH_POLLENTROPY, MASK_POLLENTROPY, match_opcode, 0},
 +
  /* Single-precision floating-point instruction subset */
  {"frcsr",     0, INSN_CLASS_F,   "d",  MATCH_FRCSR, MASK_FRCSR, match_opcode, INSN_ALIAS },

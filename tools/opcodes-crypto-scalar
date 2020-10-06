@@ -58,5 +58,5 @@ sha512sum0    rd rs1           31..25=7  24..20=6  14..12=7  6..0=0x2B
 sha512sum1    rd rs1           31..25=7  24..20=7  14..12=7  6..0=0x2B
 
 # Poll Entropy Instruction
-pollentropyi    rd shamtw        31..25=15 19..15=10 14..12=7  6..0=0x2B
+pollentropy   rd 24..20=0      31..25=15 19..15=10 14..12=7  6..0=0x2B
 
