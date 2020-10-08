@@ -11,7 +11,9 @@ SPIKE   = $(RISCV)/bin/spike
 
 BUILD_DIR = $(REPO_BUILD)/benchmarks/$(CONFIG)
 
-CFLAGS  += -Wall -I$(BUILD_DIR)/include
+CFLAGS  += -Wall
+CFLAGS  += -I$(BUILD_DIR)/include
+CFLAGS  += -I$(BUILD_DIR)/include/riscvcrypto/share
 CFLAGS  += $(CONF_CFLAGS)
 
 TEST_SRC = $(REPO_HOME)/benchmarks/share/test.c
