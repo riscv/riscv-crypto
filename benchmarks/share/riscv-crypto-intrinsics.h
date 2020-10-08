@@ -2,8 +2,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "riscvcrypto/share/util.h"
-
 #ifndef __RISCV_CRYPTO_INTRINSICS__
 #define __RISCV_CRYPTO_INTRINSICS__
 
@@ -13,10 +11,12 @@
 
 #if __riscv_xlen == 32
 #define RISCV_CRYPTO_RV32
+typedef uint32_t uint_xlen_t;
 #endif
 
 #if __riscv_xlen == 64
 #define RISCV_CRYPTO_RV64
+typedef uint64_t uint_xlen_t;
 #endif
 
 //
@@ -83,8 +83,8 @@ static inline uint32_t _sm4ed (uint32_t rs1, uint32_t rs2, int bs) {uint32_t rd;
 //
 
 #if (defined(__ZSCRYPTO))
-static inline uint32_t _sm3p0 (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("sm3p0 %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
-static inline uint32_t _sm3p1 (uint32_t rs1, uint32_t rs2) {uint32_t rd; __asm__("sm3p1 %0, %1, %2" : "=r"(rd) : "r"(rs1), "r"(rs2)); return rd;}
+static inline uint32_t _sm3p0 (uint32_t rs1) {uint32_t rd; __asm__("sm3p0 %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
+static inline uint32_t _sm3p1 (uint32_t rs1) {uint32_t rd; __asm__("sm3p1 %0, %1" : "=r"(rd) : "r"(rs1)); return rd;}
 #endif
 
 //

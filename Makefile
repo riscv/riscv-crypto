@@ -7,17 +7,6 @@ spec:
 	$(MAKE) -C $(REPO_HOME)/doc/ specs
 
 
-tests-assembler:
-	$(MAKE) -C $(REPO_HOME)/tests/assembler all
-
-tests-compiler:
-	$(MAKE) -C $(REPO_HOME)/tests/compiler  all
-
-tests-kat:
-	$(MAKE) -C $(REPO_HOME)/tests/kat       all
-
-tests-all: tests-assembler tests-compiler tests-kat
-
 OPCODES_SPEC_SCALAR = $(REPO_HOME)/tools/opcodes-crypto-scalar
 OPCODES_SPEC_VECTOR = $(REPO_HOME)/tools/opcodes-crypto-vector
 
