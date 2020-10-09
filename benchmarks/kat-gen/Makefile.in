@@ -1,8 +1,0 @@
-
-ifeq ($(ZSCRYPTO),1)
-
-KAT_GEN_FILES = kat-gen/kat-gen.c
-
-$(eval $(call add_test_elf_target,$(KAT_GEN_FILES),,kat-gen))
-
-endif

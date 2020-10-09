@@ -43,7 +43,6 @@ include sha3/zscrypto_rv64/Makefile.in
 include permutation/Makefile.in
 
 include test/Makefile.in
-include kat-gen/Makefile.in
 
 all: headers $(TARGETS)
 
