@@ -43,7 +43,7 @@ to generate known-good input/output test vectors for each instruction.
     tuple of two values: (`mnemonic`, `operands`).
     The `mnemonic` is a string representation of the mnemonic of the
     instruction.
-    `operands` is dictionary mapping instruction operands and results
+    `operands` is dictionary mapping instruction operands
     (`rd`,`rs1`,`imm` etc) to values.
 
   - Hence walking this data structure gives you expected results for
