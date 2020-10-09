@@ -183,10 +183,10 @@ function vSetElement1024 (ridx, elem, value) = {
  */
 
 /* Byte shift parameter for scalar 32-bit aes instructions */
-type            saes_bs = bits(2)
+type            aes_bs = bits(2)
 
 /* Scalar AES round instruction operations. Used for 32,64-bit versions */
-enum            saes_op = {
+enum            aes_op = {
     ENCS, ENCSM, DECS, DECSM
 }
 
@@ -225,7 +225,7 @@ enum            sm4_op = {
 }
 
 /* Map scalar instruction round function ops to whether they enc or dec? */
-mapping saes_op_fwd        : saes_op <-> bool = {
+mapping aes_op_fwd        : aes_op <-> bool = {
     ENCSM   <-> true    ,
     ENCS    <-> true    ,
     DECSM   <-> false   ,
@@ -233,7 +233,7 @@ mapping saes_op_fwd        : saes_op <-> bool = {
 }
 
 /* Map scalar instruction round function ops to whether they perform mix? */
-mapping saes_op_does_mix   : saes_op <-> bool = {
+mapping aes_op_does_mix   : aes_op <-> bool = {
     ENCSM   <-> true    ,
     ENCS    <-> false   ,
     DECSM   <-> true    ,
@@ -284,6 +284,18 @@ function gfmul( x, y) = {
     (if(bit_to_bool(y[3])) then xt2(xt2(xt2(x))) else 0x00)
 }
 
+
+/* 8-bit to 32-bit partial AES Mix Colum - forwards */
+val      aes_mixcolumn_byte_fwd : bits(8) -> bits(32)
+function aes_mixcolumn_byte_fwd (so) = {
+        gfmul(so, 0x3) @       so        @       so        @ gfmul(so, 0x2)
+}
+
+/* 8-bit to 32-bit partial AES Mix Colum - inverse*/
+val      aes_mixcolumn_byte_inv : bits(8) -> bits(32)
+function aes_mixcolumn_byte_inv (so) = {
+        gfmul(so, 0xb) @ gfmul(so, 0xd) @ gfmul(so, 0x9) @ gfmul(so, 0xe)
+}
 
 /* 32-bit to 32-bit AES forward MixColumn */
 val      aes_mixcolumn_fwd : bits(32) -> bits(32)

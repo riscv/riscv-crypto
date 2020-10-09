@@ -197,7 +197,7 @@ function clause execute (SM4_KS (bs,rs2,rs1,rd)) = {
 union   clause ast      = POLLENTROPY : (regidx)
 
 /* Encode / decode mapping for pollentropy */
-mapping clause encdec   = POLLENTROPY (shamtw,rd) <->
+mapping clause encdec   = POLLENTROPY (rd) <->
     0b0001111 @ 0b00000 @ 0b01010111 @ rd @ 0b0101011
 
 /* Assembly string mapping for pollentropy */
@@ -205,7 +205,7 @@ mapping clause assembly = POLLENTROPY (rd) <->
     "pollentropy" ^ spc() ^ reg_name(rd) 
 
 /* Execute clause for pollentropy */
-function clause execute (    POLLENTROPY (shamtw,rd)) = {
+function clause execute (    POLLENTROPY (rd)) = {
     /* TBD, implemented as nop.*/
     RETIRE_SUCCESS
 }
