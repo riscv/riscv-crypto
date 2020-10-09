@@ -3,7 +3,7 @@
 
 
 // How many input/output value pairs to create per instruction?
-const int NUM_KATS = 1000;
+int NUM_KATS = 1000;
 
 // Stringification macros
 #define XSTR(s) #s
@@ -192,10 +192,12 @@ static uint_xlen_t sample_rng () {
 
 void kat_generate(
     uint_xlen_t prng_seed , //!< Initial value for the internal PRNG.
-    void (*put_char)(char)  //!< Put character function used for IO.
+    void (*put_char)(char), //!< Put character function used for IO.
+    int num_tests           //!< Number of tests per instruction to perform.
 ) {
     __rng_state = prng_seed;
     kat_put_char= put_char;
+    NUM_KATS    = num_tests;
     
     kat_put_str("# -- begin kat generation -- #\n");
     kat_put_str("xlen = " STR(__riscv_xlen) "\n");

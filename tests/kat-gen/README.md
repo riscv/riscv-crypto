@@ -21,7 +21,7 @@ to generate known-good input/output test vectors for each instruction.
 
 - The entire program lives in the `kat_gen.c` file, with a single exposed
   function `kat_generate`.
-  The `kat_generate` function takes two arguments:
+  The `kat_generate` function takes three arguments:
 
   - `prng_seed` - An `XLEN`-bit integer which seeds the internal
     pseudo-random number generator.
@@ -31,6 +31,8 @@ to generate known-good input/output test vectors for each instruction.
     function call. For the Spike example generator (`main_spike.c`), this
     just points at a wrapper for `printf`. This makes it very easy
     to re-target the output for any bare-metal SoC or simulator.
+
+  - `num_tests` - How many operand/result pairs to generate per instruction.
 
 - Running the program will cause it to print out a *valid Python file*.
   This python file records several variables:
@@ -49,10 +51,6 @@ to generate known-good input/output test vectors for each instruction.
     A little more scripting can be used to generate the required test
     formats for the RISC-V architectural compliance tests.
 
-  - The initial seed is set to a compile time default, or may be
-    specified as the first and only argument on the command line.
-    It must be supplied as a decimal-number.
-
   - Note that the LFSR PRNG used to create 'random' values differs
     for RV32 and RV64, because it always uses and `XLEN`-bit state
     and differing tap points, taken from
@@ -63,9 +61,8 @@ to generate known-good input/output test vectors for each instruction.
   (whether by walking the data structure, or just using a text diff)
   will tell you whether they match.
 
-  - By default, the generate will run `1000` iterations per instruction.
-    For instructions with small immediates, all immediate values are tested
-    `1000` times to get complete coverage of the immediate values.
+  - For instructions with small immediates, all immediate values are tested
+    `num_tests` times to get complete coverage of the immediate values.
 
 ## Building and Running
 
@@ -79,11 +76,13 @@ make generate   # Run the 32/64-bit generators on Spike.
 
 All results and build artefacts are dumped to `$REPO_BUILD/kat-gen`.
 
-The `prng_seed` may be set through the `Makefile` too using:
+For the spike example,
+the `prng_seed` and `num_tests` may be set through the `Makefile` too using:
 
 ```make
 make generate SEED=12345      # Use constant value "12345"
 make generate SEED=`date +%s` # Use current unix time as seed
+make generate NUM_TESTS=10 SEED=1243656 # Run 10 tests per instr with seed.
 ```
 
 

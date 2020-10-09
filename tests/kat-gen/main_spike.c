@@ -21,18 +21,15 @@ static void kat_put_char (
 int main(int argc, char ** argv) {
 
     uint_xlen_t prng_seed;
+    int         num_tests;
 
-    #if __riscv_xlen == 32
-    prng_seed = 0x78ABCDEF;
-    #elif __riscv_xlen == 64
-    prng_seed = 0x34ABCDEF01234567UL;
-    #else
-    #error "Unsupported __riscv_xlen value. Expected 32 or 64"
-    #endif
-
-    if(argc == 2) {
+    if(argc == 3) {
         prng_seed = atoi(argv[1]);
+        num_tests = atoi(argv[2]);
+        kat_generate(prng_seed, &kat_put_char, num_tests);
+        return 0;
+    } else {
+        printf("Usage: %s <SEED> <NUM TESTS>\n", argv[0]);
+        return 1;
     }
-
-    kat_generate(prng_seed, &kat_put_char);
 }
