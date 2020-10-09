@@ -49,7 +49,7 @@ function crypto_sha256   (op        , rd    , rs1   ) =  {
     OP_SHA256_SIG0 => ror32(inb ,07) ^ ror32(inb ,18) ^ (inb >>  3),
     OP_SHA256_SIG1 => ror32(inb ,17) ^ ror32(inb ,19) ^ (inb >> 10),
     OP_SHA256_SUM0 => ror32(inb , 2) ^ ror32(inb, 13) ^ ror32(inb,22),
-    OP_SHA256_SUM1 => ror32(inb , 6) ^ ror32(inb, 11) ^ ror32(inb,27)
+    OP_SHA256_SUM1 => ror32(inb , 6) ^ ror32(inb, 11) ^ ror32(inb,25)
   };
   X(rd) = EXTZ(result);
   RETIRE_SUCCESS
@@ -107,7 +107,7 @@ function crypto_sm3   (op     , rd    , rs1   ) =  {
   let r1    : bits(32) = X(rs1)[31..0];
   let result  : bits(32) = match op {
     P0  => r1 ^ rol32(r1 , 9) ^ rol32(r1 ,17),
-    P1  => r1 ^ rol32(r1 ,14) ^ rol32(r1 ,23)
+    P1  => r1 ^ rol32(r1 ,15) ^ rol32(r1 ,23)
   };
   X(rd)       = EXTZ(result);
   RETIRE_SUCCESS
