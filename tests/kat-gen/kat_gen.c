@@ -205,6 +205,10 @@ void kat_generate(
     kat_put_str("prng_seed = 0x");
     kat_puthex_xlen(prng_seed);
     kat_put_str("\n");
+    
+    kat_put_str("num_tests = 0x");
+    kat_puthex_xlen(num_tests);
+    kat_put_str("\n");
 
     kat_put_str("kat_results = [\n");
 

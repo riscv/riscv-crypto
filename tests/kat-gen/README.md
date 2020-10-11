@@ -85,4 +85,18 @@ make generate SEED=`date +%s` # Use current unix time as seed
 make generate NUM_TESTS=10 SEED=1243656 # Run 10 tests per instr with seed.
 ```
 
+To check for differences between Spike and SAIL on RV32 or RV64, run:
+
+```
+make check-rv32 NUM_TESTS=100 SEED=12345678
+make check-rv64 NUM_TESTS=100 SEED=12345678
+```
+
+Note `NUM_TESTS` and `SEED  must be set to the shown values, as this is hard
+coded into the SAIL test harness.
+
+Also note that the SAIL model is *very slow* compared to Spike.
+
+
+
 
