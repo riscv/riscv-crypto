@@ -300,28 +300,28 @@ function aes_mixcolumn_byte_inv (so) = {
 /* 32-bit to 32-bit AES forward MixColumn */
 val      aes_mixcolumn_fwd : bits(32) -> bits(32)
 function aes_mixcolumn_fwd (x) = {
-  let s3 : bits (8) = x[ 7.. 0];
-  let s2 : bits (8) = x[15.. 8];
-  let s1 : bits (8) = x[23..16];
-  let s0 : bits (8) = x[31..24];
-  let b3 : bits (8) = xt2(s0) ^ xt3(s1) ^    (s2) ^    (s3);
-  let b2 : bits (8) =    (s0) ^ xt2(s1) ^ xt3(s2) ^    (s3);
-  let b1 : bits (8) =    (s0) ^    (s1) ^ xt2(s2) ^ xt3(s3);
-  let b0 : bits (8) = xt3(s0) ^    (s1) ^    (s2) ^ xt2(s3);
+  let s0 : bits (8) = x[ 7.. 0];
+  let s1 : bits (8) = x[15.. 8];
+  let s2 : bits (8) = x[23..16];
+  let s3 : bits (8) = x[31..24];
+  let b0 : bits (8) = xt2(s0) ^ xt3(s1) ^    (s2) ^    (s3);
+  let b1 : bits (8) =    (s0) ^ xt2(s1) ^ xt3(s2) ^    (s3);
+  let b2 : bits (8) =    (s0) ^    (s1) ^ xt2(s2) ^ xt3(s3);
+  let b3 : bits (8) = xt3(s0) ^    (s1) ^    (s2) ^ xt2(s3);
   b3 @ b2 @ b1 @ b0 /* Return value */
 }
 
 /* 32-bit to 32-bit AES inverse MixColumn */
 val      aes_mixcolumn_inv : bits(32) -> bits(32)
 function aes_mixcolumn_inv (x) = {
-  let s3 : bits (8) = x[ 7.. 0];
-  let s2 : bits (8) = x[15.. 8];
-  let s1 : bits (8) = x[23..16];
-  let s0 : bits (8) = x[31..24];
-  let b3 : bits (8) = gfmul(s0,0xE)^gfmul(s1,0xB)^gfmul(s2,0xD)^gfmul(s3,0x9);
-  let b2 : bits (8) = gfmul(s0,0x9)^gfmul(s1,0xE)^gfmul(s2,0xB)^gfmul(s3,0xD);
-  let b1 : bits (8) = gfmul(s0,0xD)^gfmul(s1,0x9)^gfmul(s2,0xE)^gfmul(s3,0xB);
-  let b0 : bits (8) = gfmul(s0,0xB)^gfmul(s1,0xD)^gfmul(s2,0x9)^gfmul(s3,0xE);
+  let s0 : bits (8) = x[ 7.. 0];
+  let s1 : bits (8) = x[15.. 8];
+  let s2 : bits (8) = x[23..16];
+  let s3 : bits (8) = x[31..24];
+  let b0 : bits (8) = gfmul(s0,0xE)^gfmul(s1,0xB)^gfmul(s2,0xD)^gfmul(s3,0x9);
+  let b1 : bits (8) = gfmul(s0,0x9)^gfmul(s1,0xE)^gfmul(s2,0xB)^gfmul(s3,0xD);
+  let b2 : bits (8) = gfmul(s0,0xD)^gfmul(s1,0x9)^gfmul(s2,0xE)^gfmul(s3,0xB);
+  let b3 : bits (8) = gfmul(s0,0xB)^gfmul(s1,0xD)^gfmul(s2,0x9)^gfmul(s3,0xE);
   b3 @ b2 @ b1 @ b0 /* Return value */
 }
 
@@ -572,6 +572,37 @@ function aes_apply_inv_sbox_to_each_byte  (x) = {
 /*
  *      AES full-round transformation functions.
  */
+
+
+val      getbyte : (bits(64), int     ) -> bits(8)
+function getbyte   (x       , i       ) = {
+    (x >> to_bits(6,i*8))[7..0]
+}
+
+val      aes_rv64_shiftrows_fwd : (bits(64), bits(64)) -> bits(64)
+function aes_rv64_shiftrows_fwd   (rs2     , rs1     ) = {
+    getbyte(rs1, 3) @
+    getbyte(rs2, 6) @
+    getbyte(rs2, 1) @
+    getbyte(rs1, 4) @
+    getbyte(rs2, 7) @
+    getbyte(rs2, 2) @
+    getbyte(rs1, 5) @
+    getbyte(rs1, 0)
+}
+
+val      aes_rv64_shiftrows_inv : (bits(64), bits(64)) -> bits(64)
+function aes_rv64_shiftrows_inv   (rs2     , rs1     ) = {
+    getbyte(rs2, 3) @
+    getbyte(rs2, 6) @
+    getbyte(rs1, 1) @
+    getbyte(rs1, 4) @
+    getbyte(rs1, 7) @
+    getbyte(rs2, 2) @
+    getbyte(rs2, 5) @
+    getbyte(rs1, 0)
+}
+
 
 /* 128-bit to 128-bit implementation of the forward AES ShiftRows transform. 
  * Byte 0 of state is input column 0, bits  7..0.

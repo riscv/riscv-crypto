@@ -70,9 +70,9 @@ mapping clause assembly =  AES64_DS (rs2,rs1,rd) <->
 val      crypto_aes64 : (regidx, regidx, regidx, bool, bool) -> Retired effect {escape, rreg, wreg}
 /* --- specification snippet begin --- */
 function crypto_aes64   (rd    , rs1   , rs2   , enc , mix )  = {
-  let sr : bits(128) = match enc {
-    true  => aes_shift_rows_fwd(X(rs2)[63..0] @ X(rs1)[63..0]), /* Encrypt */
-    false => aes_shift_rows_inv(X(rs2)[63..0] @ X(rs1)[63..0])  /* Decrypt */
+  let sr : bits( 64) = match enc {
+    true  => aes_rv64_shiftrows_fwd(X(rs2)[63..0], X(rs1)[63..0]), /*Encrypt*/
+    false => aes_rv64_shiftrows_inv(X(rs2)[63..0], X(rs1)[63..0])  /*Decrypt*/
   };
   let wd : bits( 64) = sr[63..0];
   let sb : bits( 64) = match enc {
