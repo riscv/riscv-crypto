@@ -70,11 +70,11 @@ Consult `sail/README.md` for instructions on building the patched
 version of the SAIL ISA simulator.
 
 Hopefully the `Makefile` is fairly self explanatory.
-The main commands are:
+The main commands, assuming you are in `$REPO_HOME`, are:
 
 ```make
-make build      # Build 32 and 64-bit versions of the KAT generator.
-make generate   # Run the 32/64-bit generators on Spike.
+make -C tests/kat-gen build    # Build 32 and 64-bit versions of the KAT generator.
+make -C tests/kat-gen generate # Run the 32/64-bit generators on Spike.
 ```
 
 All results and build artefacts are dumped to `$REPO_BUILD/kat-gen`.
@@ -83,16 +83,16 @@ For the spike example,
 the `prng_seed` and `num_tests` may be set through the `Makefile` too using:
 
 ```make
-make generate SEED=12345      # Use constant value "12345"
-make generate SEED=`date +%s` # Use current unix time as seed
-make generate NUM_TESTS=10 SEED=1243656 # Run 10 tests per instr with seed.
+make -C tests/kat-gen generate SEED=12345      # Use constant value "12345"
+make -C tests/kat-gen generate SEED=`date +%s` # Use current unix time as seed
+make -C tests/kat-gen generate NUM_TESTS=10 SEED=1243656 # Run 10 tests per instr with seed.
 ```
 
 To check for differences between Spike and SAIL on RV32 or RV64, run:
 
 ```
-make check-rv32 NUM_TESTS=100 SEED=12345678
-make check-rv64 NUM_TESTS=100 SEED=12345678
+make -C tests/kat-gen check-rv32 NUM_TESTS=100 SEED=12345678
+make -C tests/kat-gen check-rv64 NUM_TESTS=100 SEED=12345678
 ```
 
 Note `NUM_TESTS` and `SEED  must be set to the shown values, as this is hard
