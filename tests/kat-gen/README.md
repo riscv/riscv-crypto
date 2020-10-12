@@ -66,6 +66,9 @@ to generate known-good input/output test vectors for each instruction.
 
 ## Building and Running
 
+Consult `sail/README.md` for instructions on building the patched
+version of the SAIL ISA simulator.
+
 Hopefully the `Makefile` is fairly self explanatory.
 The main commands are:
 

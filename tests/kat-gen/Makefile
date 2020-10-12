@@ -6,8 +6,8 @@ SIZE    = $(RISCV)/bin/riscv64-unknown-elf-size
 PK64    = $(RISCV)/riscv64-unknown-elf/bin/pk
 PK32    = $(RISCV)/riscv32-unknown-elf/bin/pk
 SPIKE   = $(RISCV)/bin/spike
-SAIL32  = ~/riscv/sail-riscv/c_emulator/riscv_sim_RV32
-SAIL64  = ~/riscv/sail-riscv/c_emulator/riscv_sim_RV64
+SAIL32  = $(REPO_HOME)/extern/sail-riscv/c_emulator/riscv_sim_RV32
+SAIL64  = $(REPO_HOME)/extern/sail-riscv/c_emulator/riscv_sim_RV64
 
 KAT_BUILD       = $(REPO_BUILD)/kat-gen
 
@@ -45,10 +45,10 @@ CFLAGS32        = -march=$(ARCH_32) -mabi=$(ABI_32)
 CFLAGS64        = -march=$(ARCH_64) -mabi=$(ABI_64)
 
 CFLAGS_SAIL     = -T$(REPO_HOME)/tests/kat-gen/sail.ld \
-                  -static -nostdlib -nostartfiles
+                  -static -nostartfiles
 
 SEED            = 12345678
-NUM_TESTS       = 1000
+NUM_TESTS       = 100
 
 $(KAT_SPIKE_ELF32) : $(KAT_GEN_SRC) $(KAT_SPIKE_SRC)
 	@mkdir -p $(dir $@)

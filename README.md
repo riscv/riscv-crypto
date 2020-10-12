@@ -54,17 +54,8 @@ Source code and supplementary information is found in the
 
 There is a work-in-progress formal-model implementation of the crypto
 instructions in the `sail/` directory.
-Currently, only the scalar instructions are implemented, since the
-vector instructions are blocked by the implementation of the base
-vector extension in the formal model.
-
-These files currently need to be manually added to the existing
-[sail-riscv](https://github.com/rems-project/sail-riscv)
-model. A proper integration will be done eventually.
-See [issue #20](https://github.com/riscv/riscv-crypto/issues/20)
-for what is left to be implemented.
-A log of open questions about SAIL is being kept in
-[issue #22](https://github.com/riscv/riscv-crypto/issues/22).
+See the [README](sail/README.md) file for information on how to build
+and use it.
 
 ## Toolchain
 
