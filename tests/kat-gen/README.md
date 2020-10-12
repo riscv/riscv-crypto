@@ -70,6 +70,8 @@ Consult `sail/README.md` for instructions on building the patched
 version of the SAIL ISA simulator.
 
 Hopefully the `Makefile` is fairly self explanatory.
+You will need to run the project setup script (`source bin/conf.sh`)
+before these commands work.
 The main commands, assuming you are in `$REPO_HOME`, are:
 
 ```make
