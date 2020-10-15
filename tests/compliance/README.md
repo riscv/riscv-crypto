@@ -83,9 +83,12 @@
 - Alternativley, run these short commands:
 
   ```make
-  make -C tests/compliance compliance-run-spike
-  make -C tests/compliance compliance-run-sail-csim
-  make -C tests/compliance compliance-run-sail-ocaml
+  make -C tests/compliance compliance-run-spike-rv32
+  make -C tests/compliance compliance-run-sail-csim-rv32
+  make -C tests/compliance compliance-run-sail-ocaml-rv32
+  make -C tests/compliance compliance-run-spike-rv64
+  make -C tests/compliance compliance-run-sail-csim-rv64
+  make -C tests/compliance compliance-run-sail-ocaml-rv64
   make -C tests/compliance compliance-run-all
   ```
 
