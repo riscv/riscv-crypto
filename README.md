@@ -62,6 +62,14 @@ and use it.
 See [tools/README.md](tools/README.md) for instructions on how to
 build the experimental toolchain.
 
+## Compliance
+
+See [tests/compliance/README/md](tests/compliance/README.md) for
+information on how to run the work-in-progress riscv-compliance
+suite for the cryptography extension.
+You will need to setup the toolchain, spike and SAIL before you can do
+this.
+
 ## Benchmarks
 
 See [`benchmarks/README.md`](benchmarks/README.md) for how to
