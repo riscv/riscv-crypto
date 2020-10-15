@@ -11,6 +11,31 @@
   - [Documentation](https://github.com/riscv/riscv-compliance/tree/master/doc)
 
 
+## Methodology:
+
+This is the general methodology for generating the compliance tests for
+the Scalar Crypto ISE.
+
+1. Implement the ISE in Spike
+2. Implement the ISE in SAIL
+3. Create a simple host-agonistic test harness to generate input/output test
+   vectors. This is found in `tests/kat-gen`.
+4. Run the harness on Spike and SAIL, checking for diffs and fixing as
+   appropriate. Again, see `tests/kat-gen/README.md` for an explanation
+   of this.
+5. Other TG members run the same harness on their implementations, and diff
+   against the same output from SAIL/Spike. If everything matches, we can be
+   confident that we have all implemented the same thing.
+6. If we are all confident our implementations are correct, the compliance
+   tests are generated from the test harness.
+7. The generated compliance tests can then be re-run on all of our various
+   implementations as a final check.
+
+Once the first set of compliance test vectors are generated, we can all
+use the existing riscv-compliance framework rather than the hacky
+kat-generator tool. The kat-generator is just there to bootstrap the
+process.
+
 ## Getting Started
 
 - Make sure that you are in the root of the `riscv-crypto` repository, and
@@ -94,4 +119,35 @@
 
   Which just wrap up the above long-form commands and run all of the
   available compliance tests.
+
+
+## Re-generating the reference outputs.
+
+- Generate example outputs from your *trusted simulator*. We will use
+  SAIL in this example.
+
+  ```make
+  make -C tests/compliance compliance-generate-rv32ik
+  make -C tests/compliance compliance-run-sail-csim-rv32
+  ```
+
+- Ignore any reported test failures, and copy the generated test
+  signatures into the *reference* signatures directory:
+
+  ```
+  make -C tests/compliance compliance-update-signatures-rv32ik
+  ```
+
+- Now, run a *different* simulator or target against the newly generated
+  reference signatures to check they agree.
+  Here, we run the SAIL OCaml simulator and Spike.
+
+  ```make
+  make -C tests/compliance compliance-run-sail-ocaml-rv32
+  make -C tests/compliance compliance-run-spike-rv32
+  ```
+
+  If they don't agree, one (or both) of the simualtors is defintley wrong.
+
+- The same process can be run, substituting `rv32` for `rv64` in all cases.
 
