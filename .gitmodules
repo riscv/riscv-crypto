@@ -10,3 +10,6 @@
 [submodule "extern/sail-riscv"]
 	path = extern/sail-riscv
 	url = https://github.com/rems-project/sail-riscv.git
+[submodule "extern/riscv-compliance"]
+	path = extern/riscv-compliance
+	url = https://github.com/riscv/riscv-compliance.git

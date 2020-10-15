@@ -24,12 +24,19 @@ if [ -z $RISCV_ARCH ] ; then
 fi
 
 export RISCV=$REPO_BUILD/$RISCV_ARCH
+export SAIL_RISCV=$REPO_HOME/extern/sail-riscv
+
+[[ ":$PATH:" != *":$RISCV/bin:"* ]] && export PATH="${RISCV}/bin:${PATH}"
+[[ ":$PATH:" != *":$SAIL_RISCV/c_emulator:"* ]] && export PATH="$SAIL_RISCV/c_emulator:${PATH}"
+[[ ":$PATH:" != *":$SAIL_RISCV/ocaml_emulator:"* ]] && export PATH="$SAIL_RISCV/ocaml_emulator:${PATH}"
 
 echo "REPO_HOME  = $REPO_HOME"
 echo "REPO_BUILD = $REPO_BUILD"
 echo "RISCV_ARCH = $RISCV_ARCH"
 echo "RISCV      = $RISCV"
 echo "YOSYS_ROOT = $YOSYS_ROOT"
+echo "SAIL_RISCV = $SAIL_RISCV"
+echo "PATH       = $PATH"
 
 echo "------------------------------"
 
