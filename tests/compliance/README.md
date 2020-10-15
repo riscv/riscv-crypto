@@ -123,6 +123,11 @@ process.
 
 ## Re-generating the reference outputs.
 
+You will need `python3` and the [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) templating engine to run the test generation process.
+
+- Run the KAT generator (see `tests/kat-generator` for instructions)
+  to create a set of input/output vectors for every instruciton.
+
 - Generate example outputs from your *trusted simulator*. We will use
   SAIL in this example.
 
