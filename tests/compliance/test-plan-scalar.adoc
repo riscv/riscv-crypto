@@ -386,3 +386,24 @@ The spec *mandates* a minumum entropy quality. If people are to
 trust the RISC-V entropy source, then people can't use the RISC-V
 label without meeting that compliance requirement.
 
+== Other Instructions
+
+The scalar crypto ISE places additional constraints on instructions
+which are present in the base ISA, or Bitmanip standard extension.
+
+    mul     rd, rs1, rs2
+    mulhu   rd, rs1, rs2
+    clmul   rd, rs1, rs2
+    clmulh  rd, rs1, rs2
+    clmulr  rd, rs1, rs2
+
+All of these instructions *must* be constant time with respect to their inputs.
+If they are not, they create a (remotely) exploitable timing channel and
+are insecure from a cryptographic perspective.
+
+Only the un-signed `mul` and `mulhu` are required to be constant time.
+
+NOTE: TODO: Discuss how to verify constant time properties of these instructions
+    by executing them with different numbers of leading 1's and 0's in the
+    inputs.
+
