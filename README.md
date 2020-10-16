@@ -9,6 +9,7 @@
 - [Specification](#Specification)
 - [Formal Model](#Formal-Model)
 - [Toolchain](#Toolchain)
+- [Compliance](#Compliance)
 - [Benchmarks](#Benchmarks)
 - [Verilog RTL](#Verilog-RTL-Prototypes)
 
@@ -64,11 +65,15 @@ build the experimental toolchain.
 
 ## Compliance
 
-See [tests/compliance/README/md](tests/compliance/README.md) for
+See [tests/compliance/README.md](tests/compliance/README.md) for
 information on how to run the work-in-progress riscv-compliance
 suite for the cryptography extension.
 You will need to setup the toolchain, spike and SAIL before you can do
 this.
+
+There is also a work-in-progress 
+[test plan](tests/compliance/test-plan-scalar.adoc)
+for the Scalar cryptography extensions.
 
 ## Benchmarks
 

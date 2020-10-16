@@ -1,0 +1,388 @@
+
+= RISC-V Scalar Crypto: Compliance Test Plan
+Ben Marshall <ben.marshall@bristol.ac.uk>
+:toc:
+
+A plan for developing the riscv-compliance tests for the Scalar Crypto
+Extension.
+
+== Introduction
+
+The point of this test plan is to:
+
+* Explain what the riscv-compliance tests try to achieve, both generally
+  and for the scalar crypto instructions in particular.
+
+* List the kinds of coverage that the compliance tests try to meet, and to
+  explain more and less important coverage cases for different kinds of
+  instruction.
+
+* Act as a starting point for verification engineers writing
+  verification plans. It describes real-world usage patterns of the
+  instructions which constrained random stimulus generation flows can focus
+  on.
+
+Some useful links:
+
+* https://github.com/riscv/riscv-compliance[RISC-V Compliance Github Repo].
+** https://github.com/riscv/riscv-compliance/tree/master/doc[Associated Documentation].
+* https://github.com/riscv/riscv-crypto/releases[Latest Scalar Crypto Spec Release].
+** https://github.com/riscv/riscv-crypto/tree/master/tests/compliance[WIP Compliance tests for scalar crypto].
+
+== Stimulus Patterns
+
+Some simple stimulus patterns described here and referred too later
+when talking about individual instructions.
+
+* `single-bit-1` - Each source register input has a single bit set.
+  Test for all bits `0<=i<XLEN`. Likewise, have `single-bit-0`.
+
+* `uniform-random` - Each source register input is a uniform random number,
+  `XLEN`-bits long.
+
+* `byte-count` - Each source register input is divided into bytes, and each
+   byte is incremented individually, starting at zero. Hence, for RV32,
+   the first two input patterns would be `0x03020100` and `0x07060504`.
+
+== Coverage Points
+
+These are coverage points relevant for single instructions,
+and act as a *bare minimum* standard to hit for every instruction.
+
+=== Register addresses
+
+* Have all values of `rd`, `rs1` and `rs2` been covered where applicable?
+
+* Have we seen:
+  
+** `rd==rs1`, `rd!=rs1`
+
+** `rd==rs2`, `rd!=rs2`
+
+** `rs1==rs2`, `rs1!=rs2`
+
+=== Immediates
+
+* The immediates for all of the scalar crypto instructions are either
+  `2` or `4` bits, so we should aim for complete coverage of these.
+
+=== Input values
+
+* Have we seen every bit *set*   for each register input?
+
+* Have we seen every bit *clear* for each register input?
+
+* For instructions with an SBox (AES,SM4), do we have complete input
+  coverage for each input to the SBox? For all instructions, this is
+  just `0..255` for each input byte.
+
+=== Cross Coverage
+
+No intra or inter instruction cross coverage is defined yet.
+Some cross coverage is implicitly discussed in real world usage
+patterns described below.
+
+== RV32 Instructions
+
+The RV32 instructions have been put into groups of instructions which
+are similar from a coverage and stimulus perspective.
+
+=== AES and SM4
+
+    aes32dsi    rd, rs1, rs2, bs
+    aes32dsmi   rd, rs1, rs2, bs
+    aes32esi    rd, rs1, rs2, bs
+    aes32esmi   rd, rs1, rs2, bs
+    sm4ed       rd, rs1, rs2, bs
+    sm4ks       rd, rs1, rs2, bs
+
+All of these instructions have the same basic input patterns, and apply
+an SBox to a single byte of `rs2`.
+The `bs` immediate is `2` bits, and is used to select a byte of `rs2`
+for further processing.
+
+* Test pattern 1: SBox Testing
+  
+** This uses the `byte-count` pattern described above.
+
+** Generate a 256-byte sequence `0..255` and pack the sequence into
+   32-bit words.
+
+** Each word in the sequence is the `rs2` input. The `rs1` input
+   is set to zero so we do not alter the SBox output value.
+
+** For each input word, generate `4` instructions, with `bs=0..3`.
+   This will mean that every possible SBox input pattern is tested.
+
+* Test pattern 2: Uniform Random
+
+** Generate uniform random values for `rs1`, `rs2` and `bs`.
+
+** Let register values be un-constrained: `0..31`.
+
+** Repeat `N` times for each instruction until sufficient coverage is
+   reached.
+
+* Test pattern 3: real-world patterns:
+
+** Execute `4` of each instruction adjacently. Each instruction has
+   the same `rd` and `rs1` value, a different `rs2` and a different
+   `bs` vaue. This mimics how the instructions will appear in real-world
+   code, and tests things like pipeline forwarding.
+
+NOTE: These instructions are un-likely to appear interleaved with one
+another, so this pattern is left out for now. Forwarding between
+like-instructions is much more common.
+
+
+=== SHA2-256 and SM3
+
+    sha256sig0  rd, rs1
+    sha256sig1  rd, rs1
+    sha256sum0  rd, rs1
+    sha256sum1  rd, rs1
+    sm3p0       rd, rs1
+    sm3p1       rd, rs1
+
+These instructions are all designed to accelerate hash functions, and
+essentially perform rotations and/or shifts of `rs1` by several different
+constants, before xor'ing the results together.
+
+* Test pattern 1: Single bit testing
+
+** For each instruction, generate `XLEN` inputs with a single bit set.
+
+** For each instruction, generate `XLEN` inputs with a single bit clear.
+
+* Test pattern 2: Uniform random.
+
+** For each instruction, generate `N` `XLEN` bit uniform random inputs.
+
+* Test pattern 3: Real-world usage.
+
+** Check forwarding result of `add`/`xor`/`not`/`andn`/`add`
+   instruction into these instructions.
+
+** Check forwarding result of these instructions into
+   `add`/`xor`/`not`/`andn`/`add` instructions.
+
+** Check load-to-use hazard into these instructions.
+
+** Check forwarding of these instructions into `rs1` of `sw` instruction.
+
+=== SHA2-512
+
+    sha512sig0h rd, rs1, rs2
+    sha512sig0l rd, rs1, rs2
+    sha512sig1h rd, rs1, rs2
+    sha512sig1l rd, rs1, rs2
+    sha512sum0r rd, rs1, rs2
+    sha512sum1r rd, rs1, rs2
+
+These instructions are similar to the SHA2-256 and SM3 instructions.
+The `rs1` and `rs2` operands are shifted left/right by several constants,
+then xor'd together.
+
+NOTE: The plan for these instructions is identical to the one for
+      SHA2-256 and SM3, but with an additional register input to cover.
+
+* Test pattern 1: Single bit testing
+
+** For each instruction, generate `XLEN` inputs with a single bit set.
+   Do this for each `rs1` and `rs2`.
+
+** For each instruction, generate `XLEN` inputs with a single bit clear.
+   Do this for each `rs1` and `rs2`.
+
+* Test pattern 2: Uniform random.
+
+** For each instruction, generate `N` `XLEN` bit uniform random inputs
+   for `rs1` and `rs2`.
+
+* Test pattern 3: Real-world usage.
+
+** Check forwarding result of `add`/`xor`/`not`/`andn`/`add`
+   instruction into these instructions.
+
+** Check forwarding result of these instructions into
+   `add`/`xor`/`not`/`andn`/`add` instructions.
+
+** Check load-to-use hazard into these instructions.
+
+** Check forwarding of these instructions into `rs1` of `sw` instruction.
+
+== RV64 Instructions
+
+The RV64 instructions have been put into groups of instructions which
+are similar from a coverage and stimulus perspective.
+
+=== AES: Round instructions
+
+    aes64ds     rd, rs1, rs2
+    aes64dsm    rd, rs1, rs2
+    aes64es     rd, rs1, rs2
+    aes64esm    rd, rs1, rs2
+
+* Test pattern 1: SBox Testing
+
+** This uses the `byte-count` pattern described above.
+
+** Generate a 256-byte sequence `0..255` and pack the sequence into
+   64-bit words.
+
+** For each pair of 64-bit words `i` and `j`, where `j=i+1`:
+
+** Execute two of each instruction. One where `rs1=i, rs2=j`, and
+   one whre `rs1=j` and `rs2=i`. Store the results of each instruction
+   to the signature.
+
+* Test pattern 2: Uniform Random Testing
+
+** For `rs1` and `rs2`, generate uniform random values and store the
+   results to the signature.
+
+* Test pattern 3: Real-world usage
+
+** Execute two adjacent instructions of the same type, with:
+
+*** Different destination registers.
+
+*** The first instruction has `rs1=x, rs2=y`, and the second instruction
+    has `rs1=y, rs2=x`.
+
+*** This is the most common usage pattern for the instructions.
+
+** Forward the result of an `xor` instruction into the instructions and
+   vice-versa.
+
+=== AES: aes64ks1
+
+    aes64ks1i   rd, rs1, rcon
+
+This instruction applies the AES Forward SBox to the low 32-bits
+of `rs1`, with an optional rotation and xor depending on `rcon.`
+`rcon` is 4-bits wide, with only values `0<=rcon<=0xA` permitted.
+
+* Test pattern 1: SBox coverage
+
+** Uses the `byte-count` pattern described above.
+
+** Generate `64` double-word inputs, such that the low `4` bytes of
+   each double-word completely cover the `0..255` SBox input space.
+
+** Execute one instruction per double-word input to get complete SBox
+   input coverage.
+
+** The `rcon` immediate should be set to `0xA` for this, to avoid it
+   altering the SBox output value and make debugging easier.
+
+* Test pattern 2: Uniform Random testing
+
+** Generate random 64-bit values for `rs1` and random 4-bit values
+   for `rcon`, where `0<=rcon<=0xA`. Record each result to the signature.
+
+=== AES: aes64ks2
+
+    aes64ks2    rd, rs1, rs2
+
+This instruction simply performs `xor` operations between high and low
+words of `rs1` and `rs2` to produce a result.
+
+* Test pattern 1: Single bit testing
+
+** Generate `XLEN` inputs with a single bit set.
+
+** Generate `XLEN` inputs with a single bit clear.
+
+* Test pattern 2: Uniform random.
+
+** Generate `N` `XLEN` bit uniform random inputs.
+
+=== SHA2, SM3 and aes64im
+
+    sha256sig0  rd, rs1
+    sha256sig1  rd, rs1
+    sha256sum0  rd, rs1
+    sha256sum1  rd, rs1
+    sha512sig0  rd, rs1
+    sha512sig1  rd, rs1
+    sha512sum0  rd, rs1
+    sha512sum1  rd, rs1
+    sm3p0       rd, rs1
+    sm3p1       rd, rs1
+    aes64im     rd, rs1
+
+The SHA256 and SM3 instructions listed here are very similar to the
+RV32 SHA and SM3 listed instructions, but with zero extended 32-bit
+outputs and they ignore the high 32-bits of their inputs.
+
+The SHA512 instructions are similar to the SHA256 instructions, but work
+across the entire 64-bits of the input.
+
+The `aes64im` instruction implements the AES Inverse MixColumn transform
+on each 32-bit word of `rs1`.
+
+* Test pattern 1: Single bit testing
+
+** Generate `XLEN` inputs with a single bit set.
+
+** Generate `XLEN` inputs with a single bit clear.
+
+* Test pattern 2: Uniform random.
+
+** Generate `N` `XLEN` bit uniform random inputs.
+
+* Test pattern 3: Real-world usage - SHA and SM3
+
+** Check forwarding result of `add`/`xor`/`not`/`andn`/`add`
+   instruction into these instructions.
+
+** Check forwarding result of these instructions into
+   `add`/`xor`/`not`/`andn`/`add` instructions.
+
+** Check load-to-use hazard into these instructions.
+
+** Check forwarding of these instructions into `rs1` of `sw` instruction.
+
+=== SM4
+
+    sm4ed   rd, rs1, rs2, bs
+    sm4ks   rd, rs1, rs2, bs
+
+NOTE: These instructions are identical to the RV32 versions, but ignore
+the high 32-bits of their register inputs, and zero extend the low
+32-bits of their outputs. The same test plan may be used, accounting for
+the wider registers.
+
+== pollentropy
+
+CAUTION: This instruction will require special treatment. The quality of
+         the entropy source must be tested separately from the
+         architectural specification for the sampling state machine.
+         What follows is a *discussion* of how compliance for `pollentropy`
+         *could* be approached.
+
+NOTE: It is worth having a copy of the 
+https://github.com/riscv/riscv-crypto/releases[specification].
+ready for this.
+
+`pollentropy` is an instruction which takes no inputs, and writes a
+single `XLEN` bit register output.
+The output has two fields of interest:
+
+- `status` - A 2-bit field indicating the current status of the entropy
+  source. The rest of the output value can only be interpreted based on
+  this value.
+
+- `seed` - A 16-bit *random* value, with at-least *8* bits of entropy.
+  This field is *only* valid if `status=ES16`. Otherwise software
+  *must* ignore it, and hardware *must* zero it.
+
+
+NOTE: TODO: Discuss valid state transitions for `status`, how to validate the
+quality of the entropy. Possible separation of architectural compliance
+from entropy measurement. Dedicated tool to check entropy quality.
+The spec *mandates* a minumum entropy quality. If people are to
+trust the RISC-V entropy source, then people can't use the RISC-V
+label without meeting that compliance requirement.
+

@@ -9,6 +9,7 @@
 
 - [RISC-V Compliance Github Repo](https://github.com/riscv/riscv-compliance)
   - [Documentation](https://github.com/riscv/riscv-compliance/tree/master/doc)
+- [Scalar Instructions Compliance Test Plan](test-plan-scalar.adoc)
 
 
 ## Methodology:
