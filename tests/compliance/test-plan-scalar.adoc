@@ -127,7 +127,7 @@ for further processing.
 
 ** Execute `4` of each instruction adjacently. Each instruction has
    the same `rd` and `rs1` value, a different `rs2` and a different
-   `bs` vaue. This mimics how the instructions will appear in real-world
+   `bs` value. This mimics how the instructions will appear in real-world
    code, and tests things like pipeline forwarding.
 
 NOTE: These instructions are un-likely to appear interleaved with one
@@ -233,7 +233,7 @@ are similar from a coverage and stimulus perspective.
 ** For each pair of 64-bit words `i` and `j`, where `j=i+1`:
 
 ** Execute two of each instruction. One where `rs1=i, rs2=j`, and
-   one whre `rs1=j` and `rs2=i`. Store the results of each instruction
+   one where `rs1=j` and `rs2=i`. Store the results of each instruction
    to the signature.
 
 * Test pattern 2: Uniform Random Testing
@@ -382,11 +382,11 @@ The output has two fields of interest:
 NOTE: TODO: Discuss valid state transitions for `status`, how to validate the
 quality of the entropy. Possible separation of architectural compliance
 from entropy measurement. Dedicated tool to check entropy quality.
-The spec *mandates* a minumum entropy quality. If people are to
+The spec *mandates* a minimum entropy quality. If people are to
 trust the RISC-V entropy source, then people can't use the RISC-V
 label without meeting that compliance requirement.
 
-== Other Instructions
+== Other Instructions: Integer & Carry-less multiply
 
 The scalar crypto ISE places additional constraints on instructions
 which are present in the base ISA, or Bitmanip standard extension.
@@ -397,13 +397,78 @@ which are present in the base ISA, or Bitmanip standard extension.
     clmulh  rd, rs1, rs2
     clmulr  rd, rs1, rs2
 
+NOTE: Only un-signed integer multiplication instructions are currently
+listed. Do we also need to consider signed multiplication?
+
 All of these instructions *must* be constant time with respect to their inputs.
 If they are not, they create a (remotely) exploitable timing channel and
 are insecure from a cryptographic perspective.
+Common micro-architectural performance optimisations for these instructions
+include early termination and macro-op fusion.
 
-Only the un-signed `mul` and `mulhu` are required to be constant time.
+NOTE: Do we also need to consider operand 
+https://en.wikipedia.org/wiki/Memoization[memoisation]
+for multiplication?
+Yes: It _does_ introduce a timing channel.
+No: That timing channel is _very_ hard to exploit.
 
-NOTE: TODO: Discuss how to verify constant time properties of these instructions
-    by executing them with different numbers of leading 1's and 0's in the
-    inputs.
+* Test pattern 1: Leading Ones
+
+** For each `rs` register input, generate a random `XLEN` input value, and
+   set the most-significant `i` bits. See the other `rs` input, pick a
+   random value.
+
+** Repeat for values `0<=i<=XLEN`.
+   The `i` value can be stepped by a value greater than `1` to manage
+   the test size.
+
+* Test pattern 2: Leading Zeros.
+
+** Repeat test pattern 1, but clear the top `i` bits instead.
+
+* Test pattern 3: Trailing Zeros
+
+** Repeat test pattern 1, but clear the least-significant `i` bits instead.
+
+* Test pattern 4: Trailing Ones
+
+** Repeat test pattern 1, but set   the least-significant `i` bits instead.
+
+
+After executing each test input, the time `rdcycle` instruction is
+used to record the amount of time taken to execute the relevant multiply
+instruction.
+Each execution time is recorded and compared to the previous
+measurement.
+If the two are not identical, a *fail* code is recorded to the
+test signature, along with the inputs which caused the failure.
+
+It may be more accurate to run several multiplication instructions in
+sequence, so as to amortise any overhead introduced by `rdcycle`.
+
+CAUTION: Will this give consistent results on modern micro-architectures?
+Can we expect `rdcycle` ordering with respect to the multiplies to
+be respected?
+Chapter 10 of the user-level ISA spec has a long discussion on how
+defining a _cycle_ is hard, and offers no guarantees of portability.
+Hence, it becomes much easier to identify when multiplication *is not*
+constant time (and so insecure), but very hard to portably show that
+multiplication *is* constant time.
+We do not want to artificially limit the range of possible implementations
+due to un-necessesarily restrictive compliance tests.
+
+As well as individual instructions, recommended fusion pairs must also
+be tested.
+These are:
+
+    mulhu ra, rs1, rs2  // ra != rs1, rs2
+    mul   rb, rs1, rs2  // rb != ra, rs1, rs2
+
+and
+
+    clmulh ra, rs1, rs2  // ra != rs1, rs2
+    clmul  rb, rs1, rs2  // rb != ra, rs1, rs2
+
+The same set of test patterns can be used, treating `rs1`,`rs2` as a 
+single `2*XLEN` input.
 
