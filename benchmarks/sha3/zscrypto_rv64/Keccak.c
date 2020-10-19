@@ -41,9 +41,20 @@ static const uint64_t KeccakP1600RoundConstants[24] =
     0x8000000080008008,
 };
 
+static inline uint64_t roli(uint64_t rs1, int i) {
+    uint64_t rd;
+    asm ("roli %0, %1, %2" : "=r"(rd) :"r"(rs1),"i"(i));
+    return rd;
+}
 
-#define ROL64(a, offset) ((((uint64_t)a) << offset) ^ (((uint64_t)a) >> (64-offset)))
-#define i(x, y) (((x)%5)+5*(((y)%5)))
+static inline uint64_t andn(uint64_t rs1, uint64_t rs2) {
+    uint64_t rd;
+    asm ("andn %0, %1, %2" : "=r"(rd) :"r"(rs1),"r"(rs2));
+    return rd;
+}
+
+#define ROL64(a, offset) roli(a,offset)
+#define ANDN(x,y) andn(y,x)
 
 /**
  * Function that computes the Keccak-f[1600] permutation on the given state.
@@ -128,38 +139,38 @@ static void KeccakF1600_StatePermute(uint64_t *s)
         s[16] = ROL64(C1,36);
 
         C0    = (~s[ 3]) & s[ 4];
-        s[ 4] = s[ 4] ^ ((~s[ 0]) & s[ 1]);
-        s[ 1] = s[ 1] ^ ((~s[ 2]) & s[ 3]);
-        s[ 3] = s[ 3] ^ ((~s[ 4]) & s[ 0]);
-        s[ 0] = s[ 0] ^ ((~s[ 1]) & s[ 2]);
+        s[ 4] = s[ 4] ^ ANDN(s[ 0], s[ 1]);
+        s[ 1] = s[ 1] ^ ANDN(s[ 2], s[ 3]);
+        s[ 3] = s[ 3] ^ ANDN(s[ 4], s[ 0]);
+        s[ 0] = s[ 0] ^ ANDN(s[ 1], s[ 2]);
         s[ 2] = s[ 2] ^ (C0              );
 
         C0    = (~s[ 8]) & s[ 9];
-        s[ 9] = s[ 9] ^ ((~s[ 5]) & s[ 6]);
-        s[ 6] = s[ 6] ^ ((~s[ 7]) & s[ 8]);
-        s[ 8] = s[ 8] ^ ((~s[ 9]) & s[ 5]);
-        s[ 5] = s[ 5] ^ ((~s[ 6]) & s[ 7]);
+        s[ 9] = s[ 9] ^ ANDN(s[ 5], s[ 6]);
+        s[ 6] = s[ 6] ^ ANDN(s[ 7], s[ 8]);
+        s[ 8] = s[ 8] ^ ANDN(s[ 9], s[ 5]);
+        s[ 5] = s[ 5] ^ ANDN(s[ 6], s[ 7]);
         s[ 7] = s[ 7] ^ (C0              );
 
         C0    = (~s[13]) & s[14];
-        s[14] = s[14] ^ ((~s[10]) & s[11]);
-        s[11] = s[11] ^ ((~s[12]) & s[13]);
-        s[13] = s[13] ^ ((~s[14]) & s[10]);
-        s[10] = s[10] ^ ((~s[11]) & s[12]);
+        s[14] = s[14] ^ ANDN(s[10], s[11]);
+        s[11] = s[11] ^ ANDN(s[12], s[13]);
+        s[13] = s[13] ^ ANDN(s[14], s[10]);
+        s[10] = s[10] ^ ANDN(s[11], s[12]);
         s[12] = s[12] ^ (C0                );
                      
         C0    = (~s[18]) & s[19];
-        s[19] = s[19] ^ ((~s[15]) & s[16]);
-        s[16] = s[16] ^ ((~s[17]) & s[18]);
-        s[18] = s[18] ^ ((~s[19]) & s[15]);
-        s[15] = s[15] ^ ((~s[16]) & s[17]);
+        s[19] = s[19] ^ ANDN(s[15], s[16]);
+        s[16] = s[16] ^ ANDN(s[17], s[18]);
+        s[18] = s[18] ^ ANDN(s[19], s[15]);
+        s[15] = s[15] ^ ANDN(s[16], s[17]);
         s[17] = s[17] ^ (C0                );
 
         C0    = (~s[23]) & s[24];
-        s[24] = s[24] ^ ((~s[20]) & s[21]);
-        s[21] = s[21] ^ ((~s[22]) & s[23]);
-        s[23] = s[23] ^ ((~s[24]) & s[20]);
-        s[20] = s[20] ^ ((~s[21]) & s[22]);
+        s[24] = s[24] ^ ANDN(s[20], s[21]);
+        s[21] = s[21] ^ ANDN(s[22], s[23]);
+        s[23] = s[23] ^ ANDN(s[24], s[20]);
+        s[20] = s[20] ^ ANDN(s[21], s[22]);
         s[22] = s[22] ^ (C0                );
 
         s[0] ^= KeccakP1600RoundConstants[round];
