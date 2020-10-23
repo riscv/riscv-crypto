@@ -44,6 +44,10 @@ when talking about individual instructions.
    byte is incremented individually, starting at zero. Hence, for RV32,
    the first two input patterns would be `0x03020100` and `0x07060504`.
 
+NOTE: Where some unknown number of test vectors will be needed to hit
+coverage, this is usually left as `N`, which can be tuned later.
+E.g. "generate `N` uniform random numbers...".
+
 == Coverage Points
 
 These are coverage points relevant for single instructions,
@@ -363,7 +367,7 @@ CAUTION: This instruction will require special treatment. The quality of
          *could* be approached.
 
 NOTE: It is worth having a copy of the 
-https://github.com/riscv/riscv-crypto/releases[specification].
+https://github.com/riscv/riscv-crypto/releases[specification]
 ready for this.
 
 `pollentropy` is an instruction which takes no inputs, and writes a
@@ -377,6 +381,12 @@ The output has two fields of interest:
 - `seed` - A 16-bit *random* value, with at-least *8* bits of entropy.
   This field is *only* valid if `status=ES16`. Otherwise software
   *must* ignore it, and hardware *must* zero it.
+
+
+Basic Architectural Test cases:
+
+* `pollentropy` raises an illegal instruction exception if executed in
+  anything other than Machine Mode.
 
 
 NOTE: TODO: Discuss valid state transitions for `status`, how to validate the
