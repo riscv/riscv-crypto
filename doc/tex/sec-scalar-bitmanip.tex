@@ -127,10 +127,9 @@ instruction.
 \subsubsection{Carry-less Multiply}
 
 \begin{cryptobitmanipisa}
-RV32, RV64:                         RV64 only:
-    clmul rd, rs1, rs2                  clmulw rd, rs1, rs2
-    clmulh rd, rs1, rs2                 clmulhw rd, rs1, rs2
-    clmulr rd, rs1, rs2                 clmulrw rd, rs1, rs2
+RV32, RV64:
+    clmul  rd, rs1, rs2
+    clmulh rd, rs1, rs2
 \end{cryptobitmanipisa}
 
 See \cite[Section 2.6]{riscv:bitmanip:draft} for details of
