@@ -1,8 +1,6 @@
-
 \newpage
 \section{Entropy Source: Rationale and Discussion}
 \label{sec:entropy-appendix}
-
 
     The security of cryptographic systems is based on secret bits and keys.
     To prevent guessing, these bits need to be random, so they come from
@@ -183,13 +181,10 @@
     or timing information \cite{MoSuEi+20}. In cryptography, such
     out-of-band information sources  are called ``oracles.''
 
-    This also applies to the raw noise source. While most developers agree
-    that access to the raw noise source would be \emph{nice to have},
-    it is less clear why a generic driver would need it, or know what to
-    do with it (the raw noise can literally be \emph{anything}).
-    Therefore raw source interface has been delegated to an optional
-    vendor-specific debug interface outside the scope of the baseline
-    specification.
+    This also applies to the raw noise source. The raw source interface has
+    been delegated to an optional vendor-specific test interface.
+    Importantly the test interface and the main interface should not be
+    operational at the same time.
 
     \begin{quote}
     {\it ``The noise source state shall be protected from adversarial
@@ -625,8 +620,6 @@
     in the case of Blum-Blum-Shub generator \cite{BlBlSh86}. However
     most symmetric algorithms are less affected as the best quantum
     attacks are still exponential to key size \cite{Gr96}.
-%    (rather than polynomial
-%   as is the case for RSA and Discrete Logarithms).
 
     As an example, the original Intel RNG \cite{Me18}, whose output
     generation is based on AES-128 can be attacked using Grover's algorithm
@@ -638,8 +631,5 @@
     We avoid this possible future issue by exposing a more direct access
     to the entropy source, which can derive its security from
     information-theoretic assumptions only.
-
-%    This eliminates potential problems caused by computational hardness
-%   assumptions.
 
 

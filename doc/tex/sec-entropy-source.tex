@@ -16,59 +16,62 @@
 \subsection{PollEntropy Instruction}
 \label{sec:es-pollentropy}
 
-    The ISA-level interface consists of a single instruction,
+    The main ISA-level interface consists of a single pseudoinstruction,
     \mnemonic{pollentropy} that returns a 32/64-bit value in a CPU register.
     It is invoked in {\bf Machine Mode} (which may be the only mode) as
     follows:
 
 \begin{cryptoisa}
-pollentropy      rd, imm          // Get randomness. imm=0 for baseline operation
+RV32, RV64
+    pollentropy    rd   // Poll randomness. Encoding: csrrs rd, mentropy, x0
 \end{cryptoisa}
+    The \mnemonic{pollentropy} pseudoinstruction reads XLEN bits from the
+    {\tt mentropy} read-only machine-mode CSR
+    described in Table \ref{tab:mentropy}.
 
-%\begin{lstlisting}[language=C]
-%int PollEntropy(0);               // C calling convention.
-%\end{lstlisting}
-
-    The instruction is {\bf non-blocking} and returns immediately, either
-    with two status bits \verb|rd[31:30]|=\verb|OPST| set to
-    \verb|ES16| (01), indicating successful polling, or with {\bf no}
-    entropy and one of three polling failure statuses \verb|BIST| (00),
-    \verb|WAIT| (10), or \verb|DEAD| (11), discussed below.
-%    See Tables \ref{tab:rdbits} and \ref{tab:opstbits} for further
-%    information.
-
-    The sixteen bits of randomness in \verb|rd[15:0]|=\verb|seed| polled
-    with \verb|ES16| status {\bf must be cryptographically conditioned}
-    before they can be used as (up to 8 bits of) keying material. See Section
-    \ref{sec:req-es}.
-
-    For the purposes of interoperable, baseline functionality, \verb|imm = 0|.
-    Nonzero values of \verb|imm| are reserved for future use; the behavior
-    described here may not apply when \verb|imm| $\neq$ 0.
-    Standard software should set \verb|imm| to $0$
-    and hardware implementations should raise an Illegal Opcode Exception.
-
+    \begin{table}[h!]
     \begin{center}
     \begin{tabular}{ccl}
     \toprule
     Bits    & Name  & Description \\
     \midrule
-    \verb|rd[63:32]|    & {\it sign\_ext}
-            & Bit 31 is sign-extended on RV64. \\
-    \verb|rd[31:30]|    & \verb|OPST|
+    \verb|63:32|    & {\it Set to 0}
+            & Upper bits are set to zero in RV64. \\
+    \verb|31:30|    & \verb|OPST|
             & Status:   \verb|BIST| (00), \verb|ES16| (01),
                         \verb|WAIT| (10),   \verb|DEAD| (11). \\
-    \verb|rd[29:24]|    & {\it reserved}
+    \verb|29:24|    & {\it reserved}
             & For future use by the RISC-V specification. \\
-    \verb|rd[23:16]|    & {\it custom}
+    \verb|23:16|    & {\it custom}
             & Reserved for custom and experimental use. \\
-    \verb|rd[15: 0]|    & \verb|SEED|
+    \verb|15: 0|    & \verb|seed|
             & 16 bits of randomness, only when \verb|OPST=ES16|.    \\
     \bottomrule
     \end{tabular}
+    \caption{
+        The {\tt mentropy} CSR.
+        It uses address {\tt 0xF15}, indicating it is a
+        standard read-only machine-mode CSR.
+    }
+    \label{tab:mentropy}
     \end{center}
+    \end{table}
 
-    The Status Bits at \verb|rd[31:30]|=\verb|OPST|:
+    The instruction is {\bf non-blocking} and returns immediately, either
+    with two status bits \verb|mentropy[31:30]| = \verb|OPST| set to
+    \verb|ES16| (01), indicating successful polling, or with {\bf no}
+    entropy and one of three polling failure statuses \verb|BIST| (00),
+    \verb|WAIT| (10), or \verb|DEAD| (11), discussed below.
+
+
+    The sixteen bits of randomness in \verb|mentropy[15:0]|=\verb|seed| polled
+    with \verb|ES16| status {\bf must be cryptographically conditioned}
+    before they can be used as (up to 8 bits of) keying material.
+    When  \verb|OPST| is not \verb|ES16|, \verb|seed| should be set to 0.
+    An implementation may safely set reserved and custom bits to zeros.
+    A polling software interface should ignore their contents.
+
+    The Status Bits at \verb|mentropy[31:30]|=\verb|OPST|:
 
 \begin{itemize}
     \item[00]   \underline{\tt BIST}
@@ -77,9 +80,10 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     \verb|BIST| will last only a few milliseconds, up to a few hundred.
     If the system returns temporarily to \verb|BIST| from any other state,
     this signals a non-fatal (usually non-actionable) self-test alarm.
+    {\tt BIST} is also used to signal test mode (\mnemonic{getnoise}).
 
     \item[01]   \underline{\tt ES16}
-    indicates success; the low bits \verb|rd[15:0]| will have 16 bits
+    indicates success; the low bits \verb|mentropy[15:0]| will have 16 bits
     of randomness which must be guaranteed to have at least 8 bits true
     entropy regardless of implementation. For example, \verb|0x4000ABCD|
     is a valid \verb|ES16| status output on RV32, with \verb|0xABCD| being
@@ -89,7 +93,7 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     means that a sufficient amount of entropy is not yet available.
     This is not an error condition and may (in fact) be more frequent than
     ES16, since true entropy sources may not have very high bandwidth.
-    If polling in a loop, we suggest calling \mnemonic{wfi} (wait for 
+    If polling in a loop, we suggest calling \mnemonic{wfi} (wait for
     interrupt) before the next poll.
 
     \item[11]   \underline{\tt DEAD}
@@ -100,15 +104,6 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     an end-user notification; an immediate lock-down may be a more
     appropriate response in dedicated security devices.
 \end{itemize}
-
-    The sixteen bits of randomness in \verb|rd[15:0]|=\verb|seed| polled
-    with \verb|ES16| status {must be cryptographically conditioned
-    before they can be used as (up to 8 bits of) keying material.
-    See Section \ref{sec:req-es}.
-
-    For the purposes of interoperable, baseline functionality, \verb|imm = 0|.
-    Nonzero values of \verb|imm| are reserved for future use; the behavior
-    described here may not apply when \verb|imm| $\neq$ 0.
 
 
 \subsection{Polling Mechanism with WFI}
@@ -139,18 +134,19 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
     implement \mnemonic{pollentropy}. The RISC-V ISA allows \mnemonic{wfi} to be
     implemented as a \mnemonic{nop}.
     As a minimum requirement for portable drivers, a \verb|WAIT| or
-    \verb|BIST| from \mnemonic{pollentropy} should be followed by a 
-    \mnemonic{wfi} before another \mnemonic{pollentropy} instruction is 
+    \verb|BIST| from \mnemonic{pollentropy} should be followed by a
+    \mnemonic{wfi} before another \mnemonic{pollentropy} instruction is
     issued. There is no need to poll after a \verb|DEAD| state.
 
     To guarantee that no sensitive data is read twice and that different
     callers don't get correlated output, it is suggested that hardware
-    implements ``wipe-on-read'' on the randomness
-    pathway during each read (successful poll). For the same reasons, only complete
-    and fully processed randomness words shall be made available via
+    implements ``wipe-on-read'' on the randomness pathway during each read
+    (successful poll). For the same reasons, only complete and fully
+    processed randomness words shall be made available via
     \mnemonic{pollentropy} (no half-conditioned buffers or even full buffers
     in \verb|WAIT| state -- even if they are to be ignored by compliant
     callers).
+
 
 \subsection{Entropy Source Requirements}
 \label{sec:req-es}
@@ -258,12 +254,47 @@ pollentropy      rd, imm          // Get randomness. imm=0 for baseline operatio
 
     \end{itemize}
 
-%    The statistical nature of some tests makes ``type-1'' false
-%    positives a possibility. Security architects will understand to use
-%    permanent or hard-to-recover ``security-fuse'' lockdowns only if the
-%    threshold of a test is such that the probability of false-positive is
-%    negligible over the entire device lifetime.
+\subsection{GetNoise Test Interface}
 
+    The optional GetNoise interface allows access to ``raw noise'' and
+    is mainly intended for manufacturer tests and validation of security
+    modules. It is must not be used as a source of randomness or for
+    other production use. Its contents and behavior must be interpreted
+    in the context of {\tt mvendorid}, {\tt marchid}, and {\tt mimpid}
+    CSR identifiers, so \mnemonic{getnoise} is effectively ``custom''.
 
+    The interface consists of the {\tt mnoise} machine-mode CSR, which
+    (unlike {\tt mentropy}) is read-write. We define a
+    pseudoinstruction for reading it:
+\begin{cryptoisa}
+RV32, RV64
+    getnoise    rd   // Noise source test. Encoding: csrrs rd, mnoise, x0
+\end{cryptoisa}
 
+    The Crypto ISE defines the semantics of only single bit,
+    \verb|mnoise[31]|, which is named \verb|NOISE_TEST|. The only
+    universal function is for enabling/disabling this interface. This is
+    because the test interface effectively disables \mnemonic{pollentropy};
+    this way a soft reset can also reset this feature.
+        
+    The {\tt mnoise} CSR uses address {\tt 0x7A9}, indicating it is a
+    standard read-write machine-mode CSR.
+    This places it adjacently to debug/trace CSRs, indicating that
+    it is not expected to be used in production.
+
+    When \verb|NOISE_TEST = 1| in \mnemonic{getnoise} and {\tt mnoise},
+    \mnemonic{pollentropy} and {\tt mentropy} {\bf must not} return
+    anything via \verb|ES16|; we recommend
+    that it is in \verb|BIST| state. When \verb|NOISE_TEST| is
+    again disabled, the entropy source shall return from \verb|BIST|
+    via a zeroization and self-test mechanism (effectively a reset).
+
+    When not implemented (e.g. in virtual machines), \mnemonic{getnoise}
+    can permanently read zero (\verb|0x00000000|). When available, but
+    \verb|NOISE_TEST = 0|, \mnemonic{getnoise} can return a nonzero
+    constant such as \verb|0x00000001|.
+
+    The behavior of other input and output bits is left to the vendor.
+    Although not used in production, we recommend that the instruction
+    is always non-blocking.
 
