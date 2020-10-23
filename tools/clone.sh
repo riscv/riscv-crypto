@@ -41,7 +41,6 @@ cd $REPO_HOME
 git submodule update --init --recursive extern/riscv-isa-sim
 
 cd $DIR_SPIKE
-git checkout riscv-bitmanip
 git checkout $SPIKE_COMMIT
 
 # --------------------------------------------------------------------------
