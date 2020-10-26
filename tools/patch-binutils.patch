@@ -49,10 +49,10 @@ index 9ecdcab0b6..1834f7c08b 100644
  	    case 'd':		/* Destination register.  */
  	    case 's':		/* Source register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 6c750a33b1..5c3a6c4518 100644
+index 6c750a33b1..a5d88b7711 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
-@@ -343,6 +343,68 @@
+@@ -343,6 +343,70 @@
  #define MASK_GORCIW  0xfe00707f
  #define MATCH_GREVIW 0x6800501b
  #define MASK_GREVIW  0xfe00707f
@@ -115,12 +115,32 @@ index 6c750a33b1..5c3a6c4518 100644
 +#define MASK_SHA512SUM0 0xfff0707f
 +#define MATCH_SHA512SUM1 0xe70702b
 +#define MASK_SHA512SUM1 0xfff0707f
-+#define MATCH_POLLENTROPY 0x1e05702b
++#define MATCH_POLLENTROPY 0xf1502073
 +#define MASK_POLLENTROPY 0xfffff07f
++#define MATCH_GETNOISE 0x7a902073
++#define MASK_GETNOISE 0xfffff07f
 +// Crypto ISE - end
  #define MATCH_FSLW 0x400103b
  #define MASK_FSLW  0x600707f
  #define MATCH_FSRW 0x400503b
+@@ -878,6 +942,8 @@
+ #define CSR_MARCHID 0xf12
+ #define CSR_MIMPID 0xf13
+ #define CSR_MHARTID 0xf14
++#define CSR_MENTROPY 0xf15
++#define CSR_MNOISE 0x7a9
+ #define CSR_MSTATUS 0x300
+ #define CSR_MISA 0x301
+ #define CSR_MEDELEG 0x302
+@@ -1525,6 +1591,8 @@ DECLARE_CSR(mvendorid, CSR_MVENDORID)
+ DECLARE_CSR(marchid, CSR_MARCHID)
+ DECLARE_CSR(mimpid, CSR_MIMPID)
+ DECLARE_CSR(mhartid, CSR_MHARTID)
++DECLARE_CSR(mentropy, CSR_MENTROPY)
++DECLARE_CSR(mnoise, CSR_MNOISE)
+ DECLARE_CSR(mstatus, CSR_MSTATUS)
+ DECLARE_CSR(misa, CSR_MISA)
+ DECLARE_CSR(medeleg, CSR_MEDELEG)
 diff --git a/include/opcode/riscv.h b/include/opcode/riscv.h
 index 7e67c7f9a2..2601217a7e 100644
 --- a/include/opcode/riscv.h
@@ -162,7 +182,7 @@ index 19f10c0e55..7506f2bc80 100644
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..9925b7a631 100644
+index e99febc823..016734c618 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -496,27 +496,27 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -256,7 +276,7 @@ index e99febc823..9925b7a631 100644
  {"bmator",   64, INSN_CLASS_B_OR_ZBM,   "d,s,t",  MATCH_BMATOR, MASK_BMATOR, match_opcode, 0 },
  {"bmatxor",  64, INSN_CLASS_B_OR_ZBM,   "d,s,t",  MATCH_BMATXOR, MASK_BMATXOR, match_opcode, 0 },
  {"bfp",       0, INSN_CLASS_B_OR_ZBF,   "d,s,t",  MATCH_BFP, MASK_BFP, match_opcode, 0 },
-@@ -709,6 +709,38 @@ const struct riscv_opcode riscv_opcodes[] =
+@@ -709,6 +709,39 @@ const struct riscv_opcode riscv_opcodes[] =
  {"unzip2",    0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  {"unzip",     0, INSN_CLASS_B_OR_ZBP,   "d,s",  0, (int) M_PERM, match_never, INSN_MACRO },
  
@@ -290,7 +310,8 @@ index e99febc823..9925b7a631 100644
 +{"sha512sig1"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SIG1, MASK_SHA512SIG1, match_opcode, 0},
 +{"sha512sum0"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SUM0, MASK_SHA512SUM0, match_opcode, 0},
 +{"sha512sum1"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SUM1, MASK_SHA512SUM1, match_opcode, 0},
-+{"pollentropy"  , 0, INSN_CLASS_I,      "d"  , MATCH_POLLENTROPY, MASK_POLLENTROPY, match_opcode, 0},
++{"pollentropy"  , 0, INSN_CLASS_I,        "d", MATCH_POLLENTROPY, MASK_POLLENTROPY, match_opcode, INSN_ALIAS},
++{"getnoise"     , 0, INSN_CLASS_I,        "d", MATCH_GETNOISE, MASK_GETNOISE, match_opcode, INSN_ALIAS},
 +
  /* Single-precision floating-point instruction subset */
  {"frcsr",     0, INSN_CLASS_F,   "d",  MATCH_FRCSR, MASK_FRCSR, match_opcode, INSN_ALIAS },

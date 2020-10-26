@@ -314,6 +314,9 @@ csrs = [
   (0xF12, 'marchid'),
   (0xF13, 'mimpid'),
   (0xF14, 'mhartid'),
+  (0xF15, 'mentropy'), # crypto ext
+  
+  (0x7A9, 'mnoise'),
 ]
 
 csrs32 = [

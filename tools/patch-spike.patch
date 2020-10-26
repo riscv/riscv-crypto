@@ -13,10 +13,10 @@ index 9e03676..a76af54 100644
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..e41008f 100644
+index 3c4bf1c..3a604f0 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -564,6 +564,68 @@
+@@ -564,6 +564,66 @@
  #define MASK_PACKUW  0xfe00707f
  #define MATCH_BFPW 0x4800703b
  #define MASK_BFPW  0xfe00707f
@@ -79,13 +79,20 @@ index 3c4bf1c..e41008f 100644
 +#define MASK_SHA512SUM0 0xfff0707f
 +#define MATCH_SHA512SUM1 0xe70702b
 +#define MASK_SHA512SUM1 0xfff0707f
-+#define MATCH_POLLENTROPY 0x1e05702b
-+#define MASK_POLLENTROPY 0xfffff07f
 +// Crypto ISE - end
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -2156,6 +2218,38 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -1906,6 +1966,8 @@
+ #define CSR_MARCHID 0xf12
+ #define CSR_MIMPID 0xf13
+ #define CSR_MHARTID 0xf14
++#define CSR_MENTROPY 0xf15
++#define CSR_MNOISE 0x7a9
+ #define CSR_CYCLEH 0xc80
+ #define CSR_TIMEH 0xc81
+ #define CSR_INSTRETH 0xc82
+@@ -2156,6 +2218,37 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
@@ -119,11 +126,156 @@ index 3c4bf1c..e41008f 100644
 +DECLARE_INSN(sha512sig1, MATCH_SHA512SIG1, MASK_SHA512SIG1)
 +DECLARE_INSN(sha512sum0, MATCH_SHA512SUM0, MASK_SHA512SUM0)
 +DECLARE_INSN(sha512sum1, MATCH_SHA512SUM1, MASK_SHA512SUM1)
-+DECLARE_INSN(pollentropy, MATCH_POLLENTROPY, MASK_POLLENTROPY)
 +// Crypto ISE - End
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
+@@ -2924,6 +3017,8 @@ DECLARE_CSR(mvendorid, CSR_MVENDORID)
+ DECLARE_CSR(marchid, CSR_MARCHID)
+ DECLARE_CSR(mimpid, CSR_MIMPID)
+ DECLARE_CSR(mhartid, CSR_MHARTID)
++DECLARE_CSR(mentropy, CSR_MENTROPY)
++DECLARE_CSR(mnoise, CSR_MNOISE)
+ DECLARE_CSR(cycleh, CSR_CYCLEH)
+ DECLARE_CSR(timeh, CSR_TIMEH)
+ DECLARE_CSR(instreth, CSR_INSTRETH)
+diff --git a/riscv/entropy_source.h b/riscv/entropy_source.h
+new file mode 100644
+index 0000000..5d86815
+--- /dev/null
++++ b/riscv/entropy_source.h
+@@ -0,0 +1,131 @@
++
++#include <fstream>
++#include <iostream>
++
++#include "internals.h"
++
++//
++// Used to model the cryptography extension entropy source.
++class entropy_source {
++
++public:
++
++    // Valid return codes for OPST bits [31:30] when reading mentropy.
++    static const uint32_t OPST_BIST = 0x0 << 30;
++    static const uint32_t OPST_ES16 = 0x1 << 30;
++    static const uint32_t OPST_WAIT = 0x2 << 30;
++    static const uint32_t OPST_DEAD = 0x3 << 30;
++
++    //
++    // mentropy register
++    // ------------------------------------------------------------
++
++    void set_mentropy(reg_t val) {
++        // Always ignore writes to mentropy.
++    }
++
++
++    reg_t get_mentropy() {
++
++        uint32_t result  = 0;
++
++        // Currently, always return ES16 (i.e. good randomness) unless in
++        // noise capture mode.  In the future, we can more realistically model
++        // things like WAIT states, BIST warm up and maybe scriptable entry
++        // into the DEAD state, but until then, this is the bare minimum.
++        uint32_t return_status = noise_capture_mode ? OPST_BIST : OPST_ES16;
++
++        if(return_status == OPST_ES16) {
++
++            // Add some sampled entropy into the low 16 bits
++            uint16_t seed  = this -> get_two_random_bytes();
++            result        |= seed;
++
++        } else if(return_status == OPST_BIST) {
++
++            // Do nothing.
++
++        } else if(return_status == OPST_WAIT) {
++
++            // Do nothing.
++
++        } else if(return_status == OPST_DEAD) {
++
++            // Do nothing. Stay dead.
++
++        } else {
++
++            // Unreachable.
++
++        }
++
++        // Note that if we get here any return_status is anything other than
++        // OPST_ES16, then the low 16-bits of the return value must be zero.
++
++        result |= return_status;
++
++        // Result is zero-extended on RV64.
++        return (reg_t)result;
++    }
++
++    //
++    // mnoise register
++    // ------------------------------------------------------------
++
++
++    void set_mnoise(reg_t val) {
++        // Almost all of the behaviour for mnoise is vendor specific,
++        // except for bit 31.
++        int new_noisemode = (val >> 31) & 0x1;
++        noise_capture_mode = new_noisemode == 1;
++    }
++
++
++    reg_t get_mnoise() {
++        reg_t to_return = 0;
++
++        if(this -> noise_capture_mode) {
++            // Set bit 31 indicating we are in noise capture mode.
++            to_return |= 0x1 << 31;
++        }
++
++        return to_return;
++    }
++
++    //
++    // Utility / support variables and functions.
++    // ------------------------------------------------------------
++
++    // The ES is in noise capture mode?
++    // If so, then get_mentropy must always return OPST_BIST.
++    bool noise_capture_mode = false;
++
++    // The file to read entropy from.
++    std::string randomness_source = "/dev/urandom";
++
++    // Read two random bytes from the entropy source file.
++    uint16_t get_two_random_bytes() {
++
++        std::ifstream fh(this -> randomness_source, std::ios::binary);
++
++        if(fh.is_open()) {
++
++            uint16_t random_bytes;
++
++            fh.read((char*)(&random_bytes), 2);
++
++            fh.close();
++
++            return random_bytes;
++
++        } else {
++
++            fprintf(stderr, "Could not open randomness source file:\n\t");
++            fprintf(stderr, "%s", randomness_source.c_str());
++            abort();
++
++        }
++
++    }
++
++};
 diff --git a/riscv/insn_template.h b/riscv/insn_template.h
 index 3c36d10..feaa10a 100644
 --- a/riscv/insn_template.h
@@ -601,51 +753,6 @@ index 0000000..9cc353c
 +    AES_INVMIXBYTE(COL,0,1,2,3) <<  0   \
 +)
 +
-diff --git a/riscv/insns/pollentropy.h b/riscv/insns/pollentropy.h
-new file mode 100644
-index 0000000..7bb7682
---- /dev/null
-+++ b/riscv/insns/pollentropy.h
-@@ -0,0 +1,39 @@
-+
-+// The return status codes, which will occupy bits 31:30 in the return value.
-+const uint32_t OPST_BIST = 0x0 << 30;
-+const uint32_t OPST_ES16 = 0x1 << 30;
-+const uint32_t OPST_WAIT = 0x2 << 30;
-+const uint32_t OPST_DEAD = 0x3 << 30;
-+
-+// A file to get our randomness from.
-+std::string    randomness_source = "/dev/urandom";
-+
-+std::ifstream   fh(randomness_source, std::ios::binary);
-+
-+if(fh.is_open()) {
-+
-+    uint16_t random_bytes;
-+
-+    fh.read((char*)(&random_bytes), 2);
-+
-+    fh.close();
-+
-+    uint32_t result;
-+
-+    // Currently, always return ES16 (i.e. good randomness) .
-+    // In the future, we can more realistically model things like
-+    // WAIT states, BIST warm up and maybe scriptable entry into the DEAD
-+    // state, but until then, this is the bare minimum.
-+    result = OPST_ES16 | random_bytes;
-+
-+    // Result is sign-extended on RV64.
-+    WRITE_RD(sext_xlen(result));
-+
-+} else {
-+
-+    fprintf(stderr, "Could not open randomness source file:\n\t");
-+    fprintf(stderr, "%s", randomness_source.c_str());
-+    abort();
-+
-+}
-+
 diff --git a/riscv/insns/sha256sig0.h b/riscv/insns/sha256sig0.h
 new file mode 100644
 index 0000000..af3d413
@@ -989,11 +1096,73 @@ index 0000000..e638a31
 +
 +WRITE_RD(zext_xlen(result));
 +
+diff --git a/riscv/processor.cc b/riscv/processor.cc
+index 6bbaca1..a4e7e75 100644
+--- a/riscv/processor.cc
++++ b/riscv/processor.cc
+@@ -558,6 +558,14 @@ void processor_t::set_csr(int which, reg_t val)
+       state.minstret = (val << 32) | (state.minstret << 32 >> 32);
+       state.minstret--; // See comment above.
+       break;
++    case CSR_MENTROPY:
++        // TODO: Check support for crypto extension.
++        state.es.set_mentropy(val);
++        break;
++    case CSR_MNOISE  :
++        // TODO: Check support for crypto extension.
++        state.es.set_mnoise(val);
++        break;
+     case CSR_SCOUNTEREN:
+       state.scounteren = val;
+       break;
+@@ -758,6 +766,12 @@ reg_t processor_t::get_csr(int which)
+       if (xlen == 32)
+         return state.minstret >> 32;
+       break;
++    case CSR_MENTROPY:
++        // TODO: Check support for crypto extension.
++        return state.es.get_mentropy();
++    case CSR_MNOISE  :
++        // TODO: Check support for crypto extension.
++        return state.es.get_mnoise();
+     case CSR_SCOUNTEREN: return state.scounteren;
+     case CSR_MCOUNTEREN: return state.mcounteren;
+     case CSR_SSTATUS: {
+diff --git a/riscv/processor.h b/riscv/processor.h
+index 2b5003b..f20bbcc 100644
+--- a/riscv/processor.h
++++ b/riscv/processor.h
+@@ -11,6 +11,7 @@
+ #include <map>
+ #include <cassert>
+ #include "debug_rom_defines.h"
++#include "entropy_source.h"
+ 
+ class processor_t;
+ class mmu_t;
+@@ -53,6 +54,7 @@ typedef struct
+   uint8_t cause;
+ } dcsr_t;
+ 
++
+ typedef enum
+ {
+   ACTION_DEBUG_EXCEPTION = MCONTROL_ACTION_DEBUG_EXCEPTION,
+@@ -240,6 +242,9 @@ struct state_t
+   reg_t satp;
+   reg_t scause;
+ 
++  // The entropy source for the crypto extension.
++  entropy_source es;
++
+   reg_t dpc;
+   reg_t dscratch0, dscratch1;
+   dcsr_t dcsr;
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..eea7f63 100644
+index 4ee64fa..92c4460 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -772,6 +772,37 @@ riscv_insn_priv = \
+@@ -772,6 +772,36 @@ riscv_insn_priv = \
  	sret \
  	wfi \
  
@@ -1026,12 +1195,11 @@ index 4ee64fa..eea7f63 100644
 +    sha512sig0 \
 +    sha512sig1 \
 +    sha512sum0 \
-+    sha512sum1 \
-+    pollentropy
++    sha512sum1
  
  riscv_insn_list = \
  	$(riscv_insn_ext_a) \
-@@ -784,6 +815,7 @@ riscv_insn_list = \
+@@ -784,6 +814,7 @@ riscv_insn_list = \
  	$(riscv_insn_ext_b) \
  	$(if $(HAVE_INT128),$(riscv_insn_ext_v),) \
  	$(riscv_insn_priv) \

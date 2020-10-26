@@ -88,11 +88,12 @@ static inline uint_xlen_t _sm3p1 (uint_xlen_t rs1) {uint_xlen_t rd; __asm__("sm3
 #endif
 
 //
-// pollentropy
+// pollentropy / getnoise
 //
 
 #if (defined(__ZSCRYPTO))
 static inline volatile uint_xlen_t _pollentropy() {uint_xlen_t rd; __asm__ volatile ("pollentropy %0" : "=r"(rd)); return rd;}
+static inline volatile uint_xlen_t _getnoise()    {uint_xlen_t rd; __asm__ volatile ("getnoise    %0" : "=r"(rd)); return rd;}
 #endif
 
 //
