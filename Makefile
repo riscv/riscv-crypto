@@ -3,7 +3,7 @@ ifndef REPO_HOME
     $(error "Please run 'source ./bin/conf.sh' to setup the project workspace")
 endif
 
-spec:
+specs:
 	$(MAKE) -C $(REPO_HOME)/doc/ specs
 
 
