@@ -246,8 +246,11 @@ RV32, RV64
 
     For alternative Common Criteria certification (or self-certification)
     vendors should target AIS 31 PTG.2 requirements \cite[Sect. 4.3.]{KiSc11}.
-    Entropy sources (\verb|seed| bits) are viewed as ``internal random numbers''
-    in the context of AIS 31.
+    Entropy sources (\verb|seed| bits) are viewed as ``internal random
+    numbers'' in the context of AIS 31. Note that PTG.2 does not preclude
+    other certification levels -- especially PTG.3 when combined with
+    appropriate post-processing and DRBG on the software side.
+
     For validation purposes, the PTG.2 requirements may be mapped to security
     controls \S T 1-3 (Sect. \ref{sec:security-controls}) and the
     \mnemonic{pollentropy} interface as follows:
@@ -280,12 +283,13 @@ RV32, RV64
     \verb|seed| bits may be designated as internal random bits for \S P7,
     we recommend that all 16 ES bits meet this requirement.
 
-    Note that in Common Criteria validation the relatively loose SP 800-90B
-    I.I.D. requirement of \S E2 is not stated. However, it may also be
-    satisfied as PTG.2.7 leaves relatively little ``room'' for joint entropy,
-    but the threshold of what is considered I.I.D. may also be tighter.
+    Note that in Common Criteria validation the SP 800-90B I.I.D. requirement
+    of \S E2 is not stated. However, it may also be satisfied -- and the
+    H=0.997 level of \S P7 / PTG.2.7 leaves relatively little ``room'' for an
+    entropy defect (mutual entropy).
     Also note that the SP 800-90B validation process is concerned with
-    min-entropy, not Shannon entropy.
+    min-entropy, not Shannon entropy, so these numbers are not directly
+    comparable.
 
 
 \subsection{Security Controls (Tests)}
