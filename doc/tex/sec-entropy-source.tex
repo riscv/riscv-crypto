@@ -50,8 +50,7 @@ RV32, RV64
     \end{tabular}
     \caption{
         The {\tt mentropy} CSR.
-        It uses address {\tt 0xF15}, indicating it is a
-        standard read-only machine-mode CSR.
+        It uses address {\tt 0xF15}, a standard read-only machine-mode CSR.
     }
     \label{tab:mentropy}
     \end{center}
@@ -66,7 +65,10 @@ RV32, RV64
 
     The sixteen bits of randomness in \verb|mentropy[15:0]|=\verb|seed| polled
     with \verb|ES16| status {\bf must be cryptographically conditioned}
-    before they can be used as (up to 8 bits of) keying material.
+    before they can be used as (up to 8 bits of) keying material. We suggest
+    entropy output to be post-processed in blocks of at least 256 bits,
+    with 128 bit resulting output block.
+
     When  \verb|OPST| is not \verb|ES16|, \verb|seed| should be set to 0.
     An implementation may safely set reserved and custom bits to zeros.
     A polling software interface should ignore their contents.
@@ -154,67 +156,156 @@ RV32, RV64
 \label{sec:req-iid}
 \label{sec:req-state}
 
-    Output \verb|SEED| from \mnemonic{pollentropy} is not necessarily fully
+    Output \verb|seed| from \mnemonic{pollentropy} is not necessarily fully
     conditioned randomness due to hardware limitations of smaller,
     low-powered implementations. However minimum requirements are
-    defined. Therefore a caller should not use the output directly but poll
+    defined. A caller should not use the output directly but poll
     twice the amount of required entropy, cryptographically condition
     (hash) it, and use that to seed a cryptographic DRBG.
+
+    The expectation is that \verb|seed| output passes typical randomness
+    tests, but pseudorandom conditioner may cause weak entropy sources to
+    pass such tests as well. The results of such tests should not be
+    confused with the security or robustness of an entropy source.
+    Evaluation of entropy sources involves an investigation of the
+    stochastic model of the noise source, an analysis of the conditioning
+    component, continuous tests, etc. Entropy estimation (statistical
+    testing) is just a part of this process.
+
+    The specification of entropy source requirements is complicated by the
+    existence of two slightly conflicting standards -- NIST SP 800-90B
+    \cite{TuBaKe+18} for FIPS 140-3 and AIS 31 \cite{KiSc11} for Common
+    Criteria evaluations. RISC-V hardware vendors may design their entropy
+    sources to meet {\bf either one of these standards} (as different type
+    of evidence is required for each certification). It is also possible for
+    implementations to meet both criteria. Alternatively, for virtual
+    entropy sources (DRBGs), the post-processed output must meet the
+    ``256-bit security'' requirements of Category 5 post-quantum cryptography.
+
+
+    \subsubsection{Virtual Entropy Sources -- Secret State Size Requirement}
+
+    A \mnemonic{pollentropy} implementation can always output fully
+    conditioned, perfectly distributed numbers. However, it is required
+    that if a DRBG is used as a source, it must have an internal state with
+    at least 256 bits of secret entropy (Example: a CTR\_DRBG built from
+    AES-128 is not sufficient). Any implementation of \mnemonic{pollentropy}
+    that limits the security strength shall not reduce it to less than
+    256 bits,
+
+    RISC-V requires drivers to implement at least 2-to-1 cryptographic
+    post-processing in software with the expectation that the final output
+    from this post-processing would should have ``computationally bounded
+    full entropy''.  The computational bound is set so that a
+    random-distinguishing attack should require computational resources
+    comparable or greater than those required for key search a block cipher
+    with a 256-bit key (e.g. AES 256). This is equivalent to a Category 5
+    classical or quantum adversary
+    \cite[Section 4.A.4 Security Strength Categories]{NI16}.
+
+    \subsubsection{FIPS 140-3 / SP 800-90 I.I.D. Track}
+
+    For FIPS 140-3 certification, vendors should design their entropy sources
+    and hardware conditioning components so that they can be submitted to
+    the  ``I.I.D. track''.
 
     \begin{itemize}
 
     \item[\S E1]    {\bf Entropy Requirement.}
-    Each 16-bit output sample (\verb|SEED|) must have more than 8 bits of
-    independent, unpredictable entropy. This minimum requirement is
+    Each 16-bit output sample (\verb|seed|) must have more than 8 bits of
+    independent, unpredictable randomness. This minimum requirement is
     satisfied if (in a NIST SP 800-90B \cite{TuBaKe+18} assessment) 128
     bits of output entropy can be obtained from each 256-bit
     ($16 \times 16$-bit) \mnemonic{pollentropy} output sequence via a vetted
     cryptographic conditioning algorithm (see Section 3.1.5.1.2 in
-    \cite{TuBaKe+18}).
+    \cite{TuBaKe+18}). This means that the actual SP 800-90B entropy
+    assessment must yield significantly more than 8 bits (vendors should
+    aim at 16).
 
     Driver developers may make this conservative assumption but are not
     prohibited from using more than twice the number of seed bits relative
     to the desired resulting entropy.
 
-    \item[\S E2]    {\bf I.I.D. Requirement.}
-    The output must be \emph{Independent and Identically Distributed}
+    \item[\S E2]    {\bf SP 800-90B I.I.D.}
+    The output must be close to \emph{Independent and Identically Distributed}
     (IID), meaning that the output distribution does not deteriorate over
-    time and that output words do not convey information about each other.
+    time and that output words convey little information about each other.
     This requirement is satisfied if the construction of the physical source
     and sampling mechanism suggests nothing against the IID assumption
     and the IID tests in Section 5 of NIST SP 800-90B \cite{TuBaKe+18} are
     consistently passed.
 
-    \item[\S E3]    {\bf Secret State Size Requirement.}
-    A \mnemonic{pollentropy} implementation can also output fully conditioned,
-    perfectly distributed numbers. However, it is required that if a DRBG is
-    used as a source, it must have an internal state with at least 256 bits
-    of secret entropy (Example: a CTR\_DRBG built from AES-128 is never
-    sufficient). In general, any implementation of \mnemonic{pollentropy} that
-    limits the security strength shall not reduce it to less than 256 bits.
-
     \end{itemize}
+
+    Note that both requirements must be satisfied (\S E1 may appear looser
+    than \S E2). FIPS 140-3 certification of course imposes many additional
+    requirements.
+
+
+    \subsubsection{Common Criteria / AIS 31 PTG.2 Class}
+
+    For alternative Common Criteria certification (or self-certification)
+    vendors should target AIS 31 PTG.2 requirements \cite[Sect. 4.3.]{KiSc11}.
+    Entropy sources (\verb|seed| bits) are viewed as ``internal random numbers''
+    in the context of AIS 31.
+    For validation purposes, the PTG.2 requirements may be mapped to security
+    controls \S T 1-3 (Sect. \ref{sec:security-controls}) and the
+    \mnemonic{pollentropy} interface as follows:
+
+    \begin{itemize}
+    \item[\S P1]{\bf [PTG.2.1]} Start-up tests map to \S T1 and reset-triggered
+            (on-demand) \verb|BIST| tests.
+
+    \item[\S P2]{\bf [PTG.2.2]} Continuous testing total failure maps to \S T2 and
+        the \verb|DEAD| state.
+
+    \item[\S P3]{\bf [PTG.2.3]}  Online tests are continuous tests of \S T2 --
+        entropy output is prevented in the \verb|BIST| state.
+
+    \item[\S P4][{\bf PTG.2.4]} Is related to the design of effective entropy source
+        health tests, which we encourage.
+
+    \item[\S P5]{\bf [PTG.2.5]} Raw random sequence may be checked via the
+        GetNoise interface (Section \ref{sec:getnoise}).
+
+    \item[\S P6][{\bf PTG.2.6]} Test Procedure A \cite[Sect 2.4.4.1]{KiSc11} is part of
+        the evaluation process, and we suggest self-evaluation using these
+        tests even if Common Criteria certification is not sought by a vendor.
+
+    \item[\S P7]{\bf [PTG.2.7]} Average Shannon entropy of ``internal random
+        bits'' exceeds 0.997.
+    \end{itemize}
+
+    Even though \S E1, \S E2, and post-processing imply that less than 16 of
+    \verb|seed| bits may be designated as internal random bits for \S P7,
+    we recommend that all 16 ES bits meet this requirement.
+
+    Note that in Common Criteria validation the relatively loose SP 800-90B
+    I.I.D. requirement of \S E2 is not stated. However, it may also be
+    satisfied as PTG.2.7 leaves relatively little ``room'' for joint entropy,
+    but the threshold of what is considered I.I.D. may also be tighter.
+    Also note that the SP 800-90B validation process is concerned with
+    min-entropy, not Shannon entropy.
 
 
 \subsection{Security Controls (Tests)}
 \label{sec:security-controls}
 
-    Security controls are not mandatory for RISC-V but are required for
-    security certification.
     The primary purpose of a cryptographic entropy source is to produce
     secret keying material. In almost all cases a hardware entropy source
     must implement appropriate \emph{security controls} to guarantee
     unpredictability, prevent leakage, detect attacks, and to deny
     adversarial control over the entropy output or ts generation mechanism.
+    Security controls are not mandatory for RISC-V (in case of virtual
+    entropy sources) but are required for security certification.
 
     Many of the security controls built into the device are called ``health
-    checks.'' Health checks can take the form of
-    integrity checks, start-up tests, and on-demand tests. These tests can
-    be implemented in hardware or firmware; typically both. Several are
-    mandated by standards such as NIST SP 800-90B \cite{NI19}. The choice
-    of appropriate health tests depends on the certification target,
-    system architecture, the threat model, entropy source type, and other
-    factors.
+    checks.'' Health checks can take the form of integrity checks, start-up
+    tests, and on-demand tests. These tests can be implemented in hardware
+    or firmware; typically both. Several are mandated by standards such as
+    NIST SP 800-90B \cite{NI19}. The choice of appropriate health tests
+    depends on the certification target, system architecture, the threat
+    model, entropy source type, and other factors.
 
     Health checks are not intended for hardware diagnostics but for
     detecting security issues -- hence the default action should be aimed
@@ -255,6 +346,7 @@ RV32, RV64
     \end{itemize}
 
 \subsection{GetNoise Test Interface}
+\label{sec:getnoise}
 
     The optional GetNoise interface allows access to ``raw noise'' and
     is mainly intended for manufacturer tests and validation of security
@@ -276,7 +368,7 @@ RV32, RV64
     universal function is for enabling/disabling this interface. This is
     because the test interface effectively disables \mnemonic{pollentropy};
     this way a soft reset can also reset this feature.
-        
+
     The {\tt mnoise} CSR uses address {\tt 0x7A9}, indicating it is a
     standard read-write machine-mode CSR.
     This places it adjacently to debug/trace CSRs, indicating that
