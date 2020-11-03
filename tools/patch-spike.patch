@@ -1,26 +1,26 @@
 diff --git a/riscv/decode.h b/riscv/decode.h
-index 9e03676..a76af54 100644
+index b4bb2e6..db01cbc 100644
 --- a/riscv/decode.h
 +++ b/riscv/decode.h
-@@ -96,6 +96,9 @@ public:
+@@ -92,6 +92,10 @@ public:
    uint64_t rm() { return x(12, 3); }
    uint64_t csr() { return x(20, 12); }
  
-+  uint64_t bs() {return x(30,2);}
++  // Crypto ISE - SM4/AES32 byte select immediate.
++  uint64_t bs  () {return x(30,2);}
 +  uint64_t rcon() {return x(20,4);}
 +
    int64_t rvc_imm() { return x(2, 5) + (xs(12, 1) << 5); }
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index 3c4bf1c..3a604f0 100644
+index fb1536e..278e6bb 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
-@@ -564,6 +564,66 @@
+@@ -660,6 +660,68 @@
  #define MASK_PACKUW  0xfe00707f
  #define MATCH_BFPW 0x4800703b
  #define MASK_BFPW  0xfe00707f
-+// Crypto ISE - Begin
 +#define MATCH_SM4ED 0x800302b
 +#define MASK_SM4ED 0x3e00707f
 +#define MATCH_SM4KS 0xa00302b
@@ -79,24 +79,26 @@ index 3c4bf1c..3a604f0 100644
 +#define MASK_SHA512SUM0 0xfff0707f
 +#define MATCH_SHA512SUM1 0xe70702b
 +#define MASK_SHA512SUM1 0xfff0707f
-+// Crypto ISE - end
++#define MATCH_POLLENTROPY 0xf1502073
++#define MASK_POLLENTROPY 0xfffff07f
++#define MATCH_GETNOISE 0x7a902073
++#define MASK_GETNOISE 0xfffff07f
  #define MATCH_AMOADD_W 0x202f
  #define MASK_AMOADD_W  0xf800707f
  #define MATCH_AMOXOR_W 0x2000202f
-@@ -1906,6 +1966,8 @@
+@@ -2262,6 +2324,8 @@
  #define CSR_MARCHID 0xf12
  #define CSR_MIMPID 0xf13
  #define CSR_MHARTID 0xf14
 +#define CSR_MENTROPY 0xf15
 +#define CSR_MNOISE 0x7a9
+ #define CSR_HTIMEDELTAH 0x615
  #define CSR_CYCLEH 0xc80
  #define CSR_TIMEH 0xc81
- #define CSR_INSTRETH 0xc82
-@@ -2156,6 +2218,37 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
+@@ -2541,6 +2605,37 @@ DECLARE_INSN(bdepw, MATCH_BDEPW, MASK_BDEPW)
  DECLARE_INSN(packw, MATCH_PACKW, MASK_PACKW)
  DECLARE_INSN(packuw, MATCH_PACKUW, MASK_PACKUW)
  DECLARE_INSN(bfpw, MATCH_BFPW, MASK_BFPW)
-+// Crypto ISE - Begin
 +DECLARE_INSN(sm4ed, MATCH_SM4ED, MASK_SM4ED)
 +DECLARE_INSN(sm4ks, MATCH_SM4KS, MASK_SM4KS)
 +DECLARE_INSN(aes32esmi, MATCH_AES32ESMI, MASK_AES32ESMI)
@@ -126,25 +128,26 @@ index 3c4bf1c..3a604f0 100644
 +DECLARE_INSN(sha512sig1, MATCH_SHA512SIG1, MASK_SHA512SIG1)
 +DECLARE_INSN(sha512sum0, MATCH_SHA512SUM0, MASK_SHA512SUM0)
 +DECLARE_INSN(sha512sum1, MATCH_SHA512SUM1, MASK_SHA512SUM1)
-+// Crypto ISE - End
++DECLARE_INSN(pollentropy, MATCH_POLLENTROPY, MASK_POLLENTROPY)
++DECLARE_INSN(getnoise, MATCH_GETNOISE, MASK_GETNOISE)
  DECLARE_INSN(amoadd_w, MATCH_AMOADD_W, MASK_AMOADD_W)
  DECLARE_INSN(amoxor_w, MATCH_AMOXOR_W, MASK_AMOXOR_W)
  DECLARE_INSN(amoor_w, MATCH_AMOOR_W, MASK_AMOOR_W)
-@@ -2924,6 +3017,8 @@ DECLARE_CSR(mvendorid, CSR_MVENDORID)
+@@ -3447,6 +3542,8 @@ DECLARE_CSR(mvendorid, CSR_MVENDORID)
  DECLARE_CSR(marchid, CSR_MARCHID)
  DECLARE_CSR(mimpid, CSR_MIMPID)
  DECLARE_CSR(mhartid, CSR_MHARTID)
 +DECLARE_CSR(mentropy, CSR_MENTROPY)
 +DECLARE_CSR(mnoise, CSR_MNOISE)
+ DECLARE_CSR(htimedeltah, CSR_HTIMEDELTAH)
  DECLARE_CSR(cycleh, CSR_CYCLEH)
  DECLARE_CSR(timeh, CSR_TIMEH)
- DECLARE_CSR(instreth, CSR_INSTRETH)
 diff --git a/riscv/entropy_source.h b/riscv/entropy_source.h
 new file mode 100644
-index 0000000..5d86815
+index 0000000..5ba750f
 --- /dev/null
 +++ b/riscv/entropy_source.h
-@@ -0,0 +1,131 @@
+@@ -0,0 +1,139 @@
 +
 +#include <fstream>
 +#include <iostream>
@@ -162,6 +165,14 @@ index 0000000..5d86815
 +    static const uint32_t OPST_ES16 = 0x1 << 30;
 +    static const uint32_t OPST_WAIT = 0x2 << 30;
 +    static const uint32_t OPST_DEAD = 0x3 << 30;
++
++    //
++    // Other system events
++    // ------------------------------------------------------------
++
++    void reset() {
++        // Does nothing for now.
++    }
 +
 +    //
 +    // mentropy register
@@ -276,16 +287,6 @@ index 0000000..5d86815
 +    }
 +
 +};
-diff --git a/riscv/insn_template.h b/riscv/insn_template.h
-index 3c36d10..feaa10a 100644
---- a/riscv/insn_template.h
-+++ b/riscv/insn_template.h
-@@ -7,3 +7,5 @@
- #include "specialize.h"
- #include "tracer.h"
- #include <assert.h>
-+#include <iostream>
-+#include <fstream>
 diff --git a/riscv/insns/aes32dsi.h b/riscv/insns/aes32dsi.h
 new file mode 100644
 index 0000000..c752526
@@ -1097,42 +1098,51 @@ index 0000000..e638a31
 +WRITE_RD(zext_xlen(result));
 +
 diff --git a/riscv/processor.cc b/riscv/processor.cc
-index 6bbaca1..a4e7e75 100644
+index 564f1b3..be9da8a 100644
 --- a/riscv/processor.cc
 +++ b/riscv/processor.cc
-@@ -558,6 +558,14 @@ void processor_t::set_csr(int which, reg_t val)
-       state.minstret = (val << 32) | (state.minstret << 32 >> 32);
-       state.minstret--; // See comment above.
+@@ -1218,6 +1218,14 @@ void processor_t::set_csr(int which, reg_t val)
+       dirty_vs_state;
+       VU.vxrm = val & 0x3ul;
        break;
 +    case CSR_MENTROPY:
-+        // TODO: Check support for crypto extension.
-+        state.es.set_mentropy(val);
-+        break;
-+    case CSR_MNOISE  :
-+        // TODO: Check support for crypto extension.
-+        state.es.set_mnoise(val);
-+        break;
-     case CSR_SCOUNTEREN:
-       state.scounteren = val;
-       break;
-@@ -758,6 +766,12 @@ reg_t processor_t::get_csr(int which)
-       if (xlen == 32)
-         return state.minstret >> 32;
-       break;
++      // TODO: require_crypto_ise_es
++      es.set_mentropy(val);
++      break;
++    case CSR_MNOISE:
++      // TODO: require_crypto_ise_es
++      es.set_mnoise(val);
++      break;
+   }
+ 
+ #if defined(RISCV_ENABLE_COMMITLOG)
+@@ -1298,6 +1306,8 @@ void processor_t::set_csr(int which, reg_t val)
+     case CSR_DPC:
+     case CSR_DSCRATCH0:
+     case CSR_DSCRATCH1:
 +    case CSR_MENTROPY:
-+        // TODO: Check support for crypto extension.
-+        return state.es.get_mentropy();
-+    case CSR_MNOISE  :
-+        // TODO: Check support for crypto extension.
-+        return state.es.get_mnoise();
-     case CSR_SCOUNTEREN: return state.scounteren;
-     case CSR_MCOUNTEREN: return state.mcounteren;
-     case CSR_SSTATUS: {
++    case CSR_MNOISE:
+       LOG_CSR(which);
+       break;
+   }
+@@ -1637,6 +1647,12 @@ reg_t processor_t::get_csr(int which, insn_t insn, bool write, bool peek)
+       if (!supports_extension('V'))
+         break;
+       ret(VU.vlenb);
++    case CSR_MENTROPY:
++      // TODO: require_crypto_ise_es
++      return es.get_mentropy();
++    case CSR_MNOISE:
++      // TODO: require_crypto_ise_es
++      return es.get_mnoise();
+   }
+ 
+ #undef ret
 diff --git a/riscv/processor.h b/riscv/processor.h
-index 2b5003b..f20bbcc 100644
+index 2187608..26b09db 100644
 --- a/riscv/processor.h
 +++ b/riscv/processor.h
-@@ -11,6 +11,7 @@
+@@ -12,6 +12,7 @@
  #include <map>
  #include <cassert>
  #include "debug_rom_defines.h"
@@ -1140,70 +1150,63 @@ index 2b5003b..f20bbcc 100644
  
  class processor_t;
  class mmu_t;
-@@ -53,6 +54,7 @@ typedef struct
-   uint8_t cause;
- } dcsr_t;
- 
-+
- typedef enum
- {
-   ACTION_DEBUG_EXCEPTION = MCONTROL_ACTION_DEBUG_EXCEPTION,
-@@ -240,6 +242,9 @@ struct state_t
-   reg_t satp;
-   reg_t scause;
- 
-+  // The entropy source for the crypto extension.
+@@ -429,6 +430,8 @@ private:
+   bool halt_on_reset;
+   std::vector<bool> extension_table;
+   
++  // Crypto ISE Entropy source.
 +  entropy_source es;
-+
-   reg_t dpc;
-   reg_t dscratch0, dscratch1;
-   dcsr_t dcsr;
+ 
+   std::vector<insn_desc_t> instructions;
+   std::map<reg_t,uint64_t> pc_histogram;
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 4ee64fa..92c4460 100644
+index 9afbc14..102cd6d 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -772,6 +772,36 @@ riscv_insn_priv = \
- 	sret \
- 	wfi \
+@@ -859,6 +859,38 @@ riscv_insn_ext_v = \
+ 	$(riscv_insn_ext_v_ctrl) \
+ 	$(riscv_insn_ext_v_ldst) \
  
-+riscv_insn_crypto = \
-+    aes32esmi \
-+    aes32esi \
-+    aes32dsmi \
-+    aes32dsi \
-+    sm4ed \
-+    sm4ks \
-+    sm3p0 \
-+    sm3p1 \
-+    aes64ks1i \
-+    aes64ks2 \
-+    aes64im \
-+    aes64esm \
-+    aes64es \
-+    aes64dsm \
-+    aes64ds \
-+    sha256sig0 \
-+    sha256sig1 \
-+    sha256sum0 \
-+    sha256sum1 \
-+    sha512sig0l \
-+    sha512sig0h \
-+    sha512sig1l \
-+    sha512sig1h \
-+    sha512sum0r \
-+    sha512sum1r \
-+    sha512sig0 \
-+    sha512sig1 \
-+    sha512sum0 \
-+    sha512sum1
- 
- riscv_insn_list = \
- 	$(riscv_insn_ext_a) \
-@@ -784,6 +814,7 @@ riscv_insn_list = \
++# Crypto ISE
++riscv_insn_ext_k = \
++	aes32dsi \
++	aes32dsmi \
++	aes32esi \
++	aes32esmi \
++	aes64ds \
++	aes64dsm \
++	aes64es \
++	aes64esm \
++	aes64im \
++	aes64ks1i \
++	aes64ks2 \
++	sha256sig0 \
++	sha256sig1 \
++	sha256sum0 \
++	sha256sum1 \
++	sha512sig0 \
++	sha512sig0h \
++	sha512sig0l \
++	sha512sig1 \
++	sha512sig1h \
++	sha512sig1l \
++	sha512sum0 \
++	sha512sum0r \
++	sha512sum1 \
++	sha512sum1r \
++	sm3p0 \
++	sm3p1 \
++	sm4ed \
++	sm4ks
++
+ riscv_insn_ext_h = \
+ 	hfence_gvma \
+ 	hfence_vvma \
+@@ -903,6 +935,7 @@ riscv_insn_list = \
+ 	$(riscv_insn_ext_q) \
  	$(riscv_insn_ext_b) \
  	$(if $(HAVE_INT128),$(riscv_insn_ext_v),) \
++    $(riscv_insn_ext_k) \
+ 	$(riscv_insn_ext_h) \
  	$(riscv_insn_priv) \
-+	$(riscv_insn_crypto)
  
- riscv_gen_srcs = \
- 	$(addsuffix .cc,$(riscv_insn_list))
