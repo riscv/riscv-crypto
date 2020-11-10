@@ -249,9 +249,9 @@ For cryptography, they can accelerate bit-sliced implementations,
 permutation layers of block ciphers, masking based countermeasures
 and SBox operations.
 
-Figure \ref{fig:example:xperm} shows example implementations of the
-$4$-bit PRINCE SBox using the instructions.
-Other lightweight block ciphers using $4$-bit SBoxes include
+%Figure \ref{fig:example:xperm} shows example implementations of the
+%$4$-bit PRINCE SBox using the instructions.
+Lightweight block ciphers using $4$-bit SBoxes include
 PRESENT\cite{block:present},
 Rectangle\cite{block:rectangle},
 GIFT\cite{block:gift},
@@ -272,26 +272,26 @@ time, using the {\tt xperm.b} instruction\footnote{
 Note that this technique is also suitable for masking based
 side-channel countermeasures.
 
-\begin{figure}[h]
-\begin{lstlisting}[style=ASM]
-prince_sbox_rv64:
-    li  t0, 0x4D5E087619CA23FB  // Load the prince block cipher SBox
-    xperm.n a0, t0, a0          // a0.4[i] = t0.4[a0.4[i]]
-    ret
-
-prince_sbox_rv32:
-    li  t0, 0x4D5E0876  // Load last  8 elements of prince sbox
-    li  t1, 0x19CA23FB  // Load first 8 elements of prince sbox
-    li  t2, 0x88888888  // Bit mask for MS bits of index nibbles.
-    xperm.n a1, t1, a0  // a1.4[i] = t1.4[a0.4[i]] if a0.4[i] < 8 else 0
-    xor     a0, a0, t2  // Toggle MS bit of each nibble in input vector
-    xperm.n a0, t0, a0  // a0.4[i] = t1.4[a0.4[i]] if a0.4[i] < 8 else 0
-    or      a0, a0, a1  // Or results together.
-    ret
-\end{lstlisting}
-\caption{
-    Example implementations of the $4$-bit PRINCE\cite{block:prince}
-    block cipher SBox using the \mnemonic{xperm.n} instruction.
-}
-\label{fig:example:xperm}
-\end{figure}
+%\begin{figure}[h]
+%\begin{lstlisting}[style=ASM]
+%prince_sbox_rv64:
+%    li  t0, 0x4D5E087619CA23FB  // Load the prince block cipher SBox
+%    xperm.n a0, t0, a0          // a0.4[i] = t0.4[a0.4[i]]
+%    ret
+%
+%prince_sbox_rv32:
+%    li  t0, 0x4D5E0876  // Load last  8 elements of prince sbox
+%    li  t1, 0x19CA23FB  // Load first 8 elements of prince sbox
+%    li  t2, 0x88888888  // Bit mask for MS bits of index nibbles.
+%    xperm.n a1, t1, a0  // a1.4[i] = t1.4[a0.4[i]] if a0.4[i] < 8 else 0
+%    xor     a0, a0, t2  // Toggle MS bit of each nibble in input vector
+%    xperm.n a0, t0, a0  // a0.4[i] = t1.4[a0.4[i]] if a0.4[i] < 8 else 0
+%    or      a0, a0, a1  // Or results together.
+%    ret
+%\end{lstlisting}
+%\caption{
+%    Example implementations of the $4$-bit PRINCE\cite{block:prince}
+%    block cipher SBox using the \mnemonic{xperm.n} instruction.
+%}
+%\label{fig:example:xperm}
+%\end{figure}
