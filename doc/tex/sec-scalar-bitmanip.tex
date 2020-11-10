@@ -63,66 +63,93 @@ SHA256, AES (Shift Rows), ChaCha20, SM3.
 Algorithms making use of 64-bit rotations:
 SHA512, SHA3.
 
-\subsubsection{Other Permutations: {\tt grev}, {\tt gorc} and {\tt shfl}}
+\subsubsection{Bit \& Byte Permutations}
 \label{sec:scalar:bitmanip:grev}
 
 \begin{cryptobitmanipisa}
-RV32, RV64:                         RV64 only:
-    grev rd, rs1, rs2                   grevw rd, rs1, rs2
-    grevi rd, rs1, imm                  greviw rd, rs1, imm
+RV32:
+    rev.b   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
+    rev8    rd, rs1 // grevi rd, rs1, 24 - Reverse bytes in 32-bit word
+
+RV64:
+    rev.b   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
+    rev8    rd, rs1 // grevi rd, rs1, 56 - Reverse bytes in 64-bit word
+    rev8.w  rd, rs1 // grevi rd, rs1, 24 - Reverse bytes in 32-bit words
 \end{cryptobitmanipisa}
 
-The Generalised Reverse ({\tt grev*}) instructions can be used for 
-``{\em byte-order swap, bitwise reversal, short-order-swap,
-word-order-swap (RV64), nibble-order swap, bitwise reversal in a byte}".
-These operations are useful for various permutation operations
-needed either by block ciphers and hash-functions directly, or for
-endianness correction of data.
-Endianness correction is important because
-cryptography often occurs in the context of communication, which requires
-standardised endianness which may be different from the natural machine
-endianness.
-This instruction is also useful for getting data into the right form
-for being posted to a dedicated accelerator.
-The full specification of these instrucitons is available in
+The scalar cryptography extension provides the following instructions for
+manipulating the bit and byte endianess of data.
+They are all parameterisations of the Generalized Reverse with Immediate
+({\tt grevi}) instruction.
+The scalar cryptography extension requires {\em only} the above instances
+of {\tt grevi} be implemented, which can be invoked via their pseudo-ops.
+
+Reversing bytes in words is very common in cryptography when setting a
+standard endinaness for input and output data.
+Bit reversal within bytes is used for implementing the GHASH  component
+of Galois/Counter Mode (GCM)~\cite{nist:gcm}.
+
+Cores which also implement the Bitmanipulation extension {\em may} also
+implement the complete {\tt grevi} instruction, with all immediate values
+supported.
+The full specification of the {\tt grevi} instruction is available in
 \cite[Section 2.2.2]{riscv:bitmanip:draft}.
 
 \begin{cryptobitmanipisa}
-RV32, RV64:                         RV64 only:
-    gorc    rd, rs1, rs2                gorcw   rd, rs1, rs2
-    gorci   rd, rs1, imm                gorciw  rd, rs1, imm
+RV32:
+    zip     rd, rs1 // shfli   rd, rs1, 15 - Bit interleave
+    unzip   rd, rs1 // unshfli rd, rs1, 15 - Bit deinterleave
 \end{cryptobitmanipisa}
 
-The Generalized Or Combine ({\tt gorc}) instructions are very similar
-to {\tt grev}, but instead of swapping bit pairs, it or's them together,
-and writes the result to both bit positions.
-It is useful for aribitrary bit permutations, and can be used in
-conjunction with the Crossbar Permutation Instrucitons
-(Section \ref{sec:xperm}) to implement aribtrary bit permutations
-very efficiently.
-The full specification of these instrucitons is available in
-\cite[Section 2.3]{riscv:bitmanip:draft}.
+The {\tt zip} and {\tt unzip} pseudo-ops are specific instances of
+the more general {\tt shfli} and {\tt unshfli} instructions.
+The scalar cryptography extension requires {\em only} the above instances
+of {\tt [un]shfli} be implemented, which can be invoked via their
+pseudo-ops.
+Only RV32 implementations require these instructions.
+
+They perform a bit-interleave (or de-interleave) operation, and are
+useful for implementing the 64-bit rotations in the
+SHA3~\cite{nist:fips:202} algorithm on
+a 32-bit architecture\footnote{
+It is also useful for the ASCON cipher, which is a candidate in the
+NIST Lightweight Cryptography competition.
+}.
+On RV64, the relevant operations in SHA3 can be done natively, so
+{\tt zip} and {\tt unzip} are not required.
+
+Cores which also implement the Bitmanipulation extension {\em may} also
+implement the complete {\tt [un]shfli} instruction, with all immediate values
+supported.
+The full specification of the {\tt shfli} instruction is available in
+\cite[Section 2.2.3]{riscv:bitmanip:draft}.
 
 \begin{cryptobitmanipisa}
-RV32, RV64:                         RV64 only:
-    shfl    rd, rs1, rs2                shflw   rd, rs1, rs2
-    unshfl  rd, rs1, rs2                unshflw rd, rs1, rs2
-    shfli   rd, rs1, imm
-    unshfli rd, rs1, imm
+RV32, RV64:             
+    gorci   rd, rs1, 3
+    gorci   rd, rs1, 4
+    gorci   rd, rs1, 7
 \end{cryptobitmanipisa}
 
-The generalised shuffle instructions are useful for implementing
-generic bit permutation operations.
-Algorithms such as 
-DES \footnote{
-One might reasonably argue that given the heritage of DES, it's support
-shouldn't really be any sort of consideration for a forward looking
-ISA like RISC-V.
-}
-and
-PRESENT\cite{block:present} with
-irregular / odd permutations are most-likely to benefit from this
-instruction.
+The Generalized Or Combine ({\tt gorci}) instructions are very similar
+to {\tt grevi}, but instead of swapping bit pairs, it or's them together,
+Only the above immediate values are required by the scalar cryptography
+extension.
+
+These variants of {\tt gorci} are
+useful for implementing aribitrary bit permutations and
+constant-time SBox lookups in
+conjunction with the Crossbar Permutation Instructions
+(Section \ref{sec:xperm})\footnote{
+\url{http://svn.clairexen.net/handicraft/2020/lut4perm/demo01.cc}
+\url{http://svn.clairexen.net/handicraft/2020/lut4perm/demo02.cc}
+}.
+
+Cores which also implement the Bitmanipulation extension {\em may} also
+implement the complete {\tt gorci} instruction, with all immediate values
+supported.
+The full specification of these instructions is available in
+\cite[Section 2.3]{riscv:bitmanip:draft}.
 
 \subsubsection{Carry-less Multiply}
 
@@ -141,14 +168,9 @@ GCM is recommended by NIST as a block cipher mode of operation
 \cite{nist:gcm}, and is the only {\em required} mode for the TLS 1.3
 protocol.
 
-\note{
-    To be used in a cryptographic context, the RISC-V extension
-    {\em requires} that these instructions be implemented in
-    a constant time fashion.
-    That is, their execution latency {\em must not} depend on
-    their operands.
-}
-
+See Section \ref{sec:scalar:timing} for additional implementation
+requirements for this instruction, related to data independent
+execution latency.
 
 \subsubsection{Logic With Negate}
 
@@ -195,40 +217,6 @@ around as byte strings, but can operate on words made out of those byte
 strings.
 This occurs for AES when loading blocks and keys (which may not be
 word aligned) into registers to perform the round functions.
-See Figure \ref{fig:example:pack} for an example.
-
-\begin{figure}
-\begin{subfigure}[t]{0.5\textwidth}
-\begin{lstlisting}
-packh   a0, a0, a1
-packh   a1, a2, a3
-pack    a0, a0, a1
-.
-.
-.
-\end{lstlisting}
-\end{subfigure}
-\begin{subfigure}[t]{0.5\textwidth}
-\begin{lstlisting}
-slli    a1, a1,  8
-slli    a2, a2, 16
-slli    a3, a3, 24
-or      a2, a2, a3
-or      a0, a0, a1
-or      a0, a0, a2
-\end{lstlisting}
-\end{subfigure}
-\caption{Comparison of packing four bytes loaded into GPRs $a0..a3$ into
-a single 32-bit word in $a0$ using the Bitmanip \mnemonic[pack*] instructions
-vs. the standard RV32 instructions.}
-\label{fig:example:pack}
-\end{figure}
-
-Algorithms with sub-word rotations/shifts:
-SPARX.
-
-Algorithms benefiting from packing bytes into words:
-AES, SHA2, SHA3.
 
 
 \subsubsection{Crossbar Permutation Instructions}
