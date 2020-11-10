@@ -78,18 +78,18 @@ RV64:
 \end{cryptobitmanipisa}
 
 The scalar cryptography extension provides the following instructions for
-manipulating the bit and byte endianess of data.
-They are all parameterisations of the Generalized Reverse with Immediate
+manipulating the bit and byte endianness of data.
+They are all parameterisations of the Generalised Reverse with Immediate
 ({\tt grevi}) instruction.
 The scalar cryptography extension requires {\em only} the above instances
 of {\tt grevi} be implemented, which can be invoked via their pseudo-ops.
 
 Reversing bytes in words is very common in cryptography when setting a
-standard endinaness for input and output data.
+standard endianness for input and output data.
 Bit reversal within bytes is used for implementing the GHASH  component
 of Galois/Counter Mode (GCM)~\cite{nist:gcm}.
 
-Cores which also implement the Bitmanipulation extension {\em may} also
+Cores which also implement the Bit-manipulation extension {\em may} also
 implement the complete {\tt grevi} instruction, with all immediate values
 supported.
 The full specification of the {\tt grevi} instruction is available in
@@ -98,7 +98,7 @@ The full specification of the {\tt grevi} instruction is available in
 \begin{cryptobitmanipisa}
 RV32:
     zip     rd, rs1 // shfli   rd, rs1, 15 - Bit interleave
-    unzip   rd, rs1 // unshfli rd, rs1, 15 - Bit deinterleave
+    unzip   rd, rs1 // unshfli rd, rs1, 15 - Bit de-interleave
 \end{cryptobitmanipisa}
 
 The {\tt zip} and {\tt unzip} pseudo-ops are specific instances of
@@ -118,7 +118,7 @@ NIST Lightweight Cryptography competition.
 On RV64, the relevant operations in SHA3 can be done natively, so
 {\tt zip} and {\tt unzip} are not required.
 
-Cores which also implement the Bitmanipulation extension {\em may} also
+Cores which also implement the Bit-manipulation extension {\em may} also
 implement the complete {\tt [un]shfli} instruction, with all immediate values
 supported.
 The full specification of the {\tt shfli} instruction is available in
@@ -131,13 +131,13 @@ RV32, RV64:
     gorci   rd, rs1, 7
 \end{cryptobitmanipisa}
 
-The Generalized Or Combine ({\tt gorci}) instructions are very similar
+The Generalised Or Combine ({\tt gorci}) instructions are very similar
 to {\tt grevi}, but instead of swapping bit pairs, it or's them together,
 Only the above immediate values are required by the scalar cryptography
 extension.
 
 These variants of {\tt gorci} are
-useful for implementing aribitrary bit permutations and
+useful for implementing arbitrary bit permutations and
 constant-time SBox lookups in
 conjunction with the Crossbar Permutation Instructions
 (Section \ref{sec:xperm})\footnote{
@@ -145,7 +145,7 @@ conjunction with the Crossbar Permutation Instructions
 \url{http://svn.clairexen.net/handicraft/2020/lut4perm/demo02.cc}
 }.
 
-Cores which also implement the Bitmanipulation extension {\em may} also
+Cores which also implement the Bit-manipulation extension {\em may} also
 implement the complete {\tt gorci} instruction, with all immediate values
 supported.
 The full specification of these instructions is available in
@@ -190,7 +190,7 @@ in systems without the ternary Bitmanip {\tt cmov} instruction.
 
 Useful for:
 SHA3 Chi step,
-bitsliced function implementations
+bit-sliced function implementations
 and
 software based power/EM side-channel countermeasures based on masking.
 
@@ -243,7 +243,7 @@ The \rstwo register contains a vector of $\XLEN/8$ $8$-bit indexes.
 The result is each element in \rstwo replaced by the indexed element
 in \rsone, or zero if the index into \rstwo is out of bounds.
 
-The instruction can be used to implement aribitrary bit
+The instruction can be used to implement arbitrary bit
 permutations.
 For cryptography, they can accelerate bit-sliced implementations,
 permutation layers of block ciphers, masking based countermeasures
