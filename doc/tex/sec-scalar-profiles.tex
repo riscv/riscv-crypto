@@ -65,6 +65,22 @@ Detection of fine-grained functionality uses the mechanisms defined
 by the {\tt tech-config} RISC-V Task Group.
 At the time of writing, these mechanisms are still being defined.
 
+Some example GCC compiler strings:
+\begin{itemize}
+\item {\tt -march=rv32ik} -
+    Implement the 32-bit NIST feature set ({\tt Zkn},
+    the entropy source feature set ({\tt Zkr}) and
+    all of the 32-bit Bit-manipulation instructions used by the
+    scalar cryptography extension listed in Section \ref{sec:scalar:bitmanip}.
+\item {\tt -march=rv64ik} -
+    As above, but implementing the 64-bit version of the NIST feature set,
+    and additional 64-bit instructions from the Bit-manipulation subset.
+\item {\tt -march=rv64i\_Zks\_Zkr} -
+    Implement the Entropy Source instrucitons,
+    the 64-bit Bit-manipulation instructions,
+    and the XLEN independent ShangMi suite instructions.
+\end{itemize}
+
 %\begin{table}[h]
 %\centering
 %\begin{tabular}{lcccccc}
