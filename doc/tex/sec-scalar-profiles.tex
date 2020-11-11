@@ -24,25 +24,25 @@ based implementations.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{cl}
-Letter   & Description \\
+\begin{tabular}{l|l}
+Functional Set    & Description \\
 \hline
-{\tt k } & The default scalar cryptography extension, short for {\tt ZknZkr}    \\
-{\tt b } & Bitmanip subset included in the scalar cryptography extension.       \\
-{\tt n } & NIST algorithm suite.                                                \\
-{\tt s } & ShangMi (SM) algorithm suite.                                        \\
-{\tt e } & Encryption Instructions.                                             \\
-{\tt d } & Decryption Instructions.                                             \\
-{\tt g } & Constant time carry-less multiply for Galois/Counter Mode            \\
-{\tt h } & Hash function instructions.                                          \\
-{\tt r } & Entropy source.                                                      \\
+       {\tt  K   }& The default scalar cryptography extension, short for {\tt ZknZkr}   \\
+       {\tt Zkg  }& Constant time carry-less multiply for Galois/Counter Mode.          \\
+       {\tt Zkb  }& Bitmanip subset included in the scalar cryptography extension, minus those in {\tt Zkg}. \\
+       {\tt Zkr  }& Entropy source for seeding random number generators.                \\
+       {\tt Zkn  }& NIST algorithm suite. Short for {\tt ZkneZkndZknhZkgZkb}.           \\
+       {\tt Zkne }& NIST AES Encryption Instructions.                                   \\
+       {\tt Zknd }& NIST AES Decryption Instructions.                                   \\
+       {\tt Zknh }& NIST SHA2 Hash function instructions.                               \\
+       {\tt Zks  }& ShangMi (SM) algorithm suite. Short for {\tt ZkseZksdZkshZkgZkb}.   \\
+       {\tt Zkse }& SM4 Encryption Instructions.                                        \\
+       {\tt Zksd }& SM4 Decryption Instructions.                                        \\
+       {\tt Zksh }& SM3 Hash function instructions.                                     \\
 \hline
 \end{tabular}
 \caption{
-    Explanation of the letters used to create the functional set names.
-    These letters are grouped to form specific functional sets.
-    For example, {\tt Zkne} refers to all of the NIST AES Encryption
-    instructions. Or, {\tt Zksh} refers to the ShangMi hash function instructions.
+    Explanation of the feature strings used to refer to the functional sets.
 }
 \label{tab:scalar:functional-sets}
 \end{table}
@@ -79,6 +79,8 @@ Some example GCC compiler strings:
     Implement the Entropy Source instructions,
     the 64-bit Bit-manipulation instructions,
     and the XLEN independent ShangMi suite instructions.
+\item {\tt -march=rv64i\_Zkne\_Zknh} -
+    Implement only the 64-bit NIST AES Encryption and hash function instructions.
 \end{itemize}
 
 %\begin{table}[h]
@@ -88,27 +90,27 @@ Some example GCC compiler strings:
 %\multirow{2}{*}{Instructions} & 
 %\multirow{2}{*}{Functional Set} &
 %\multicolumn{3}{c}{Feature Sets}    \\
-%                              &      & Zkn (RV32) & Zkn (RV64) & Zks    \\ \hline
-%{\tt clmul                   }& Zkg  & \cmark     & \cmark     & \cmark \\
-%{\tt clmulh                  }& Zkg  & \cmark     & \cmark     & \cmark \\
-%{\tt xperm.n                 }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt xperm.b                 }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt ror                     }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt rol                     }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt rori                    }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt roriw                   }& Zkb  &            & \cmark     & \cmark \\
-%{\tt andn                    }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt orn                     }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt xorn                    }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt pack                    }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt packu                   }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt packh                   }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt packw                   }& Zkb  &            & \cmark     & \cmark \\
-%{\tt packuw                  }& Zkb  &            & \cmark     & \cmark \\
-%{\tt grevi                   }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt gorci                   }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt shfli                   }& Zkb  & \cmark     & \cmark     & \cmark \\
-%{\tt unshfli                 }& Zkb  & \cmark     & \cmark     & \cmark \\
+%                              &            & Zkn (RV32) & Zkn (RV64) & Zks    \\ \hline
+%{\tt clmul                   }& {\tt Zkg } & \cmark     & \cmark     & \cmark \\
+%{\tt clmulh                  }& {\tt Zkg } & \cmark     & \cmark     & \cmark \\
+%{\tt xperm.n                 }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt xperm.b                 }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt ror                     }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt rol                     }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt rori                    }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt roriw                   }& {\tt Zkb } &            & \cmark     & \cmark \\
+%{\tt andn                    }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt orn                     }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt xorn                    }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt pack                    }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt packu                   }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt packh                   }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt packw                   }& {\tt Zkb } &            & \cmark     & \cmark \\
+%{\tt packuw                  }& {\tt Zkb } &            & \cmark     & \cmark \\
+%{\tt grevi                   }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt gorci                   }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt shfli                   }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
+%{\tt unshfli                 }& {\tt Zkb } & \cmark     & \cmark     & \cmark \\
 %\hline
 %\end{tabular}
 %\caption{Feature sets for instructions from the Bit-manipulation extension which
@@ -118,50 +120,62 @@ Some example GCC compiler strings:
 
 \begin{table}[]
 \centering
-\begin{tabular}{lccccccc}
+\begin{tabular}{llcccccc}
 \hline
 \multirow{2}{*}{Instructions} & 
 \multirow{2}{*}{Functional Set} &
 \multicolumn{4}{c}{Feature Sets}    \\
-                              &      & Zkn (RV32) & Zkn (RV64) & Zks    & Zkr     \\ \hline
-{\tt aes32dsi                }& Zknd & \cmark     &            &        &         \\
-{\tt aes32dsmi               }& Zknd & \cmark     &            &        &         \\
-{\tt aes32esi                }& Zkne & \cmark     &            &        &         \\
-{\tt aes32esmi               }& Zkne & \cmark     &            &        &         \\
-{\tt aes64ds                 }& Zknd &            & \cmark     &        &         \\
-{\tt aes64dsm                }& Zknd &            & \cmark     &        &         \\
-{\tt aes64es                 }& Zkne &            & \cmark     &        &         \\
-{\tt aes64esm                }& Zkne &            & \cmark     &        &         \\
-{\tt aes64im                 }& Zknd &            & \cmark     &        &         \\
-{\tt aes64ks1i               }& Zkne &            & \cmark     &        &         \\
-{\tt aes64ks2                }& Zkne &            & \cmark     &        &         \\
-{\tt sha256sig0              }& Zknh & \cmark     & \cmark     &        &         \\
-{\tt sha256sig1              }& Zknh & \cmark     & \cmark     &        &         \\
-{\tt sha256sum0              }& Zknh & \cmark     & \cmark     &        &         \\
-{\tt sha256sum1              }& Zknh & \cmark     & \cmark     &        &         \\
-{\tt sha512sig0h             }& Zknh & \cmark     &            &        &         \\
-{\tt sha512sig0l             }& Zknh & \cmark     &            &        &         \\
-{\tt sha512sig1h             }& Zknh & \cmark     &            &        &         \\
-{\tt sha512sig1l             }& Zknh & \cmark     &            &        &         \\
-{\tt sha512sum0r             }& Zknh & \cmark     &            &        &         \\
-{\tt sha512sum1r             }& Zknh & \cmark     &            &        &         \\
-{\tt sha512sig0              }& Zknh &            & \cmark     &        &         \\
-{\tt sha512sig1              }& Zknh &            & \cmark     &        &         \\
-{\tt sha512sum0              }& Zknh &            & \cmark     &        &         \\
-{\tt sha512sum1              }& Zknh &            & \cmark     &        &         \\
-{\tt sm3p0                   }& Zksh &            &            & \cmark &         \\
-{\tt sm3p1                   }& Zksh &            &            & \cmark &         \\
-{\tt sm4ed                   }& Zkse &            &            & \cmark &         \\
-{\tt sm4ks                   }& Zkse &            &            & \cmark &         \\
-{\tt pollentropy             }& Zkr  &            &            &        & \cmark  \\
-{\tt getnoise                }& Zkr  &            &            &        & \cmark  \\
+                              &             & Zkn (RV32) & Zkn (RV64) & Zks (RV32) & Zks (RV64) & Zkr     \\ \hline
+{\tt aes32dsi                }& {\tt Zknd } & \cmark     &            &         &        &         \\
+{\tt aes32dsmi               }& {\tt Zknd } & \cmark     &            &         &        &         \\
+{\tt aes32esi                }& {\tt Zkne } & \cmark     &            &         &        &         \\
+{\tt aes32esmi               }& {\tt Zkne } & \cmark     &            &         &        &         \\
+{\tt aes64ds                 }& {\tt Zknd } &            & \cmark     &         &        &         \\
+{\tt aes64dsm                }& {\tt Zknd } &            & \cmark     &         &        &         \\
+{\tt aes64es                 }& {\tt Zkne } &            & \cmark     &         &        &         \\
+{\tt aes64esm                }& {\tt Zkne } &            & \cmark     &         &        &         \\
+{\tt aes64im                 }& {\tt Zknd } &            & \cmark     &         &        &         \\
+{\tt aes64ks1i               }& {\tt Zkne } &            & \cmark     &         &        &         \\
+{\tt aes64ks2                }& {\tt Zkne } &            & \cmark     &         &        &         \\
+{\tt sha256sig0              }& {\tt Zknh } & \cmark     & \cmark     &         &        &         \\
+{\tt sha256sig1              }& {\tt Zknh } & \cmark     & \cmark     &         &        &         \\
+{\tt sha256sum0              }& {\tt Zknh } & \cmark     & \cmark     &         &        &         \\
+{\tt sha256sum1              }& {\tt Zknh } & \cmark     & \cmark     &         &        &         \\
+{\tt sha512sig0h             }& {\tt Zknh } & \cmark     &            &         &        &         \\
+{\tt sha512sig0l             }& {\tt Zknh } & \cmark     &            &         &        &         \\
+{\tt sha512sig1h             }& {\tt Zknh } & \cmark     &            &         &        &         \\
+{\tt sha512sig1l             }& {\tt Zknh } & \cmark     &            &         &        &         \\
+{\tt sha512sum0r             }& {\tt Zknh } & \cmark     &            &         &        &         \\
+{\tt sha512sum1r             }& {\tt Zknh } & \cmark     &            &         &        &         \\
+{\tt sha512sig0              }& {\tt Zknh } &            & \cmark     &         &        &         \\
+{\tt sha512sig1              }& {\tt Zknh } &            & \cmark     &         &        &         \\
+{\tt sha512sum0              }& {\tt Zknh } &            & \cmark     &         &        &         \\
+{\tt sha512sum1              }& {\tt Zknh } &            & \cmark     &         &        &         \\
+\hline                                                                                   
+{\tt sm3p0                   }& {\tt Zksh } &            &            & \cmark  & \cmark &         \\
+{\tt sm3p1                   }& {\tt Zksh } &            &            & \cmark  & \cmark &         \\
+{\tt sm4ed                   }& {\tt Zkse } &            &            & \cmark  & \cmark &         \\
+{\tt sm4ks                   }& {\tt Zkse } &            &            & \cmark  & \cmark &         \\
+\hline                                                                                   
+{\tt pollentropy             }& {\tt Zkr  } &            &            &         &        & \cmark  \\
+{\tt getnoise                }& {\tt Zkr  } &            &            &         &        & \cmark  \\
+\hline                                                                                   
+{\tt clmul}, {\tt clmulh     }& {\tt Zkg  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt xperm.n}, {\tt xperm.b  }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt ror, rol, rori          }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt roriw                   }& {\tt Zkb  } &            & \cmark     &         & \cmark &         \\
+{\tt andn, orn, xorn         }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt pack, packu, packh      }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt packw, packuw           }& {\tt Zkb  } &            & \cmark     &         & \cmark &         \\
+{\tt rev.b, rev8 (grevi)     }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt rev8.w      (grevi)     }& {\tt Zkb  } &            & \cmark     &         & \cmark &         \\
+{\tt gorci                   }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt zip    (shfl)           }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
+{\tt unzip  (unshfl)         }& {\tt Zkb  } & \cmark     & \cmark     & \cmark  & \cmark &         \\
 \hline
 \end{tabular}
 \caption{
-Feature sets for instructions exclusive to the scalar cryptography extension.
-The Bit-manipulation instructions listed in Section \ref{sec:scalar:bitmanip}
-are not shown, as they are always included in every subset with an appropriate
-{\tt XLEN}.
+Feature sets for instructions in the scalar cryptography extension.
 }
 \label{tab:scalar:feature-sets:crypto}
 \end{table}

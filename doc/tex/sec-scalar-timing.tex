@@ -56,4 +56,16 @@ mul  t1, a1, a0 // a1 >  a0, not guaranteed to have data-independent latency.
 \end{verbatim}
 Cores do not need to abide by the data independent latency constraint,
 as this is consistent with the un-fused sequence.
+Note that the register address choices {\em may} result in different
+execution latencies, so long as the numerical values contained in the
+sourced registers do not affect the execution latency.
+For example,
+{\tt mul a1, a2, a3} (a1 = a2 * a3)
+may have a different latency profile from self-assignment
+{\tt mul a2, a2, a3} (a2 *= a3)
+or squaring
+{\tt mul a1, a2, a2} (a1 = a2 * a2) - 
+so long as the {\em contents} of {\tt GPR[a0/a1/a2]} do not affect
+the execution latency.
+None of these latency requirements apply to floating point operations.
 
