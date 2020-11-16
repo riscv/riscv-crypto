@@ -132,9 +132,12 @@ RV32, RV64
     We specifically recommend against busy-loop polling on this instruction
     as it may have relatively low bandwidth. Even though no specific interrupt
     sequence is specified, it is required that the \mnemonic{wfi} (wait for
-    interrupt) instruction is available and does not trap on systems that
-    implement \mnemonic{pollentropy}. The RISC-V ISA allows \mnemonic{wfi} to be
-    implemented as a \mnemonic{nop}.
+    interrupt) instruction is available.
+    Cores which implement \mnemonic{mentropy} must not raise an Illegal
+    Instruction Exception when executing \mnemonic{wfi} unless required to
+    do so by the Timeout Wait bit of the \mnemonic{mstatus} register,
+    as detailed in Section 3.1.6.5 of the Privileged ISA Manual \cite{_WaAs19A}.
+    The RISC-V ISA allows \mnemonic{wfi} to be implemented as a \mnemonic{nop}.
     As a minimum requirement for portable drivers, a \verb|WAIT| or
     \verb|BIST| from \mnemonic{pollentropy} should be followed by a
     \mnemonic{wfi} before another \mnemonic{pollentropy} instruction is
