@@ -6,6 +6,9 @@ toolchain and ISA simulator.*
 
 ---
 
+**NOTE:** There is a task-list for creating an official GCC/Binutils patch
+for the scalar cryptography extension [here](gcc-patch-tasks.adoc).
+
 ## Building the Toolchain
 
 **TL;DR:**

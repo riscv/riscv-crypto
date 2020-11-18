@@ -435,7 +435,7 @@ def make_c(match,mask):
 
       argstring = ",".join([acodes[a] for a in arguments[mnemonic]])
 
-      line = "{%-22s, 0, INSN_CLASS_ZSCRYPTO, %10s, %s, %s, match_opcode, 0}," % (
+      line = "{%-22s, 0, INSN_CLASS_K, %10s, %s, %s, match_opcode, 0}," % (
         "\"%s\""%mnemonic,
         "\"%s\""%argstring,
         match_vars[mnemonic],
