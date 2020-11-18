@@ -28,7 +28,7 @@ function clause ext_write_CSR(0x7A9, value) = {
     Some(mnoise)
 }
 
-val      in_noise_capture_mode : unit -> bool
+val      in_noise_capture_mode : unit -> bool effect {rreg}
 function in_noise_capture_mode() = {
     if(bit_to_bool(mnoise[31])) then true else false
 }
