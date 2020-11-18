@@ -1,5 +1,5 @@
 diff --git a/riscv/decode.h b/riscv/decode.h
-index b4bb2e6..db01cbc 100644
+index b4bb2e6..ad335b6 100644
 --- a/riscv/decode.h
 +++ b/riscv/decode.h
 @@ -92,6 +92,10 @@ public:
@@ -13,6 +13,14 @@ index b4bb2e6..db01cbc 100644
    int64_t rvc_imm() { return x(2, 5) + (xs(12, 1) << 5); }
    int64_t rvc_zimm() { return x(2, 5) + (x(12, 1) << 5); }
    int64_t rvc_addi4spn_imm() { return (x(6, 1) << 2) + (x(5, 1) << 3) + (x(11, 2) << 4) + (x(7, 4) << 6); }
+@@ -236,6 +240,7 @@ private:
+ #define require_rv64 require(xlen == 64)
+ #define require_rv32 require(xlen == 32)
+ #define require_extension(s) require(p->supports_extension(s))
++#define require_either_extension(A,B) require(p->supports_extension(A) || p->supports_extension(B));
+ #define require_fp require((STATE.mstatus & MSTATUS_FS) != 0)
+ #define require_accelerator require((STATE.mstatus & MSTATUS_XS) != 0)
+ 
 diff --git a/riscv/encoding.h b/riscv/encoding.h
 index fb1536e..278e6bb 100644
 --- a/riscv/encoding.h
@@ -289,14 +297,15 @@ index 0000000..5ba750f
 +};
 diff --git a/riscv/insns/aes32dsi.h b/riscv/insns/aes32dsi.h
 new file mode 100644
-index 0000000..c752526
+index 0000000..63febc7
 --- /dev/null
 +++ b/riscv/insns/aes32dsi.h
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,17 @@
 +
 +#include "aes_common.h"
 +
 +require_rv32;
++require_extension('K');
 +
 +uint8_t     bs = insn.bs();
 +
@@ -311,14 +320,15 @@ index 0000000..c752526
 +
 diff --git a/riscv/insns/aes32dsmi.h b/riscv/insns/aes32dsmi.h
 new file mode 100644
-index 0000000..50a0738
+index 0000000..a417001
 --- /dev/null
 +++ b/riscv/insns/aes32dsmi.h
-@@ -0,0 +1,23 @@
+@@ -0,0 +1,24 @@
 +
 +#include "aes_common.h"
 +
 +require_rv32;
++require_extension('K');
 +
 +uint8_t     bs = insn.bs();
 +
@@ -340,14 +350,15 @@ index 0000000..50a0738
 +
 diff --git a/riscv/insns/aes32esi.h b/riscv/insns/aes32esi.h
 new file mode 100644
-index 0000000..59d3d7e
+index 0000000..07c09b2
 --- /dev/null
 +++ b/riscv/insns/aes32esi.h
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,17 @@
 +
 +#include "aes_common.h"
 +
 +require_rv32;
++require_extension('K');
 +
 +uint8_t     bs = insn.bs();
 +
@@ -362,14 +373,15 @@ index 0000000..59d3d7e
 +
 diff --git a/riscv/insns/aes32esmi.h b/riscv/insns/aes32esmi.h
 new file mode 100644
-index 0000000..ba96939
+index 0000000..411195e
 --- /dev/null
 +++ b/riscv/insns/aes32esmi.h
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +
 +#include "aes_common.h"
 +
 +require_rv32;
++require_extension('K');
 +
 +uint8_t     bs = insn.bs();
 +
@@ -388,14 +400,15 @@ index 0000000..ba96939
 +
 diff --git a/riscv/insns/aes64ds.h b/riscv/insns/aes64ds.h
 new file mode 100644
-index 0000000..b833b39
+index 0000000..05fadca
 --- /dev/null
 +++ b/riscv/insns/aes64ds.h
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint64_t temp = AES_INVSHIFROWS_LO(RS1,RS2);
 +
@@ -414,14 +427,15 @@ index 0000000..b833b39
 +
 diff --git a/riscv/insns/aes64dsm.h b/riscv/insns/aes64dsm.h
 new file mode 100644
-index 0000000..6ebb117
+index 0000000..f5becf7
 --- /dev/null
 +++ b/riscv/insns/aes64dsm.h
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,30 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint64_t temp = AES_INVSHIFROWS_LO(RS1,RS2);
 +
@@ -449,14 +463,15 @@ index 0000000..6ebb117
 +
 diff --git a/riscv/insns/aes64es.h b/riscv/insns/aes64es.h
 new file mode 100644
-index 0000000..32530c0
+index 0000000..a34436d
 --- /dev/null
 +++ b/riscv/insns/aes64es.h
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint64_t temp = AES_SHIFROWS_LO(RS1,RS2);
 +
@@ -475,14 +490,15 @@ index 0000000..32530c0
 +
 diff --git a/riscv/insns/aes64esm.h b/riscv/insns/aes64esm.h
 new file mode 100644
-index 0000000..88645f9
+index 0000000..a41667b
 --- /dev/null
 +++ b/riscv/insns/aes64esm.h
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,29 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint64_t temp = AES_SHIFROWS_LO(RS1,RS2);
 +
@@ -509,14 +525,15 @@ index 0000000..88645f9
 +
 diff --git a/riscv/insns/aes64im.h b/riscv/insns/aes64im.h
 new file mode 100644
-index 0000000..754535e
+index 0000000..31fd0e4
 --- /dev/null
 +++ b/riscv/insns/aes64im.h
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint32_t col_0 = RS1 & 0xFFFFFFFF;
 +uint32_t col_1 = RS1 >> 32       ;
@@ -530,14 +547,15 @@ index 0000000..754535e
 +
 diff --git a/riscv/insns/aes64ks1i.h b/riscv/insns/aes64ks1i.h
 new file mode 100644
-index 0000000..172b5ed
+index 0000000..06d9d84
 --- /dev/null
 +++ b/riscv/insns/aes64ks1i.h
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,38 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint8_t     round_consts [10] = {
 +    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36
@@ -573,14 +591,15 @@ index 0000000..172b5ed
 +
 diff --git a/riscv/insns/aes64ks2.h b/riscv/insns/aes64ks2.h
 new file mode 100644
-index 0000000..fcec177
+index 0000000..07c8488
 --- /dev/null
 +++ b/riscv/insns/aes64ks2.h
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +
 +#include "aes_common.h"
 +
 +require_rv64;
++require_extension('K');
 +
 +uint32_t    rs1_hi  =  RS1 >> 32;
 +uint32_t    rs2_lo  =  RS2      ;
@@ -754,12 +773,182 @@ index 0000000..9cc353c
 +    AES_INVMIXBYTE(COL,0,1,2,3) <<  0   \
 +)
 +
+diff --git a/riscv/insns/andn.h b/riscv/insns/andn.h
+index 4582aac..7d44fd2 100644
+--- a/riscv/insns/andn.h
++++ b/riscv/insns/andn.h
+@@ -1,2 +1,2 @@
+-require_extension('B');
++require_either_extension('B','K');
+ WRITE_RD(RS1 & ~RS2);
+diff --git a/riscv/insns/clmul.h b/riscv/insns/clmul.h
+index 9601567..56193f5 100644
+--- a/riscv/insns/clmul.h
++++ b/riscv/insns/clmul.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t a = zext_xlen(RS1), b = zext_xlen(RS2), x = 0;
+ for (int i = 0; i < xlen; i++)
+   if ((b >> i) & 1)
+diff --git a/riscv/insns/clmulh.h b/riscv/insns/clmulh.h
+index 68a50e3..206499b 100644
+--- a/riscv/insns/clmulh.h
++++ b/riscv/insns/clmulh.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t a = zext_xlen(RS1), b = zext_xlen(RS2), x = 0;
+ for (int i = 1; i < xlen; i++)
+   if ((b >> i) & 1)
+diff --git a/riscv/insns/gorci.h b/riscv/insns/gorci.h
+index c42142f..4d838eb 100644
+--- a/riscv/insns/gorci.h
++++ b/riscv/insns/gorci.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ require(SHAMT < xlen);
+ reg_t x = RS1;
+ int shamt = SHAMT;
+diff --git a/riscv/insns/grevi.h b/riscv/insns/grevi.h
+index 68213c6..c420d29 100644
+--- a/riscv/insns/grevi.h
++++ b/riscv/insns/grevi.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ require(SHAMT < xlen);
+ reg_t x = RS1;
+ int shamt = SHAMT;
+diff --git a/riscv/insns/orn.h b/riscv/insns/orn.h
+index 670926f..7b7396f 100644
+--- a/riscv/insns/orn.h
++++ b/riscv/insns/orn.h
+@@ -1,2 +1,2 @@
+-require_extension('B');
++require_either_extension('B','K');
+ WRITE_RD(RS1 | ~RS2);
+diff --git a/riscv/insns/pack.h b/riscv/insns/pack.h
+index 841f24d..9d319ed 100644
+--- a/riscv/insns/pack.h
++++ b/riscv/insns/pack.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t lo = zext_xlen(RS1 << (xlen/2)) >> (xlen/2);
+ reg_t hi = zext_xlen(RS2 << (xlen/2));
+ WRITE_RD(sext_xlen(lo | hi));
+diff --git a/riscv/insns/packh.h b/riscv/insns/packh.h
+index 34a95c8..cf5cdf3 100644
+--- a/riscv/insns/packh.h
++++ b/riscv/insns/packh.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t lo = zext_xlen(RS1 << (xlen-8)) >> (xlen-8);
+ reg_t hi = zext_xlen(RS2 << (xlen-8)) >> (xlen-16);
+ WRITE_RD(sext_xlen(lo | hi));
+diff --git a/riscv/insns/packu.h b/riscv/insns/packu.h
+index 25cc9c2..efba9ab 100644
+--- a/riscv/insns/packu.h
++++ b/riscv/insns/packu.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t lo = zext_xlen(RS1) >> (xlen/2);
+ reg_t hi = zext_xlen(RS2) >> (xlen/2) << (xlen/2);
+ WRITE_RD(sext_xlen(lo | hi));
+diff --git a/riscv/insns/packuw.h b/riscv/insns/packuw.h
+index b4a2f50..7d2dce2 100644
+--- a/riscv/insns/packuw.h
++++ b/riscv/insns/packuw.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t lo = zext32(RS1) >> 16;
+ reg_t hi = zext32(RS2) >> 16 << 16;
+ WRITE_RD(sext32(lo | hi));
+diff --git a/riscv/insns/packw.h b/riscv/insns/packw.h
+index 3da96bf..763ce22 100644
+--- a/riscv/insns/packw.h
++++ b/riscv/insns/packw.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ reg_t lo = zext32(RS1 << 16) >> 16;
+ reg_t hi = zext32(RS2 << 16);
+ WRITE_RD(sext32(lo | hi));
+diff --git a/riscv/insns/rol.h b/riscv/insns/rol.h
+index 2b15c93..ce017e7 100644
+--- a/riscv/insns/rol.h
++++ b/riscv/insns/rol.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ int shamt = RS2 & (xlen-1);
+ int rshamt = -shamt & (xlen-1);
+ WRITE_RD(sext_xlen((RS1 << shamt) | (zext_xlen(RS1) >> rshamt)));
+diff --git a/riscv/insns/rolw.h b/riscv/insns/rolw.h
+index 6d66a50..a7ea130 100644
+--- a/riscv/insns/rolw.h
++++ b/riscv/insns/rolw.h
+@@ -1,5 +1,5 @@
+ require_rv64;
+-require_extension('B');
++require_either_extension('B','K');
+ int shamt = RS2 & 31;
+ int rshamt = -shamt & 31;
+ WRITE_RD(sext32((RS1 << shamt) | (zext32(RS1) >> rshamt)));
+diff --git a/riscv/insns/ror.h b/riscv/insns/ror.h
+index 8788a12..fb84555 100644
+--- a/riscv/insns/ror.h
++++ b/riscv/insns/ror.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ int shamt = RS2 & (xlen-1);
+ int rshamt = -shamt & (xlen-1);
+ WRITE_RD(sext_xlen((RS1 << rshamt) | (zext_xlen(RS1) >> shamt)));
+diff --git a/riscv/insns/rori.h b/riscv/insns/rori.h
+index 72f1529..6ebf4ba 100644
+--- a/riscv/insns/rori.h
++++ b/riscv/insns/rori.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ require(SHAMT < xlen);
+ int shamt = SHAMT & (xlen-1);
+ int rshamt = -shamt & (xlen-1);
+diff --git a/riscv/insns/roriw.h b/riscv/insns/roriw.h
+index d0b8d67..374adfd 100644
+--- a/riscv/insns/roriw.h
++++ b/riscv/insns/roriw.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ require(SHAMT < 32);
+ int shamt = SHAMT & 31;
+ int rshamt = -shamt & 31;
+diff --git a/riscv/insns/rorw.h b/riscv/insns/rorw.h
+index b42ab73..14514d0 100644
+--- a/riscv/insns/rorw.h
++++ b/riscv/insns/rorw.h
+@@ -1,5 +1,5 @@
+ require_rv64;
+-require_extension('B');
++require_either_extension('B','K');
+ int shamt = RS2 & 31;
+ int rshamt = -shamt & 31;
+ WRITE_RD(sext32((RS1 << rshamt) | (zext32(RS1) >> shamt)));
 diff --git a/riscv/insns/sha256sig0.h b/riscv/insns/sha256sig0.h
 new file mode 100644
-index 0000000..af3d413
+index 0000000..b09e34a
 --- /dev/null
 +++ b/riscv/insns/sha256sig0.h
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,13 @@
++
++require_extension('K');
 +
 +#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
 +
@@ -773,10 +962,12 @@ index 0000000..af3d413
 +
 diff --git a/riscv/insns/sha256sig1.h b/riscv/insns/sha256sig1.h
 new file mode 100644
-index 0000000..882a3e0
+index 0000000..b2118a0
 --- /dev/null
 +++ b/riscv/insns/sha256sig1.h
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,13 @@
++
++require_extension('K');
 +
 +#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
 +
@@ -790,10 +981,12 @@ index 0000000..882a3e0
 +
 diff --git a/riscv/insns/sha256sum0.h b/riscv/insns/sha256sum0.h
 new file mode 100644
-index 0000000..4afbeec
+index 0000000..5c3048a
 --- /dev/null
 +++ b/riscv/insns/sha256sum0.h
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,13 @@
++
++require_extension('K');
 +
 +#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
 +
@@ -807,10 +1000,12 @@ index 0000000..4afbeec
 +
 diff --git a/riscv/insns/sha256sum1.h b/riscv/insns/sha256sum1.h
 new file mode 100644
-index 0000000..b91d3ab
+index 0000000..8724b4e
 --- /dev/null
 +++ b/riscv/insns/sha256sum1.h
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,13 @@
++
++require_extension('K');
 +
 +#define ROR32(a,amt) ((a << (-amt & (32-1))) | (a >> (amt & (32-1))))
 +
@@ -824,11 +1019,12 @@ index 0000000..b91d3ab
 +
 diff --git a/riscv/insns/sha512sig0.h b/riscv/insns/sha512sig0.h
 new file mode 100644
-index 0000000..0b490b0
+index 0000000..140a61e
 --- /dev/null
 +++ b/riscv/insns/sha512sig0.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +require_rv64;
++require_extension('K');
 +
 +#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
 +
@@ -842,12 +1038,13 @@ index 0000000..0b490b0
 +
 diff --git a/riscv/insns/sha512sig0h.h b/riscv/insns/sha512sig0h.h
 new file mode 100644
-index 0000000..f2b8b8d
+index 0000000..c28716f
 --- /dev/null
 +++ b/riscv/insns/sha512sig0h.h
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,9 @@
 +
 +require_rv32;
++require_extension('K');
 +
 +uint32_t result =
 +    ((uint32_t)RS1 >>  1) ^ ((uint32_t)RS1 >>  7) ^ ((uint32_t)RS1 >>  8) ^
@@ -856,12 +1053,13 @@ index 0000000..f2b8b8d
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sig0l.h b/riscv/insns/sha512sig0l.h
 new file mode 100644
-index 0000000..d7a855e
+index 0000000..d0a6db2
 --- /dev/null
 +++ b/riscv/insns/sha512sig0l.h
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,9 @@
 +
 +require_rv32;
++require_extension('K');
 +
 +uint32_t result =
 +    ((uint32_t)RS1 >>  1) ^ ((uint32_t)RS1 >>  7) ^ ((uint32_t)RS1 >>  8) ^
@@ -870,11 +1068,12 @@ index 0000000..d7a855e
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sig1.h b/riscv/insns/sha512sig1.h
 new file mode 100644
-index 0000000..ab66c6a
+index 0000000..0ec9f29
 --- /dev/null
 +++ b/riscv/insns/sha512sig1.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +require_rv64;
++require_extension('K');
 +
 +#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
 +
@@ -888,12 +1087,13 @@ index 0000000..ab66c6a
 +
 diff --git a/riscv/insns/sha512sig1h.h b/riscv/insns/sha512sig1h.h
 new file mode 100644
-index 0000000..78e7d2a
+index 0000000..18ba85f
 --- /dev/null
 +++ b/riscv/insns/sha512sig1h.h
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,9 @@
 +
 +require_rv32;
++require_extension('K');
 +
 +uint32_t result =
 +    ((uint32_t)RS1 <<  3) ^ ((uint32_t)RS1 >>  6) ^ ((uint32_t)RS1 >> 19) ^
@@ -902,12 +1102,13 @@ index 0000000..78e7d2a
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sig1l.h b/riscv/insns/sha512sig1l.h
 new file mode 100644
-index 0000000..87569e8
+index 0000000..691ef32
 --- /dev/null
 +++ b/riscv/insns/sha512sig1l.h
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,9 @@
 +
 +require_rv32;
++require_extension('K');
 +
 +uint32_t result =
 +    ((uint32_t)RS1 <<  3) ^ ((uint32_t)RS1 >>  6) ^ ((uint32_t)RS1 >> 19) ^
@@ -916,11 +1117,12 @@ index 0000000..87569e8
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sum0.h b/riscv/insns/sha512sum0.h
 new file mode 100644
-index 0000000..ad2dc89
+index 0000000..211be4e
 --- /dev/null
 +++ b/riscv/insns/sha512sum0.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +require_rv64;
++require_extension('K');
 +
 +#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
 +
@@ -934,12 +1136,13 @@ index 0000000..ad2dc89
 +
 diff --git a/riscv/insns/sha512sum0r.h b/riscv/insns/sha512sum0r.h
 new file mode 100644
-index 0000000..4294c3c
+index 0000000..e2772e3
 --- /dev/null
 +++ b/riscv/insns/sha512sum0r.h
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,9 @@
 +
 +require_rv32;
++require_extension('K');
 +
 +uint32_t result =
 +    ((uint32_t)RS1 << 25) ^ ((uint32_t)RS1 << 30) ^ ((uint32_t)RS1 >> 28) ^
@@ -948,11 +1151,12 @@ index 0000000..4294c3c
 +WRITE_RD(zext_xlen(result));
 diff --git a/riscv/insns/sha512sum1.h b/riscv/insns/sha512sum1.h
 new file mode 100644
-index 0000000..a2e555b
+index 0000000..a238e50
 --- /dev/null
 +++ b/riscv/insns/sha512sum1.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +require_rv64;
++require_extension('K');
 +
 +#define ROR64(a,amt) ((a << (-amt & (64-1))) | (a >> (amt & (64-1))))
 +
@@ -966,24 +1170,37 @@ index 0000000..a2e555b
 +
 diff --git a/riscv/insns/sha512sum1r.h b/riscv/insns/sha512sum1r.h
 new file mode 100644
-index 0000000..698780e
+index 0000000..acb08d9
 --- /dev/null
 +++ b/riscv/insns/sha512sum1r.h
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,9 @@
 +
 +require_rv32;
++require_extension('K');
 +
 +uint32_t result =
 +    ((uint32_t)RS1 << 23) ^ ((uint32_t)RS1 >> 14) ^ ((uint32_t)RS1 >> 18) ^
 +    ((uint32_t)RS2 >>  9) ^ ((uint32_t)RS2 << 18) ^ ((uint32_t)RS2 << 14);
 +
 +WRITE_RD(result);
+diff --git a/riscv/insns/shfli.h b/riscv/insns/shfli.h
+index 59fbcff..834fbff 100644
+--- a/riscv/insns/shfli.h
++++ b/riscv/insns/shfli.h
+@@ -1,4 +1,4 @@
+-require_extension('B');
++require_either_extension('B','K');
+ require(SHAMT < (xlen/2));
+ reg_t x = RS1;
+ int shamt = SHAMT & ((xlen-1) >> 1);
 diff --git a/riscv/insns/sm3p0.h b/riscv/insns/sm3p0.h
 new file mode 100644
-index 0000000..276d47a
+index 0000000..9450951
 --- /dev/null
 +++ b/riscv/insns/sm3p0.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,14 @@
++
++require_extension('K');
 +
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
@@ -998,10 +1215,12 @@ index 0000000..276d47a
 +
 diff --git a/riscv/insns/sm3p1.h b/riscv/insns/sm3p1.h
 new file mode 100644
-index 0000000..4c0a82e
+index 0000000..c20f9b2
 --- /dev/null
 +++ b/riscv/insns/sm3p1.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,14 @@
++
++require_extension('K');
 +
 +#define ROL32(a,amt) ((a >> (-amt & (32-1))) | (a << (amt & (32-1))))
 +
@@ -1049,10 +1268,12 @@ index 0000000..17f129f
 +
 diff --git a/riscv/insns/sm4ed.h b/riscv/insns/sm4ed.h
 new file mode 100644
-index 0000000..8ce8651
+index 0000000..738bc69
 --- /dev/null
 +++ b/riscv/insns/sm4ed.h
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,22 @@
++
++require_extension('K');
 +
 +#include "sm4_common.h"
 +
@@ -1075,10 +1296,12 @@ index 0000000..8ce8651
 +
 diff --git a/riscv/insns/sm4ks.h b/riscv/insns/sm4ks.h
 new file mode 100644
-index 0000000..e638a31
+index 0000000..5758d57
 --- /dev/null
 +++ b/riscv/insns/sm4ks.h
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,20 @@
++
++require_extension('K');
 +
 +#include "sm4_common.h"
 +
@@ -1097,10 +1320,27 @@ index 0000000..e638a31
 +
 +WRITE_RD(zext_xlen(result));
 +
+diff --git a/riscv/insns/xnor.h b/riscv/insns/xnor.h
+index b2fe95b..fdb1f5d 100644
+--- a/riscv/insns/xnor.h
++++ b/riscv/insns/xnor.h
+@@ -1,2 +1,2 @@
+-require_extension('B');
++require_either_extension('B','K');
+ WRITE_RD(RS1 ^ ~RS2);
 diff --git a/riscv/processor.cc b/riscv/processor.cc
-index 564f1b3..be9da8a 100644
+index 564f1b3..734dd26 100644
 --- a/riscv/processor.cc
 +++ b/riscv/processor.cc
+@@ -204,7 +204,7 @@ void processor_t::parse_isa_string(const char* str)
+ 
+   char error_msg[256];
+   const char* p = lowercase.c_str();
+-  const char* all_subsets = "imafdqcbh"
++  const char* all_subsets = "imafdqcbkh"
+ #ifdef __SIZEOF_INT128__
+     "v"
+ #endif
 @@ -1218,6 +1218,14 @@ void processor_t::set_csr(int which, reg_t val)
        dirty_vs_state;
        VU.vxrm = val & 0x3ul;

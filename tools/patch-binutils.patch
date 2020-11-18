@@ -182,7 +182,7 @@ index 19f10c0e55..7506f2bc80 100644
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index e99febc823..016734c618 100644
+index e99febc823..19844fca55 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -496,27 +496,27 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -300,12 +300,12 @@ index e99febc823..016734c618 100644
 +{"sha256sum1"   , 0, INSN_CLASS_I,      "d,s", MATCH_SHA256SUM1, MASK_SHA256SUM1, match_opcode, 0},
 +{"sm3p0"        , 0, INSN_CLASS_I,      "d,s", MATCH_SM3P0, MASK_SM3P0, match_opcode, 0},
 +{"sm3p1"        , 0, INSN_CLASS_I,      "d,s", MATCH_SM3P1, MASK_SM3P1, match_opcode, 0},
-+{"sha512sig0l"  , 0, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG0L, MASK_SHA512SIG0L, match_opcode, 0},
-+{"sha512sig0h"  , 0, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG0H, MASK_SHA512SIG0H, match_opcode, 0},
-+{"sha512sig1l"  , 0, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG1L, MASK_SHA512SIG1L, match_opcode, 0},
-+{"sha512sig1h"  , 0, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG1H, MASK_SHA512SIG1H, match_opcode, 0},
-+{"sha512sum0r"  , 0, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SUM0R, MASK_SHA512SUM0R, match_opcode, 0},
-+{"sha512sum1r"  , 0, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SUM1R, MASK_SHA512SUM1R, match_opcode, 0},
++{"sha512sig0l"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG0L, MASK_SHA512SIG0L, match_opcode, 0},
++{"sha512sig0h"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG0H, MASK_SHA512SIG0H, match_opcode, 0},
++{"sha512sig1l"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG1L, MASK_SHA512SIG1L, match_opcode, 0},
++{"sha512sig1h"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG1H, MASK_SHA512SIG1H, match_opcode, 0},
++{"sha512sum0r"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SUM0R, MASK_SHA512SUM0R, match_opcode, 0},
++{"sha512sum1r"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SUM1R, MASK_SHA512SUM1R, match_opcode, 0},
 +{"sha512sig0"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SIG0, MASK_SHA512SIG0, match_opcode, 0},
 +{"sha512sig1"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SIG1, MASK_SHA512SIG1, match_opcode, 0},
 +{"sha512sum0"   ,64, INSN_CLASS_I,      "d,s", MATCH_SHA512SUM0, MASK_SHA512SUM0, match_opcode, 0},
