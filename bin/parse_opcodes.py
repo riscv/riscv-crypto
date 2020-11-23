@@ -397,6 +397,20 @@ def binary(n, digits=0):
   rep = bin(n)[2:]
   return rep if digits == 0 else ('0' * (digits - len(rep))) + rep
 
+def make_count_encoding_points():
+    total = 0
+    available = 2**30
+    for name in namelist:
+        bits = 0
+        for argname in arglut:
+            if(argname in arguments[name]):
+                hi,lo = arglut[argname]
+                bits += 1 +(hi-lo)
+        points = 2**bits
+        total += points
+        print("%20s %4d" % (name, points))
+    print("%d of %d = %s" %(total,available,total/available))
+
 def make_c(match,mask):
   match_vars= {}
   mask_vars = {}
@@ -1043,7 +1057,7 @@ def make_latex_table():
 \bitheader{0-31} \\
   """)
   for name in namelist:
-    print_inst(name)
+    print("\\enc%s" % latex_safename(name))
   print(r"""\end{bytefield}""")
 
 def make_latex_cmd_table():
@@ -1222,8 +1236,8 @@ def parse_inputs(args):
       else:
         for name2,match2 in match.items():
           if name2 not in pseudos and (match2 & mymask) == mymatch:
+            print("%s and %s overlap," % (name,name2))
             #sys.exit("%s and %s overlap" % (name,name2))
-            print("%s and %s overlap" % (name,name2))
 
       mask[name] = mymask
       match[name] = mymatch
@@ -1254,6 +1268,8 @@ if __name__ == "__main__":
     make_c(match,mask)
   elif sys.argv[1] == '-go':
     make_go()
+  elif sys.argv[1] == '-count':
+    make_count_encoding_points()
   elif sys.argv[1] == '-check':
     pass
   else:

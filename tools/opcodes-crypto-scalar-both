@@ -1,0 +1,33 @@
+
+#
+# This file contains *experimental* opcode specifications for the RISC-V
+# Scalar Cryptographic instruction set extension.
+#
+# - Currently, all of the instructions occupy the "custom1" space.
+#   This is to ensure they do not collide with other instructions during
+#   development.
+#
+# - The expectation is that the scalar crypto instructions will be
+#   brownfield, fitting in alongside pre-existing encodings.
+#
+
+#
+# ------------------------------------------------------------
+
+# Poll Entropy / Get Noise Pseudo Instructions
+@pollentropy  rd 19..15=0 31..20=0xF15 14..12=2 6..2=0x1C 1..0=3
+@getnoise     rd 19..15=0 31..20=0x7A9 14..12=2 6..2=0x1C 1..0=3
+
+# Scalar SM4 - RV32, RV64
+sm4ed         rd rs1 rs2 bs 29..25=0b11000       14..12=0b000 6..0=0x33
+sm4ks         rd rs1 rs2 bs 29..25=0b11001       14..12=0b000 6..0=0x33
+
+# Scalar SM3 - RV32, RV64
+sm3p0         rd rs1 31..30=0 29..25=0b01000 24..20=0b01000 14..12=2 6..0=0x33
+sm3p1         rd rs1 31..30=0 29..25=0b01000 24..20=0b01001 14..12=2 6..0=0x33
+
+# Scalar SHA256 - RV32/RV64
+sha256sum0    rd rs1 31..30=0 29..25=0b01000 24..20=0b00000 14..12=2 6..0=0x33
+sha256sum1    rd rs1 31..30=0 29..25=0b01000 24..20=0b00001 14..12=2 6..0=0x33
+sha256sig0    rd rs1 31..30=0 29..25=0b01000 24..20=0b00010 14..12=2 6..0=0x33
+sha256sig1    rd rs1 31..30=0 29..25=0b01000 24..20=0b00011 14..12=2 6..0=0x33
