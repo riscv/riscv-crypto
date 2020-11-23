@@ -92,6 +92,9 @@ Scalar Cryptography instructions:
 \end{enumerate}
 
 \noindent
+Logic for identifying each of these sub-field values already exists, so
+the cost of separating all Scalar Crypto instructions from the rest of the
+ISA is of the order of three 2-input AND gates and a 2-input OR gate.
 The single exception to this is \mnemonic{aes64ks1i}, which has
 {\tt opcode=0b0{\bf 0}1011}.
 
@@ -145,6 +148,8 @@ instructions and say that {\tt rd} must be sourced from the {\tt rs1}
 field.
 This breaks existing encoding idioms however about register address fields
 always being in the same place in the encoding.
+
+\todo{Discuss rejecting invalid instructions.}
 
 \clearpage
 \subsection{Instruction Encodings Table: RV32}
