@@ -60,6 +60,8 @@ check-rv64: $(BASE_RV32) $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH)
         | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
 
 check: check-rv32 check-rv64
+	cat $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH) $(OPCODES_SCALAR_RV32)\
+        | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
 
 $(TEX_SCALAR_TAB) : $(OPCODES_SCALAR)
 	@mkdir -p $(dir $(TEX_SCALAR_TAB))
