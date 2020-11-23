@@ -13,6 +13,14 @@ these instructions can be found in \cite{cryptoeprint:2020:930}.
 \subsubsection{RV32 Instructions}
 \label{sec:scalar:aes:rv32}
 
+\begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
+\bitheader{0-31} \\
+\encaesthreetwoesmi
+\encaesthreetwoesi
+\encaesthreetwodsmi
+\encaesthreetwodsi
+\end{bytefield}
+
 \begin{cryptoisa}
 aes32esi     rd, rs1, rs2, bs // Encrypt: SubBytes
 aes32esmi    rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
@@ -56,6 +64,17 @@ in particular.
 \newpage
 \subsubsection{RV64 Instructions}
 \label{sec:scalar:aes:rv64}
+
+\begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
+\bitheader{0-31} \\
+\encaessixfourksonei
+\encaessixfourkstwo
+\encaessixfourim
+\encaessixfouresm
+\encaessixfoures
+\encaessixfourdsm
+\encaessixfourds
+\end{bytefield}
 
 \begin{cryptoisa}
 aes64ks1i  rd, rs1, rcon // KeySchedule: SubBytes, Rotate, Round Const

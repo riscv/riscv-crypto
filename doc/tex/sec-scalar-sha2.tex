@@ -5,6 +5,14 @@
 
 \subsubsection{SHA-256 Instructions}
 
+\begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
+\bitheader{0-31} \\
+\encshatwofivesixsigzero
+\encshatwofivesixsigone
+\encshatwofivesixsumzero
+\encshatwofivesixsumone
+\end{bytefield}
+
 \begin{cryptoisa}
 sha256sig0 rd, rs1
 sha256sig1 rd, rs1
@@ -32,6 +40,24 @@ SAIL Model code for each instruction is found in figure
 \end{figure}
 
 \subsubsection{SHA-512 Instructions}
+
+\begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
+\bitheader{0-31} \\
+\encshafiveonetwosigzero
+\encshafiveonetwosigone
+\encshafiveonetwosumzero
+\encshafiveonetwosumone
+\end{bytefield}
+
+\begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
+\bitheader{0-31} \\
+\encshafiveonetwosumzeror
+\encshafiveonetwosumoner
+\encshafiveonetwosigzerol
+\encshafiveonetwosigzeroh
+\encshafiveonetwosigonel
+\encshafiveonetwosigoneh
+\end{bytefield}
 
 \begin{cryptoisa}
 RV32:                                       RV64:

@@ -7,7 +7,8 @@ TEX = pdflatex
 
 BUILD_DIR = $(REPO_BUILD)/spec
 
-OPCODES_SCALAR   = $(REPO_HOME)/doc/opcodes-crypto-scalar.tex
+OPCODES_SCALARCMD= $(REPO_HOME)/doc/opcodes-crypto-scalar-cmds.tex
+OPCODES_SCALARTAB= $(REPO_HOME)/doc/opcodes-crypto-scalar-table.tex
 OPCODES_VECTOR   = $(REPO_HOME)/doc/opcodes-crypto-vector.tex
 
 SPEC_SCALAR_OUT  = $(BUILD_DIR)/riscv-crypto-spec-scalar.pdf
@@ -18,12 +19,16 @@ SPEC_VECTOR_OUT  = $(BUILD_DIR)/riscv-crypto-spec-vector.pdf
 SPEC_VECTOR_TOP  = riscv-crypto-spec-vector.tex
 SPEC_VECTOR_TEX  = $(SPEC_TOP) $(wildcard $(REPO_HOME)/doc/tex/*) $(OPCODES_VECTOR)
 
-SPEC_EXTRA= riscv-crypto-spec.sty $(OPCODES)
+SPEC_EXTRA= riscv-crypto-spec.sty $(OPCODES_SCALARTAB) $(OPCODES_SCALARCMD)
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
-$(OPCODES_SCALAR) : $(REPO_HOME)/tools/opcodes-crypto-scalar
-	@mkdir -p $(dir $(OPCODES_SCALAR))
+$(OPCODES_SCALARTAB) : $(REPO_HOME)/tools/opcodes-crypto-scalar
+	@mkdir -p $(dir $(OPCODES_SCALARTAB))
 	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -tex > $@
+
+$(OPCODES_SCALARCMD) : $(REPO_HOME)/tools/opcodes-crypto-scalar
+	@mkdir -p $(dir $(OPCODES_SCALARCMD))
+	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -texcmd > $@
 
 $(OPCODES_VECTOR) : $(REPO_HOME)/tools/opcodes-crypto-vector
 	@mkdir -p $(dir $(OPCODES_VECTOR))

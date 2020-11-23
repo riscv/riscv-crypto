@@ -823,7 +823,19 @@ def print_footer(caption=''):
 \\end{table}
   """ % caption)
 
-def print_xcrypto_inst(n):
+def latex_safename(n):
+    n = n.replace("0","zero")
+    n = n.replace("1","one")
+    n = n.replace("2","two")
+    n = n.replace("3","three")
+    n = n.replace("4","four")
+    n = n.replace("5","five")
+    n = n.replace("6","six")
+    return n
+
+def print_xcrypto_inst(n, cmd=False):
+    if(cmd):
+        print("\\newcommand{\enc%s}{" % latex_safename(n))
     ifields = opcodebits[n]
     fs      = []
     for hi,lo,val in ifields:
@@ -839,8 +851,10 @@ def print_xcrypto_inst(n):
 
     for hi,lo,val in fs:
         width = 1 + hi - lo
-        print( r'\bitbox{%d}{\tt %s}%%' % (width,val))
-    print( r'\bitbox{%d}{\bf\tt %s}\\%%' % ( 9,  n))
+        print( r'\bitbox{%d}{\tt %s}' % (width,val))
+    print( r'\bitbox{%d}{\bf\tt %s}\\' % ( 9,  n))
+    if(cmd):
+        print("}")
 
 
 def make_dec_wirename(instrname):
@@ -1029,8 +1043,12 @@ def make_latex_table():
 \bitheader{0-31} \\
   """)
   for name in namelist:
-      print_inst(name)
+    print_inst(name)
   print(r"""\end{bytefield}""")
+
+def make_latex_cmd_table():
+  for name in namelist:
+      print_xcrypto_inst(name, cmd=True)
 
 def print_chisel_insn(name):
   s = "  def %-18s = BitPat(\"b" % name.replace('.', '_').upper()
@@ -1204,7 +1222,8 @@ def parse_inputs(args):
       else:
         for name2,match2 in match.items():
           if name2 not in pseudos and (match2 & mymask) == mymatch:
-            sys.exit("%s and %s overlap" % (name,name2))
+            #sys.exit("%s and %s overlap" % (name,name2))
+            print("%s and %s overlap" % (name,name2))
 
       mask[name] = mymask
       match[name] = mymatch
@@ -1219,6 +1238,8 @@ if __name__ == "__main__":
 
   if sys.argv[1] == '-tex':
     make_latex_table()
+  elif sys.argv[1] == '-texcmd':
+    make_latex_cmd_table()
   elif sys.argv[1] == '-privtex':
     make_supervisor_latex_table()
   elif sys.argv[1] == '-chisel':

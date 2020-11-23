@@ -7,5 +7,5 @@
 *.pdf
 *.run.xml
 *.toc
-opcodes-crypto-scalar.tex
-opcodes-crypto-vector.tex
+opcodes-crypto-*.tex
+opcodes-crypto-*.tex
