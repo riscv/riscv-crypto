@@ -96,7 +96,8 @@ Logic for identifying each of these sub-field values already exists, so
 the cost of separating all Scalar Crypto instructions from the rest of the
 ISA is of the order of three 2-input AND gates and a 2-input OR gate.
 The single exception to this is \mnemonic{aes64ks1i}, which has
-{\tt opcode=0b0{\bf 0}1011}.
+{\tt opcode=0b0{\bf 0}1011}, and must also check for a particular
+value of bits $31:24$.
 
 All instructions with a single register operand can be distinguished
 with {\tt func7=0b0001000}.
