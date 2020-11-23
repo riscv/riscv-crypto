@@ -6,7 +6,7 @@ aes64ds and aes32dsi overlap,
 \newcommand{\encpollentropy}{
 \bitbox{12}{\tt 111100010101}
 \bitbox{5}{\tt 00000}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{5}{\tt 11100}
 \bitbox{2}{\tt 11}
@@ -15,7 +15,7 @@ aes64ds and aes32dsi overlap,
 \newcommand{\encgetnoise}{
 \bitbox{12}{\tt 011110101001}
 \bitbox{5}{\tt 00000}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{5}{\tt 11100}
 \bitbox{2}{\tt 11}
@@ -25,7 +25,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{2}{\tt bs}
 \bitbox{5}{\tt 11000}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1=rd}
+\bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -33,9 +33,9 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encsmfourks}{
 \bitbox{2}{\tt bs}
-\bitbox{5}{\tt 11001}
+\bitbox{5}{\tt 11010}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1=rd}
+\bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -46,7 +46,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sm3p0}\\
@@ -56,7 +56,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 01001}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sm3p1}\\
@@ -66,9 +66,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00000}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha256sum0}\\
 }
 \newcommand{\encshatwofivesixsumone}{
@@ -76,9 +76,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00001}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha256sum1}\\
 }
 \newcommand{\encshatwofivesixsigzero}{
@@ -86,9 +86,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00010}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha256sig0}\\
 }
 \newcommand{\encshatwofivesixsigone}{
@@ -96,16 +96,16 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00011}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha256sig1}\\
 }
 \newcommand{\encaesthreetwoesmi}{
 \bitbox{2}{\tt bs}
-\bitbox{5}{\tt 01010}
+\bitbox{5}{\tt 11011}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1=rd}
+\bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -113,9 +113,9 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaesthreetwoesi}{
 \bitbox{2}{\tt bs}
-\bitbox{5}{\tt 01000}
+\bitbox{5}{\tt 11001}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1=rd}
+\bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -123,9 +123,9 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaesthreetwodsmi}{
 \bitbox{2}{\tt bs}
-\bitbox{5}{\tt 01110}
+\bitbox{5}{\tt 11111}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1=rd}
+\bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -133,9 +133,9 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaesthreetwodsi}{
 \bitbox{2}{\tt bs}
-\bitbox{5}{\tt 01100}
+\bitbox{5}{\tt 11101}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1=rd}
+\bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -146,7 +146,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sha512sum0r}\\
@@ -156,7 +156,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01001}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sha512sum1r}\\
@@ -166,7 +166,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01010}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sha512sig0l}\\
@@ -176,7 +176,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01110}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sha512sig0h}\\
@@ -186,7 +186,7 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01011}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sha512sig1l}\\
@@ -196,16 +196,16 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01111}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt sha512sig1h}\\
 }
 \newcommand{\encaessixfourksonei}{
-\bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01001}
+\bitbox{2}{\tt 10}
+\bitbox{5}{\tt 11001}
 \bitbox{1}{\tt 0}
-\bitbox{4}{\tt rcon$\le$10}
+\bitbox{4}{\tt rcon}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
@@ -213,9 +213,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{9}{\bf\tt aes64ks1i}\\
 }
 \newcommand{\encaessixfourkstwo}{
-\bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01001}
-\bitbox{5}{\tt rs2!=0}
+\bitbox{2}{\tt 10}
+\bitbox{5}{\tt 11001}
+\bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
@@ -223,8 +223,8 @@ aes64ds and aes32dsi overlap,
 \bitbox{9}{\bf\tt aes64ks2}\\
 }
 \newcommand{\encaessixfourim}{
-\bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01001}
+\bitbox{2}{\tt 10}
+\bitbox{5}{\tt 11001}
 \bitbox{5}{\tt 00000}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
@@ -234,7 +234,7 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaessixfouresm}{
 \bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01010}
+\bitbox{5}{\tt 11011}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
@@ -244,7 +244,7 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaessixfoures}{
 \bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01000}
+\bitbox{5}{\tt 11001}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
@@ -254,7 +254,7 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaessixfourdsm}{
 \bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01110}
+\bitbox{5}{\tt 11111}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
@@ -264,7 +264,7 @@ aes64ds and aes32dsi overlap,
 }
 \newcommand{\encaessixfourds}{
 \bitbox{2}{\tt 00}
-\bitbox{5}{\tt 01100}
+\bitbox{5}{\tt 11101}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 000}
@@ -277,9 +277,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00100}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha512sum0}\\
 }
 \newcommand{\encshafiveonetwosumone}{
@@ -287,9 +287,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00101}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha512sum1}\\
 }
 \newcommand{\encshafiveonetwosigzero}{
@@ -297,9 +297,9 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00110}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha512sig0}\\
 }
 \newcommand{\encshafiveonetwosigone}{
@@ -307,8 +307,8 @@ aes64ds and aes32dsi overlap,
 \bitbox{5}{\tt 01000}
 \bitbox{5}{\tt 00111}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 010}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sha512sig1}\\
 }

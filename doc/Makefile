@@ -50,13 +50,13 @@ SPEC_EXTRA= riscv-crypto-spec.sty $(TEX_SCALAR_TAB) $(TEX_SCALAR_CMD)
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
 check-rv32: $(BASE_RV32) $(OPCODES_SCALAR_RV32) $(OPCODES_SCALAR_BOTH)
-	@cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -check
-	@cat $(OPCODES_SCALAR_RV32) $(OPCODES_SCALAR_BOTH) \
+	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -check
+	cat $(OPCODES_SCALAR_RV32) $(OPCODES_SCALAR_BOTH) \
         | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
 
 check-rv64: $(BASE_RV32) $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH)
-	@cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -check
-	@cat $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH) \
+	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -check
+	cat $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH) \
         | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
 
 check: check-rv32 check-rv64

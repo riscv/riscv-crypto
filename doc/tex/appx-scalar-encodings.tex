@@ -45,12 +45,16 @@ the additional complexity and costs are deemed worth while.
 
 \subsection{Decoding Strategy}
 
-Almost all of the Scalar Cryptography instructions write a single
-destination register, and read one or two source registers, meaning they
-best fit in the {\tt OP} major opcode.
-The single exception is \mnemonic{aes64ks1i}, which has one source register
-and one 4-bit immediate, and so best sits in the {\tt OP-IMM} major opcode
-along with instructions like \mnemonic{slli}.
+Scalar Cryptography instructions which write a single
+destination register, and read two source registers
+best fit in the {\tt OP} major opcode, which contains other ALU-esq
+instructions which source two registers.
+Scalar Cryptography instructions which source a single register ({\tt rs1})
+best fit into the {\tt OP-IMM} major opcode.
+Even instructions with only a single source register and no immediate are
+better placed in the {\tt OP-IMM} space, because the decoder will already
+have inferred that only a single register needs reading, and can disregard
+the {\tt rs2} field.
 
 The encodings for the Scalar Cryptography instructions are chosen based on
 two assumptions.
@@ -69,35 +73,13 @@ easily identify {\em which} Scalar Cryptography instruction we are decoding,
 so that it may be identified and executed with minimal effort by the
 functional unit.
 
-Scalar Cryptography instructions are first divided into Hash Function
-instructions (\mnemonic{sha256*},\mnemonic{sha512*},\mnemonic{sm3*})
-and Block Cipher instructions
-(\mnemonic{aes*}, \mnemonic{sm4*}).
-\begin{enumerate}
-\item Hash Function instructions use {\tt func3=0b010},
-\item Block Cipher instructions  use {\tt func3=0b000}.
-\end{enumerate}
-This places
-Hash Function instructions adjacent to \mnemonic{slt/mulhsu/clmulr/sh1add}
-and
-Block Cipher instructions adjacent to \mnemonic{add/sub/mul}.
-In both cases, Scalar Cryptography instructions are distinguished from
-existing ALU-type instructions by checking if bit $28$ is {\em set}.
-
-Hence, we end up with the following rules for quickly identifying
-Scalar Cryptography instructions:
-\begin{enumerate}
-\item Hash Function instructions: {\tt func3=0b010, opcode=0b0110011, bit[28]=1}
-\item Block Cipher  instructions: {\tt func3=0b000, opcode=0b0110011, bit[28]=1}
-\end{enumerate}
-
-\noindent
+Scalar Cryptography instructions all use {\tt func3=0b000},
+and {\tt bit[28]=1}, with either the {\tt OP} or {\tt OP-IMM} major opcode.
+This places them adjacent to the {\tt add/mul/sub} instructions, but
+distinguished by bit $28$.
 Logic for identifying each of these sub-field values already exists, so
 the cost of separating all Scalar Crypto instructions from the rest of the
 ISA is of the order of three 2-input AND gates and a 2-input OR gate.
-The single exception to this is \mnemonic{aes64ks1i}, which has
-{\tt opcode=0b0{\bf 0}1011}, and must also check for a particular
-value of bits $31:24$.
 
 All instructions with a single register operand can be distinguished
 with {\tt func7=0b0001000}.
@@ -128,6 +110,9 @@ but is much more efficient in terms of opcode space.
 All encodings taken up by {\tt sha512*} instructions on RV32 and
 free for use by other instructions on RV64.
 
+Bit $28$ distinguishes between hash function instructions and block
+cipher instructions.
+
 All AES round instructions use bits $27:26$ to distinguish between
 encrypt/decrypt and middle/final round variants.
 On RV64, the \mnemonic{aes64ks2} and \mnemonic{aes64im} instructions
@@ -144,7 +129,7 @@ This reflects the fact that these instructions are designed to {\em always}
 use their source/destination registers in this way.
 This takes the number of encoding points used per RV32 AES / SM4 instruction
 from $131072$ to $4096$.
-It is possible to {\em remove} the {\tt rd} field completed from these
+It is possible to {\em remove} the {\tt rd} field completely from these
 instructions and say that {\tt rd} must be sourced from the {\tt rs1}
 field.
 This breaks existing encoding idioms however about register address fields
