@@ -28,7 +28,8 @@ the complexity of identifying {\em valid} instructions.
 Where a particular design choice has been made, rationale will be provided
 and other rejected options will be described.
 Where the design choice is somewhat arbitrary (at-least to the designers
-knowledge) this too will be noted.
+knowledge) this too will be noted as an indication someone might be
+able to do better.
 \item \label{itm:enc:6}
 Where instructions are exclusive to a particular base architecture
 (i.e. used on RV32 / RV64 only), these encodings will be overlapped with
@@ -108,6 +109,7 @@ For the RV32-only SHA512 instructions,
 bits $26:25$ distinguish between {\tt sig/sum} and {\tt 0/1},
 while bit $27$ distinguishes high/low variants of the {\tt sha512sig*}
 instructions.
+All of these bits were chosen arbitrarily.
 Having the operation bits for SHA512/SHA256 instructions at a different place
 in the instruction on RV32 is slightly inefficient and costs more gates,
 but is much more efficient in terms of opcode space.
@@ -117,6 +119,7 @@ free for use by other instructions on RV64.
 Bit $28$ distinguishes between hash function instructions and block
 cipher instructions.
 Bit $25$ distinguish between SM4 and AES Block ciphers.
+These bits were chosen arbitrarily.
 
 All AES round instructions use bits $27:26$ to distinguish between
 encrypt/decrypt and middle/final round variants.
@@ -126,6 +129,9 @@ are distinguished by checking if
 Note that this breaks point \ref{itm:enc:7} above, but can easily be
 fixed by moving \mnemonic{aes64im} to the {\tt OP-IMM} major opcode
 if the register address comparison is deemed un-reasonable.
+
+The RV32 and RV64 AES round instructions overlap, as they are mutually
+exclusive given the base ISA.
 
 For the SM4 and RV32 AES instructions, we require that {\tt rs1=rd}.
 Encodings where {\tt rs1!=rd} raise an Illegal Opcode Exception unless
@@ -142,10 +148,71 @@ This breaks existing encoding idioms however about register address fields
 always being in the same place in the encoding.
 
 \todo{Discuss rejecting invalid instructions.}
-\todo{Encoding point counts for each instruction.}
+
+Table \ref{tab:encodings:counts} shows the number of encoding points
+taken up by each instruction individually, and all instructions for either
+the RV32 or RV64 base architecture.
+The entire 32-bit instruction opcode space is $2^{30}$ encoding points.
+The instructions exclusive to the Scalar Cryptography extension
+(i.e. ignoring those borrowed from Bitmanip)
+take up $\num{2.12e-4}\%$
+and     $\num{1.86e-4}\%$
+of the RV32 and RV64 encoding spaces respectively.
+
+The actual encodings for all RV32 and RV64 instructions are
+found in sections
+\ref{sec:encodings:rv32}
+and
+\ref{sec:encodings:rv64}
+respectively, or alongside each instruction description.
+
+\begin{table}[]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+Instruction      & RV32   & RV64   & Notes \\ \midrule
+{\tt       sm4ed}& 4096   & 4096   & Down from 131072 when requiring {\tt rs1=rd}. \\
+{\tt       sm4ks}& 4096   & 4096   & Down from 131072 when requiring {\tt rs1=rd}. \\
+{\tt       sm3p0}& 1024   & 1024   &           \\
+{\tt       sm3p1}& 1024   & 1024   &           \\
+{\tt  sha256sum0}& 1024   & 1024   &           \\
+{\tt  sha256sum1}& 1024   & 1024   &           \\
+{\tt  sha256sig0}& 1024   & 1024   &           \\
+{\tt  sha256sig1}& 1024   & 1024   &           \\
+{\tt   aes32esmi}& 4096   &        & Down from 131072 when requiring {\tt rs1=rd}. \\
+{\tt    aes32esi}& 4096   &        & Down from 131072 when requiring {\tt rs1=rd}. \\
+{\tt   aes32dsmi}& 4096   &        & Down from 131072 when requiring {\tt rs1=rd}. \\
+{\tt    aes32dsi}& 4096   &        & Down from 131072 when requiring {\tt rs1=rd}. \\
+{\tt sha512sum0r}& 32768  &        &           \\
+{\tt sha512sum1r}& 32768  &        &           \\
+{\tt sha512sig0l}& 32768  &        &           \\
+{\tt sha512sig0h}& 32768  &        &           \\
+{\tt sha512sig1l}& 32768  &        &           \\
+{\tt sha512sig1h}& 32768  &        &           \\
+{\tt   aes64ks1i}&        & 16384  &           \\
+{\tt    aes64ks2}&        & 32768  & {\tt rd!=0}, Overlaps with {\tt aes32esi}. \\
+{\tt     aes64im}&        & 1024   & Overlaps with {\tt aes64ks2}, {\tt rd=0}.\\
+{\tt    aes64esm}&        & 32768  & Overlaps with {\tt aes32esmi}.\\
+{\tt     aes64es}&        & 32768  & Overlaps with {\tt aes32esi}.\\
+{\tt    aes64dsm}&        & 32768  & Overlaps with {\tt aes32dsmi}.\\
+{\tt     aes64ds}&        & 32768  & Overlaps with {\tt aes32dsi}.\\
+{\tt  sha512sum0}&        & 1024   &           \\
+{\tt  sha512sum1}&        & 1024   &           \\
+{\tt  sha512sig0}&        & 1024   &           \\
+{\tt  sha512sig1}&        & 1024   &           \\
+\midrule
+Totals           &227328  & 199680 &           \\
+\bottomrule
+\end{tabular}
+\caption{Encoding point counts for each instruction.
+Note \mnemonic{pollentropy} and \mnemonic{getnoise} are not shown, as
+they are pseudo-ops relating to CSR reads.}
+\label{tab:encodings:counts}
+\end{table}
 
 \clearpage
 \subsection{Instruction Encodings Table: RV32}
+\label{sec:encodings:rv32}
 
 \begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
 \bitheader{0-31} \\
@@ -173,6 +240,7 @@ always being in the same place in the encoding.
 
 \clearpage
 \subsection{Instruction Encodings Table: RV64}
+\label{sec:encodings:rv64}
 
 \begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
 \bitheader{0-31} \\
