@@ -6,7 +6,7 @@ This section describes the encodings for the {\em Scalar} Cryptography
 extension.
 It is developed in accordance with the RISC-V Instruction Encodings
 Allocation Policy~\cite{riscv:policy:encodings}.
-Listed below are the evaluation critera for the proposed encodings.
+Listed below are the evaluation criteria for the proposed encodings.
 Some of these are re-statements of the obvious, some are re-statements of
 the Allocation Policy document, and some are added to acknowledge the
 nature of the instructions being proposed.
@@ -37,7 +37,7 @@ architecture}. This allows the base architecture to act as an additional
 implicit bit in the encoding, thus saving actual encoding space.
 \item \label{itm:enc:7}
 New encoding constraints such as relationships between register addresses
-will be {\em sufficient but not neccessary} to uniquely decode all of
+will be {\em sufficient but not necessary} to uniquely decode all of
 the instructions.
 This allows for additional saving of encoding space {\em if and only if}
 the additional complexity and costs are deemed worth while.
@@ -56,7 +56,7 @@ The encodings for the Scalar Cryptography instructions are chosen based on
 two assumptions.
 First, the instruction implementations share little or no logic with existing
 RISC-V instructions, and so can be expected to be implemented
-independantly.
+independently.
 Second, it will be reasonable to implement all of the Scalar Cryptography
 instructions as part of the same {\em functional unit} within the
 execution pipeline of a core.
@@ -66,7 +66,7 @@ Very quickly identify
 that we are decoding {\em any} Scalar Cryptography instruction, in order to
 select the correct functional unit to send it too; and
 easily identify {\em which} Scalar Cryptography instruction we are decoding,
-so that it may be identifed and executed with minimal effort by the
+so that it may be identified and executed with minimal effort by the
 functional unit.
 
 Scalar Cryptography instructions are first divided into Hash Function
