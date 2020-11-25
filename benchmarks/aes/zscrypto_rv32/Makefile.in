@@ -1,5 +1,6 @@
 
 ifeq ($(ZSCRYPTO),1)
+ifeq ($(XLEN),32)
 
 BLOCK_AES_ZSCRYPTO_RV32_FILES = \
     aes/zscrypto_rv32/aes_enc.S \
@@ -10,4 +11,5 @@ BLOCK_AES_ZSCRYPTO_RV32_FILES = \
 
 $(eval $(call add_lib_target,aes_zscrypto_rv32,$(BLOCK_AES_ZSCRYPTO_RV32_FILES)))
 
+endif
 endif

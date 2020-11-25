@@ -127,15 +127,14 @@ These bits were chosen arbitrarily.
 
 All AES round instructions use bits $27:26$ to distinguish between
 encrypt/decrypt and middle/final round variants.
-On RV64, the \mnemonic{aes64ks2} and \mnemonic{aes64im} instructions
-are distinguished by checking if
-{\tt rs2=0} (\mnemonic{aes64im}) or not (\mnemonic{aes64ks2}).
-Note that this breaks point \ref{itm:enc:7} above, but can easily be
-fixed by moving \mnemonic{aes64im} to the {\tt OP-IMM} major opcode
-if the register address comparison is deemed un-reasonable.
-
 The RV32 and RV64 AES round instructions overlap, as they are mutually
 exclusive given the base ISA.
+This leaves some spare encoding space on RV64, when bits $31:30$
+are non-zero, due to the {\tt bs} immediate for the RV32 AES instructions.
+As single-source-register instructions,
+\mnemonic{aes64ks1i} and \mnemonic{aes64im}
+live in the {\tt OP-IMM} major opcode, adjacent to the hash function
+instructions but distinguished by bit $29$.
 
 For the SM4 and RV32 AES instructions, we require that {\tt rs1=rd}.
 Encodings where {\tt rs1!=rd} raise an Illegal Opcode Exception unless
@@ -263,8 +262,8 @@ they are pseudo-ops relating to CSR reads.}
 \encshafiveonetwosigzero
 \encshafiveonetwosigone
 \encaessixfourksonei
-\encaessixfourkstwo
 \encaessixfourim
+\encaessixfourkstwo
 \encaessixfouresm
 \encaessixfoures
 \encaessixfourdsm

@@ -7,7 +7,9 @@ specs:
 	$(MAKE) -C $(REPO_HOME)/doc/ specs
 
 
-OPCODES_SPEC_SCALAR = $(REPO_HOME)/tools/opcodes-crypto-scalar
+OPCODES_SPEC_SCALAR = $(REPO_HOME)/tools/opcodes-crypto-scalar-both \
+                      $(REPO_HOME)/tools/opcodes-crypto-scalar-rv32 \
+                      $(REPO_HOME)/tools/opcodes-crypto-scalar-rv64
 OPCODES_SPEC_VECTOR = $(REPO_HOME)/tools/opcodes-crypto-vector
 
 opcodes:
