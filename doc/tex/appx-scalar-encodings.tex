@@ -86,7 +86,7 @@ ISA is of the order of three 2-input AND gates and a 2-input OR gate.
 Individual instructions within the Scalar Cryptography extension
 are then interpreted based on the {\tt func7} and {\tt rs2/shamt} bitfields.
 
-All instructions with a single register operand can be distinguished
+All Scalar Cryptography instructions with a single register operand can be distinguished
 with {\tt func7=0b0001000}.
 The {\tt rs2} field is then used to encode the exact kind of instruction.
 Although this means that an instruction which does not read {\tt rs2} has
@@ -96,6 +96,10 @@ it is more efficient in terms of opcode-space to re-use the {\tt rs2} field
 for encoding bits, and
 so leave additional {\tt func7} encodings free for more instructions which
 use two source registers.
+The {\tt rs2} field overlaps with the {\tt shamt} field in the {\tt OP-IMM}
+major opcode, meaning the decoder can treat the encoding bits as an
+immediate for the execution unit responsible for cryptography
+instructions.
 
 For single operand SHA instructions,
 bit $22$ distinguishes SHA256 and SHA512, while
@@ -118,7 +122,7 @@ free for use by other instructions on RV64.
 
 Bit $28$ distinguishes between hash function instructions and block
 cipher instructions.
-Bit $25$ distinguish between SM4 and AES Block ciphers.
+Bit $25$ distinguishes between SM4 and AES Block ciphers.
 These bits were chosen arbitrarily.
 
 All AES round instructions use bits $27:26$ to distinguish between
