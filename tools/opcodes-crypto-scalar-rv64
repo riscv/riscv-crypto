@@ -3,15 +3,6 @@
 # This file contains *experimental* opcode specifications for the RISC-V
 # Scalar Cryptographic instruction set extension.
 #
-# - Currently, all of the instructions occupy the "custom1" space.
-#   This is to ensure they do not collide with other instructions during
-#   development.
-#
-# - The expectation is that the scalar crypto instructions will be
-#   brownfield, fitting in alongside pre-existing encodings.
-#
-
-#
 # ------------------------------------------------------------
 
 # Scalar AES - RV64
