@@ -112,7 +112,7 @@ int main(int argc, char ** argv) {
     printf("import sys, binascii, Crypto.Cipher.AES as AES\n");
     printf("benchmark_name = \"" STR(TEST_NAME)"\"\n");
 
-    test_aes_256(10);
+    test_aes_256(1);
 
     return 0;
 

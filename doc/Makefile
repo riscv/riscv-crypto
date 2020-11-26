@@ -7,6 +7,8 @@ TEX = pdflatex
 
 BUILD_DIR = $(REPO_BUILD)/spec
 
+PARSEOPCODES = python3 $(REPO_HOME)/bin/better_parse_opcodes.py
+
 BASE_RV32 = $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv32a \
             $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv32b \
             $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv32d \
@@ -50,26 +52,20 @@ SPEC_EXTRA= riscv-crypto-spec.sty $(TEX_SCALAR_TAB) $(TEX_SCALAR_CMD)
 SPEC_COMMIT= $(BUILD_DIR)/spec.commit
 
 check-rv32: $(BASE_RV32) $(OPCODES_SCALAR_RV32) $(OPCODES_SCALAR_BOTH)
-	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -check
-	cat $(OPCODES_SCALAR_RV32) $(OPCODES_SCALAR_BOTH) \
-        | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
+	$(PARSEOPCODES) check $^
 
-check-rv64: $(BASE_RV32) $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH)
-	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -check
-	cat $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH) \
-        | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
+check-rv64: $(BASE_RV64) $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH)
+	$(PARSEOPCODES) check $^
 
 check: check-rv32 check-rv64
-	cat $(OPCODES_SCALAR_RV64) $(OPCODES_SCALAR_BOTH) $(OPCODES_SCALAR_RV32)\
-        | python3 $(REPO_HOME)/bin/parse_opcodes.py -count
 
 $(TEX_SCALAR_TAB) : $(OPCODES_SCALAR)
 	@mkdir -p $(dir $(TEX_SCALAR_TAB))
-	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -tex > $@
+	$(PARSEOPCODES) tex-table $^ > $@
 
 $(TEX_SCALAR_CMD) : $(OPCODES_SCALAR)
 	@mkdir -p $(dir $(TEX_SCALAR_CMD))
-	cat $^ | python3 $(REPO_HOME)/bin/parse_opcodes.py -texcmd > $@
+	$(PARSEOPCODES) tex-cmds $^ > $@
 
 $(TEX_VECTOR) : $(REPO_HOME)/tools/opcodes-crypto-vector
 	@mkdir -p $(dir $(TEX_VECTOR))

@@ -12,19 +12,17 @@ OPCODES_SPEC_SCALAR = $(REPO_HOME)/tools/opcodes-crypto-scalar-both \
                       $(REPO_HOME)/tools/opcodes-crypto-scalar-rv64
 OPCODES_SPEC_VECTOR = $(REPO_HOME)/tools/opcodes-crypto-vector
 
-opcodes:
-	cat $(REPO_HOME)/extern/riscv-opcodes/opcodes \
-        $(OPCODES_SPEC_SCALAR) $(OPCODES_SPEC_VECTOR) \
-	| python3 $(REPO_HOME)/bin/parse_opcodes.py -check
-	cat $(OPCODES_SPEC_SCALAR) \
-	| python3 $(REPO_HOME)/bin/parse_opcodes.py -c > build/opcodes-crypto_scalar.h
-	cat $(OPCODES_SPEC_VECTOR) \
-	| python3 $(REPO_HOME)/bin/parse_opcodes.py -c > build/opcodes-crypto_vector.h
-	cat $(OPCODES_SPEC_SCALAR) \
-	| python3 $(REPO_HOME)/bin/parse_opcodes.py -sail-boilerplate > build/opcodes-crypto_scalar.sail
-	cat $(OPCODES_SPEC_VECTOR) \
-	| python3 $(REPO_HOME)/bin/parse_opcodes.py -sail-boilerplate > build/opcodes-crypto_vector.sail
+PARSEOPCODES = python3 $(REPO_HOME)/bin/better_parse_opcodes.py
 
+opcodes:
+	$(PARSEOPCODES) spike    $(OPCODES_SPEC_SCALAR) > build/spike_scalar.h
+	$(PARSEOPCODES) spike    $(OPCODES_SPEC_VECTOR) > build/spike_vector.h
+	$(PARSEOPCODES) binutils $(OPCODES_SPEC_SCALAR) > build/binutils_scalar.h
+	$(PARSEOPCODES) binutils $(OPCODES_SPEC_VECTOR) > build/binutils_vector.h
+	$(PARSEOPCODES) normal-parse-opcodes $(OPCODES_SPEC_SCALAR) > build/opcodes_scalar
+	$(PARSEOPCODES) normal-parse-opcodes $(OPCODES_SPEC_VECTOR) > build/opcodes_vector
+	$(PARSEOPCODES) sail $(OPCODES_SPEC_SCALAR) > build/scalar.sail
+	#$(PARSEOPCODES) sail $(OPCODES_SPEC_VECTOR) > build/vector.sail
 
 clean:
 	$(MAKE) -C $(REPO_HOME)/doc/ clean

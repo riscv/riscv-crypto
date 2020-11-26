@@ -3,8 +3,7 @@
 \bitbox{5}{\tt 00000}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{5}{\tt 11100}
-\bitbox{2}{\tt 11}
+\bitbox{7}{\tt 1110011}
 \bitbox{9}{\bf\tt pollentropy}\\
 }
 \newcommand{\encgetnoise}{
@@ -12,8 +11,7 @@
 \bitbox{5}{\tt 00000}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
-\bitbox{5}{\tt 11100}
-\bitbox{2}{\tt 11}
+\bitbox{7}{\tt 1110011}
 \bitbox{9}{\bf\tt getnoise}\\
 }
 \newcommand{\encsmfoured}{
@@ -43,7 +41,7 @@
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 001}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sm3p0}\\
 }
 \newcommand{\encsmthreepone}{
@@ -53,7 +51,7 @@
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 001}
 \bitbox{5}{\tt rd}
-\bitbox{7}{\tt 0110011}
+\bitbox{7}{\tt 0010011}
 \bitbox{9}{\bf\tt sm3p1}\\
 }
 \newcommand{\encshatwofivesixsumzero}{
@@ -100,7 +98,7 @@
 \bitbox{2}{\tt bs}
 \bitbox{5}{\tt 11011}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1}
+\bitbox{5}{\tt rs1==rd}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -110,7 +108,7 @@
 \bitbox{2}{\tt bs}
 \bitbox{5}{\tt 11001}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1}
+\bitbox{5}{\tt rs1==rd}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -120,7 +118,7 @@
 \bitbox{2}{\tt bs}
 \bitbox{5}{\tt 11111}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1}
+\bitbox{5}{\tt rs1==rd}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -130,7 +128,7 @@
 \bitbox{2}{\tt bs}
 \bitbox{5}{\tt 11101}
 \bitbox{5}{\tt rs2}
-\bitbox{5}{\tt rs1}
+\bitbox{5}{\tt rs1==rd}
 \bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
@@ -200,7 +198,7 @@
 \bitbox{2}{\tt 00}
 \bitbox{5}{\tt 11000}
 \bitbox{1}{\tt 1}
-\bitbox{4}{\tt rcon}
+\bitbox{4}{\tt rcon<=10}
 \bitbox{5}{\tt rs1}
 \bitbox{3}{\tt 001}
 \bitbox{5}{\tt rd}
@@ -218,11 +216,11 @@
 \bitbox{9}{\bf\tt aes64im}\\
 }
 \newcommand{\encaessixfourkstwo}{
-\bitbox{2}{\tt 00}
-\bitbox{5}{\tt 11000}
+\bitbox{2}{\tt 01}
+\bitbox{5}{\tt 11111}
 \bitbox{5}{\tt rs2}
 \bitbox{5}{\tt rs1}
-\bitbox{3}{\tt 001}
+\bitbox{3}{\tt 000}
 \bitbox{5}{\tt rd}
 \bitbox{7}{\tt 0110011}
 \bitbox{9}{\bf\tt aes64ks2}\\
