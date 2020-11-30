@@ -127,7 +127,7 @@ but is much more efficient in terms of opcode space.
 All encodings taken up by {\tt sha512*} instructions on RV32 and
 free for use by other instructions on RV64.
 
-Bit $28$ distinguishes between hash function instructions and block
+Bit $29$ distinguishes between hash function instructions and block
 cipher instructions.
 Bit $25$ distinguishes between SM4 and AES Block ciphers.
 These bits were chosen arbitrarily.
@@ -141,7 +141,7 @@ are non-zero, due to the {\tt bs} immediate for the RV32 AES instructions.
 As single-source-register instructions,
 \mnemonic{aes64ks1i} and \mnemonic{aes64im}
 live in the {\tt OP-IMM} major opcode, adjacent to the hash function
-instructions but distinguished by bit $29$.
+instructions but distinguished from them by bit $29$.
 
 For the SM4 and RV32 AES instructions, we require that {\tt rs1=rd}.
 Encodings where {\tt rs1!=rd} raise an Illegal Opcode Exception unless
