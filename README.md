@@ -63,6 +63,10 @@ and use it.
 See [tools/README.md](tools/README.md) for instructions on how to
 build the experimental toolchain.
 
+There is also a [task list](tools/gcc-patch-tasks.adoc) for
+implementing an upstreamable patch.
+If you can implement this patch, please get in touch.
+
 ## Compliance
 
 See [tests/compliance/README.md](tests/compliance/README.md) for
