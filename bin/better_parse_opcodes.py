@@ -4,11 +4,6 @@ import os
 import sys
 import argparse
 
-# parser library
-import lark
-
-from tqdm import tqdm
-
 from pysmt.shortcuts import Symbol, BV, LE, GE, Int, And, Equals, Plus, Solver
 from pysmt.shortcuts import BVAnd, BVOr,BVXor,BVExtract,BVUGT,BVULE,BVUGE
 from pysmt.shortcuts import BVNeg,BVComp, BVType, is_sat
@@ -317,7 +312,8 @@ def cmd_check_encodings(instrs):
     fi = None
     fj = None
 
-    for i in tqdm(instrs):
+    for i in instrs:
+        print("Checking: %s" % i.mnemonic)
         for j in instrs:
             if(i != j and not (j,i) in checked):
                 if(overlaps(i,j)):
@@ -342,6 +338,7 @@ def cmd_check_encodings(instrs):
     return len(collisions) == 0
 
 def latex_safename(n):
+    n = n.replace(".","")
     n = n.replace("0","zero")
     n = n.replace("1","one")
     n = n.replace("2","two")
@@ -349,6 +346,8 @@ def latex_safename(n):
     n = n.replace("4","four")
     n = n.replace("5","five")
     n = n.replace("6","six")
+    n = n.replace("8","eight")
+    n = n.replace("9","nine")
     return n
 
 def c_safename(n):
@@ -382,10 +381,7 @@ def cmd_tex_cmds(instrs):
 
 
 def cmd_tex_table(instrs):
-    print(r"""
-    \begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}
-    \bitheader{0-31} \\
-    """)
+    print(r"""\begin{bytefield}[bitwidth={1.05em},endianness={big}]{32}\bitheader{0-31} \\""")
     for i in instrs:
         print("\\enc%s" % latex_safename(i.mnemonic))
     print(r"""\end{bytefield}""")
