@@ -118,7 +118,9 @@ RV32, RV64
         (no data) and ES16, which means that 16 bits of randomness (seed)
         has been polled. BIST (Built-in Self-Test) only occurs after reset
         or to signal a non-fatal self-test alarm (if reached after WAIT or
-        ES16). DEAD is an unrecoverable error state.}
+        ES16). DEAD is an unrecoverable error state.
+        In test mode (when GetNoise is active) WAIT and ES16 states are
+        unavailable in PollEntropy.}
 %   \Description{State diagram of the Entropy Source.}
     \label{fig:esstate_tikz}
 \end{figure}
@@ -206,11 +208,18 @@ RV32, RV64
     classical or quantum adversary
     \cite[Section 4.A.4 Security Strength Categories]{NI16}.
 
-    \subsubsection{FIPS 140-3 / SP 800-90 I.I.D. Track}
+    \subsubsection{FIPS 140-3 / SP 800-90 IID Track}
 
-    For FIPS 140-3 certification, vendors should design their entropy sources
-    and hardware conditioning components so that they can be submitted to
-    the  ``I.I.D. track''.
+    For FIPS 140-3 certification, vendors should design their physical entropy
+    sources so that they can be submitted to the  ``IID track''. This usually
+    requires post-processing of noise in hardware.\footnote{NIST SP 800-90B
+        \cite{TuBaKe+18} and its  FIPS 140-3 Implementation Guidance
+        \cite[Section D.K.]{NICC20} are being revised at the time of writing.
+        The type of appropriate post-processing for IID track depends on
+        the physical noise source. Some simple post-processing methods are
+        currently considered to be part of sampling (``digitization'') step of
+        of the process by the implementation guidance. Hardware conditioning
+        may also be required, forming a hardware-software conditioning chain.}
 
     \begin{itemize}
 
@@ -229,7 +238,7 @@ RV32, RV64
     prohibited from using more than twice the number of seed bits relative
     to the desired resulting entropy.
 
-    \item[\S E2]    {\bf SP 800-90B I.I.D.}
+    \item[\S E2]    {\bf SP 800-90B IID}
     The output must be close to \emph{Independent and Identically Distributed}
     (IID), meaning that the output distribution does not deteriorate over
     time and that output words convey little information about each other.
@@ -238,7 +247,7 @@ RV32, RV64
     and the IID tests in Section 5 of NIST SP 800-90B \cite{TuBaKe+18} are
     consistently passed.
 
-    \end{itemize}
+    \end{itemize}g
 
     Note that both requirements must be satisfied (\S E1 may appear looser
     than \S E2). FIPS 140-3 certification of course imposes many additional
@@ -286,7 +295,7 @@ RV32, RV64
     \verb|seed| bits may be designated as internal random bits for \S P7,
     we recommend that all 16 ES bits meet this requirement.
 
-    Note that in Common Criteria validation the SP 800-90B I.I.D. requirement
+    Note that in Common Criteria validation the SP 800-90B IID requirement
     of \S E2 is not stated. However, it may also be satisfied -- and the
     H=0.997 level of \S P7 / PTG.2.7 leaves relatively little ``room'' for an
     entropy defect (mutual entropy).
