@@ -1,0 +1,13 @@
+
+ifeq ($(ZSCRYPTO),1)
+
+ifeq ($(XLEN),32)
+
+HASH_SM3_ZSCRYPTO_RV32_FILES = \
+    sm3/zscrypto_rv32/sm3.c
+
+$(eval $(call add_lib_target,sm3_zscrypto_rv32,$(HASH_SM3_ZSCRYPTO_RV32_FILES)))
+
+endif
+
+endif

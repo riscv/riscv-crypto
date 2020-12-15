@@ -40,6 +40,10 @@ include sha512/zscrypto_rv64/Makefile.in
 include sha3/reference/Makefile.in
 include sha3/zscrypto_rv64/Makefile.in
 
+include sm3/reference/Makefile.in
+include sm3/zscrypto_rv32/Makefile.in
+include sm3/zscrypto_rv64/Makefile.in
+
 include permutation/Makefile.in
 
 include test/Makefile.in

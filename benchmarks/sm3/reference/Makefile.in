@@ -1,0 +1,5 @@
+
+HASH_SM3_REF_FILES = \
+    sm3/reference/sm3.c
+
+$(eval $(call add_lib_target,sm3_reference,$(HASH_SM3_REF_FILES)))
