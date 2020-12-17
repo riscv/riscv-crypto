@@ -77,7 +77,7 @@ static void sm3_compress(uint32_t s[24]) {
 
 // Hashes `message` with `len` bytes with SM3 and stores it to `hash`
 void sm3_hash(uint8_t hash[32], const uint8_t *message, size_t len) {
-  uint32_t s[8 + SM3_BLOCK_SIZE] = {
+  uint32_t s[24] = {
       0x7380166F, 0x4914B2B9, 0x172442D7, 0xDA8A0600,
       0xA96F30BC, 0x163138AA, 0xE38DEE4D, 0xB0FB0E4E,
   };
