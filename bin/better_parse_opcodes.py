@@ -26,7 +26,7 @@ class Operand(object):
     @property
     def is_register(self):
         return self.name in [
-            "rs1", "rs2", "rs3", "rd"
+            "rs1", "rs2", "rs3", "rd", "rt"
         ]
 
     def __repr__(self):
@@ -172,6 +172,7 @@ class EncodingParser(object):
         "rcon"    : Operand("rcon"    , 23, 20,"W"  , "bits(4)"  ),
         "rd"      : Operand("rd"      , 11,  7,"d"  , "regidx"   ),
         "rs1"     : Operand("rs1"     , 19, 15,"s"  , "regidx"   ),
+        "rt"      : Operand("rt"      , 19, 15,"s"  , "regidx"   ),
         "rs2"     : Operand("rs2"     , 24, 20,"t"  , "regidx"   ),
         "rs3"     : Operand("rs3"     , 31, 27,"r"  , "regidx"   ),
         "shamt"   : Operand("shamt"   , 25, 20,">"  , "bits(5)"  ),

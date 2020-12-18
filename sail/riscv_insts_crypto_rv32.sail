@@ -16,10 +16,10 @@
 
 /* Map between f5 encoding field and scalar round function instrucitons. */
 mapping encdec_aes32_op : aes_op <-> bits(5) = {
-    ENCSM   <-> 0b00000,
-    ENCS    <-> 0b00001,
-    DECSM   <-> 0b00010,
-    DECS    <-> 0b00011
+    ENCSM   <-> 0b11011,
+    ENCS    <-> 0b11001,
+    DECSM   <-> 0b11111,
+    DECS    <-> 0b11101
 }
 
 /* Map 32-bit operations to assembly mnemonics - for disassemly */
@@ -39,33 +39,31 @@ mapping aes32_bs_to_str   : aes_bs <-> string = {
     0b11 <-> "3"
 }
 
-union    clause ast      = AES32 : (aes_bs, regidx, regidx, regidx, aes_op)
+union    clause ast      = AES32 : (aes_bs, regidx, regidx, aes_op)
 
 
 /* Encrypt/Decrypt mapping for 32-bit scalar AES instructions. */
-mapping  clause encdec   = AES32   (aes_bs, rs2   , rs1   , rd    , op     )
-    <-> aes_bs @ encdec_aes32_op(op) @ rs2 @ rs1 @ 0b010 @ rd @ 0b0101011
+mapping  clause encdec   = AES32   (aes_bs, rs2   , rt    , op     )
+    <-> aes_bs @ encdec_aes32_op(op) @ rs2 @ rt  @ 0b010 @ 0b00000 @ 0b0101011
 
 
 /* Map between an AST representation of AES32 and a disassembly string. */
-mapping  clause assembly = AES32   (     bs, rs2   , rs1   , rd    , op     )
+mapping  clause assembly = AES32   (     bs, rs2   , rt    , op     )
 <-> aes32_op_to_mnemonic(op)   ^   spc()   ^
-    reg_name(rd)                ^   sep()   ^
-    reg_name(rs1)               ^   sep()   ^
+    reg_name(rt)                ^   sep()   ^
     reg_name(rs2)               ^   sep()   ^
     aes32_bs_to_str(bs)
 
 
 /* Execute the scalar 32-bit AES instructions.
  * - op : The exact instruciton variant to perform.
- * - rd : Destination register address
- * - rs1: Source register 1 address
+ * - rt : Source register 1 / Destination register address
  * - rs2: Source register 2 address
  * - bs : 2-bit byte shift.
  */ 
 /* --- specification snippet begin --- */
-function clause execute   (AES32 (bs, rs2, rs1, rd, op))={
-  let rs1_val : xlenbits = X(rs1);
+function clause execute   (AES32 (bs, rs2, rt, op))={
+  let rs1_val : xlenbits = X(rt );
   let rs2_val : xlenbits = X(rs2);
   let shamt   : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
   let si      : bits(8)  = (rs2_val >> shamt)[7..0]; /* SBox Input */
@@ -78,7 +76,7 @@ function clause execute   (AES32 (bs, rs2, rs1, rd, op))={
     else
         0x000000 @ so;
   let result  : xlenbits = rs1_val ^ (mixed << shamt) ^ (mixed >> (0b100000-shamt));
-  X(rd)       = result;
+  X(rt)       = result;
   RETIRE_SUCCESS
 }
 /* --- specification snippet end --- */
@@ -91,50 +89,50 @@ function clause execute   (AES32 (bs, rs2, rs1, rd, op))={
 
 
 /* AST clauses for the RV32 SHA512 instructions. */
-union   clause ast    = SHA512_SIG0L : (regidx,regidx,regidx)
-union   clause ast    = SHA512_SIG0H : (regidx,regidx,regidx)
-union   clause ast    = SHA512_SIG1L : (regidx,regidx,regidx)
-union   clause ast    = SHA512_SIG1H : (regidx,regidx,regidx)
-union   clause ast    = SHA512_SUM0R : (regidx,regidx,regidx)
-union   clause ast    = SHA512_SUM1R : (regidx,regidx,regidx)
+union   clause ast    = SHA512SIG0L : (regidx,regidx,regidx)
+union   clause ast    = SHA512SIG0H : (regidx,regidx,regidx)
+union   clause ast    = SHA512SIG1L : (regidx,regidx,regidx)
+union   clause ast    = SHA512SIG1H : (regidx,regidx,regidx)
+union   clause ast    = SHA512SUM0R : (regidx,regidx,regidx)
+union   clause ast    = SHA512SUM1R : (regidx,regidx,regidx)
 
 /* Encode / decode mappings for the RV32 SHA512 instructions. */
-mapping clause encdec = SHA512_SIG0L (rs2,rs1,rd) <->
-    0b0001000 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =     SHA512SUM0R   (rs2,rs1,rd) 
+    <-> 0b01 @ 0b01000 @ rs2 @ rs1 @ 0b000 @ rd @ 0b0110011
 
-mapping clause encdec = SHA512_SIG0H (rs2,rs1,rd) <->
-    0b0001001 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =     SHA512SUM1R   (rs2,rs1,rd) 
+    <-> 0b01 @ 0b01001 @ rs2 @ rs1 @ 0b000 @ rd @ 0b0110011
 
-mapping clause encdec = SHA512_SIG1L (rs2,rs1,rd) <->
-    0b0001010 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =     SHA512SIG0L   (rs2,rs1,rd) 
+    <-> 0b01 @ 0b01010 @ rs2 @ rs1 @ 0b000 @ rd @ 0b0110011
 
-mapping clause encdec = SHA512_SIG1H (rs2,rs1,rd) <->
-    0b0001011 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =     SHA512SIG0H   (rs2,rs1,rd) 
+    <-> 0b01 @ 0b01110 @ rs2 @ rs1 @ 0b000 @ rd @ 0b0110011
 
-mapping clause encdec = SHA512_SUM0R (rs2,rs1,rd) <->
-    0b0001100 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =     SHA512SIG1L   (rs2,rs1,rd) 
+    <-> 0b01 @ 0b01011 @ rs2 @ rs1 @ 0b000 @ rd @ 0b0110011
 
-mapping clause encdec = SHA512_SUM1R (rs2,rs1,rd) <->
-    0b0001101 @ rs2 @ rs1 @ 0b111 @ rd @ 0b0101011
+mapping clause encdec =     SHA512SIG1H   (rs2,rs1,rd) 
+    <-> 0b01 @ 0b01111 @ rs2 @ rs1 @ 0b000 @ rd @ 0b0110011
 
 
 /* Assembly string mappings for the RV32 SHA512 instructions. */
-mapping clause assembly = SHA512_SIG0L (rs2,rs1,rd) <->
+mapping clause assembly = SHA512SIG0L (rs2,rs1,rd) <->
     "sha512sig0l" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
-mapping clause assembly = SHA512_SIG0H (rs2,rs1,rd) <->
+mapping clause assembly = SHA512SIG0H (rs2,rs1,rd) <->
     "sha512sig0h" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
-mapping clause assembly = SHA512_SIG1L (rs2,rs1,rd) <->
+mapping clause assembly = SHA512SIG1L (rs2,rs1,rd) <->
     "sha512sig1l" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
-mapping clause assembly = SHA512_SIG1H (rs2,rs1,rd) <->
+mapping clause assembly = SHA512SIG1H (rs2,rs1,rd) <->
     "sha512sig1h" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
-mapping clause assembly = SHA512_SUM0R (rs2,rs1,rd) <->
+mapping clause assembly = SHA512SUM0R (rs2,rs1,rd) <->
     "sha512sum0r" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
-mapping clause assembly = SHA512_SUM1R (rs2,rs1,rd) <->
+mapping clause assembly = SHA512SUM1R (rs2,rs1,rd) <->
     "sha512sum1r" ^ spc() ^ reg_name(rd) ^ sep() ^ reg_name(rs1) ^ sep() ^ reg_name(rs2)
 
 
@@ -161,27 +159,27 @@ function crypto_sha512_rv32  (op             , rd    , rs1   , rs2   ) = {
  * Execute clauses for the 32-bit SHA512 instructions.
  */
 
-function clause execute (  SHA512_SIG0L (rs2,rs1,rd)) = {
+function clause execute (  SHA512SIG0L (rs2,rs1,rd)) = {
   crypto_sha512_rv32(OP_SHA512_SIG0L, rd, rs1, rs2);
 }
 
-function clause execute (  SHA512_SIG0H (rs2,rs1,rd)) = {
+function clause execute (  SHA512SIG0H (rs2,rs1,rd)) = {
   crypto_sha512_rv32(OP_SHA512_SIG0H, rd, rs1, rs2);
 }
 
-function clause execute (  SHA512_SIG1L (rs2,rs1,rd)) = {
+function clause execute (  SHA512SIG1L (rs2,rs1,rd)) = {
   crypto_sha512_rv32(OP_SHA512_SIG1L, rd, rs1, rs2);
 }
 
-function clause execute (  SHA512_SIG1H (rs2,rs1,rd)) = {
+function clause execute (  SHA512SIG1H (rs2,rs1,rd)) = {
   crypto_sha512_rv32(OP_SHA512_SIG1H, rd, rs1, rs2);
 }
 
-function clause execute (  SHA512_SUM0R (rs2,rs1,rd)) = {
+function clause execute (  SHA512SUM0R (rs2,rs1,rd)) = {
   crypto_sha512_rv32(OP_SHA512_SUM0R, rd, rs1, rs2);
 }
 
-function clause execute (  SHA512_SUM1R (rs2,rs1,rd)) = {
+function clause execute (  SHA512SUM1R (rs2,rs1,rd)) = {
   crypto_sha512_rv32(OP_SHA512_SUM1R, rd, rs1, rs2);
 }
 

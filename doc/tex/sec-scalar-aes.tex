@@ -22,10 +22,10 @@ these instructions can be found in \cite{cryptoeprint:2020:930}.
 \end{bytefield}
 
 \begin{cryptoisa}
-aes32esi     rd, rs1, rs2, bs // Encrypt: SubBytes
-aes32esmi    rd, rs1, rs2, bs // Encrypt: SubBytes & MixColumns
-aes32dsi     rd, rs1, rs2, bs // Decrypt: SubBytes
-aes32dsmi    rd, rs1, rs2, bs // Decrypt: SubBytes & MixColumns
+aes32esi     rt, rs2, bs // Encrypt: SubBytes
+aes32esmi    rt, rs2, bs // Encrypt: SubBytes & MixColumns
+aes32dsi     rt, rs2, bs // Decrypt: SubBytes
+aes32dsmi    rt, rs2, bs // Decrypt: SubBytes & MixColumns
 \end{cryptoisa}
 
 These instructions are a very lightweight proposal, derived from
@@ -38,6 +38,10 @@ The {\tt bs} immediate operand is a 2-bit {\em Byte Select}, and indicates
 which byte of the input word is operated on.
 SAIL Model code for each instruction is found in figure
 \ref{fig:sail:aes:rv32}.
+Note that the instructions source their destination register from
+bits $19:15$ of the encoding, rather than the usual $11:7$.
+This is because the instructions are designed to be used such that
+the destination register is always the same as {\tt rs1}.
 
 These instructions use the Equivalent Inverse Cipher
 construction \cite[Section 5.3.5]{nist:fips:197}.
@@ -45,19 +49,11 @@ This affects the computation of the KeySchedule, as shown in
 \cite[Figure 15]{nist:fips:197}.
 
 \begin{figure}[h]
-\lstinputlisting[language=sail,firstline=67,lastline=83]{../sail/riscv_insts_crypto_rv32.sail}
+\lstinputlisting[language=sail,firstline=65,lastline=81]{../sail/riscv_insts_crypto_rv32.sail}
 \caption{SAIL specification for the lightweight AES instructions targeting the
 RV32 base architecture.}
 \label{fig:sail:aes:rv32}
 \end{figure}
-
-\note{
-The SM4 (see Section \ref{sec:scalar:sm4}) and RV32 AES 
-instructions are designed to share much of their data-path, and
-can be implemented with much logic shared  between their SBoxes
-in particular.
-}
-
 
 % ------------------------------------------------------------
 

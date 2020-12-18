@@ -22,7 +22,7 @@ index b4bb2e6..ad335b6 100644
  #define require_accelerator require((STATE.mstatus & MSTATUS_XS) != 0)
  
 diff --git a/riscv/encoding.h b/riscv/encoding.h
-index fb1536e..62862cc 100644
+index fb1536e..c4dc4ce 100644
 --- a/riscv/encoding.h
 +++ b/riscv/encoding.h
 @@ -660,6 +660,62 @@
@@ -34,9 +34,9 @@ index fb1536e..62862cc 100644
 +#define MATCH_POLLENTROPY 0xf1500073
 +#define MASK_GETNOISE  0xfffff07f
 +#define MATCH_GETNOISE 0x7a900073
-+#define MASK_SM4ED  0x3e00707f
++#define MASK_SM4ED  0x3e007fff
 +#define MATCH_SM4ED 0x30000033
-+#define MASK_SM4KS  0x3e00707f
++#define MASK_SM4KS  0x3e007fff
 +#define MATCH_SM4KS 0x34000033
 +#define MASK_SM3P0  0xfff0707f
 +#define MATCH_SM3P0 0x10801013
@@ -537,10 +537,10 @@ index 0000000..9cc353c
 +
 diff --git a/riscv/insns/aesds.h b/riscv/insns/aesds.h
 new file mode 100644
-index 0000000..63c12f2
+index 0000000..c8d4f1f
 --- /dev/null
 +++ b/riscv/insns/aesds.h
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,42 @@
 +
 +#include "aes_common.h"
 +
@@ -548,6 +548,7 @@ index 0000000..63c12f2
 +
 +    require_rv32;
 +    require_extension('K');
++    require(RD == 0); // Additional decoding required for RV32
 +
 +    uint8_t     bs = insn.bs();
 +
@@ -557,7 +558,8 @@ index 0000000..63c12f2
 +
 +    u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+    WRITE_RD(u ^ RS1);
++    uint64_t    rd = insn.rs1(); // RD sourced from RS1 field.
++    WRITE_REG(rd, u ^ RS1);
 +
 +} else {
 +
@@ -583,10 +585,10 @@ index 0000000..63c12f2
 +}
 diff --git a/riscv/insns/aesdsm.h b/riscv/insns/aesdsm.h
 new file mode 100644
-index 0000000..f3ee138
+index 0000000..02bbbc8
 --- /dev/null
 +++ b/riscv/insns/aesdsm.h
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,55 @@
 +
 +#include "aes_common.h"
 +
@@ -594,6 +596,7 @@ index 0000000..f3ee138
 +
 +    require_rv32;
 +    require_extension('K');
++    require(RD == 0); // Additional decoding required for RV32
 +
 +    uint8_t     bs = insn.bs();
 +
@@ -608,7 +611,8 @@ index 0000000..f3ee138
 +
 +    u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+    WRITE_RD(u ^ RS1);
++    uint64_t    rd = insn.rs1(); // RD sourced from RS1 field.
++    WRITE_REG(rd, u ^ RS1);
 +
 +} else {
 +
@@ -642,10 +646,10 @@ index 0000000..f3ee138
 +}
 diff --git a/riscv/insns/aeses.h b/riscv/insns/aeses.h
 new file mode 100644
-index 0000000..1d7d206
+index 0000000..088b8b5
 --- /dev/null
 +++ b/riscv/insns/aeses.h
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,43 @@
 +
 +#include "aes_common.h"
 +
@@ -654,6 +658,7 @@ index 0000000..1d7d206
 +
 +    require_rv32;
 +    require_extension('K');
++    require(RD == 0); // Additional decoding required for RV32
 +
 +    uint8_t     bs = insn.bs();
 +
@@ -663,7 +668,8 @@ index 0000000..1d7d206
 +
 +    u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+    WRITE_RD(u ^ RS1);
++    uint64_t    rd = insn.rs1(); // RD sourced from RS1 field.
++    WRITE_REG(rd, u ^ RS1);
 +
 +} else {
 +    
@@ -689,10 +695,10 @@ index 0000000..1d7d206
 +}
 diff --git a/riscv/insns/aesesm.h b/riscv/insns/aesesm.h
 new file mode 100644
-index 0000000..740270c
+index 0000000..9188cf2
 --- /dev/null
 +++ b/riscv/insns/aesesm.h
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,56 @@
 +
 +#include "aes_common.h"
 +
@@ -700,6 +706,7 @@ index 0000000..740270c
 +
 +    require_rv32;
 +    require_extension('K');
++    require(RD == 0); // Additional decoding required for RV32
 +
 +    uint8_t     bs = insn.bs();
 +
@@ -714,7 +721,8 @@ index 0000000..740270c
 +
 +    u = (u << (8*bs)) | (u >> (32-8*bs));
 +
-+    WRITE_RD(u ^ RS1);
++    uint64_t    rd = insn.rs1(); // RD sourced from RS1 field.
++    WRITE_REG(rd, u ^ RS1);
 +
 +} else {
 +
@@ -1242,10 +1250,10 @@ index 0000000..17f129f
 +
 diff --git a/riscv/insns/sm4ed.h b/riscv/insns/sm4ed.h
 new file mode 100644
-index 0000000..738bc69
+index 0000000..5583335
 --- /dev/null
 +++ b/riscv/insns/sm4ed.h
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,23 @@
 +
 +require_extension('K');
 +
@@ -1265,15 +1273,16 @@ index 0000000..738bc69
 +uint32_t rotl   = (linear << (8*bs)) | (linear >> (32-8*bs));
 +
 +uint32_t result = rotl ^ RS1;
++uint64_t rd     = insn.rs1(); // RD sourced from RS1 field.
 +
-+WRITE_RD(zext_xlen(result));
++WRITE_REG(rd, zext_xlen(result));
 +
 diff --git a/riscv/insns/sm4ks.h b/riscv/insns/sm4ks.h
 new file mode 100644
-index 0000000..5758d57
+index 0000000..589eb97
 --- /dev/null
 +++ b/riscv/insns/sm4ks.h
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +
 +require_extension('K');
 +
@@ -1291,8 +1300,9 @@ index 0000000..5758d57
 +uint32_t rotl   = (x << (8*bs)) | (x >> (32-8*bs));
 +
 +uint32_t result = rotl ^ RS1;
++uint64_t rd     = insn.rs1(); // RD sourced from RS1 field.
 +
-+WRITE_RD(zext_xlen(result));
++WRITE_REG(rd, zext_xlen(result));
 +
 diff --git a/riscv/insns/xnor.h b/riscv/insns/xnor.h
 index b2fe95b..fdb1f5d 100644

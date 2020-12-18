@@ -13,8 +13,8 @@
 
 \begin{cryptoisa}
 RV32 / RV64:
-    sm4ed     rd, rs1, rs2, bs
-    sm4ks     rd, rs1, rs2, bs
+    sm4ed     rt, rs2, bs
+    sm4ks     rt, rs2, bs
 \end{cryptoisa}
 
 This section proposes acceleration instructions for
@@ -35,6 +35,10 @@ software implementation.
 
 SAIL Model code for each instruction is found in figure
 \ref{fig:sail:sm4}.
+Note that the instructions source their destination register from
+bits $19:15$ of the encoding, rather than the usual $11:7$.
+This is because the instructions are designed to be used such that
+the destination register is always the same as {\tt rs1}.
 
 %
 % Old pseudo code for SM4. 
@@ -60,15 +64,8 @@ SAIL Model code for each instruction is found in figure
 %\caption{Scalar SM4 instruction pseudocode.}
 %\end{figure}
 
-\note{
-The SM4 and RV32 AES (see Section \ref{sec:scalar:aes:rv32})
-instructions are designed to share much of their data-path, and
-can be implemented with much logic shared  between their SBoxes
-in particular.
-}
-
 \begin{figure}[h]
-\lstinputlisting[language=sail,firstline=164,lastline=187]{../sail/riscv_insts_crypto.sail}
+\lstinputlisting[language=sail,firstline=160,lastline=183]{../sail/riscv_insts_crypto.sail}
 \caption{SAIL specification for the SM4 instructions.}
 \label{fig:sail:sm4}
 \end{figure}

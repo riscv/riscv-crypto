@@ -29,8 +29,8 @@ OPCODES_BASE_RV32 = \
 
 #
 # Machine readable opcode descriptions for RV64
-OPCODES_BASE_RV32 = \
-    $(BASE_RV32) \
+OPCODES_BASE_RV64 = \
+    $(OPCODES_BASE_RV32) \
     $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv64a \
     $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv64b \
     $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv64d \

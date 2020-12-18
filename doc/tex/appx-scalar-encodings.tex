@@ -143,19 +143,18 @@ As single-source-register instructions,
 live in the {\tt OP-IMM} major opcode, adjacent to the hash function
 instructions but distinguished from them by bit $29$.
 
-For the SM4 and RV32 AES instructions, we require that {\tt rs1=rd}.
-Encodings where {\tt rs1!=rd} raise an Illegal Opcode Exception unless
-they are defined as another instruction by another extension, or
-future versions of the Scalar Cryptography Extension.
+For the SM4 and RV32 AES instructions, we introduce a new {\em destructive}
+instruction format, where the destination register is sourced from
+the {\tt rs1} field.
+We call this combined source/destination register {\tt rt}.
 This reflects the fact that these instructions are designed to {\em always}
 use their source/destination registers in this way.
 This takes the number of encoding points used per RV32 AES / SM4 instruction
 from $131072$ to $4096$.
-It is possible to {\em remove} the {\tt rd} field completely from these
-instructions and say that {\tt rd} must be sourced from the {\tt rs1}
-field.
-This breaks existing encoding idioms however about register address fields
-always being in the same place in the encoding.
+We source {\tt rd} from {\tt rs1} (rather than the reverse) because on
+the smaller cores we expect these instructions to be use on, it is
+more important to be able to decode {\tt rs1} quickly than {\tt rd}.
+The former {\tt rd} field (bits $11:7$) are re-used as encoding space.
 
 Table \ref{tab:encodings:counts} shows the number of encoding points
 taken up by each instruction individually, and all instructions for either
