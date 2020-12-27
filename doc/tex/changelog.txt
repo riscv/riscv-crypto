@@ -1,0 +1,48 @@
+* {blank}
+** Initial first version shown to Crypto Task group.
+* {blank}
+** Don’t recommend funnel shifts for RV64, 128-bit rotations are not
+common enough to justify.
+** Change LUT4 instruction. Go for very efficient RV64 instruction and
+split 4-to-2 32-bit instruction. Avoids extra ternary instructions.
+* {blank}
+** LUT4 specification updates for 32-bit variant based on TG discussion.
+** Initial performance code size impact for SHA256/512 instructions.
+* {blank}
+** Split AES proposals into 3 variants.
+* {blank}
+** Revisions to AES proposals and added benchmarking results.
+** Added SHA256/512 benchmark results.
+** Added AES benchmark results.
+** Codified scalar extension design policies.
+* {blank}
+** Selected Markku’s lightweight AES proposal for RV32.
+** Added a dedicated RV64 scalar AES proposal.
+* {blank}
+** Modified AES RV64 proposal with Barry’s improved KeySchedule.
+** Add Markku’s lightweight SM4 proposal.
+** Add scalar SM3 instructions, similar to SHA2 instructions.
+* {blank}
+** Added RV32 instructions for accelerating SHA-512.
+* {blank}
+** Update RV64 AES instructions: remove need for hi/lo variants of the
+round instructions.
+* {blank}
+** Fix SM4 instruction specs.
+* {blank}
+** Removed Indexed load/store. They weren’t used in any of the
+benchmarked workloads, and can be optimised/coded around.
+** Removed old fused multiply add/accumulate. Not used, ternary.
+** Removed cmov instruction. Single ternary op not justified since it
+doesn’t appear in performance critical places.
+* {blank}
+** Transcribed vector instruction descriptions from Richard’s
+slide-show.
+** Changed ``feature discovery'' section to ``implementation profiles''
+section.
+* {blank}
+** Added vector carry-less multiply instructions.
+** Entropy source proposal all merged in.
+* {blank}
+** Added vector rotate and vector grev.
+** Replaced pseudo-code of all scalar instructions with SAIL models.
