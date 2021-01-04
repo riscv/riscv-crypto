@@ -354,6 +354,9 @@ def latex_safename(n):
 def c_safename(n):
     return n.replace(".","_")
 
+def verilog_safename(n):
+    return n.replace(".","_")
+
 def cmd_tex_cmds(instrs):
     """
     Print latex commands which when invoked, show the encoding of
@@ -509,6 +512,15 @@ def cmd_normal_parse_opcodes(instrs):
     return True
 
 
+def cmd_verilog(instrs):
+    for i in instrs:
+        print("wire dec_%-20s = (d_data & 32'h%s) == 32'h%s;" % (
+           verilog_safename(i.mnemonic),
+           hex(i.mask())[2:],
+           hex(i.match())[2:]
+        ))
+    return True
+
 
 def build_arg_parser():
     parser  = argparse.ArgumentParser()
@@ -541,6 +553,10 @@ def build_arg_parser():
     sub_binutils= subs.add_parser("normal-parse-opcodes",help="Print the instructions in the format used by the vanilla parse_opcodes.py script")
     sub_binutils.set_defaults(func=cmd_normal_parse_opcodes)
     sub_binutils.add_argument("input_files",nargs="+",type=argparse.FileType("r"))
+
+    sub_verilog = subs.add_parser("verilog", help="Print a simple verilog decoder per instruction")
+    sub_verilog.set_defaults(func=cmd_verilog)
+    sub_verilog.add_argument("input_files",nargs="+",type=argparse.FileType("r"))
 
     return parser
 
