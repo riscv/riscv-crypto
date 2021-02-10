@@ -1,19 +1,19 @@
 
-= RISC-V Scalar Crypto: Compliance Test Plan
+= RISC-V Scalar Crypto: Architectural Tests Plan
 Ben Marshall <ben.marshall@bristol.ac.uk>
 :toc:
 
-A plan for developing the riscv-compliance tests for the Scalar Crypto
+A plan for developing the riscv architectural tests for the Scalar Crypto
 Extension.
 
 == Introduction
 
 The point of this test plan is to:
 
-* Explain what the riscv-compliance tests try to achieve, both generally
+* Explain what the RISC-V architectural tests try to achieve, both generally
   and for the scalar crypto instructions in particular.
 
-* List the kinds of coverage that the compliance tests try to meet, and to
+* List the kinds of coverage that the architectural tests try to meet, and to
   explain more and less important coverage cases for different kinds of
   instruction.
 
@@ -36,6 +36,7 @@ when talking about individual instructions.
 
 * `single-bit-1` - Each source register input has a single bit set.
   Test for all bits `0<=i<XLEN`. Likewise, have `single-bit-0`.
+  These are sometimes also referred too as _walking ones_ or _walking zeros_.
 
 * `uniform-random` - Each source register input is a uniform random number,
   `XLEN`-bits long.
@@ -93,17 +94,20 @@ are similar from a coverage and stimulus perspective.
 
 === AES and SM4
 
-    aes32dsi    rd, rs1, rs2, bs
-    aes32dsmi   rd, rs1, rs2, bs
-    aes32esi    rd, rs1, rs2, bs
-    aes32esmi   rd, rs1, rs2, bs
-    sm4ed       rd, rs1, rs2, bs
-    sm4ks       rd, rs1, rs2, bs
+    aes32dsi    rt, rs2, bs
+    aes32dsmi   rt, rs2, bs
+    aes32esi    rt, rs2, bs
+    aes32esmi   rt, rs2, bs
+    sm4ed       rt, rs2, bs
+    sm4ks       rt, rs2, bs
 
 All of these instructions have the same basic input patterns, and apply
 an SBox to a single byte of `rs2`.
 The `bs` immediate is `2` bits, and is used to select a byte of `rs2`
 for further processing.
+
+NOTE: The `aes32*` and `sm4*` instructions read and write the `rt` register.
+It can be thought of as _both_ `rs1` and `rd`.
 
 * Test pattern 1: SBox Testing
   
@@ -134,7 +138,17 @@ for further processing.
    `bs` value. This mimics how the instructions will appear in real-world
    code, and tests things like pipeline forwarding.
 
-NOTE: These instructions are un-likely to appear interleaved with one
+    li  a0, <random>
+    li  a1, <random>
+    li  a2, <random>
+    li  a3, <random>
+    li  a4, <random>
+    aes32* a4, a0, 0 // This is the expected use-case sequence
+    aes32* a4, a1, 1 // for these instructions.
+    aes32* a4, a2, 2
+    aes32* a4, a3, 3
+
+NOTE: These instructions are un-likely to ever appear interleaved with one
 another, so this pattern is left out for now. Forwarding between
 like-instructions is much more common.
 
@@ -308,13 +322,13 @@ words of `rs1` and `rs2` to produce a result.
     sha256sig1  rd, rs1
     sha256sum0  rd, rs1
     sha256sum1  rd, rs1
-    sha512sig0  rd, rs1
-    sha512sig1  rd, rs1
-    sha512sum0  rd, rs1
-    sha512sum1  rd, rs1
+    sha512sig0  rd, rs1 (RV64 Only)
+    sha512sig1  rd, rs1 (RV64 Only)
+    sha512sum0  rd, rs1 (RV64 Only)
+    sha512sum1  rd, rs1 (RV64 Only)
     sm3p0       rd, rs1
     sm3p1       rd, rs1
-    aes64im     rd, rs1
+    aes64im     rd, rs1 (RV64 Only)
 
 The SHA256 and SM3 instructions listed here are very similar to the
 RV32 SHA and SM3 listed instructions, but with zero extended 32-bit
@@ -353,10 +367,11 @@ on each 32-bit word of `rs1`.
     sm4ed   rd, rs1, rs2, bs
     sm4ks   rd, rs1, rs2, bs
 
-NOTE: These instructions are identical to the RV32 versions, but ignore
-the high 32-bits of their register inputs, and zero extend the low
-32-bits of their outputs. The same test plan may be used, accounting for
-the wider registers.
+NOTE: These instructions are identical to the RV32 versions, but are also
+available on RV64.
+On RV64, they ignore the high 32-bits of their register inputs,
+and zero extend the low 32-bits of their outputs.
+The same test plan may be used, accounting for the wider registers on RV64.
 
 == Entropy Source
 
