@@ -4,12 +4,10 @@
 
 These instructions each compute a single round of the AES forward
 or inverse cipher, or perform one KeySchedule round.
-All of the per-round AES instructions use the Equivalent Inverse Cipher
-construction \cite[Section 5.3.5]{nist:fips:197}.
-This affects the computation of the KeySchedule, and the order of the
-round transformations for {\em decryption}.
-See \cite[Figure 15]{nist:fips:197} for a pseudo-code description
-of the AES inverse cipher and KeySchedule modifications.
+All of the per-round AES instructions use the standard Inverse Cipher
+construction \cite[Section 5.3]{nist:fips:197}.
+Note this is different to the {\em scalar} AES instructions, which use
+the Equivalent Inverse Cipher construction.
 
 \begin{cryptoisa}
 // Vector-Scalar
@@ -300,7 +298,7 @@ $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
 The \mnemonic{vaes256rkey.vv} instruction takes a single
 vector source register {\tt vrt}, and for each $256$-bit element
 (containing a $256$-bit cipher key),
-computes the final two AES-192 round keys.
+computes the final two AES-256 round keys.
 The result is then written back to {\tt vrt}.
 Note that this instruction requires $\SEW=128$ when executed.
 Hence, \vrt is sourced with $\EEW=2*\SEW$ and $\EMUL=2*\LMUL$.
