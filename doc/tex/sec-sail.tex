@@ -1,0 +1,14 @@
+
+RISC-V maintains a formal model of the ISA specificaiton, implemented
+in the Sail ISA specification language\cite{sail}.
+Note that {\em Sail} refers to the specification language itself,
+and that there is a {\em model of RISC-V}, written using Sail.
+It is not correct to refer to ``the Sail model".
+This is ambiguous, given there are many models of different ISAs implemented
+using Sail.
+
+The Cryptography extension uses inline Sail code snippets from the
+actual model to give canonical descriptions of instruction
+functionality.
+The Sail Manual\footnote{\url{https://github.com/rems-project/sail/blob/sail2/manual.pdf}} is recommended reading in order to
+best understand the code snippets.
