@@ -40,9 +40,6 @@ git checkout -B $BRANCH_NAME
 cd $REPO_HOME
 git submodule update --init --recursive extern/riscv-isa-sim
 
-cd $DIR_SPIKE
-git checkout $SPIKE_COMMIT
-
 # --------------------------------------------------------------------------
 
 cd $REPO_HOME
