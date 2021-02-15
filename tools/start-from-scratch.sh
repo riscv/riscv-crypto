@@ -26,7 +26,6 @@ set -x
 bash $REPO_HOME/tools/clone.sh
 
 bash $REPO_HOME/tools/binutils-apply.sh
-bash $REPO_HOME/tools/spike-apply.sh
 
 bash $REPO_HOME/tools/toolchain-conf.sh
 bash $REPO_HOME/tools/spike-conf.sh
