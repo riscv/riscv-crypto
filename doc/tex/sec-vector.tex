@@ -16,9 +16,7 @@ read using only this document.
               $\ELEN \ge 8$ and must be a power of $2$.
 \item[\VLEN] - The width in bits of each vector register.
               $\VLEN \ge \ELEN$ and must be a power of $2$.
-\item[\SLEN] - The striping distance in bits.
-              $\VLEN \ge \SLEN \ge 32$ and must be a power of $2$.
-\item[\SEW]  - The Standard Element Width in bits.
+\item[\SEW]  - The Selected Element Width in bits.
               Each vector register is viewed as $N=\VLEN/\SEW$ elements.
 \item[\LMUL] - The Vector Length Multiplier.
               $\LMUL\in\{{1\over 8},{1\over 4},{1\over 2},1,2,4,8\}$.
@@ -31,7 +29,8 @@ read using only this document.
               can contain: $\VLMAX=\LMUL*\VLEN/\SEW$.
 \item[\EEW]  - Effective Element Width. This is defined per vector register
               operand, and allows for instructions which operate on
-              two sets of elements of different widths.
+              two sets of elements of different widths. E.g. widening
+              instructions.
 \item[\EMUL] - Effective $\LMUL$. Like $\EEW$, this is defined per vector
               register operand, allowing for widening and narrowing
               operations.
@@ -40,9 +39,11 @@ read using only this document.
 The base vector extension has the constraint $\VLEN \ge \ELEN$.
 The vector crypto instructions require that $\ELEN \ge 128$ for all
 of it's instructions, and upto $1024$ for some.
-To widen the set of implementation choices for $\VLEN$ which will support
-the vector crypto extension, we allow $\ELEN$ to vary with $\LMUL$,
-requiring instead that $\VLEN*\LMUL \ge \ELEN$.
+Note that the vector crypto extension {\em does not} require these
+large \ELEN values to be supported for all instructions, only those
+which require them in order to function.
+Each instruction described below includes the minimum \ELEN it
+requires to be supported.
 
 % ============================================================================
 

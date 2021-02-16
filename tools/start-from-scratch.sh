@@ -9,7 +9,6 @@ echo "Installation Dir: $INSTALL_DIR"
 echo "Target Arch     : $TARGET_ARCH"
 echo "GCC Commit      : $GCC_COMMIT"
 echo "Binutils Commit : $BINUTILS_COMMIT"
-echo "Spike Commit    : $SPIKE_COMMIT"
 echo ""
 echo "DIR_GCC         = $DIR_GCC"
 echo "DIR_BINUTILS    = $DIR_BINUTILS"
@@ -26,7 +25,6 @@ set -x
 bash $REPO_HOME/tools/clone.sh
 
 bash $REPO_HOME/tools/binutils-apply.sh
-bash $REPO_HOME/tools/spike-apply.sh
 
 bash $REPO_HOME/tools/toolchain-conf.sh
 bash $REPO_HOME/tools/spike-conf.sh
