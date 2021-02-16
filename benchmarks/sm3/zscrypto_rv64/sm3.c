@@ -4,17 +4,16 @@
 
 #include "riscvcrypto/share/riscv-crypto-intrinsics.h"
 #include "riscvcrypto/sm3/api_sm3.h"
+#include "rvintrin.h"
 
 // The block size in bytes
 #define SM3_BLOCK_SIZE (16 * sizeof(uint32_t))
 
 // Reverses the byte order of `V`
-#define REVERSE_BYTES_32(V)                                                    \
-  (((V & 0x000000FF) << 24) | (((V)&0x0000FF00) << 8) |                        \
-   (((V)&0x00FF0000) >> 8) | (((V)&0xFF000000) >> 24))
+#define REVERSE_BYTES_32(V) (_rv32_grev((V), 0x18))
 
 // Rotates `V` by `N` bits to the left
-#define SM3_ROTATE_32(V, N) (((V) << (N)) | ((V) >> (32 - (N))))
+#define SM3_ROTATE_32(V, N) (_rv32_rol((V), (N)))
 
 // The two permutation functions
 #define SM3_P0(X) _sm3p0((X))
