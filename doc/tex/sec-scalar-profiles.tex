@@ -35,9 +35,8 @@ Functional Set    & Description \\
        {\tt Zkne }& NIST AES Encryption Instructions.                                   \\
        {\tt Zknd }& NIST AES Decryption Instructions.                                   \\
        {\tt Zknh }& NIST SHA2 Hash function instructions.                               \\
-       {\tt Zks  }& ShangMi (SM) algorithm suite. Short for {\tt ZkseZksdZkshZkgZkb}.   \\
-       {\tt Zkse }& SM4 Encryption Instructions.                                        \\
-       {\tt Zksd }& SM4 Decryption Instructions.                                        \\
+       {\tt Zks  }& ShangMi (SM) algorithm suite. Short for {\tt ZksedZkshZkgZkb}.   \\
+       {\tt Zksed}& SM4 Instructions.                                        \\
        {\tt Zksh }& SM3 Hash function instructions.                                     \\
 \hline
 \end{tabular}
@@ -154,8 +153,8 @@ Some example GCC compiler strings:
 \hline                                                                                   
 {\tt sm3p0                   }& {\tt Zksh } &            &            & \cmark  & \cmark &         \\
 {\tt sm3p1                   }& {\tt Zksh } &            &            & \cmark  & \cmark &         \\
-{\tt sm4ed                   }& {\tt Zkse } &            &            & \cmark  & \cmark &         \\
-{\tt sm4ks                   }& {\tt Zkse } &            &            & \cmark  & \cmark &         \\
+{\tt sm4ed                   }& {\tt Zksed} &            &            & \cmark  & \cmark &         \\
+{\tt sm4ks                   }& {\tt Zksed} &            &            & \cmark  & \cmark &         \\
 \hline                                                                                   
 {\tt pollentropy             }& {\tt Zkr  } &            &            &         &        & \cmark  \\
 {\tt getnoise                }& {\tt Zkr  } &            &            &         &        & \cmark  \\
