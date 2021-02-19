@@ -144,10 +144,10 @@ vaese.vs    vrt, vrs1:
 vaesd.vs    vrt, vrs1:
     for i=vstart, i<vl, i++:
         tmp.128  = vrt[i]
-        tmp.8[j] = InvAESSBox[tmp.8[j]] for i = 0..15   // InvSubBytes
         tmp.128  = InvAESShiftRows(tmp.128)             // InvShiftRows
-        tmp.128  = InvAESMixColumns(tmp.128)            // InvMixColumns
+        tmp.8[j] = InvAESSBox[tmp.8[j]] for i = 0..15   // InvSubBytes
         tmp.128  = tmp.128 ^ vrs1[i]                    // InvAddRoundKey
+        tmp.128  = InvAESMixColumns(tmp.128)            // InvMixColumns
 
 vaeselast.vs    vrt, vrs1:
     for i=vstart, i<vl, i++:
@@ -159,8 +159,8 @@ vaeselast.vs    vrt, vrs1:
 vaesdlast.vs    vrt, vrs1:
     for i=vstart, i<vl, i++:
         tmp.128  = vrt[i]
-        tmp.8[j] = InvAESSBox[tmp.8[j]] for j = 0..15   // InvSubBytes
         tmp.128  = InvAESShiftRows(tmp.128)             // InvShiftRows
+        tmp.8[j] = InvAESSBox[tmp.8[j]] for j = 0..15   // InvSubBytes
         tmp.128  = tmp.128 ^ vrs1[0]                    // InvAddRoundKey
 \end{lstlisting}
 \caption{Pseudocode for the per-round vector-scalar AES instructions.
