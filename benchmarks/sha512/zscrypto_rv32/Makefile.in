@@ -1,0 +1,13 @@
+
+ifeq ($(ZSCRYPTO),1)
+
+ifeq ($(XLEN),32)
+
+HASH_SHA512_ZSCRYPTO_RV32_FILES = \
+    sha512/zscrypto_rv32/sha512.c
+
+$(eval $(call add_lib_target,sha512_zscrypto_rv32,$(HASH_SHA512_ZSCRYPTO_RV32_FILES)))
+
+endif
+
+endif
