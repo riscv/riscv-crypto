@@ -15,9 +15,14 @@ This directory contains two types of information:
   
   ```sh
   source bin/conf.sh
+  git submodule update --init extern/sail-riscv
   make specs
   ```
   from the root project of the directory.
+
+  Note the `git submodule` command is needed, because Sail code is pulled
+  directly from the source into the specification, so the files need to be
+  checked out.
 
   Individual versions can be built by running:
 
