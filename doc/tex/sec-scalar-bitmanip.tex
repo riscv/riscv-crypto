@@ -124,33 +124,6 @@ supported.
 The full specification of the {\tt shfli} instruction is available in
 \cite[Section 2.2.3]{riscv:bitmanip:draft}.
 
-\begin{cryptobitmanipisa}
-RV32, RV64:             
-    gorci   rd, rs1, 3
-    gorci   rd, rs1, 4
-    gorci   rd, rs1, 7
-\end{cryptobitmanipisa}
-
-The Generalised Or Combine ({\tt gorci}) instructions are very similar
-to {\tt grevi}, but instead of swapping bit pairs, it or's them together,
-Only the above immediate values are required by the scalar cryptography
-extension.
-
-These variants of {\tt gorci} are
-useful for implementing arbitrary bit permutations and
-constant-time SBox lookups in
-conjunction with the Crossbar Permutation Instructions
-(Section \ref{sec:xperm})\footnote{
-\url{http://svn.clairexen.net/handicraft/2020/lut4perm/demo01.cc}
-\url{http://svn.clairexen.net/handicraft/2020/lut4perm/demo02.cc}
-}.
-
-Cores which also implement the Bit-manipulation extension {\em may} also
-implement the complete {\tt gorci} instruction, with all immediate values
-supported.
-The full specification of these instructions is available in
-\cite[Section 2.3]{riscv:bitmanip:draft}.
-
 \subsubsection{Carry-less Multiply}
 
 \begin{cryptobitmanipisa}
