@@ -71,6 +71,22 @@ check-rv64: $(OPCODES_BASE_RV64) $(OPCODES_CRYPTO_SCALAR_RV64) $(OPCODES_CRYPTO_
 check: check-rv32 check-rv64
 
 #
+# Sail snippets
+#   TODO: Automatic extraction of SAIL snippet code.
+# ------------------------------------------------------------
+        
+SAIL_INPUTS = \
+    $(REPO_HOME)/extern/sail-riscv/model/riscv_insts_kext.sail \
+    $(REPO_HOME)/extern/sail-riscv/model/riscv_insts_kext_rv32.sail \
+    $(REPO_HOME)/extern/sail-riscv/model/riscv_insts_kext_rv64.sail
+
+sail-snippets: $(SAIL_INPUTS)
+	echo $(SAIL_INPUTS)
+
+clean-sail-snippets:
+	rm -rf $(REPO_HOME)/doc/sail-snippets
+
+#
 # Specification - General
 # ------------------------------------------------------------
 

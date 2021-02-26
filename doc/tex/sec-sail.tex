@@ -11,5 +11,10 @@ using Sail. We refer to the Sail implementation of RISC-V as
 The Cryptography extension uses inline Sail code snippets from the
 actual model to give canonical descriptions of instruction
 functionality.
+Each instruction is accompanied by it's expression in Sail, and includes
+calls to supporting functions which are too verbose to include directly
+in the specificaiton.
+This supporting code is listed in Appendix \ref{sec:appx:sail}.
+
 The Sail Manual\footnote{\url{https://github.com/rems-project/sail/blob/sail2/manual.pdf}} is recommended reading in order to
 best understand the code snippets.

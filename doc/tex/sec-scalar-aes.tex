@@ -49,7 +49,7 @@ This affects the computation of the KeySchedule, as shown in
 \cite[Figure 15]{nist:fips:197}.
 
 \begin{figure}[h]
-\lstinputlisting[language=sail,firstline=65,lastline=81]{../sail/riscv_insts_crypto_rv32.sail}
+\lstinputlisting[language=sail,firstline=55,lastline=71]{../extern/sail-riscv/model/riscv_insts_kext_rv32.sail}
 \caption{Sail specification for the lightweight AES instructions targeting the
 RV32 base architecture.}
 \label{fig:sail:aes:rv32}
@@ -173,7 +173,7 @@ for further processing from the concatenation {\tt rs2 || \tt rs1}.
 \end{figure}
 
 \begin{figure}[h!]
-\lstinputlisting[language=sail,firstline=72,lastline=110]{../sail/riscv_insts_crypto_rv64.sail}
+\lstinputlisting[language=sail,firstline=64,lastline=105]{../extern/sail-riscv/model/riscv_insts_kext_rv64.sail}
 \caption{
 Sail specification for the RV64 AES instructions.
 }
