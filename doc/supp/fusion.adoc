@@ -68,7 +68,7 @@ from Bitmanip have been implemented, namely:
 
 - `andn rD, rA, rB // rD = rA & ~rB`
 - `orn  rD, rA, rB // rD = rA | ~rB`
-- `xorn rD, rA, rB // rD = rA ^ ~rB`
+- `xnor rD, rA, rB // rD = rA ^ ~rB`
 
 The Size column gives the size of the instruction sequence in bytes.
 
