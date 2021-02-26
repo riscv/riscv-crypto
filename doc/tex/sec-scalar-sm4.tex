@@ -33,7 +33,7 @@ software implementation.
     SBox and $L'$ transformations as part of the KeySchedule.
 \end{itemize}
 
-SAIL Model code for each instruction is found in figure
+Sail Model code for each instruction is found in figure
 \ref{fig:sail:sm4}.
 Note that the instructions source their destination register from
 bits $19:15$ of the encoding, rather than the usual $11:7$.
@@ -66,6 +66,6 @@ the destination register is always the same as {\tt rs1}.
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=160,lastline=183]{../sail/riscv_insts_crypto.sail}
-\caption{SAIL specification for the SM4 instructions.}
+\caption{Sail specification for the SM4 instructions.}
 \label{fig:sail:sm4}
 \end{figure}

@@ -36,7 +36,7 @@ transformations are all rolled into a single instruction, with the
 per-byte results then accumulated.
 The {\tt bs} immediate operand is a 2-bit {\em Byte Select}, and indicates
 which byte of the input word is operated on.
-SAIL Model code for each instruction is found in figure
+Sail Model code for each instruction is found in figure
 \ref{fig:sail:aes:rv32}.
 Note that the instructions source their destination register from
 bits $19:15$ of the encoding, rather than the usual $11:7$.
@@ -50,7 +50,7 @@ This affects the computation of the KeySchedule, as shown in
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=65,lastline=81]{../sail/riscv_insts_crypto_rv32.sail}
-\caption{SAIL specification for the lightweight AES instructions targeting the
+\caption{Sail specification for the lightweight AES instructions targeting the
 RV32 base architecture.}
 \label{fig:sail:aes:rv32}
 \end{figure}
@@ -175,7 +175,7 @@ for further processing from the concatenation {\tt rs2 || \tt rs1}.
 \begin{figure}[h!]
 \lstinputlisting[language=sail,firstline=72,lastline=110]{../sail/riscv_insts_crypto_rv64.sail}
 \caption{
-SAIL specification for the RV64 AES instructions.
+Sail specification for the RV64 AES instructions.
 }
 \label{fig:pesudo:aes:rv64}
 \end{figure}
