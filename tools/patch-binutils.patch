@@ -173,7 +173,7 @@ index 96189d97d0..0be48518ef 100644
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index 3a59630101..6ba3c98b2b 100644
+index 3a59630101..e3e364b792 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -499,19 +499,19 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -204,7 +204,7 @@ index 3a59630101..6ba3c98b2b 100644
  {"sbclr",     0, INSN_CLASS_B_OR_ZBS,   "d,s,t",  MATCH_SBCLR, MASK_SBCLR, match_opcode, 0 },
  {"sbclr",     0, INSN_CLASS_B_OR_ZBS,   "d,s,>",  MATCH_SBCLRI, MASK_SBCLRI, match_opcode, INSN_ALIAS },
  {"sbset",     0, INSN_CLASS_B_OR_ZBS,   "d,s,t",  MATCH_SBSET, MASK_SBSET, match_opcode, 0 },
-@@ -547,8 +547,8 @@ const struct riscv_opcode riscv_opcodes[] =
+@@ -547,41 +547,41 @@ const struct riscv_opcode riscv_opcodes[] =
  {"sh1add",    0, INSN_CLASS_B_OR_ZBA,   "d,s,t",  MATCH_SH1ADD, MASK_SH1ADD, match_opcode, 0 },
  {"sh2add",    0, INSN_CLASS_B_OR_ZBA,   "d,s,t",  MATCH_SH2ADD, MASK_SH2ADD, match_opcode, 0 },
  {"sh3add",    0, INSN_CLASS_B_OR_ZBA,   "d,s,t",  MATCH_SH3ADD, MASK_SH3ADD, match_opcode, 0 },
@@ -215,7 +215,15 @@ index 3a59630101..6ba3c98b2b 100644
  {"clmulr",    0, INSN_CLASS_B_OR_ZBC,   "d,s,t",  MATCH_CLMULR, MASK_CLMULR, match_opcode, 0 },
  {"min",       0, INSN_CLASS_B_OR_ZBB,   "d,s,t",  MATCH_MIN, MASK_MIN, match_opcode, 0 },
  {"max",       0, INSN_CLASS_B_OR_ZBB,   "d,s,t",  MATCH_MAX, MASK_MAX, match_opcode, 0 },
-@@ -562,26 +562,26 @@ const struct riscv_opcode riscv_opcodes[] =
+ {"minu",      0, INSN_CLASS_B_OR_ZBB,   "d,s,t",  MATCH_MINU, MASK_MINU, match_opcode, 0 },
+ {"maxu",      0, INSN_CLASS_B_OR_ZBB,   "d,s,t",  MATCH_MAXU, MASK_MAXU, match_opcode, 0 },
+-{"shfli",     0, INSN_CLASS_B_OR_ZBP,   "d,s,|",  MATCH_SHFLI, MASK_SHFLI, match_opcode, 0 },
+-{"unshfli",   0, INSN_CLASS_B_OR_ZBP,   "d,s,|",  MATCH_UNSHFLI, MASK_UNSHFLI, match_opcode, 0 },
++{"shfli",     0, INSN_CLASS_I       ,   "d,s,|",  MATCH_SHFLI, MASK_SHFLI, match_opcode, 0 },
++{"unshfli",   0, INSN_CLASS_I       ,   "d,s,|",  MATCH_UNSHFLI, MASK_UNSHFLI, match_opcode, 0 },
+ {"shfl",      0, INSN_CLASS_B_OR_ZBP,   "d,s,t",  MATCH_SHFL, MASK_SHFL, match_opcode, 0 },
+ {"shfl",      0, INSN_CLASS_B_OR_ZBP,   "d,s,|",  MATCH_SHFLI, MASK_SHFLI, match_opcode, INSN_ALIAS },
+ {"unshfl",    0, INSN_CLASS_B_OR_ZBP,   "d,s,t",  MATCH_UNSHFL, MASK_UNSHFL, match_opcode, 0 },
  {"unshfl",    0, INSN_CLASS_B_OR_ZBP,   "d,s,|",  MATCH_UNSHFLI, MASK_UNSHFLI, match_opcode, INSN_ALIAS },
  {"bdep",      0, INSN_CLASS_B_OR_ZBE,   "d,s,t",  MATCH_BDEP, MASK_BDEP, match_opcode, 0 },
  {"bext",      0, INSN_CLASS_B_OR_ZBE,   "d,s,t",  MATCH_BEXT, MASK_BEXT, match_opcode, 0 },
