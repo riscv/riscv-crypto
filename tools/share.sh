@@ -23,8 +23,8 @@ PATCH_SPIKE=$REPO_HOME/tools/patch-spike.patch
 
 #
 # Known good commits
-BINUTILS_COMMIT=c870418800cd390bb2ae531226efd8a8ce1b741d
-GCC_COMMIT=7aad2f362811fb07d75eea90aaebd16fca714d4c
+BINUTILS_COMMIT=riscv-binutils-2.35-rvb
+GCC_COMMIT=c3911e6425f
 
 #
 # Check that a directory exists and exit if not.

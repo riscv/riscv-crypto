@@ -43,7 +43,7 @@ static const uint64_t KeccakP1600RoundConstants[24] =
 
 static inline uint64_t roli(uint64_t rs1, int i) {
     uint64_t rd;
-    asm ("roli %0, %1, %2" : "=r"(rd) :"r"(rs1),"i"(i));
+    asm ("rori %0, %1, 64-%2" : "=r"(rd) :"r"(rs1),"i"(i));
     return rd;
 }
 

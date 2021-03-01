@@ -19,11 +19,9 @@ git submodule update --init --recursive riscv-glibc
 git submodule update --init --recursive riscv-newlib
 
 cd $DIR_GCC
-git checkout riscv-bitmanip
 git checkout $GCC_COMMIT
 
 cd $DIR_BINUTILS
-git checkout riscv-bitmanip
 git checkout $BINUTILS_COMMIT
 
 # ------ Proxy Kernel (PK) -------------------------------------------------
