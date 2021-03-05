@@ -1,6 +1,7 @@
 
 \newpage
 \section{Instruction Encodings}
+\label{sec:scalar:encodings}
 
 This section describes the encodings for the {\em Scalar} Cryptography
 extension.
@@ -27,7 +28,7 @@ the complexity of identifying {\em valid} instructions.
 \item \label{itm:enc:5}
 Where a particular design choice has been made, rationale will be provided
 and other rejected options will be described.
-Where the design choice is somewhat arbitrary (at-least to the designers
+Where the design choice is somewhat arbitrary (at-least to the designer's
 knowledge) this too will be noted as an indication someone might be
 able to do better.
 \item \label{itm:enc:6}
@@ -49,8 +50,8 @@ the additional complexity and costs are deemed worth while.
 Scalar Cryptography instructions which write a single
 destination register, and read two source registers
 best fit in the {\tt OP} major opcode, which contains other ALU-esq
-instructions which source two registers.
-Scalar Cryptography instructions which source a single register ({\tt rs1})
+instructions that source two registers.
+Scalar Cryptography instructions that source a single register ({\tt rs1})
 best fit into the {\tt OP-IMM} major opcode.
 Even instructions with only a single source register and no immediate are
 better placed in the {\tt OP-IMM} space, because the decoder will already
@@ -69,7 +70,7 @@ execution pipeline of a core.
 Based on these two assumptions, we want to:
 very quickly identify
 that we are decoding {\em any} Scalar Cryptography instruction, in order to
-select the correct functional unit to send it too; and
+select the correct functional unit to send it to; and
 easily identify {\em which} Scalar Cryptography instruction we are decoding,
 so that it may be identified and executed with minimal effort by the
 functional unit.
@@ -124,7 +125,7 @@ All of these bits were chosen arbitrarily.
 Having the operation bits for SHA512/SHA256 instructions at a different place
 in the instruction on RV32 is slightly inefficient and costs more gates,
 but is much more efficient in terms of opcode space.
-All encodings taken up by {\tt sha512*} instructions on RV32 and
+All encodings taken up by {\tt sha512*} instructions on RV32 are
 free for use by other instructions on RV64.
 
 Bit $29$ distinguishes between hash function instructions and block

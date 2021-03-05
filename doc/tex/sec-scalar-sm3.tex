@@ -23,11 +23,11 @@ the same pattern as the scalar SHA2 instructions
 
 The instructions implement versions of the $P_0$ and $P_1$
 permutations, per the SM3 specification \cite{ietf:sm3}.
-Sail Model code for each instruction is found in figure
+RISC-V Sail model code for each instruction is found in figure
 \ref{fig:sail:sm3}.
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=98,lastline=106]{../extern/sail-riscv/model/riscv_insts_kext.sail}
-\caption{Sail specification for the scalar RV32/RV64 SM3 instructions.}
+\caption{RISC-V Sail model specification for the scalar RV32/RV64 SM3 instructions.}
 \label{fig:sail:sm3}
 \end{figure}

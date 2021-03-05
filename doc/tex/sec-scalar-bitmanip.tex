@@ -26,7 +26,7 @@ the scalar cryptographic extensions,
 the Bitmanip extension,
 {\em or}
 both,
-would be able to depend on the existence of these instructions.
+would be required to implement these instructions.
 
 %
 % TODO: Venn diagram of proposed instructions.
@@ -51,8 +51,8 @@ RV32, RV64:                         RV64 only:
 See \cite[Section 3.1.1]{riscv:bitmanip:draft} for details of
 these instructions.
 Standard bitwise rotation is a primitive operation in many block ciphers and
-hash functions.
-It particularly features in the ARX (Add, Rotate, Xor) class of
+hash functions;
+it features particularly in the ARX (Add, Rotate, Xor) class of
 block ciphers
 \footnote{\url{https://www.cosic.esat.kuleuven.be/ecrypt/courses/albena11/slides/nicky_mouha_arx-slides.pdf}}
 and stream ciphers.
@@ -89,7 +89,7 @@ standard endianness for input and output data.
 Bit reversal within bytes is used for implementing the GHASH  component
 of Galois/Counter Mode (GCM)~\cite{nist:gcm}.
 
-Cores which also implement the Bit-manipulation extension {\em may} also
+Cores which also implement the Bit-manipulation extension {\em must}
 implement the complete {\tt grevi} instruction, with all immediate values
 supported.
 The full specification of the {\tt grevi} instruction is available in
@@ -107,7 +107,6 @@ The scalar cryptography extension requires {\em only} the above instances
 of {\tt [un]shfli} be implemented, which can be invoked via their
 pseudo-ops.
 Only RV32 implementations require these instructions.
-
 They perform a bit-interleave (or de-interleave) operation, and are
 useful for implementing the 64-bit rotations in the
 SHA3~\cite{nist:fips:202} algorithm on
@@ -118,7 +117,7 @@ NIST Lightweight Cryptography competition.
 On RV64, the relevant operations in SHA3 can be done natively, so
 {\tt zip} and {\tt unzip} are not required.
 
-Cores which also implement the Bit-manipulation extension {\em may} also
+Cores which also implement the Bit-manipulation extension {\em must}
 implement the complete {\tt [un]shfli} instruction, with all immediate values
 supported.
 The full specification of the {\tt shfli} instruction is available in
@@ -179,7 +178,7 @@ RV32, RV64:                         RV64:
 See \cite[Section 2.1.4]{riscv:bitmanip:draft} for details of
 these instructions.
 Some lightweight block ciphers
-(e.g. SPARX \cite{DPUVGB:16})
+(e.g., SPARX \cite{DPUVGB:16})
 use sub-word data types in their primitives.
 The Bitmanip pack instructions are useful for performing rotations on
 16-bit data elements.

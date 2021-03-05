@@ -7,7 +7,7 @@
     DRBGs of virtually any state size and security level.
 
     The purpose of this baseline specification is to guarantee that a simple,
-    device-independent driver component (e.g. in Linux kernel, embedded
+    device-independent driver component (e.g., in Linux kernel, embedded
     firmware, or a cryptographic library) can use the ISA instruction to
     generate truly random bits. See Appendix \ref{sec:entropy-appendix} for
     rationale and further discussion. This section is also supported by
@@ -203,8 +203,8 @@ RV32, RV64
     from this post-processing would should have ``computationally bounded
     full entropy''.  The computational bound is set so that a
     random-distinguishing attack should require computational resources
-    comparable or greater than those required for key search a block cipher
-    with a 256-bit key (e.g. AES 256). This is equivalent to a Category 5
+    comparable or greater than those required for key searching a block cipher
+    with a 256-bit key (e.g., AES 256). This is equivalent to a Category 5
     classical or quantum adversary
     \cite[Section 4.A.4 Security Strength Categories]{NI16}.
 
@@ -310,7 +310,7 @@ RV32, RV64
     The primary purpose of a cryptographic entropy source is to produce
     secret keying material. In almost all cases a hardware entropy source
     must implement appropriate \emph{security controls} to guarantee
-    unpredictability, prevent leakage, detect attacks, and to deny
+    unpredictability, prevent leakage, detect attacks, and deny
     adversarial control over the entropy output or ts generation mechanism.
     Security controls are not mandatory for RISC-V (in case of virtual
     entropy sources) but are required for security certification.
@@ -379,7 +379,7 @@ RV32, RV64
     getnoise    rd   // Noise source test. Encoding: csrrs rd, mnoise, x0
 \end{cryptoisa}
 
-    The Crypto ISE defines the semantics of only single bit,
+    The Crypto ISE defines the semantics of only a single bit,
     \verb|mnoise[31]|, which is named \verb|NOISE_TEST|. The only
     universal function is for enabling/disabling this interface. This is
     because the test interface effectively disables \mnemonic{pollentropy};
@@ -397,7 +397,7 @@ RV32, RV64
     again disabled, the entropy source shall return from \verb|BIST|
     via a zeroization and self-test mechanism (effectively a reset).
 
-    When not implemented (e.g. in virtual machines), \mnemonic{getnoise}
+    When not implemented (e.g., in virtual machines), \mnemonic{getnoise}
     can permanently read zero (\verb|0x00000000|). When available, but
     \verb|NOISE_TEST = 0|, \mnemonic{getnoise} can return a nonzero
     constant such as \verb|0x00000001|.

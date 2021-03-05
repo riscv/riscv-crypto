@@ -36,8 +36,16 @@ This covers all of the integer multiply instructions in the
 M extension, and the carry-less multiply instructions required by the
 scalar cryptography extension.
 
-Cores which do not implement any data-dependant optimisations in their
-multipliers (e.g. early termination, memoization) do not need to add
+\begin{displayquote}{\em
+We considered alternative approaches to this.
+For example, a CSR containing an ``enable constant time mode'' bit.
+While this is a reasonable approach, we opted to avoid adding
+state (and so complicate things like context switches and CSR accesses)
+or additional instructions.
+}\end{displayquote}
+
+Cores which do not implement any data-dependent optimisations in their
+multipliers (e.g., early termination, memoization) do not need to add
 any additional logic to interpret this hint.
 Note that this hint must also be interpreted when {\em fusing}
 sequences of multiply instructions. For example, the sequence
@@ -47,14 +55,14 @@ mul  t1, a0, a1
 \end{verbatim}
 {\em may} be fused into a single operation inside the core.
 However, because it meets the {\tt rs1 <= rs2} constraint, the fused
-operation must still execution with a latency which is not dependant on
+operation must still execution with a latency which is not dependent on
 the input operands.
 When fusing instruction pairs which partially meet the hint condition:
 \begin{verbatim}
 mulh t0, a0, a1 // a0 <= a1, latency must be independent of GPR[rs1], GPR[rs2]
 mul  t1, a1, a0 // a1 >  a0, not guaranteed to have data-independent latency.
 \end{verbatim}
-Cores do not need to abide by the data independent latency constraint,
+cores do not need to abide by the data independent latency constraint,
 as this is consistent with the un-fused sequence.
 Note that the register address choices {\em may} result in different
 execution latencies, so long as the numerical values contained in the
@@ -65,7 +73,7 @@ may have a different latency profile from self-assignment
 {\tt mul a2, a2, a3} (a2 *= a3)
 or squaring
 {\tt mul a1, a2, a2} (a1 = a2 * a2) - 
-so long as the {\em contents} of {\tt GPR[a0/a1/a2]} do not affect
+so long as the {\em contents} of {\tt GPR[a2/a3]} do not affect
 the execution latency.
 None of these latency requirements apply to floating point operations.
 

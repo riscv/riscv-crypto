@@ -22,23 +22,24 @@ the SM4 block cipher\cite{block:sm4:1, ietf:sm4}.
 
 The instructions are taken from proposals found in \cite{MJS:LWAES:20}.
 They are very lightweight and require only a single SBox instance.
-They are designed to give an very high performance improvement with
+They are designed to give a very high performance improvement with
 minimal area requirements, and resemble a TTables-esq
 software implementation.
 
 \begin{itemize}
-\item \mnemonic{sm4ed} - Encrypt/Decrypt instruction. Applies the
+\item \mnemonic{sm4ed} - Encrypt/Decrypt. Applies the
     SBox and $L$ transformations as part of the round function.
-\item \mnemonic{sm4ks} - KeySchedule instruction. Applies the
+\item \mnemonic{sm4ks} - KeySchedule. Applies the
     SBox and $L'$ transformations as part of the KeySchedule.
 \end{itemize}
 
-Sail Model code for each instruction is found in figure
+RISC-V Sail model code for each instruction is found in figure
 \ref{fig:sail:sm4}.
 Note that the instructions source their destination register from
 bits $19:15$ of the encoding, rather than the usual $11:7$.
 This is because the instructions are designed to be used such that
 the destination register is always the same as {\tt rs1}.
+See Appendix \ref{sec:scalar:encodings} for more information.
 
 %
 % Old pseudo code for SM4. 
@@ -66,6 +67,6 @@ the destination register is always the same as {\tt rs1}.
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=142,lastline=165]{../extern/sail-riscv/model/riscv_insts_kext.sail}
-\caption{Sail specification for the SM4 instructions.}
+\caption{RISC-V Sail model specification for the SM4 instructions.}
 \label{fig:sail:sm4}
 \end{figure}

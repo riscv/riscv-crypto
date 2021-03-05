@@ -36,12 +36,13 @@ transformations are all rolled into a single instruction, with the
 per-byte results then accumulated.
 The {\tt bs} immediate operand is a 2-bit {\em Byte Select}, and indicates
 which byte of the input word is operated on.
-Sail Model code for each instruction is found in figure
+RISC-V Sail model code for each instruction is found in figure
 \ref{fig:sail:aes:rv32}.
 Note that the instructions source their destination register from
 bits $19:15$ of the encoding, rather than the usual $11:7$.
 This is because the instructions are designed to be used such that
 the destination register is always the same as {\tt rs1}.
+See Appendix \ref{sec:scalar:encodings} for more information.
 
 These instructions use the Equivalent Inverse Cipher
 construction \cite[Section 5.3.5]{nist:fips:197}.
@@ -50,7 +51,7 @@ This affects the computation of the KeySchedule, as shown in
 
 \begin{figure}[h]
 \lstinputlisting[language=sail,firstline=55,lastline=71]{../extern/sail-riscv/model/riscv_insts_kext_rv32.sail}
-\caption{Sail specification for the lightweight AES instructions targeting the
+\caption{RISC-V Sail model specification for the lightweight AES instructions targeting the
 RV32 base architecture.}
 \label{fig:sail:aes:rv32}
 \end{figure}
@@ -89,7 +90,7 @@ the 128-bit state of the AES cipher, and outputs one 64-bit
 result, i.e. half of the next round state.
 The byte mapping of input register values to AES state and output register
 values is shown in \figref{aes:rv64:mapping}.
-Pseudocode for the instructions is illustrated in
+RISC-V Sail model code for the instructions is illustrated in
 \figref{pesudo:aes:rv64}.
 
 \begin{itemize}
@@ -175,7 +176,7 @@ for further processing from the concatenation {\tt rs2 || \tt rs1}.
 \begin{figure}[h!]
 \lstinputlisting[language=sail,firstline=64,lastline=105]{../extern/sail-riscv/model/riscv_insts_kext_rv64.sail}
 \caption{
-Sail specification for the RV64 AES instructions.
+RISC-V Sail model specification for the RV64 AES instructions.
 }
 \label{fig:pesudo:aes:rv64}
 \end{figure}
