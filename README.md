@@ -9,6 +9,7 @@
 - [Specification](#Specification)
 - [Formal Model](#Formal-Model)
 - [Toolchain](#Toolchain)
+- [Spike](#Spike)
 - [Compliance](#Compliance)
 - [Benchmarks](#Benchmarks)
 - [Verilog RTL](#Verilog-RTL-Prototypes)
@@ -66,6 +67,17 @@ build the experimental toolchain.
 There is also a [task list](tools/gcc-patch-tasks.adoc) for
 implementing an upstreamable patch.
 If you can implement this patch, please get in touch.
+
+## Spike
+
+Spike is included as a submodule (`extern/riscv-isa-sim`). We have
+[upstream Spike](https://github.com/riscv/riscv-isa-sim)
+support, but are waiting on an
+[open pull request](https://github.com/riscv/riscv-isa-sim/pull/649) to
+be merged to fix some problems. Until then, the Spike submodule
+points at this
+[public fork](https://github.com/ben-marshall/riscv-isa-sim/tree/scalar-crypto-fix),
+from which the pull request is derived.
 
 ## Compliance
 
