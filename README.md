@@ -70,14 +70,11 @@ If you can implement this patch, please get in touch.
 
 ## Spike
 
-Spike is included as a submodule (`extern/riscv-isa-sim`). We have
-[upstream Spike](https://github.com/riscv/riscv-isa-sim)
-support, but are waiting on an
-[open pull request](https://github.com/riscv/riscv-isa-sim/pull/649) to
-be merged to fix some problems. Until then, the Spike submodule
-points at this
-[public fork](https://github.com/ben-marshall/riscv-isa-sim/tree/scalar-crypto-fix),
-from which the pull request is derived.
+Spike is included as a submodule (`extern/riscv-isa-sim`), since
+we have upstream Spike support which is periodically updated as the
+specification progresses.
+See [tools/README.md](tools/README.md) for instructions on how to
+build Spike.
 
 ## Compliance
 
