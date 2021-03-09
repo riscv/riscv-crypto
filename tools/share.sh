@@ -23,7 +23,10 @@ PATCH_SPIKE=$REPO_HOME/tools/patch-spike.patch
 
 #
 # Known good commits
-BINUTILS_COMMIT=riscv-binutils-2.35-rvb
+
+# Points at riscv-binutils-2.35-rvb branch
+BINUTILS_COMMIT=3e5f50f31348d05144966545d862a3172d315230
+
 GCC_COMMIT=c3911e6425f
 
 #
