@@ -8,9 +8,14 @@ secret.
 Integer multiply and carry-less multiply instructions are principly affected
 by this requirement.
 Cores which implement the scalar cryptography
-extension must interpret the following {\em hint}\footnote{
-We considered adding a CSR bit to {\em turn on} data-independent instruction
-latency guarantees, but decided against this as it introduced new state.
+extension must interpret the following {\em conditions}\footnote{
+Prior versions of this specification described the constant-time indicator
+as a {\em hint}. In RISC-V terminology, a hint is a totally optional
+indicator to the core, and may always be ignored.
+This mechanism is catagorically not a hint in this sense.
+It {\em must} be handled by the core, and cannot be ignored.
+The word {\em hint} has hence been removed from the specification to
+emphasise this point.
 } to provide some
 guarantees of constant time behaviour to cryptographic code:
 
@@ -24,7 +29,7 @@ guarantees of constant time behaviour to cryptographic code:
     guaranteed to do so.
 \end{itemize}
 
-This hint is applied to the following instructions:
+This condition is applied to the following instructions:
 {\tt mul},
 {\tt mulh},
 {\tt mulw},
@@ -46,8 +51,8 @@ or additional instructions.
 
 Cores which do not implement any data-dependent optimisations in their
 multipliers (e.g., early termination, memoization) do not need to add
-any additional logic to interpret this hint.
-Note that this hint must also be interpreted when {\em fusing}
+any additional logic to interpret this indicator.
+Note that this indicator must also be interpreted when {\em fusing}
 sequences of multiply instructions. For example, the sequence
 \begin{verbatim}
 mulh t0, a0, a1
@@ -57,7 +62,7 @@ mul  t1, a0, a1
 However, because it meets the {\tt rs1 <= rs2} constraint, the fused
 operation must still execution with a latency which is not dependent on
 the input operands.
-When fusing instruction pairs which partially meet the hint condition:
+When fusing instruction pairs which partially meet the condition:
 \begin{verbatim}
 mulh t0, a0, a1 // a0 <= a1, latency must be independent of GPR[rs1], GPR[rs2]
 mul  t1, a1, a0 // a1 >  a0, not guaranteed to have data-independent latency.
