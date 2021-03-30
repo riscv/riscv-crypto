@@ -10,7 +10,7 @@
 - [Formal Model](#Formal-Model)
 - [Toolchain](#Toolchain)
 - [Spike](#Spike)
-- [Compliance](#Compliance)
+- [Architectural Tests](#Architectural-Tests)
 - [Benchmarks](#Benchmarks)
 - [Verilog RTL](#Verilog-RTL-Prototypes)
 
@@ -19,6 +19,10 @@
 This repository is used to develop standardisation proposals for
 scalar cryptographic instruction set extensions for the RISC-V
 architecture.
+
+For a general overview of the extension status and ratification progress,
+please see 
+[our page on the RISC-V Wiki](https://wiki.riscv.org/x/MVcF).
 
 - **Note:** See the
    [dev/next-release](https://github.com/riscv/riscv-crypto/tree/dev/next-release)
@@ -76,17 +80,23 @@ specification progresses.
 See [tools/README.md](tools/README.md) for instructions on how to
 build Spike.
 
-## Compliance
+## Architectural Tests 
 
 See [tests/compliance/README.md](tests/compliance/README.md) for
-information on how to run the work-in-progress riscv-compliance
-suite for the cryptography extension.
+information on how to run the work-in-progress
+[RISC-V Architectural Test suite](https://github.com/riscv/riscv-arch-test)
+for the cryptography extension.
 You will need to setup the toolchain, spike and SAIL before you can do
 this.
 
 There is also a work-in-progress 
 [test plan](tests/compliance/test-plan-scalar.adoc)
 for the Scalar cryptography extensions.
+
+**Note:** This was formally known as the _riscv-compliance_ test suite.
+Hence there are some references or directories to "compliance".
+These have been left in some cases to preserve widely shared links,
+especially to the test plan.
 
 ## Benchmarks
 
