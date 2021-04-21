@@ -364,8 +364,8 @@ on each 32-bit word of `rs1`.
 
 === SM4
 
-    sm4ed   rd, rs1, rs2, bs
-    sm4ks   rd, rs1, rs2, bs
+    sm4ed       rt, rs2, bs
+    sm4ks       rt, rs2, bs
 
 NOTE: These instructions are identical to the RV32 versions, but are also
 available on RV64.
