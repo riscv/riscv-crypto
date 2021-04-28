@@ -1,4 +1,27 @@
 [[crypto_scalar_sail_specifications]]
 === Sail Specifications
 
-NOTE: Todo: convert Sail notes into asciidoc from LaTeX
+RISC-V maintains a 
+link:https://github.com/rems-project/sail-riscv[formal model]
+of the ISA specification,
+implemented in the Sail ISA specification language
+\cite{sail}.
+Note that _Sail_ refers to the specification language itself,
+and that there is a _model of RISC-V_, written using Sail.
+It is not correct to refer to "the Sail model".
+This is ambiguous, given there are many models of different ISAs implemented
+using Sail. We refer to the Sail implementation of RISC-V as
+"the RISC-V Sail model".
+
+The Cryptography extension uses inline Sail code snippets from the
+actual model to give canonical descriptions of instruction
+functionality.
+Each instruction is accompanied by its expression in Sail, and includes
+calls to supporting functions which are too verbose to include directly
+in the specificaiton.
+This supporting code is listed in
+<<crypto_scalar_appx_sail>>.
+The 
+link:https://github.com/rems-project/sail/blob/sail2/manual.pdf[Sail Manual]
+is recommended reading in order to best understand the code snippets.
+
