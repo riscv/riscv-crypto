@@ -1,5 +1,126 @@
 [[crypto_scalar_profiles]]
 == Implementation Profiles
 
-NOTE: todo: convert from LaTeX
+All instructions in the scalar cryptography extension are grouped into
+_functional sets_ and _feature sets_. Functional sets are very fine
+grained, and are constructed around specific algorithms, standards
+requirements, or small logical groupings of instructions. Feature sets
+are more coarse grained, and are what cores are expected to implement.
+The letters used to construct Functional Set names are explained in
+<<crypto_scalar_functional_sets>>.
 
+The Feature Sets for instructions exclusive to the scalar cryptography
+extension are listed in Table
+<<crypto_scalar_feature_sets>>. All
+Bit-manipulation instructions used by the scalar cryptography extension
+(<<crypto_scalar_zkb>>) are always
+included in the feature sets listed in Table
+<<crypto_scalar_feature_sets>>.
+Exceptions are RV64 only instructions, which are not included in RV32
+based implementations.
+
+.Explanation of the functional sets.
+[[crypto_scalar_functional_sets]]
+[%autowidth]
+|=======================================================================
+|Functional Set |Description
+
+|`Zkg` |Constant time carry-less multiply for Galois/Counter Mode.
+|`Zkb` |Bitmanip subset included in the scalar cryptography extension, minus those in Zk.
+|`Zkr` |Entropy source for seeding random number generators.
+|`Zkne` |NIST AES Encryption Instructions.
+|`Zknd` |NIST AES Decryption Instructions.
+|`Zknh` |NIST SHA2 Hash function instructions.
+|`Zksed` |SM4 Instructions.
+|`Zksh` |SM3 Hash function instructions.
+|=======================================================================
+
+.Explanation of the feature strings used to refer to the functional sets.
+[[crypto_scalar_feature_sets]]
+[%autowidth]
+|================================================================
+|Feature Set |Description
+
+|`K` |The default scalar cryptography extension, short for `Zkn_Zkr`
+|`Zkn` |NIST algorithm suite. Short for `Zkne_Zknd_Zknh_Zkg_Zkb`.
+|`Zks` |ShangMi (SM) algorithm suite. Short for `Zksed_Zksh_Zkg_Zkb`.
+|================================================================
+
+Encryption and decryption instructions are separated into different
+functional groups because some popular use cases (e.g., Galois/Counter
+Mode in TLS 1.3, among others) do not require decryption functionality.
+The NIST and ShangMi algorithms suites are separated because their
+usefulness is heavily dependent on the countries a device is expected to
+operate in. NIST ciphers are a part of most standardised internet
+protocols, while ShangMi ciphers are required for use in China.
+
+Presence of the cryptography extension in any form is indicated by bit
+`10` of the MISA CSR. i.e. bit `K`, because `C` is taken
+and `K` is for _Kappa_, the first letter of the ancient Greek word
+_kruptós_, meaning _hidden_. Detection of fine-grained functionality
+uses the mechanisms defined by the tech-config RISC-V Task Group. At the
+time of writing, these mechanisms are still being defined.
+
+Some example GCC `-march=` strings:
+
+* `rv32ik` - Implement the 32-bit NIST feature set (Zkn, the entropy
+source feature set (Zkr) and all of the 32-bit Bit-manipulation
+instructions used by the scalar cryptography extension listed in 
+<<crypto_scalar_zkb>>.
+* `rv64ik` - As above, but implementing the 64-bit version of the NIST
+feature set, and additional 64-bit instructions from the
+Bit-manipulation subset.
+* `rv64i_Zks_Zkr` - Implement the Entropy Source instructions, the 64-bit
+Bit-manipulation instructions, and the XLEN independent ShangMi suite
+instructions.
+* `rv64i_Zkne_Zknh` - Implement only the 64-bit NIST AES Encryption and
+hash function instructions.
+
+.Feature sets for instructions in the scalar cryptography extension.
+[%autowidth]
+|=========================================================
+| Instruction | Functional Set |Zkn (RV32) |Zkn (RV64) |Zks (RV32) |Zks (RV64) | Zkr 
+
+|aes32dsi           |Zknd      |     x     |           |           |    |
+|aes32dsmi          |Zknd      |     x     |           |           |    |
+|aes32esi           |Zkne      |     x     |           |           |    |
+|aes32esmi          |Zkne      |     x     |           |           |    |
+|aes64ds            |Zknd      |           |     x     |           |    |
+|aes64dsm           |Zknd      |           |     x     |           |    |
+|aes64es            |Zkne      |           |     x     |           |    |
+|aes64esm           |Zkne      |           |     x     |           |    |
+|aes64im            |Zknd      |           |     x     |           |    |
+|aes64ks1i          |Zkne      |           |     x     |           |    |
+|aes64ks2           |Zkne      |           |     x     |           |    |
+|sha256sig0         |Zknh      |     x     |     x     |           |    |
+|sha256sig1         |Zknh      |     x     |     x     |           |    |
+|sha256sum0         |Zknh      |     x     |     x     |           |    |
+|sha256sum1         |Zknh      |     x     |     x     |           |    |
+|sha512sig0h        |Zknh      |     x     |           |           |    |
+|sha512sig0l        |Zknh      |     x     |           |           |    |
+|sha512sig1h        |Zknh      |     x     |           |           |    |
+|sha512sig1l        |Zknh      |     x     |           |           |    |
+|sha512sum0r        |Zknh      |     x     |           |           |    |
+|sha512sum1r        |Zknh      |     x     |           |           |    |
+|sha512sig0         |Zknh      |     x     |           |           |    |
+|sha512sig1         |Zknh      |     x     |           |           |    |
+|sha512sum0         |Zknh      |     x     |           |           |    |
+|sha512sum1         |Zknh      |     x     |           |           |    |
+|sm3p0              |Zksh      |           |           |     x     | x  |
+|sm3p1              |Zksh      |           |           |     x     | x  |
+|sm4ed              |Zksed     |           |           |     x     | x  |
+|sm4ks              |Zksed     |           |           |     x     | x  |
+|pollentropy        |Zkr       |           |           |           |    | x
+|getnoise           |Zkr       |           |           |           |    | x
+|clmul, clmulh      |Zkg       |     x     |     x     |     x     | x  |
+|xperm.n, xperm.b   |Zkb       |     x     |     x     |     x     | x  |
+|ror, rol, rori     |Zkb       |     x     |     x     |     x     | x  |
+|rorw, rolw, roriw  |Zkb       |           |     x     |           | x  |
+|andn, orn, xnor    |Zkb       |     x     |     x     |     x     | x  |
+|pack, packu, packh |Zkb       |     x     |     x     |     x     | x  |
+|packw, packuw      |Zkb       |           |     x     |           | x  |
+|rev.b, rev8 (grevi)|Zkb       |     x     |     x     |     x     | x  |
+|rev8.w (grevi)     |Zkb       |           |     x     |           | x  |
+|zip (shfli)        |Zkb       |     x     |           |     x     |    |
+|unzip (unshfli)    |Zkb       |     x     |           |     x     |    |
+|=========================================================
