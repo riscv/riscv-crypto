@@ -1,0 +1,5 @@
+[[crypto_scalar_zkb]]
+=== Bitmanip Instructions for Cryptography: ZKb
+
+NOTE: todo - convert to asciidoc.
+

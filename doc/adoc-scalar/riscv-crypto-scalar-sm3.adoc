@@ -1,0 +1,7 @@
+[[crypto_scalar_sm3]]
+=== Scalar SM3 Instructions
+
+NOTE: todo - convert to asciidoc.
+
+
+

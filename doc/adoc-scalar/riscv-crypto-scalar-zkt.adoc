@@ -1,0 +1,7 @@
+[[crypto_scalar_zkt]]
+== Data Independent Execution Latency Subset: ZKt
+
+NOTE: todo - merge in existing asciidoc document found
+link:https://github.com/rvkrypto/riscv-zkt-list/blob/main/zkt-list.adoc[here].
+
+

@@ -1,0 +1,6 @@
+[[crypto_scalar_sm4]]
+=== Scalar SM4 Instructions
+
+NOTE: todo - convert to asciidoc.
+
+

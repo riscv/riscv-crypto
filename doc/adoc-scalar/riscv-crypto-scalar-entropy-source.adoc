@@ -1,0 +1,5 @@
+[[crypto_scalar_entropy_source]]
+== Entropy Source
+
+NOTE: Needs converting from LaTeX
+

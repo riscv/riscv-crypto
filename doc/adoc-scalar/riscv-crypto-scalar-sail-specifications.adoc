@@ -1,0 +1,4 @@
+[[crypto_scalar_sail_specifications]]
+=== Sail Specifications
+
+NOTE: Todo: convert Sail notes into asciidoc from LaTeX

@@ -1,0 +1,5 @@
+[[bibliography]]
+== Bibliography
+
+NOTE: This is a placeholder file while bibliography is being implemented.
+

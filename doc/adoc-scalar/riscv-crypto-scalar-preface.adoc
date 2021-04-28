@@ -1,0 +1,33 @@
+[colophon]
+= Preface
+
+Contributors to all versions of the specification in alphabetical order
+(please contact editors to suggest corrections):
+
+Alexander Zeh,
+Andy Glew,
+Barry Spinney,
+link:mailto:ben.marshall@bristol.ac.uk[Ben Marshall] (Editor),
+Daniel Page,
+Derek Atkins,
+Ken Dockser,
+Markku-Juhani O. Saarinen,
+Nathan Menhorn,
+L Peter Deutsch,
+Richard Newell,
+Claire Wolf
+
+[NOTE]
+.Document Version Information:
+====
+include::git-commit.adoc[]
+
+See link:https://github.com/riscv/riscv-crypto[github.com/riscv/riscv-crypto]
+for more information.
+====
+
+[copyright]
+.Copyright and licensure:
+This work is licensed under a
+link:http://creativecommons.org/licenses/by/4.0/[Creative Commons Attribution 4.0 International License]
+

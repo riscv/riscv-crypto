@@ -1,0 +1,63 @@
+[[riscv-doc-template]]
+= RISC-V Cryptography Extensions Volume I: Scalar & Entropy Source Instructions
+:description: A working template for documenting RISC-V architecture in asciidoc
+:company: RISC-V.org
+:revdate: 04/2021
+:revnumber: 0.9.0
+:revremark: Pre-release version
+:url-riscv: http://riscv.org
+:doctype: book
+//:doctype: report
+:preface-title: Preamble
+:colophon:
+:appendix-caption: Appendix
+:imagesdir: images
+:title-logo-image: image:risc-v_logo.png[pdfwidth=3.25in,align=center]
+//:page-background-image: image:draft.svg[opacity=20%]
+//:title-page-background-image: none
+//:back-cover-image: image:circuit.png[opacity=25%]
+// Settings:
+:experimental:
+:reproducible:
+// needs to be changed? bug discussion started
+//:WaveDromEditorApp: app/wavedrom-editor.app
+:imagesoutdir: images
+:icons: font
+:lang: en
+:listing-caption: Listing
+:sectnums:
+:toc: left
+:toclevels: 4
+:source-highlighter: pygments
+ifdef::backend-pdf[]
+:source-highlighter: coderay
+endif::[]
+:data-uri:
+:hide-uri-scheme:
+:stem: latexmath
+:footnote:
+:xrefstyle: short
+
+//:This is the preamble.
+
+include::riscv-crypto-scalar-preface.adoc[]
+include::riscv-crypto-scalar-introduction.adoc[]
+include::riscv-crypto-scalar-sail-specifications.adoc[]
+include::riscv-crypto-scalar-profiles.adoc[]
+
+[[crypto_scalar_extension]]
+== Scalar Cryptography Extension
+
+include::riscv-crypto-scalar-zkb.adoc[]
+include::riscv-crypto-scalar-aes.adoc[]
+include::riscv-crypto-scalar-sha2.adoc[]
+include::riscv-crypto-scalar-sm3.adoc[]
+include::riscv-crypto-scalar-sm4.adoc[]
+include::riscv-crypto-scalar-entropy-source.adoc[]
+include::riscv-crypto-scalar-zkt.adoc[]
+include::riscv-crypto-scalar-bibliography.adoc[]
+include::riscv-crypto-scalar-appx-encodings.adoc[]
+include::riscv-crypto-scalar-appx-entropy-source.adoc[]
+include::riscv-crypto-scalar-appx-materials.adoc[]
+include::riscv-crypto-scalar-appx-sail.adoc[]
+

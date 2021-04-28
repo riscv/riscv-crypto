@@ -1,0 +1,5 @@
+[[crypto_scalar_aes]]
+=== Scalar AES Instructions
+
+NOTE: todo - convert to asciidoc.
+

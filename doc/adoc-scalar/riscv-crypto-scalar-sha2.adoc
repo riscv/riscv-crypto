@@ -1,0 +1,6 @@
+[[crypto_scalar_sha2]]
+=== Scalar SHA2 Instructions
+
+NOTE: todo - convert to asciidoc.
+
+
