@@ -42,7 +42,10 @@ endif::[]
 
 include::riscv-crypto-scalar-preface.adoc[]
 include::riscv-crypto-scalar-introduction.adoc[]
+include::riscv-crypto-scalar-audience.adoc[]
 include::riscv-crypto-scalar-sail-specifications.adoc[]
+include::riscv-crypto-scalar-policies.adoc[]
+
 include::riscv-crypto-scalar-profiles.adoc[]
 
 [[crypto_scalar_extension]]
