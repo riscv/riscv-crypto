@@ -12,7 +12,10 @@ $(SPEC_COMMIT):
 	@git log --pretty=format:'%H' -n 1 >> ${@}
 
 %.pdf : %.adoc $(SPEC_COMMIT)
-	asciidoctor-pdf -o $@ $<
+	asciidoctor-pdf \
+        -a pdf-style=resources/themes/risc-v_spec-pdf.yml \
+        -a pdf-fontsdir=resources/fonts \
+        -o $@ $<
 
 all: $(DOC_PDF)
 

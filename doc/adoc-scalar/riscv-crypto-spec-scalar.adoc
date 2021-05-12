@@ -51,6 +51,19 @@ include::riscv-crypto-scalar-profiles.adoc[]
 [[crypto_scalar_extension]]
 == Scalar Cryptography Extension
 
+As per the RISC-V Cryptographic Extensions Task Group charter:
+_"The committee will also make ISA extension proposals for lightweight
+scalar instructions for 32 and 64 bit machines that improve the performance
+and reduce the code size required for software execution of common algorithms
+like AES and SHA and lightweight algorithms like PRESENT and GOST."_
+
+For context, some of these instructions have been developed based on academic
+work at the University of Bristol as part of the XCrypto project
+\cite{MPP:19},
+and work by
+Paris Telecom on acceleration of lightweight block ciphers
+\cite{TGMGD:19}.
+
 include::riscv-crypto-scalar-zkb.adoc[]
 include::riscv-crypto-scalar-aes.adoc[]
 include::riscv-crypto-scalar-sha2.adoc[]

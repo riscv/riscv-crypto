@@ -13,3 +13,6 @@
 [submodule "extern/riscv-compliance"]
 	path = extern/riscv-arch-test
 	url = https://github.com/riscv/riscv-compliance.git
+[submodule "extern/riscv-docs-templates"]
+	path = extern/riscv-docs-templates
+	url = https://github.com/riscv/docs-templates/
