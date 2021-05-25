@@ -2,6 +2,8 @@
 HEADER=riscv-crypto-spec-scalar.adoc
 DOC_PDF=$(HEADER:%.adoc=%.pdf)
 
+all: $(DOC_PDF)
+
 # Contains current git commit for putting into the spec.
 SPEC_COMMIT= git-commit.adoc
 
@@ -16,8 +18,6 @@ $(SPEC_COMMIT):
         -a pdf-style=resources/themes/risc-v_spec-pdf.yml \
         -a pdf-fontsdir=resources/fonts \
         -o $@ $<
-
-all: $(DOC_PDF)
 
 clean:
 	rm -f $(DOC_PDF)
