@@ -12,31 +12,47 @@ def main():
     Main function for the script.
     """
     bibtex_input = sys.argv[1]
-    print("Parsing %s" % bibtex_input)
+    
+    print("[[bibliography]]")
+    print("== Bibliography")
+    print("// Parsed from %s" % bibtex_input)
+    print("")
 
     parsed = parse_bibtex(bibtex_input)
     for entry_name in parsed.entries:
         entry = parsed.entries[entry_name]
         elements = []
 
-        elements.append(entry.fields.get("title",""))
-        elements.append(entry.fields.get("author","")) # todo
-        elements.append(entry.fields.get("publisher",""))
-        elements.append(entry.fields.get("organization",""))
-        elements.append(entry.fields.get("journal",""))
-        elements.append(entry.fields.get("booktitle",""))
-        elements.append(entry.fields.get("howpublished",""))
-        elements.append(entry.fields.get("pages",""))
-        elements.append(entry.fields.get("volume",""))
-        elements.append(entry.fields.get("month",""))
-        elements.append(entry.fields.get("year",""))
-        elements.append(entry.fields.get("url","").lstrip(" ,"))
-        elements.append(entry.fields.get("note",""))
-        elements.append(entry.fields.get("doi",""))
+        ef  = entry.fields
+
+        elements.append(ef.get("title",""))
+        elements.append(ef.get("author","")) # todo
+        elements.append(ef.get("publisher",""))
+        elements.append(ef.get("organization",""))
+        elements.append(ef.get("journal",""))
+        elements.append(ef.get("booktitle",""))
+        elements.append(ef.get("howpublished",""))
+        elements.append(ef.get("pages",""))
+        elements.append(ef.get("volume",""))
+        elements.append(ef.get("month",""))
+        elements.append(ef.get("year",""))
+        elements.append(ef.get("url","").lstrip(" ,"))
+        elements.append(ef.get("note",""))
+        elements.append(ef.get("doi",""))
 
         elements = [e for e in elements if e != ""]
+
+        sanitised = []
+        for e in elements:
+            ne = e.replace("\\url{","")
+            ne = ne.replace("{","")
+            ne = ne.replace("}","")
+            ne = ne.strip()
+            sanitised.append(ne)
+        elements = sanitised
+
         contents = ", ".join(elements)
-        op = "* [[[%s]]] %s" % (entry_name, contents)
+        op = "* [[[%s]]] %s" % (entry_name.replace("+",":"), contents)
         print(op)
 
 
