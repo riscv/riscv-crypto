@@ -28,7 +28,7 @@ policies:
   may be dealt with this way, depending on timescales.
   
 * Historically, there has been some discussion
-  \cite{LSYRR:04}
+  cite:[LSYRR:04]
   on how newly supported operations in general purpose computing might
   enable new bases for cryptographic algorithms.
   The standard will not try to anticipate new useful low level

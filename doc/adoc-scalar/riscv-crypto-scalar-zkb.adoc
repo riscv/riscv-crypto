@@ -3,12 +3,12 @@
 
 Many of the primitive operations used in symmetric key cryptography
 and cryptographic hash functions are well supported by the
-RISC-V Bitmanip \cite{riscv:bitmanip:repo} extension.
+RISC-V Bitmanip cite:[riscv:bitmanip:repo] extension.
 
 NOTE: At the time of writing, the Bitmanip extension is still undergoing
 standardisation.
 Please refer to the Bitmanip draft specification
-\cite{riscv:bitmanip:draft}
+cite:[riscv:bitmanip:draft]
 directly for the
 latest information, as it may be slightly ahead of what is described
 here.
@@ -35,18 +35,21 @@ RV32, RV64:                         RV64 only:
     rori   rd, rs1, imm                 roriw  rd, rs1, imm
 ----
 
-See \cite[Section 3.1.1]{riscv:bitmanip:draft} for details of
+See cite:[riscv:bitmanip:draft] (Section 3.1.1) for details of
 these instructions.
 
+.Notes to software developers
+[NOTE,caption="SH"]
+====
 Standard bitwise rotation is a primitive operation in many block ciphers
 and hash functions; it features particularly in the ARX (Add, Rotate, Xor)
 class of block ciphers and stream ciphers.
 
 * Algorithms making use of 32-bit rotations:
   SHA256, AES (Shift Rows), ChaCha20, SM3.
-
 * Algorithms making use of 64-bit rotations:
   SHA512, SHA3.
+====
 
 
 ==== Bit & Byte Permutations
@@ -69,16 +72,20 @@ They are all parameterisations of the Generalised Reverse with Immediate
 The scalar cryptography extension requires _only_ the above instances
 of `grevi` be implemented, which can be invoked via their pseudo-ops.
 
-Reversing bytes in words is very common in cryptography when setting a
-standard endianness for input and output data.
-Bit reversal within bytes is used for implementing the GHASH component
-of Galois/Counter Mode (GCM) \cite{nist:gcm}.
-
 Cores which also implement the Bit-manipulation extension _must_
 implement the complete `grevi` instruction as specified there, not the
 minimal subset described here.
 The full specification of the `grevi` instruction is available in
-\cite[Section 2.2.2]{riscv:bitmanip:draft}.
+cite:[riscv:bitmanip:draft] (Section 2.2.2).
+
+.Notes to software developers
+[NOTE,caption="SH"]
+====
+Reversing bytes in words is very common in cryptography when setting a
+standard endianness for input and output data.
+Bit reversal within bytes is used for implementing the GHASH component
+of Galois/Counter Mode (GCM) cite:[nist:gcm].
+====
 
 ----
 RV32:
@@ -92,18 +99,23 @@ The scalar cryptography extension requires _only_ the above instances
 of `[un]shfli` be implemented, which can be invoked via their
 pseudo-ops.
 Only RV32 implementations require these instructions.
-They perform a bit-interleave (or de-interleave) operation, and are
-useful for implementing the 64-bit rotations in the
-SHA3 \cite{nist:fips:202} algorithm on
-a 32-bit architecture.
-On RV64, the relevant operations in SHA3 can be done natively using
-rotation instructions, so `zip` and `unzip` are not required.
 
 Cores which also implement the Bit-manipulation extension _must_
 implement the `[un]shfli` instruction as specified there, not the
 minimal subset described here.
 The full specification of the `shfli` instruction is available in
-\cite[Section 2.2.3]{riscv:bitmanip:draft}.
+cite:[riscv:bitmanip:draft] (Section 2.2.3).
+
+.Notes to software developers
+[NOTE,caption="SH"]
+====
+These instructions perform a bit-interleave (or de-interleave) operation, and
+are useful for implementing the 64-bit rotations in the
+SHA3 cite:[nist:fips:202] algorithm on
+a 32-bit architecture.
+On RV64, the relevant operations in SHA3 can be done natively using
+rotation instructions, so `zip` and `unzip` are not required.
+====
 
 
 ==== Carry-less Multiply
@@ -114,17 +126,21 @@ RV32, RV64:
     clmulh rd, rs1, rs2
 ----
 
-See \cite[Section 2.6]{riscv:bitmanip:draft} for details of
+See cite:[riscv:bitmanip:draft] (Section 2.6) for details of
 this instruction.
-As is mentioned there, obvious cryptographic use-cases for carry-less
-multiply are for Galois Counter Mode (GCM) block cipher operations.
-GCM is recommended by NIST as a block cipher mode of operation
-\cite{nist:gcm}, and is the only _required_ mode for the TLS 1.3
-protocol.
-
 See <<crypto_scalar_zkt>> for additional implementation
 requirements for these instructions, related to data independent
 execution latency.
+
+.Notes to software developers
+[NOTE,caption="SH"]
+====
+As is mentioned there, obvious cryptographic use-cases for carry-less
+multiply are for Galois Counter Mode (GCM) block cipher operations.
+GCM is recommended by NIST as a block cipher mode of operation
+cite:[nist:gcm], and is the only _required_ mode for the TLS 1.3
+protocol.
+====
 
 ==== Logic With Negate
 
@@ -135,18 +151,21 @@ RV32, RV64:
     xnor rd, rs1, rs2
 ----
 
-See \cite[Section 2.1.3]{riscv:bitmanip:draft} for details of
+See cite:[riscv:bitmanip:draft] (Section 2.1.3) for details of
 these instructions.
 These instructions are useful inside hash functions, block ciphers and
 for implementing software based side-channel countermeasures like masking.
 The `andn` instruction is also useful for constant time word-select
 in systems without the ternary Bitmanip `cmov` instruction.
 
-Useful for:
-
-* SHA3/Keccak Chi step.
-* Bit-sliced function implementations.
-* Software based power/EM side-channel countermeasures based on masking.
+.Notes to software developers
+[NOTE,caption="SH"]
+====
+In the context of Cryptography, these instructions are useful for:
+SHA3/Keccak Chi step,
+Bit-sliced function implementations,
+Software based power/EM side-channel countermeasures based on masking.
+====
 
 ==== Packing
 
@@ -157,9 +176,13 @@ RV32, RV64:                         RV64:
     packh  rd, rs1, rs2
 ----
 
-See \cite[Section 2.1.4]{riscv:bitmanip:draft} for details of
+See cite:[riscv:bitmanip:draft] (Section 2.1.4) for details of
 these instructions.
-The Bitmanip pack instructions are
+
+.Notes to software developers
+[NOTE,caption="SH"]
+====
+The `pack*` instructions are
 useful for re-arranging halfwords within words, and
 generally getting data into the right shape prior to applying transforms.
 This is particularly useful for cryptographic algorithms which pass inputs
@@ -167,6 +190,7 @@ around as (potentially un-aligned) byte strings, but can operate on words
 made out of those byte strings.
 This occurs (for example) in AES when loading blocks and keys (which may not
 be word aligned) into registers to perform the round functions.
+====
 
 
 ==== Crossbar Permutation Instructions
@@ -177,7 +201,7 @@ RV32, RV64:
     xperm.b rd, rs1, rs2
 ----
 
-See \cite[Section 2.2.4]{riscv:bitmanip:draft} for a complete
+See cite:[riscv:bitmanip:draft] (Section 2.2.4) for a complete
 description of this instruction.
 
 The `xperm.n` instruction operates on nibbles.
@@ -192,32 +216,34 @@ The `xperm.b` instruction operates on bytes.
 The result is each element in `GPR[rs2]` replaced by the indexed element
 in `GPR[rs1]`, or zero if the index into `GPR[rs2]` is out of bounds.
 
+.Notes to software developers
+[NOTE,caption="SH"]
+====
 The instruction can be used to implement arbitrary bit
 permutations.
 For cryptography, they can accelerate bit-sliced implementations,
 permutation layers of block ciphers, masking based countermeasures
 and SBox operations.
 
-Lightweight block ciphers using 4-bit SBoxes include
+Lightweight block ciphers using 4-bit SBoxes include:
+PRESENT cite:[block:present],
+Rectangle cite:[block:rectangle],
+GIFT cite:[block:gift],
+Twine cite:[block:twine],
+Skinny, MANTIS cite:[block:skinny],
+Midori cite:[block:midori].
 
-* PRESENT\cite{block:present},
-* Rectangle\cite{block:rectangle},
-* GIFT\cite{block:gift},
-* Twine\cite{block:twine},
-* Skinny, MANTIS\cite{block:skinny},
-* Midori \cite{block:midori}.
-
-National ciphers using 8-bit SBoxes include
-
-* Camellia\cite{block:camellia} (Japan), 
-* Aria\cite{block:aria} (Korea),
-* AES\cite{nist:fips:197} (USA, Belgium),
-* SM4\cite{block:sm4:1} (China)
-* Kuznyechik (Russia).
+National ciphers using 8-bit SBoxes include:
+Camellia cite:[block:camellia] (Japan), 
+Aria cite:[block:aria] (Korea),
+AES cite:[nist:fips:197] (USA, Belgium),
+SM4 cite:[block:sm4:1] (China)
+Kuznyechik (Russia).
 
 All of these SBoxes can be implemented efficiently, in constant
 time, using the `xperm.b` instruction
 footnote:l[link:http://svn.clairexen.net/handicraft/2020/lut4perm/demo02.cc[]].
 Note that this technique is also suitable for masking based
 side-channel countermeasures.
+====
 

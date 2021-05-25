@@ -25,12 +25,12 @@ Encoding::
 Description::
 The SHA256
 instructions implement the four `sigma` and `sum` functions used in
-the SHA256 hash function \cite[Section 4.1.2]{nist:fips:180:4}.
+the SHA256 hash function cite:[nist:fips:180:4] (Section 4.1.2).
 These operations are supported for both RV32 and RV64 base architectures.
 For RV32, the entire `XLEN` source register is operated on.
 Though named for SHA256, the instructions work for both the
 SHA-224 and SHA-256 parameterisations as described in
-\cite{nist:fips:180:4}.
+cite:[nist:fips:180:4].
 
 Operation::
 [source,sail]

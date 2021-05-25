@@ -1,5 +1,0 @@
-[[bibliography]]
-== Bibliography
-
-bibliography::../riscv-crypto-spec.bib[ieee]
-

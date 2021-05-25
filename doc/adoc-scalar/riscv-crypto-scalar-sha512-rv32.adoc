@@ -27,7 +27,7 @@ Encoding::
 
 Description::
 These instructions implement the four `sigma` and `sum` functions used in
-the SHA512 hash function \cite[Section 4.1.3]{nist:fips:180:4}.
+the SHA512 hash function cite:[nist:fips:180:4] (Section 4.1.3).
 They work by concatenating the two 32-bit `rs1` and
 `rs2` registers into a 64-bit word.
 The high or low 32-bits of the full 64-bit function result are then

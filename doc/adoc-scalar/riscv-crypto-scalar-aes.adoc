@@ -48,17 +48,17 @@ consistency with the base ISA.
 [NOTE,caption="SH"]
 ====
 These instructions use the Equivalent Inverse Cipher
-representaiton \cite[Section 5.3.5]{nist:fips:197} of AES.
+representaiton cite:[nist:fips:197] (Section 5.3.5) of AES.
 This affects the computation of the KeySchedule, as shown in
-\cite[Figure 15]{nist:fips:197}.
+cite:[nist:fips:197] (Figure 15).
 ====
 
 .Supporting Material
 [NOTE,caption="SH"]
 ====
-These instrucitons were derived from work in \cite{MJS:LWAES:20}.
+These instrucitons were derived from work in cite:[MJS:LWAES:20].
 Supporting material, including rationale and a design space exploration
-for these instructions can be found in \cite{cryptoeprint:2020:930}.
+for these instructions can be found in cite:[cryptoeprint:2020:930].
 ====
 
 Operation::

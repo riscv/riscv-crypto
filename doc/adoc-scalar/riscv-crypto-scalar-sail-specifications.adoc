@@ -5,7 +5,7 @@ RISC-V maintains a
 link:https://github.com/rems-project/sail-riscv[formal model]
 of the ISA specification,
 implemented in the Sail ISA specification language
-\cite{sail}.
+cite:[sail].
 Note that _Sail_ refers to the specification language itself,
 and that there is a _model of RISC-V_, written using Sail.
 It is not correct to refer to "the Sail model".

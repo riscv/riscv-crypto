@@ -21,8 +21,8 @@ Encoding::
 
 Description::
 This section proposes acceleration instructions for
-the SM4 block cipher\cite{block:sm4:1, ietf:sm4}.
-The instructions are taken from proposals found in \cite{MJS:LWAES:20}.
+the SM4 block ciphercite:[block:sm4:1, ietf:sm4].
+The instructions are taken from proposals found in cite:[MJS:LWAES:20].
 They are very lightweight and require only a single SBox instance.
 They are designed to give a very high performance improvement with
 minimal area requirements, and resemble a TTables-esq
@@ -46,7 +46,7 @@ consistency with the base ISA.
 .Supporting Material
 [NOTE,caption="SH"]
 ====
-These instrucitons were derived from work in \cite{MJS:LWAES:20}.
+These instrucitons were derived from work in cite:[MJS:LWAES:20].
 ====
 
 Operation::
