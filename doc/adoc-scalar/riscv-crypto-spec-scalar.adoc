@@ -75,7 +75,7 @@ include::riscv-crypto-scalar-sha512-rv64.adoc[]
 include::riscv-crypto-scalar-sm3.adoc[]
 include::riscv-crypto-scalar-sm4.adoc[]
 include::riscv-crypto-scalar-entropy-source.adoc[]
-include::riscv-crypto-scalar-zkt.adoc[]
+include::riscv-crypto-scalar-zkt.adoc[leveloffset=+1]
 
 [[bibliography]]
 == Bibliography
