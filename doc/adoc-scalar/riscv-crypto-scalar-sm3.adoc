@@ -22,11 +22,11 @@ Encoding::
 
 Description::
 These instructions are designed to accelerate the SM3 secure
-hash functioncite:[ietf:sm3].
+hash function cite:[ietf:sm3].
 They are based on work done in cite:[MJS:LWSHA:20], and follow
 the same pattern as the scalar SHA2 instructions
 (Section <<crypto_scalar_sha256>>).
-The instructions implement versions of the $P_0$ and $P_1$
+The instructions implement versions of the `P_0` and `P_1`
 permutations, per the SM3 specification cite:[ietf:sm3].
 
 Operation::
