@@ -15,6 +15,7 @@ $(SPEC_COMMIT):
 
 %.pdf : %.adoc $(SPEC_COMMIT)
 	asciidoctor-pdf \
+        -r asciidoctor-bibtex \
         -a pdf-style=resources/themes/risc-v_spec-pdf.yml \
         -a pdf-fontsdir=resources/fonts \
         -o $@ $<

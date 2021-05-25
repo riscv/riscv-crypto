@@ -1,5 +1,5 @@
 [[bibliography]]
 == Bibliography
 
-NOTE: This is a placeholder file while bibliography is being implemented.
+bibliography::../riscv-crypto-spec.bib[ieee]
 

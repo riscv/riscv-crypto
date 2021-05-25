@@ -37,6 +37,9 @@ endif::[]
 :stem: latexmath
 :footnote:
 :xrefstyle: short
+:bibtex-file: ../riscv-crypto-spec.bib
+:bibtex-order: alphabetical
+:bibtex-style: ieee
 
 //:This is the preamble.
 
@@ -73,7 +76,9 @@ include::riscv-crypto-scalar-sm3.adoc[]
 include::riscv-crypto-scalar-sm4.adoc[]
 include::riscv-crypto-scalar-entropy-source.adoc[]
 include::riscv-crypto-scalar-zkt.adoc[]
+
 include::riscv-crypto-scalar-bibliography.adoc[]
+
 include::riscv-crypto-scalar-appx-encodings.adoc[]
 include::riscv-crypto-scalar-appx-entropy-source.adoc[]
 include::riscv-crypto-scalar-appx-materials.adoc[]

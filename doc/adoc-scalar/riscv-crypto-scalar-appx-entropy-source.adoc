@@ -1,6 +1,6 @@
 [appendix]
 [[crypto_scalar_appx_entropy_source]]
-== Entropy Source: Rationale and Discussion
+== Entropy Source Rationale
 
 NOTE: Needs converting from LaTeX
 
