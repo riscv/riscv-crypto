@@ -1,58 +1,8 @@
 [[crypto_scalar_profiles]]
-== Implementation Profiles
+== Extension Groups
 
-All instructions in the scalar cryptography extension are grouped into
-_functional sets_ and _feature sets_. Functional sets are very fine
-grained, and are constructed around specific algorithms, standards
-requirements, or small logical groupings of instructions. Feature sets
-are more coarse grained, and are what cores are expected to implement.
-The letters used to construct Functional Set names are explained in
-<<crypto_scalar_functional_sets>>.
-
-The Feature Sets for instructions exclusive to the scalar cryptography
-extension are listed in Table
-<<crypto_scalar_feature_sets>>. All
-Bit-manipulation instructions used by the scalar cryptography extension
-(<<crypto_scalar_zkb>>) are always
-included in the feature sets listed in Table
-<<crypto_scalar_feature_sets>>.
-Exceptions are RV64 only instructions, which are not included in RV32
-based implementations.
-
-.Explanation of the functional sets.
-[[crypto_scalar_functional_sets]]
-[%autowidth]
-|=======================================================================
-|Functional Set |Description
-
-|`Zkg` |Constant time carry-less multiply for Galois/Counter Mode.
-|`Zkb` |Bitmanip subset included in the scalar cryptography extension, minus those in Zk.
-|`Zkr` |Entropy source for seeding random number generators.
-|`Zkne` |NIST AES Encryption Instructions.
-|`Zknd` |NIST AES Decryption Instructions.
-|`Zknh` |NIST SHA2 Hash function instructions.
-|`Zksed` |SM4 Instructions.
-|`Zksh` |SM3 Hash function instructions.
-|=======================================================================
-
-.Explanation of the feature strings used to refer to the functional sets.
-[[crypto_scalar_feature_sets]]
-[%autowidth]
-|================================================================
-|Feature Set |Description
-
-|`K` |The default scalar cryptography extension, short for `Zkn_Zkr`
-|`Zkn` |NIST algorithm suite. Short for `Zkne_Zknd_Zknh_Zkg_Zkb`.
-|`Zks` |ShangMi (SM) algorithm suite. Short for `Zksed_Zksh_Zkg_Zkb`.
-|================================================================
-
-Encryption and decryption instructions are separated into different
-functional groups because some popular use cases (e.g., Galois/Counter
-Mode in TLS 1.3, among others) do not require decryption functionality.
-The NIST and ShangMi algorithms suites are separated because their
-usefulness is heavily dependent on the countries a device is expected to
-operate in. NIST ciphers are a part of most standardised internet
-protocols, while ShangMi ciphers are required for use in China.
+The group of extensions introduced by the Scalar Cryptography Instruction Set
+Extension is listed here.
 
 Presence of the cryptography extension in any form is indicated by bit
 `10` of the MISA CSR. i.e. bit `K`, because `C` is taken
@@ -61,66 +11,197 @@ _kruptós_, meaning _hidden_. Detection of fine-grained functionality
 uses the mechanisms defined by the tech-config RISC-V Task Group. At the
 time of writing, these mechanisms are still being defined.
 
-Some example GCC `-march=` strings:
+.Note to readers
+[NOTE, caption="SH"]
+====
+Specialist encryption and decryption instructions are separated into different
+functional groups because some popular use cases (e.g., Galois/Counter
+Mode in TLS 1.3, among others) do not require decryption functionality.
 
-* `rv32ik` - Implement the 32-bit NIST feature set (Zkn, the entropy
-source feature set (Zkr) and all of the 32-bit Bit-manipulation
-instructions used by the scalar cryptography extension listed in 
-<<crypto_scalar_zkb>>.
-* `rv64ik` - As above, but implementing the 64-bit version of the NIST
-feature set, and additional 64-bit instructions from the
-Bit-manipulation subset.
-* `rv64i_Zks_Zkr` - Implement the Entropy Source instructions, the 64-bit
-Bit-manipulation instructions, and the XLEN independent ShangMi suite
+The NIST and ShangMi algorithms suites are separated because their
+usefulness is heavily dependent on the countries a device is expected to
+operate in. NIST ciphers are a part of most standardised internet
+protocols, while ShangMi ciphers are required for use in China.
+====
+
+[[crypto_scalar_ext_zkb]]
+=== `Zkb` - Bitmanip instructions for Cryptography
+
+These are a subset of the Bitmanipulation Extension which are particularly
+useful for Cryptography.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; |  xperm.n     | <<#insn-xperm.n>>
+| &#10003; | &#10003; |  xperm.b     | <<#insn-xperm.b>>
+| &#10003; | &#10003; |  ror         | <<#insn-ror>>
+| &#10003; | &#10003; |  rol         | <<#insn-rol>>
+| &#10003; | &#10003; |  rori        | <<#insn-rori>>
+|          | &#10003; |  roriw       | <<#insn-roriw>>
+| &#10003; | &#10003; |  andn        | <<#insn-andn>>
+| &#10003; | &#10003; |  orn         | <<#insn-orn>>
+| &#10003; | &#10003; |  xnor        | <<#insn-xnor>>
+| &#10003; | &#10003; |  pack        | <<#insn-pack>>
+| &#10003; | &#10003; |  packu       | <<#insn-packu>>
+| &#10003; | &#10003; |  packh       | <<#insn-packh>>
+|          | &#10003; |  packw       | <<#insn-packw>>
+|          | &#10003; |  packuw      | <<#insn-packuw>>
+| &#10003; | &#10003; |  rev.b       | <<#insn-rev.b>>
+| &#10003; | &#10003; |  rev8        | <<#insn-rev8>>
+|          | &#10003; |  rev8.w      | <<#insn-rev8.w>>
+| &#10003; |          |  zip         | <<#insn-zip>>
+| &#10003; |          |  unzip       | <<#insn-unzip>>
+|===
+
+
+[[crypto_scalar_ext_zkg]]
+=== `Zkg` - Carryless multiply instructions
+
+Constant time carry-less multiply for Galois/Counter Mode.
+These are separated from the <<crypto_scalar_ext_zkb>> because they
+have a considerable implementation overhead which cannot be amortised
+across other instructions.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; |  clmul       | <<#insn-clmul>>
+| &#10003; | &#10003; |  clmulh      | <<#insn-clmulh>>
+|===
+
+[[crypto_scalar_ext_zkr]]
+=== `Zkr` - Entropy Source Extension
+
+Entropy source for seeding random number generators.
+Both of these are pseudo-instructions, and alias particular CSR read
 instructions.
-* `rv64i_Zkne_Zknh` - Implement only the 64-bit NIST AES Encryption and
-hash function instructions.
+See <<crypto_scalar_entropy_source>> for a complete explanation.
 
-.Feature sets for instructions in the scalar cryptography extension.
-[%autowidth]
-|=========================================================
-| Instruction | Functional Set |Zkn (RV32) |Zkn (RV64) |Zks (RV32) |Zks (RV64) | Zkr 
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
 
-|aes32dsi           |Zknd      |     x     |           |           |    |
-|aes32dsmi          |Zknd      |     x     |           |           |    |
-|aes32esi           |Zkne      |     x     |           |           |    |
-|aes32esmi          |Zkne      |     x     |           |           |    |
-|aes64ds            |Zknd      |           |     x     |           |    |
-|aes64dsm           |Zknd      |           |     x     |           |    |
-|aes64es            |Zkne      |           |     x     |           |    |
-|aes64esm           |Zkne      |           |     x     |           |    |
-|aes64im            |Zknd      |           |     x     |           |    |
-|aes64ks1i          |Zkne      |           |     x     |           |    |
-|aes64ks2           |Zkne      |           |     x     |           |    |
-|sha256sig0         |Zknh      |     x     |     x     |           |    |
-|sha256sig1         |Zknh      |     x     |     x     |           |    |
-|sha256sum0         |Zknh      |     x     |     x     |           |    |
-|sha256sum1         |Zknh      |     x     |     x     |           |    |
-|sha512sig0h        |Zknh      |     x     |           |           |    |
-|sha512sig0l        |Zknh      |     x     |           |           |    |
-|sha512sig1h        |Zknh      |     x     |           |           |    |
-|sha512sig1l        |Zknh      |     x     |           |           |    |
-|sha512sum0r        |Zknh      |     x     |           |           |    |
-|sha512sum1r        |Zknh      |     x     |           |           |    |
-|sha512sig0         |Zknh      |     x     |           |           |    |
-|sha512sig1         |Zknh      |     x     |           |           |    |
-|sha512sum0         |Zknh      |     x     |           |           |    |
-|sha512sum1         |Zknh      |     x     |           |           |    |
-|sm3p0              |Zksh      |           |           |     x     | x  |
-|sm3p1              |Zksh      |           |           |     x     | x  |
-|sm4ed              |Zksed     |           |           |     x     | x  |
-|sm4ks              |Zksed     |           |           |     x     | x  |
-|pollentropy        |Zkr       |           |           |           |    | x
-|getnoise           |Zkr       |           |           |           |    | x
-|clmul, clmulh      |Zkg       |     x     |     x     |     x     | x  |
-|xperm.n, xperm.b   |Zkb       |     x     |     x     |     x     | x  |
-|ror, rol, rori     |Zkb       |     x     |     x     |     x     | x  |
-|rorw, rolw, roriw  |Zkb       |           |     x     |           | x  |
-|andn, orn, xnor    |Zkb       |     x     |     x     |     x     | x  |
-|pack, packu, packh |Zkb       |     x     |     x     |     x     | x  |
-|packw, packuw      |Zkb       |           |     x     |           | x  |
-|rev.b, rev8 (grevi)|Zkb       |     x     |     x     |     x     | x  |
-|rev8.w (grevi)     |Zkb       |           |     x     |           | x  |
-|zip (shfli)        |Zkb       |     x     |           |     x     |    |
-|unzip (unshfli)    |Zkb       |     x     |           |     x     |    |
-|=========================================================
+| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_entropy_source>>
+| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_entropy_source>>
+|===
+
+
+[[crypto_scalar_ext_zkne]]
+=== `Zkne` - NIST Suite: AES Encryption
+
+Instructions for accelerating the encryption and key-schedule functions of
+the AES block cipher.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; |          | aes32esi     | <<#insn-aes32esi>>
+| &#10003; |          | aes32esmi    | <<#insn-aes32esmi>>
+|          | &#10003; | aes64es      | <<#insn-aes64es>>
+|          | &#10003; | aes64esm     | <<#insn-aes64esm>>
+|          | &#10003; | aes64ks1i    | <<#insn-aes64ks1i>>
+|          | &#10003; | aes64ks2     | <<#insn-aes64ks2>>
+|===
+
+[[crypto_scalar_ext_zknd]]
+=== `Zknd` - NIST Suite: AES Decryption
+
+Instructions for accelerating the decryption and key-schedule functions of
+the AES block cipher.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; |          | aes32dsi     | <<#insn-aes32dsi>>
+| &#10003; |          | aes32dsmi    | <<#insn-aes32dsmi>>
+|          | &#10003; | aes64ds      | <<#insn-aes64ds>>
+|          | &#10003; | aes64dsm     | <<#insn-aes64dsm>>
+|          | &#10003; | aes64im      | <<#insn-aes64im>>
+|          | &#10003; | aes64ks1i    | <<#insn-aes64ks1i>>
+|          | &#10003; | aes64ks2     | <<#insn-aes64ks2>>
+|===
+
+[[crypto_scalar_ext_zknh]]
+=== `Zknh` - NIST Suite: Hash Function Instructions
+
+Instructions for accelerating the SHA2 family of hash functions.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; | sha256sig0   | <<#insn-sha256sig0>>
+| &#10003; | &#10003; | sha256sig1   | <<#insn-sha256sig1>>
+| &#10003; | &#10003; | sha256sum0   | <<#insn-sha256sum0>>
+| &#10003; | &#10003; | sha256sum1   | <<#insn-sha256sum1>>
+| &#10003; |          | sha512sig0h  | <<#insn-sha512sig0h>>
+| &#10003; |          | sha512sig0l  | <<#insn-sha512sig0l>>
+| &#10003; |          | sha512sig1h  | <<#insn-sha512sig1h>>
+| &#10003; |          | sha512sig1l  | <<#insn-sha512sig1l>>
+| &#10003; |          | sha512sum0r  | <<#insn-sha512sum0r>>
+| &#10003; |          | sha512sum1r  | <<#insn-sha512sum1r>>
+|          | &#10003; | sha512sig0   | <<#insn-sha512sig0>>
+|          | &#10003; | sha512sig1   | <<#insn-sha512sig1>>
+|          | &#10003; | sha512sum0   | <<#insn-sha512sum0>>
+|          | &#10003; | sha512sum1   | <<#insn-sha512sum1>>
+|===
+
+[[crypto_scalar_ext_zksed]]
+=== `Zksed` - ShangMi Suite: SM4 Block Cipher Instructions
+
+Instructions for accelerating the SM4 Block Cipher.
+Note that unlike AES, this cipher uses the same core operation for
+encryption and decryption, hence there is only one
+extension for it.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; | sm4ed        | <<#insn-sm4ed>>
+| &#10003; | &#10003; | sm4ks        | <<#insn-sm4ks>>
+|===
+
+[[crypto_scalar_ext_zksh]]
+=== `Zksh` - ShangMi Suite: SM3 Hash Function Instructions
+
+Instructions for accelerating the SM3 hash function.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; | sm3p0        | <<#insn-sm3p0>>
+| &#10003; | &#10003; | sm3p1        | <<#insn-sm3p1>>
+|===
+
+

@@ -13,6 +13,9 @@ directly for the
 latest information, as it may be slightly ahead of what is described
 here.
 
+NOTE: This section repeats much of the information in
+<<crypto_scalar_ext_zkb>>, but includes more rationale.
+
 We propose that the scalar cryptographic extension _reuse_ a
 subset of the instructions from the Bitmanip extension directly.
 Specifically, this would mean that
