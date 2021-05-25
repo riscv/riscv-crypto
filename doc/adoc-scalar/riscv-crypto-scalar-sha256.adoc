@@ -1,0 +1,49 @@
+[[crypto_scalar_sha256]]
+=== SHA256 Instructions
+
+Synopsis::
+Lightweight instructions for accelerating the SHA256 Cryptographic Hash
+Function.
+
+Mnemonic::
+
+----
+sha256sig0 rd, rs1
+sha256sig1 rd, rs1
+sha256sum0 rd, rs1
+sha256sum1 rd, rs1
+----
+
+Encoding::
+[wavedrom, , svg]
+----
+{reg:[
+    {bits: 32, name:todo,attr:["todo"]}
+]}
+----
+
+Description::
+The SHA256
+instructions implement the four `sigma` and `sum` functions used in
+the SHA256 hash function \cite[Section 4.1.2]{nist:fips:180:4}.
+These operations are supported for both RV32 and RV64 base architectures.
+For RV32, the entire `XLEN` source register is operated on.
+Though named for SHA256, the instructions work for both the
+SHA-224 and SHA-256 parameterisations as described in
+\cite{nist:fips:180:4}.
+
+Operation::
+[source,sail]
+--
+function crypto_sha256(op, rd, rs1) = {
+  let inb    : bits(32) = X(rs1)[31..0];
+  let result : bits(32) = match op {
+    OP_SHA256_SIG0 => ror32(inb,  7) ^ ror32(inb, 18) ^ (inb >>  3),
+    OP_SHA256_SIG1 => ror32(inb, 17) ^ ror32(inb, 19) ^ (inb >> 10),
+    OP_SHA256_SUM0 => ror32(inb,  2) ^ ror32(inb, 13) ^ ror32(inb, 22),
+    OP_SHA256_SUM1 => ror32(inb,  6) ^ ror32(inb, 11) ^ ror32(inb, 25)
+  };
+  X(rd) = EXTZ(result);
+  RETIRE_SUCCESS
+}
+--

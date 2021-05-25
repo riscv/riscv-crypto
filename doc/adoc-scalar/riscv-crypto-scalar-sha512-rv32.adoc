@@ -1,0 +1,61 @@
+
+[[crypto_scalar_sha512_rv32]]
+=== SHA512 Instructions: RV32
+
+Synopsis::
+Lightweight instructions for accelerating the SHA512 Cryptographic Hash
+Function on the RV32 Base Architecture.
+
+Mnemonic::
+
+----
+sha512sum0r rd, rs1, rs2
+sha512sum1r rd, rs1, rs2
+sha512sig0l rd, rs1, rs2
+sha512sig0h rd, rs1, rs2
+sha512sig1l rd, rs1, rs2
+sha512sig1h rd, rs1, rs2
+----
+
+Encoding::
+[wavedrom, , svg]
+----
+{reg:[
+    {bits: 32, name:todo,attr:["todo"]}
+]}
+----
+
+Description::
+These instructions implement the four `sigma` and `sum` functions used in
+the SHA512 hash function \cite[Section 4.1.3]{nist:fips:180:4}.
+They work by concatenating the two 32-bit `rs1` and
+`rs2` registers into a 64-bit word.
+The high or low 32-bits of the full 64-bit function result are then
+written to the destination register depending on the instruction.
+For the `sha512sum*r` instructions, the operation is based
+purely on rotations;
+the high or low 32-bits of the result can be selected by swapping
+the input source registers to the instruction.
+For the `sha512sig*[l|h]` instructions, which include shifts,
+the `*l` instruction writes the _low_ 32-bits of the `sigma`
+transform, and the `*h` instruction writes the _high_ 32-bits.
+
+Operation::
+[source,sail]
+--
+function crypto_sha512_rv32(op, rd, rs1, rs2) = {
+  let r1     : bits(32) = X(rs1)[31..0];
+  let r2     : bits(32) = X(rs2)[31..0];
+  let result : bits(32) = match op {
+    OP_SHA512_SIG0L => (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^ (r2 << 31) ^ (r2 << 25) ^ (r2 << 24),
+    OP_SHA512_SIG0H => (r1 >>  1) ^ (r1 >>  7) ^ (r1 >>  8) ^ (r2 << 31)              ^ (r2 << 24),
+    OP_SHA512_SIG1L => (r1 <<  3) ^ (r1 >>  6) ^ (r1 >> 19) ^ (r2 >> 29) ^ (r2 << 26) ^ (r2 << 13),
+    OP_SHA512_SIG1H => (r1 <<  3) ^ (r1 >>  6) ^ (r1 >> 19) ^ (r2 >> 29)              ^ (r2 << 13),
+    OP_SHA512_SUM0R => (r1 << 25) ^ (r1 << 30) ^ (r1 >> 28) ^ (r2 >>  7) ^ (r2 >>  2) ^ (r2 <<  4),
+    OP_SHA512_SUM1R => (r1 << 23) ^ (r1 >> 14) ^ (r1 >> 18) ^ (r2 >>  9) ^ (r2 << 18) ^ (r2 << 14)
+  };
+  X(rd) = EXTZ(result);
+  RETIRE_SUCCESS
+}
+--
+
