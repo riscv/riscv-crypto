@@ -42,6 +42,8 @@ useful for Cryptography.
 | &#10003; | &#10003; |  ror         | <<#insn-ror>>
 | &#10003; | &#10003; |  rol         | <<#insn-rol>>
 | &#10003; | &#10003; |  rori        | <<#insn-rori>>
+|          | &#10003; |  rorw        | <<#insn-rorw>>
+|          | &#10003; |  rolw        | <<#insn-rolw>>
 |          | &#10003; |  roriw       | <<#insn-roriw>>
 | &#10003; | &#10003; |  andn        | <<#insn-andn>>
 | &#10003; | &#10003; |  orn         | <<#insn-orn>>
