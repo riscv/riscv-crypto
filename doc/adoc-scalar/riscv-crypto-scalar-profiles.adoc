@@ -86,7 +86,7 @@ across other instructions.
 Entropy source for seeding random number generators.
 Both of these are pseudo-instructions, and alias particular CSR read
 instructions.
-See <<crypto_scalar_entropy_source>> for a complete explanation.
+See <<crypto_scalar_es>> for a complete explanation.
 
 [%header,cols="^1,^1,4,8"]
 |===
@@ -95,8 +95,8 @@ See <<crypto_scalar_entropy_source>> for a complete explanation.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_entropy_source>>
-| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_entropy_source>>
+| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_es_pollentropy>>
+| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_es_getnoise>>
 |===
 
 

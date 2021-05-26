@@ -62,7 +62,6 @@ RV32, RV64
     entropy and one of three polling failure statuses \verb|BIST| (00),
     \verb|WAIT| (10), or \verb|DEAD| (11), discussed below.
 
-
     The sixteen bits of randomness in \verb|mentropy[15:0]|=\verb|seed| polled
     with \verb|ES16| status {\bf must be cryptographically conditioned}
     before they can be used as (up to 8 bits of) keying material. We suggest

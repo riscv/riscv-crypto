@@ -1,5 +1,369 @@
-[[crypto_scalar_entropy_source]]
+[[crypto_scalar_es]]
 == Entropy Source
 
-NOTE: Needs converting from LaTeX
+The proposed RISC-V TRNG ISA is primarily an Entropy Source (ES)
+interface. A valid implementation should satisfy properties that allow
+it to be used to _seed_ standard and nonstandard cryptographic DRBGs of
+virtually any state size and security level.
+
+The purpose of this baseline specification is to guarantee that a
+simple, device-independent driver component (e.g., in Linux kernel,
+embedded firmware, or a cryptographic library) can use the ISA
+instruction to generate truly random bits. See
+<<crypto_scalar_appx_es>> for rationale and further
+discussion. This section is also supported by 
+cite:[SaNeMa20].
+
+[[crypto_scalar_es_pollentropy]]
+=== PollEntropy Instruction
+
+The main ISA-level interface consists of a single pseudoinstruction,
+`pollentropy`,
+which returns a 32/64-bit value in a CPU register. It is invoked in
+_Machine Mode_ (which may be the only mode) as follows:
+
+Memonic::
+pollentropy rd
+
+It is an alias for `csrrs rd, mentropy, x0`
+
+`pollentropy` reads `XLEN` bits from the mentropy read-only
+machine-mode CSR described in the table below.
+
+.The mentropy CSR. It uses address `0xF15`, a standard read-only machine-mode CSR.
+[cols="^,^,<",options="header",]
+|=======================================================================
+|Bits |Name |Description
+|`63:32` |_Set to 0_ |Upper bits are set to zero in RV64.
+
+|`31:30` |`OPST` |Status: `BIST` (00), `ES16` (01), `WAIT` (10), `DEAD`
+(11).
+
+|`29:24` |_reserved_ |For future use by the RISC-V specification.
+
+|`23:16` |_custom_ |Reserved for custom and experimental use.
+
+|`15: 0` |`seed` |16 bits of randomness, only when `OPST=ES16`.
+|=======================================================================
+
+The instruction is *non-blocking* and returns immediately, either with
+two status bits `mentropy[31:30]` = `OPST` set to `ES16` (01),
+indicating successful polling, or with *no* entropy and one of three
+polling failure statuses `BIST` (00), `WAIT` (10), or `DEAD` (11),
+discussed below.
+
+[IMPORTANT]
+====
+The sixteen bits of randomness in `mentropy[15:0]`=`seed` polled with
+`ES16` status *must be cryptographically conditioned* before they can be
+used as (up to 8 bits of) keying material. We suggest entropy output
+be post-processed in blocks of at least 256 bits, with 128 bit resulting
+output block.
+====
+
+When `OPST` is not `ES16`, `seed` must be set to 0. An implementation
+may safely set reserved and custom bits to zeros. A polling software
+interface must ignore their contents.
+
+The Status Bits at `mentropy[31:30]`=`OPST`:
+
+* `00` - `BIST`
+indicates that Built-In Self-Test "on-demand" (BIST) statistical
+testing is being performed. In typical implementations, `BIST` will last
+only a few milliseconds, up to a few hundred. If the system returns
+temporarily to `BIST` from any other state, this signals a non-fatal
+(usually non-actionable) self-test alarm. BIST is also used to signal
+test mode ().
+
+* `01` - `ES16`
+indicates success; the low bits `mentropy[15:0]` will have 16 bits of
+randomness which must be guaranteed to have at least 8 bits true entropy
+regardless of implementation. For example, `0x4000ABCD` is a valid
+`ES16` status output on RV32, with `0xABCD` being the `seed` value.
+
+* `10` - `WAIT`
+means that a sufficient amount of entropy is not yet available. This
+is not an error condition and may (in fact) be more frequent than ES16,
+since true entropy sources may not have very high bandwidth. If polling
+in a loop, we suggest calling (wait for interrupt) before the next poll.
+
+* `11` - `DEAD`
+is an unrecoverable self-test error. This may indicate a hardware
+fault, a security issue, or (extremely rarely) a type-1 statistical
+false positive in the continuous testing procedures. Implementations do
+not need to implement `DEAD` as it may not require an end-user
+notification; an immediate lock-down may be a more appropriate response
+in dedicated security devices.
+
+[[crypto_scalar_es_polling]]
+=== Polling Mechanism with WFI
+
+.Entropy Source state transition diagram.
+Normally the operational state alternates between WAIT
+(no data) and ES16, which means that 16 bits of randomness (seed)
+has been polled. BIST (Built-in Self-Test) only occurs after reset
+or to signal a non-fatal self-test alarm (if reached after WAIT or
+ES16). DEAD is an unrecoverable error state.
+In test mode (when GetNoise is active) WAIT and ES16 states are
+unavailable in PollEntropy.
+[graphviz, , svg]
+....
+digraph {TODO}
+....
+
+The diagram above illustrates operational
+state (`OPST`) transitions. The state is usually either `WAIT` or
+`ES16`. There are no mandatory interrupts. However, the polling
+mechanism should be implemented in a way that allows even generic
+non-interrupt drivers to benefit from interrupts.
+
+We specifically recommend against busy-loop polling on this instruction
+as it may have relatively low bandwidth. Even though no specific interrupt
+sequence is specified, it is required that the `wfi` (wait for
+interrupt) instruction is available.
+Cores which implement `mentropy` must not raise an Illegal
+Instruction Exception when executing `wfi` unless required to
+do so by the Timeout Wait bit of the `mstatus` register,
+as detailed in Section 3.1.6.5 of the Privileged ISA Manual cite:[_WaAs19A].
+The RISC-V ISA allows `wfi` to be implemented as a `nop`.
+
+To guarantee that no sensitive data is read twice and that different
+callers don’t get correlated output, it is suggested that hardware
+implements _wipe-on-read_ on the randomness pathway during each read
+(successful poll). For the same reasons, only complete and fully
+processed randomness words shall be made available via (no
+half-conditioned buffers or even full buffers in `WAIT` state – even if
+they are to be ignored by compliant callers).
+
+[[crypto_scalar_es_req]]
+=== Entropy Source Requirements
+
+Output `seed` from `pollentropy` is not necessarily fully
+conditioned randomness due to hardware limitations of smaller,
+low-powered implementations. However minimum requirements are
+defined. A caller should not use the output directly but poll
+twice the amount of required entropy, cryptographically condition
+(hash) it, and use that to seed a cryptographic DRBG.
+
+The expectation is that `seed` output passes typical randomness
+tests, but pseudorandom conditioner may cause weak entropy sources to
+pass such tests as well. The results of such tests should not be
+confused with the security or robustness of an entropy source.
+Evaluation of entropy sources involves an investigation of the
+stochastic model of the noise source, an analysis of the conditioning
+component, continuous tests, etc. Entropy estimation (statistical
+testing) is just a part of this process.
+
+The specification of entropy source requirements is complicated by the
+existence of two slightly conflicting standards -- NIST SP 800-90B
+cite:[TuBaKe+18] for FIPS 140-3 and AIS 31 cite:[KiSc11] for Common
+Criteria evaluations. RISC-V hardware vendors may design their entropy
+sources to meet *either one of these standards* (as different type
+of evidence is required for each certification). It is also possible for
+implementations to meet both criteria. Alternatively, for virtual
+entropy sources (DRBGs), the post-processed output must meet the
+_256-bit security_ requirements of Category 5 post-quantum cryptography.
+
+==== Virtual Entropy Sources – Secret State Size Requirement
+
+An Entropy Source implementation can always output fully
+conditioned, perfectly distributed numbers. However, it is required
+that if a DRBG is used as a source, it must have an internal state with
+_at least_ 256 bits of secret entropy (Example: a CTR_DRBG built from
+AES-128 is not sufficient). Any implementation of the Entropy Source
+that limits the security strength must not reduce it to less than
+256 bits.
+
+RISC-V requires drivers to implement at least 2-to-1 cryptographic
+post-processing in software with the expectation that the final output
+from this post-processing would should have "computationally bounded
+full entropy".  The computational bound is set so that a
+random-distinguishing attack should require computational resources
+comparable or greater than those required for key searching a block cipher
+with a 256-bit key (e.g., AES 256). This is equivalent to a Category 5
+classical or quantum adversary
+cite:[NI16] (Section 4.A.4 Security Strength Categories).
+
+==== FIPS 140-3 / SP 800-90 IID Track
+
+For FIPS 140-3 certification, vendors should design their physical entropy
+sources so that they can be submitted to the  "IID track".
+This usually requires post-processing of noise in hardware.
+
+[NOTE]
+====
+NIST SP 800-90B
+cite:[TuBaKe+18] and its  FIPS 140-3 Implementation Guidance
+cite:[NICC20] (Section D.K.) are being revised at the time of writing.
+The type of appropriate post-processing for IID track depends on
+the physical noise source. Some simple post-processing methods are
+currently considered to be part of the sampling ("digitization")
+step of the process. Vetted or non-vetted conditioning may also be
+required in hardware, forming a hardware-software conditioning chain.
+====
+
+* *E1 Entropy Requirement* - 
+Each 16-bit output sample `seed` must have more than 8 bits of
+independent, unpredictable randomness. This minimum requirement is
+satisfied if (in a NIST SP 800-90B cite:[TuBaKe+18] assessment) 128
+bits of output entropy can be obtained from each 256-bit
+(`16*16` bits) `pollentropy` output sequence via a vetted
+cryptographic conditioning algorithm (see Section 3.1.5.1.2 in
+cite:[TuBaKe+18]). This means that the actual SP 800-90B entropy
+assessment must yield significantly more than 8 bits (vendors should
+aim at 16).
+Driver developers may make this conservative assumption but are not
+prohibited from using more than twice the number of seed bits relative
+to the desired resulting entropy.
+
+* *E2 SP 800-90B IID* - 
+The output must be close to _Independent and Identically Distributed_
+(IID), meaning that the output distribution does not deteriorate over
+time and that output words convey little information about each other.
+This requirement is satisfied if the construction of the physical source
+and sampling mechanism suggests nothing against the IID assumption
+and the IID tests in Section 5 of NIST SP 800-90B cite:[TuBaKe+18] are
+consistently passed.
+
+[NOTE]
+====
+Both requirements must be satisfied (E1 may appear looser
+than E2). FIPS 140-3 certification of course imposes many additional
+requirements.
+====
+
+==== Common Criteria / AIS 31 PTG.2 Class
+
+For alternative Common Criteria certification (or self-certification)
+vendors should target AIS 31 PTG.2 requirements cite:[KiSc11] (Sect. 4.3.).
+Entropy sources
+(`seed` bits) are viewed as "internal random numbers" in the context
+of AIS 31. Note that PTG.2 does not preclude other certification levels
+– especially PTG.3 when combined with appropriate post-processing and
+DRBG on the software side.
+
+For validation purposes, the PTG.2 requirements may be mapped to
+security controls T1-3 (<<crypto_scalar_es_security_controls>>) and the
+interface as follows:
+
+* P1 *[PTG.2.1]* Start-up tests map to T1 and reset-triggered (on-demand)
+`BIST` tests.
+* P2 *[PTG.2.2]* Continuous testing total failure maps to T2 and the
+`DEAD` state.
+* P3 *[PTG.2.3]* Online tests are continuous tests of T2 – entropy output
+is prevented in the `BIST` state.
+* P4 *[PTG.2.4]* Is related to the design of effective entropy source health tests, which we encourage.
+* P5 *[PTG.2.5]* Raw random sequence may be checked via the GetNoise
+interface (<<crypto_scalar_es_getnoise>>).
+* P6 *[PTG.2.6]* Test Procedure A cite:[KiSc11] (Sect 2.4.4.1) is part of is
+part of the evaluation process, and we suggest self-evaluation using these tests even if Common Criteria certification is not sought by a vendor.
+* P7 *[PTG.2.7]* Average Shannon entropy of "internal random bits"
+exceeds 0.997.
+
+Even though E1, E2, and post-processing imply that less than 16 of
+`seed` bits may be designated as internal random bits for P7, we
+recommend that all 16 ES bits meet this requirement.
+
+[NOTE]
+====
+Common Criteria validation the SP 800-90B IID requirement
+of E2 is not stated. However, it may also be satisfied – and the
+H=0.997 level of P7 / PTG.2.7 leaves relatively little room for an
+entropy defect (mutual entropy). Also note that the SP 800-90B
+validation process is concerned with min-entropy, not Shannon entropy,
+so these numbers are not directly comparable.
+====
+
+[[crypto_scalar_es_security_controls]]
+=== Security Controls (Tests)
+
+The primary purpose of a cryptographic entropy source is to produce
+secret keying material. In almost all cases a hardware entropy source
+must implement appropriate _security controls_ to guarantee
+unpredictability, prevent leakage, detect attacks, and deny adversarial
+control over the entropy output or ts generation mechanism. Security
+controls are not mandatory for RISC-V (in case of virtual entropy
+sources) but are required for security certification.
+
+Many of the security controls built into the device are called "health
+checks." Health checks can take the form of integrity checks, start-up
+tests, and on-demand tests. These tests can be implemented in hardware
+or firmware; typically both. Several are mandated by standards such as
+NIST SP 800-90B cite:[NI19].
+The choice of appropriate health tests depends on the
+certification target, system architecture, the threat model, entropy
+source type, and other factors.
+
+Health checks are not intended for hardware diagnostics but for
+detecting security issues – hence the default action should be aimed at
+damage control (prevent weak crypto keys from being generated).
+Additional "debug" mechanisms may be implemented if necessary, but
+then the device must be outside production use.
+
+* T1 *On-demand testing.* A sequence of simple tests is invoked via
+resetting, rebooting, or powering-up the hardware (not an ISA signal).
+The implementation will simply return `BIST` during the initial start-up
+self-test period; in any case, the driver must wait for them to finish
+before starting cryptographic operations. Upon failure the entropy
+source will enter a no-output `DEAD` state.
+
+* T2 *Continuous checks.* If an error is detected in continuous tests or
+environmental sensors, the entropy source will enter a no-output state.
+We define that a non-critical alarm is signaled if the entropy source
+returns to `BIST` state from live (`WAIT` or `ES16`) states. Such a
+`BIST` alarm should be latched until polled at least once. Critical
+failures will result in `DEAD` state immediately. A hardware-based
+continuous testing mechanism must not make statistical information
+externally available, and it must be zeroized periodically or upon
+demand via reset, power-up, or similar signal.
+
+* T3 *Fatal error states,* Since the security of most cryptographic
+operations depends on the entropy source, a system-wide "default deny"
+security policy approach is appropriate for most entropy source
+failures. A hardware test failure should at least result in the `DEAD`
+state and possibly reset/halt. It’s a show stopper: The entropy source
+(or its cryptographic client application) _must not_ be allowed to run
+if its secure operation can’t be guaranteed.
+
+[[crypto_scalar_es_getnoise]]
+=== GetNoise Test Interface
+
+The optional GetNoise interface allows access to "raw noise" and is
+intended for manufacturer tests and validation of security
+modules. It is must not be used as a source of randomness or for other
+production use. Its contents and behavior must be interpreted in the
+context of mvendorid, marchid, and mimpid CSR identifiers, so is
+effectively "custom".
+
+The interface consists of the mnoise machine-mode CSR, which (unlike
+mentropy) is read-write. We define a pseudoinstruction for reading it:
+
+Mnemonic::
+getnoise rd 
+
+It is an alias for `csrrs rd, mnoise, x0`.
+
+The Entropy Source ISE defines the semantics of only a single bit,
+`mnoise[31]`,
+which is named `NOISE_TEST`. The only universal function is for
+enabling/disabling this interface. This is because the test interface
+effectively disables ; this way a soft reset can also reset this
+feature.
+
+The mnoise CSR uses address 0x7A9, indicating it is a standard
+read-write machine-mode CSR. This places it adjacently to debug/trace
+CSRs, indicating that it is not expected to be used in production.
+
+When `NOISE_TEST = 1` in and mnoise, and mentropy *must not* return
+anything via `ES16`; we recommend that it is in `BIST` state. When
+`NOISE_TEST` is again disabled, the entropy source shall return from
+`BIST` via a zeroization and self-test mechanism (effectively a reset).
+
+When not implemented (e.g., in virtual machines), can permanently read
+zero (`0x00000000`). When available, but `NOISE_TEST = 0`, can return a
+nonzero constant such as `0x00000001`.
+
+The behavior of other input and output bits is left to the vendor.
+Although not used in production, we recommend that the instruction is
+always non-blocking.
 

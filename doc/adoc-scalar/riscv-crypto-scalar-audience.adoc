@@ -26,7 +26,7 @@ and outside standards which we refer to.
 We expect the sections on constant time exection
 (<<crypto_scalar_zkt>>)
 and the entropy source
-(<<crypto_scalar_entropy_source>>)
+(<<crypto_scalar_es>>)
 to be chiefly understood with their help.
 
 Computer architects::

@@ -283,8 +283,8 @@ All K-specific, non-debug instructions included.
 | &#10003; | &#10003; | sm3p1        | <<#insn-sm3p1>>
 | &#10003; | &#10003; | sm4ed        | <<#insn-sm4ed>>
 | &#10003; | &#10003; | sm4ks        | <<#insn-sm4ks>>
-| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_entropy_source>>
-| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_entropy_source>>
+| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_es_pollentropy>>
+| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_es_getnoise>>
 |===
 
 === RVB (Bitmanip)
