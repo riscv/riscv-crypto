@@ -2,6 +2,27 @@
 [[crypto_scalar_appx_materials]]
 == Supplementary Materials 
 
-NOTE: Needs converting from LaTeX
+While ths document contains the specifications for the RISC-V cryptography
+extensions, numerous supplementary materials and example codes have
+also been developed.
+All of the materials related to the RISC-V Cryptography
+extension live in a Github Repository, located at
+https://github.com/riscv/riscv-crypto
+
+* `doc/`
+  Contains the source code for this document.
+
+* `doc/supp/`
+  Contains supplementary information and recommendations for implementers of
+  software and hardare.
+
+* `benchmarks/`
+  Example software implementations.
+
+* `rtl/`
+  Example Verilog implementations of each instruction.
+
+* `sail/`
+  Formal model implementations in Sail.
 
 
