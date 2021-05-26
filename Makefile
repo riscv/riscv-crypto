@@ -24,6 +24,7 @@ opcodes:
 	$(PARSEOPCODES) normal-parse-opcodes $(OPCODES_SPEC_SCALAR) > build/opcodes_scalar
 	$(PARSEOPCODES) normal-parse-opcodes $(OPCODES_SPEC_VECTOR) > build/opcodes_vector
 	$(PARSEOPCODES) sail $(OPCODES_SPEC_SCALAR) > build/scalar.sail
+	$(PARSEOPCODES) wavedrom $(OPCODES_SPEC_SCALAR) > build/opcodes.json
 	#$(PARSEOPCODES) sail $(OPCODES_SPEC_VECTOR) > build/vector.sail
 
 clean:

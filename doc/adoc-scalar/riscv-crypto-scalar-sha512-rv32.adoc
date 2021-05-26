@@ -1,6 +1,6 @@
 
 [[crypto_scalar_sha512_rv32]]
-=== SHA512 Instructions: RV32
+=== SHA512 Instructions (RV32)
 
 Synopsis::
 Lightweight instructions for accelerating the SHA512 Cryptographic Hash
@@ -17,13 +17,84 @@ sha512sig1l rd, rs1, rs2
 sha512sig1h rd, rs1, rs2
 ----
 
-Encoding::
+Encoding `sha512sum0r`::
 [wavedrom, , svg]
-----
+....
 {reg:[
-    {bits: 32, name:todo,attr:["todo"]}
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x1},
 ]}
-----
+....
+Encoding `sha512sum1r`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x9},
+{bits: 2, name: 0x1},
+]}
+....
+Encoding `sha512sig0l`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0xa},
+{bits: 2, name: 0x1},
+]}
+....
+Encoding `sha512sig0h`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0xe},
+{bits: 2, name: 0x1},
+]}
+....
+Encoding `sha512sig1l`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0xb},
+{bits: 2, name: 0x1},
+]}
+....
+Encoding `sha512sig1h`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0xf},
+{bits: 2, name: 0x1},
+]}
+....
 
 Description::
 These instructions implement the four `sigma` and `sum` functions used in

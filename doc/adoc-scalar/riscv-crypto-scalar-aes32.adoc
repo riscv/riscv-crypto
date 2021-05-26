@@ -1,5 +1,5 @@
-[[crypto_scalar_aes]]
-=== Scalar AES Instructions
+[[crypto_scalar_aes32]]
+=== Scalar AES Instructions (RV32)
 
 
 Synopsis::
@@ -14,13 +14,58 @@ aes32dsi     rt, rs2, bs // Decrypt: SubBytes
 aes32dsmi    rt, rs2, bs // Decrypt: SubBytes & MixColumns
 ----
 
-Encoding::
+Encoding `aes32esmi`::
 [wavedrom, , svg]
-----
+....
 {reg:[
-    {bits: 32, name:todo,attr:["todo"]}
+{bits: 7, name: 0x33},
+{bits: 5, name: 0x0},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rt'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x1b},
+{bits: 2, name: 'bs'},
 ]}
-----
+....
+Encoding `aes32esi`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 0x0},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rt'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x19},
+{bits: 2, name: 'bs'},
+]}
+....
+Encoding `aes32dsmi`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 0x0},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rt'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x1f},
+{bits: 2, name: 'bs'},
+]}
+....
+Encoding `aes32dsi`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 0x0},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rt'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x1d},
+{bits: 2, name: 'bs'},
+]}
+....
 
 Description::
 These instructions are a very lightweight way to accelerate the

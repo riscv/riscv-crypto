@@ -12,13 +12,32 @@ sm3p1 rd, rs1
 sm3p0 rd, rs1
 ----
 
-Encoding::
+Encoding `sm3p0`::
 [wavedrom, , svg]
-----
+....
 {reg:[
-    {bits: 32, name:todo,attr:["todo"]}
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x8},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
 ]}
-----
+....
+Encoding `sm3p1`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x9},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
+]}
+....
 
 Description::
 These instructions are designed to accelerate the SM3 secure

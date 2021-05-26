@@ -20,7 +20,7 @@
 :experimental:
 :reproducible:
 // needs to be changed? bug discussion started
-//:WaveDromEditorApp: app/wavedrom-editor.app
+:WaveDromEditorApp: wavedrom-cli
 :imagesoutdir: images
 :icons: font
 :lang: en
@@ -68,7 +68,8 @@ Paris Telecom on acceleration of lightweight block ciphers
 cite:[TGMGD:19].
 
 include::riscv-crypto-scalar-zkb.adoc[]
-include::riscv-crypto-scalar-aes.adoc[]
+include::riscv-crypto-scalar-aes32.adoc[]
+include::riscv-crypto-scalar-aes64.adoc[]
 include::riscv-crypto-scalar-sha256.adoc[]
 include::riscv-crypto-scalar-sha512-rv32.adoc[]
 include::riscv-crypto-scalar-sha512-rv64.adoc[]

@@ -11,15 +11,23 @@ from pysmt.shortcuts import    Equals as EQ
 from pysmt.shortcuts import NotEquals as NE
 from pysmt.typing import INT
 
-class Operand(object):
+class Bitfield(object):
+
+    def __init__(self, hi,lo):
+        self.hi     = int(hi)
+        self.lo     = int(lo)
+        assert(self.hi >= self.lo)
+
+def BitfieldLo(b):
+    return b.lo
+
+class Operand(Bitfield):
     """
     Describes a single operand. Could be an immediate or register address.
     """
     def __init__(self, name, hi,lo,binutilscode,sailtype):
+        Bitfield.__init__(self,hi,lo)
         self.name   = name
-        self.hi     = hi
-        self.lo     = lo
-        assert(self.hi >= self.lo)
         self.binutilscode = binutilscode
         self.sailtype       = sailtype
 
@@ -60,15 +68,13 @@ class OperandConstraint(object):
     def __repr__(self):
         return "%s%s%s" % (self.lhs,str(self.cond_str),self.rhs)
 
-class Field(object):
+class Field(Bitfield):
     """
     Describes a single immutable opcode encoding field.
     """
 
     def __init__(self,hi,lo,val):
-        self.hi = int(hi)
-        self.lo = int(lo)
-        assert(self.hi >= self.lo)
+        Bitfield.__init__(self,hi,lo)
         if(val.startswith("0x")):
             self.val = int(val[2:],16)
         elif(val.startswith("0b")):
@@ -87,6 +93,10 @@ class Field(object):
 
     def mask(self):
         return ((2**len(self))-1) << self.lo
+    
+    @property
+    def hex(self):
+        return hex(self.val)
 
 class Instruction(object):
     """
@@ -160,6 +170,21 @@ class Instruction(object):
         return hex(self.match())
     def mask_hex(self):
         return hex(self.mask())
+
+    def wavedrom(self):
+        print("Encoding `%s`::"%self.mnemonic)
+        print("[wavedrom, , svg]")
+        print("....")
+        print("{reg:[")
+        l = self.operands + self.fields
+        l.sort(key=BitfieldLo)
+        for f in l:
+            if(isinstance(f,Operand)):
+                print("{bits: %d, name: '%s'}," % (len(f),f.name))
+            else:
+                print("{bits: %d, name: %s}," % (len(f),f.hex))
+        print("]}")
+        print("....")
 
 class EncodingParser(object):
     """
@@ -397,6 +422,10 @@ def print_match_mask_defines(instrs):
         print("#define MASK_%s  %s" %(mname,i.mask_hex()))
         print("#define MATCH_%s %s" %(mname,i.match_hex()))
 
+def cmd_wavedrom(instrs):
+    for i in instrs:
+        i.wavedrom()
+
 def cmd_spike(instrs):
     """
     Print code useful for generating the spike patch.
@@ -537,6 +566,10 @@ def build_arg_parser():
     sub_texcmds = subs.add_parser("tex-cmds",help="Print the latex for the encoding table row of each instruciton, wrapped up as a single command.")
     sub_texcmds.set_defaults(func=cmd_tex_cmds)
     sub_texcmds.add_argument("input_files",nargs="+",type=argparse.FileType("r"))
+    
+    sub_wavedrom = subs.add_parser("wavedrom",help="Print the instruction encodings as wavedrom reg descriptions for inclusion in the asciidoc spec.")
+    sub_wavedrom.set_defaults(func=cmd_wavedrom)
+    sub_wavedrom.add_argument("input_files",nargs="+",type=argparse.FileType("r"))
 
     sub_spike= subs.add_parser("spike",help="Print Useful C code for the Spike patch")
     sub_spike.set_defaults(func=cmd_spike)

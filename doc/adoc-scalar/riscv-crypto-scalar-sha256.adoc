@@ -14,13 +14,58 @@ sha256sum0 rd, rs1
 sha256sum1 rd, rs1
 ----
 
-Encoding::
+Encoding `sha256sum0`::
 [wavedrom, , svg]
-----
+....
 {reg:[
-    {bits: 32, name:todo,attr:["todo"]}
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x0},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
 ]}
-----
+....
+Encoding `sha256sum1`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x1},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
+]}
+....
+Encoding `sha256sig0`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x2},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
+]}
+....
+Encoding `sha256sig1`::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x3},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
+]}
+....
 
 Description::
 The SHA256
