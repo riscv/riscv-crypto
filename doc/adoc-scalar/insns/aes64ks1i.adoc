@@ -1,0 +1,60 @@
+[#insns-aes64ks1i, reftext="AES Key Schedule Instruction 1 (RV64)"]
+==== aes64ks1i
+
+Synopsis::
+This instruction implements part of the KeySchedule operation for the
+AES Block cipher involving the SBox operation.
+
+Mnemonic::
+aes64ks1i rd, rs1, rnum
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 4, name: 'rcon'},
+{bits: 1, name: 0x1},
+{bits: 5, name: 0x18},
+{bits: 2, name: 0x0},
+]}
+....
+
+Description:: 
+This instruction implements the rotation, SubBytes and Round Constant
+addition steps of the AES block cipher Key Schedule.
+
+Operation::
+[source,sail]
+--
+function clause execute (AES64KS1I(rcon, rs1, rd)) = {
+  let tmp1 : bits(32) = X(rs1)[63..32];
+  let rc   : bits(32) = aes_decode_rcon(rcon);
+  let tmp2 : bits(32) = if (rcon ==0xA) then tmp1 else ror32(tmp1, 8);
+  let tmp3 : bits(32) = aes_sbox_fwd(tmp2[31..24]) @ aes_sbox_fwd(tmp2[23..16]) @
+                        aes_sbox_fwd(tmp2[15.. 8]) @ aes_sbox_fwd(tmp2[ 7.. 0]) ;
+  let result : bits(64) = (tmp3 ^ rc) @ (tmp3 ^ rc);
+  X(rd) = EXTZ(result);
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zkne>>
+| v0.9.0
+| Frozen
+| <<crypto_scalar_ext_zknd>>
+| v0.9.0
+| Frozen
+|===
+
+

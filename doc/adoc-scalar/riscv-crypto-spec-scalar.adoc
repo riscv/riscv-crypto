@@ -52,7 +52,7 @@ include::riscv-crypto-scalar-policies.adoc[]
 include::riscv-crypto-scalar-profiles.adoc[]
 
 [[crypto_scalar_extension]]
-== Scalar Cryptography Extension
+== Instructions
 
 As per the RISC-V Cryptographic Extensions Task Group charter:
 _"The committee will also make ISA extension proposals for lightweight
@@ -67,14 +67,139 @@ and work by
 Paris Telecom on acceleration of lightweight block ciphers
 cite:[TGMGD:19].
 
-include::riscv-crypto-scalar-zkb.adoc[]
-include::riscv-crypto-scalar-aes32.adoc[]
-include::riscv-crypto-scalar-aes64.adoc[]
-include::riscv-crypto-scalar-sha256.adoc[]
-include::riscv-crypto-scalar-sha512-rv32.adoc[]
-include::riscv-crypto-scalar-sha512-rv64.adoc[]
-include::riscv-crypto-scalar-sm3.adoc[]
-include::riscv-crypto-scalar-sm4.adoc[]
+//include::riscv-crypto-scalar-zkb.adoc[]
+//include::riscv-crypto-scalar-aes32.adoc[]
+//include::riscv-crypto-scalar-aes64.adoc[]
+//include::riscv-crypto-scalar-sha256.adoc[]
+//include::riscv-crypto-scalar-sha512-rv32.adoc[]
+//include::riscv-crypto-scalar-sha512-rv64.adoc[]
+//include::riscv-crypto-scalar-sm3.adoc[]
+//include::riscv-crypto-scalar-sm4.adoc[]
+
+=== AES Instructions (RV32)
+
+These instructions are a very lightweight way to accelerate the
+AES block cipher.
+They are designed to enable a partial T-Table based implementation
+of AES in hardware, where the SubBytes, ShiftRows and MixColumns
+transformations are all rolled into a single instruction, with the
+per-byte results then accumulated.
+The `bs` immediate operand is a 2-bit _Byte Select_, and indicates
+which byte of the input word is operated on.
+
+.Architecture Note
+[WARNING,caption="SH"]
+====
+The instructions source their destination register from
+bits `19:15` of the encoding, rather than the usual `11:7`.
+This is because the instructions are designed to be used such that
+the destination register is always the same as `rs1`.
+See Appendix <<crypto_scalar_appx_encodings>> for more information.
+*This is expected to change* in a future release to maintain
+consistency with the base ISA.
+====
+
+.Note To Software Developers
+[NOTE,caption="SH"]
+====
+These instructions use the Equivalent Inverse Cipher
+representaiton cite:[nist:fips:197] (Section 5.3.5) of AES.
+This affects the computation of the KeySchedule, as shown in
+cite:[nist:fips:197] (Figure 15).
+====
+
+.Supporting Material
+[NOTE,caption="SH"]
+====
+These instrucitons were derived from work in cite:[MJS:LWAES:20].
+Supporting material, including rationale and a design space exploration
+for these instructions can be found in cite:[cryptoeprint:2020:930].
+====
+
+<<<
+include::insns/aes32dsi.adoc[]
+<<<
+include::insns/aes32dsmi.adoc[]
+<<<
+include::insns/aes32esi.adoc[]
+<<<
+include::insns/aes32esmi.adoc[]
+
+<<<
+=== AES Instructions (RV64)
+
+.Supporting Material
+[NOTE,caption="SH"]
+====
+Supporting material, including rationale and a design space exploration
+for these instructions can be found in cite:[cryptoeprint:2020:930].
+====
+
+include::insns/aes64ds.adoc[]
+<<<
+include::insns/aes64dsm.adoc[]
+<<<
+include::insns/aes64es.adoc[]
+<<<
+include::insns/aes64esm.adoc[]
+<<<
+include::insns/aes64im.adoc[]
+<<<
+include::insns/aes64ks1i.adoc[]
+<<<
+include::insns/aes64ks2.adoc[]
+
+<<<
+=== SHA256 Instructions
+
+include::insns/sha256sig0.adoc[]
+<<<
+include::insns/sha256sig1.adoc[]
+<<<
+include::insns/sha256sum0.adoc[]
+<<<
+include::insns/sha256sum1.adoc[]
+
+<<<
+=== SHA512 Instructions (RV32)
+
+include::insns/sha512sig0h.adoc[]
+<<<
+include::insns/sha512sig0l.adoc[]
+<<<
+include::insns/sha512sig1h.adoc[]
+<<<
+include::insns/sha512sig1l.adoc[]
+<<<
+include::insns/sha512sum0r.adoc[]
+<<<
+include::insns/sha512sum1r.adoc[]
+
+<<<
+=== SHA512 Instructions (RV64)
+
+include::insns/sha512sig0.adoc[]
+<<<
+include::insns/sha512sig1.adoc[]
+<<<
+include::insns/sha512sum0.adoc[]
+<<<
+include::insns/sha512sum1.adoc[]
+
+<<<
+=== SM3 Instructions
+
+include::insns/sm3p0.adoc[]
+<<<
+include::insns/sm3p1.adoc[]
+
+<<<
+=== SM4 Instructions
+
+include::insns/sm4ed.adoc[]
+<<<
+include::insns/sm4ks.adoc[]
+
 include::riscv-crypto-scalar-entropy-source.adoc[]
 include::riscv-crypto-scalar-zkt.adoc[leveloffset=+1]
 

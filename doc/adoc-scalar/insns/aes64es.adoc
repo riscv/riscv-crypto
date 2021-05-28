@@ -1,0 +1,65 @@
+[#insns-aes64es, reftext="AES encrypt final round instruction (RV64)"]
+==== aes64es
+
+Synopsis::
+AES final round encryption instruction for RV32.
+
+Mnemonic::
+aes64es rd, rs1, rs2
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x19},
+{bits: 2, name: 0x0},
+]}
+....
+
+Description:: 
+Uses the two 64-bit source registers to represent the entire AES state,
+and produces _half_ of the next round output, applying the ShiftRows and
+SubBytes steps.
+
+.Note To Software Developers
+[NOTE,caption="SH"]
+====
+The following code snippet shows the final round of the AES block encryption.
+`t0` and `t1` hold the current round state.
+`t2` and `t3` hold the next round state.
+
+  aes64es t2, t0, t1
+  aes64es t3, t1, t0
+
+Note the reversed register order of the second instruction.
+====
+
+Operation::
+[source,sail]
+--
+function clause execute (AES64ES(rs2, rs1, rd)) = {
+  let sr : bits(64) = aes_rv64_shiftrows_fwd(X(rs2)[63..0], X(rs1)[63..0]);
+  let wd : bits(64) = sr[63..0];
+  X(rd) = aes_apply_fwd_sbox_to_each_byte(wd);
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zkne>>
+| v0.9.0
+| Frozen
+|===
+
+

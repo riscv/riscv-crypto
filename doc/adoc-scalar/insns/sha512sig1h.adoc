@@ -1,0 +1,65 @@
+[#insns-sha512sig1h, reftext="SHA2-512 Sigma1 high (RV32)"]
+==== sha512sig1h
+
+Synopsis::
+Implements the _high half_ of the Sigma1 transformation, as
+used in the SHA2-512 hash function cite:[nist:fips:180:4] (Section 4.1.3).
+
+Mnemonic::
+sha512sig1h rd, rs1, rs2
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0xf},
+{bits: 2, name: 0x1},
+]}
+....
+
+Description:: 
+This instruction is implemented on RV32 only.
+Used to compute the Sigma1 transform of the SHA2-512 hash function
+in conjunction with the <<insns-sha512sig1l,`sha512sig1l`>> instruction.
+The transform is a 64-bit to 64-bit function, so the input and output
+is represented by two 32-bit registers.
+
+[TIP]
+.Note to software developers
+====
+The entire Sigma1 transform for SHA2-512 may be computed on RV32
+using the following instruction sequence:
+
+ sha512sig1l    t0, a0, a1 
+ sha512sig1h    t1, a0, a1 
+
+====
+
+Operation::
+[source,sail]
+--
+function clause execute (SHA512SIG1H(rs2, rs1, rd)) = {
+  X(rd) = EXTZ((X(rs1) <<  3) ^ (X(rs1) >>  6) ^ (X(rs1) >> 19) ^
+               (X(rs2) >> 29)                  ^ (X(rs2) << 13) );
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zknh>>
+| v0.9.0
+| Frozen
+|===
+
+

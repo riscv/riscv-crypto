@@ -1,0 +1,57 @@
+[#insns-sha256sig1, reftext="SHA2-256 Sigma1 instruction"]
+==== sha256sig1
+
+Synopsis::
+Implements the Sigma1 transformation function as used in
+the SHA2-256 hash function cite:[nist:fips:180:4] (Section 4.1.2).
+
+Mnemonic::
+sha256sig1 rd, rs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x3},
+{bits: 5, name: 0x8},
+{bits: 2, name: 0x0},
+]}
+....
+
+Description:: 
+This instruction is supported for both RV32 and RV64 base architectures.
+For RV32, the entire `XLEN` source register is operated on.
+For RV64, the low `32` bits of the source register is operated on, and the
+result zero extended.
+Though named for SHA2-256, the instruction works for both the
+SHA2-224 and SHA2-256 parameterisations as described in
+cite:[nist:fips:180:4].
+
+Operation::
+[source,sail]
+--
+function clause execute (SHA256SIG1(rs1,rd)) = {
+  let inb    : bits(32) = X(rs1)[31..0];
+  let result : bits(32) = ror32(inb, 17) ^ ror32(inb, 19) ^ (inb >> 10);
+  X(rd)      = EXTZ(result);
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zknh>>
+| v0.9.0
+| Frozen
+|===
+
+

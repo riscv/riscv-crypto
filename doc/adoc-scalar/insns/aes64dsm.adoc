@@ -1,0 +1,66 @@
+[#insns-aes64dsm, reftext="AES decrypt middle round (RV64)"]
+==== aes64dsm
+
+Synopsis::
+AES middle round decryption instruction for RV64.
+
+Mnemonic::
+aes64dsm rd, rs1, rs2
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x1f},
+{bits: 2, name: 0x0},
+]}
+....
+
+Description:: 
+Uses the two 64-bit source registers to represent the entire AES state,
+and produces _half_ of the next round output, applying the Inverse ShiftRows,
+SubBytes and MixColumns steps.
+
+.Note To Software Developers
+[NOTE,caption="SH"]
+====
+The following code snippet shows one middle round of the AES block decryption.
+`t0` and `t1` hold the current round state.
+`t2` and `t3` hold the next round state.
+
+  aes64dsm t2, t0, t1
+  aes64dsm t3, t1, t0
+
+Note the reversed register order of the second instruction.
+====
+
+Operation::
+[source,sail]
+--
+function clause execute (AES64DSM(rs2, rs1, rd)) = {
+  let sr : bits(64) = aes_rv64_shiftrows_inv(X(rs2)[63..0], X(rs1)[63..0]);
+  let wd : bits(64) = sr[63..0];
+  let sb : bits(64) = aes_apply_inv_sbox_to_each_byte(wd);
+  X(rd)  = aes_mixcolumn_inv(sb[63..32]) @ aes_mixcolumn_inv(sb[31..0]);
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zknd>>
+| v0.9.0
+| Frozen
+|===
+
+

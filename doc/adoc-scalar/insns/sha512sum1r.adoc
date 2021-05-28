@@ -1,0 +1,65 @@
+[#insns-sha512sum1r, reftext="SHA2-512 Sum1 (RV32)"]
+==== sha512sum1r
+
+Synopsis::
+Implements the the Sum1 transformation, as
+used in the SHA2-512 hash function cite:[nist:fips:180:4] (Section 4.1.3).
+
+Mnemonic::
+sha512sum1r rd, rs1, rs2
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x9},
+{bits: 2, name: 0x1},
+]}
+....
+
+Description:: 
+This instruction is implemented on RV32 only.
+Used to compute the Sum1 transform of the SHA2-512 hash function.
+The transform is a 64-bit to 64-bit function, so the input and output
+is represented by two 32-bit registers.
+
+[TIP]
+.Note to software developers
+====
+The entire Sum1 transform for SHA2-512 may be computed on RV32
+using the following instruction sequence:
+
+ sha512sum1r    t0, a0, a1 
+ sha512sum1r    t1, a1, a0 
+
+Note the reversed source register ordering.
+====
+
+Operation::
+[source,sail]
+--
+function clause execute (SHA512SUM1R(rs2, rs1, rd)) = {
+  X(rd) = EXTZ((X(rs1) << 23) ^ (X(rs1) >> 14) ^ (X(rs1) >> 18) ^
+               (X(rs2) >>  9) ^ (X(rs2) << 18) ^ (X(rs2) << 14) );
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zknh>>
+| v0.9.0
+| Frozen
+|===
+
+

@@ -1,0 +1,80 @@
+[#insns-sm4ks, reftext="SM4 Key Schedule Instruction"]
+==== sm4ks
+
+Synopsis::
+Accelerates the Key Schedule operation of the SM4 block cipher
+cite:[block:sm4:1, ietf:sm4].
+
+Mnemonic::
+sm4ks rt, rs2, bs
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 0x0},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rt'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x1a},
+{bits: 2, name: 'bs'},
+]}
+....
+
+Description:: 
+Implements a T-tables in hardware style approach to accelerating the
+SM4 Key Schedule.
+A byte is extracted from `rs2` based on `bs`, to which the SBox and
+linear layer transforms are applied, before the result is XOR'd with
+`rt` and written back to `rd`.
+This instruction exists on RV32 and RV64 base architectures.
+On RV64, the 32-bit result is zero extended upto XLEN bits.
+
+.Architecture Note
+[NOTE,caption="SH"]
+====
+The instructions source their destination register from
+bits `19:15` of the encoding, rather than the usual `11:7`.
+This is because the instructions are designed to be used such that
+the destination register is always the same as `rs1`.
+See Appendix <<crypto_scalar_encodings>> for more information.
+*This is expected to change* in a future release to maintain
+consistency with the base ISA.
+====
+
+.Supporting Material
+[NOTE,caption="SH"]
+====
+These instrucitons were derived from work in cite:[MJS:LWAES:20].
+====
+
+Operation::
+[source,sail]
+--
+function clause execute (SM4KS(bs,rs2,rt)) = {
+  let shamt : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
+  let sb_in : bits(8)  = (X(rs2) >> shamt)[7..0];
+  let x     : bits(32) = 0x000000 @ sm4_sbox(sb_in);
+  let y     : bits(32) = x ^ ((x & 0x00000007) << 29) ^ ((x & 0x000000FE) <<  7) ^
+                             ((x & 0x00000001) << 23) ^ ((x & 0x000000F8) << 13) ;
+  let z     : bits(32) = (y << shamt) ^ (y >> (0b100000 - shamt));
+  let result: bits(32) = z ^ X(rt)[31..0];
+  X(rt) = EXTZ(result);
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zksed>>
+| v0.9.0
+| Frozen
+|===
+
+

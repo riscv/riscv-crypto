@@ -24,7 +24,7 @@ operate in. NIST ciphers are a part of most standardised internet
 protocols, while ShangMi ciphers are required for use in China.
 ====
 
-[[crypto_scalar_ext_zkb]]
+[[crypto_scalar_ext_zkb,Zkb]]
 === `Zkb` - Bitmanip instructions for Cryptography
 
 These are a subset of the Bitmanipulation Extension which are particularly
@@ -37,31 +37,31 @@ useful for Cryptography.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; |  xperm.n     | <<#insn-xperm.n>>
-| &#10003; | &#10003; |  xperm.b     | <<#insn-xperm.b>>
-| &#10003; | &#10003; |  ror         | <<#insn-ror>>
-| &#10003; | &#10003; |  rol         | <<#insn-rol>>
-| &#10003; | &#10003; |  rori        | <<#insn-rori>>
-|          | &#10003; |  rorw        | <<#insn-rorw>>
-|          | &#10003; |  rolw        | <<#insn-rolw>>
-|          | &#10003; |  roriw       | <<#insn-roriw>>
-| &#10003; | &#10003; |  andn        | <<#insn-andn>>
-| &#10003; | &#10003; |  orn         | <<#insn-orn>>
-| &#10003; | &#10003; |  xnor        | <<#insn-xnor>>
-| &#10003; | &#10003; |  pack        | <<#insn-pack>>
-| &#10003; | &#10003; |  packu       | <<#insn-packu>>
-| &#10003; | &#10003; |  packh       | <<#insn-packh>>
-|          | &#10003; |  packw       | <<#insn-packw>>
-|          | &#10003; |  packuw      | <<#insn-packuw>>
-| &#10003; | &#10003; |  rev.b       | <<#insn-rev.b>>
-| &#10003; | &#10003; |  rev8        | <<#insn-rev8>>
-|          | &#10003; |  rev8.w      | <<#insn-rev8.w>>
-| &#10003; |          |  zip         | <<#insn-zip>>
-| &#10003; |          |  unzip       | <<#insn-unzip>>
+| &#10003; | &#10003; |  xperm.n     | <<insns-xperm.n>>
+| &#10003; | &#10003; |  xperm.b     | <<insns-xperm.b>>
+| &#10003; | &#10003; |  ror         | <<insns-ror>>
+| &#10003; | &#10003; |  rol         | <<insns-rol>>
+| &#10003; | &#10003; |  rori        | <<insns-rori>>
+|          | &#10003; |  rorw        | <<insns-rorw>>
+|          | &#10003; |  rolw        | <<insns-rolw>>
+|          | &#10003; |  roriw       | <<insns-roriw>>
+| &#10003; | &#10003; |  andn        | <<insns-andn>>
+| &#10003; | &#10003; |  orn         | <<insns-orn>>
+| &#10003; | &#10003; |  xnor        | <<insns-xnor>>
+| &#10003; | &#10003; |  pack        | <<insns-pack>>
+| &#10003; | &#10003; |  packu       | <<insns-packu>>
+| &#10003; | &#10003; |  packh       | <<insns-packh>>
+|          | &#10003; |  packw       | <<insns-packw>>
+|          | &#10003; |  packuw      | <<insns-packuw>>
+| &#10003; | &#10003; |  rev.b       | <<insns-rev.b>>
+| &#10003; | &#10003; |  rev8        | <<insns-rev8>>
+|          | &#10003; |  rev8.w      | <<insns-rev8.w>>
+| &#10003; |          |  zip         | <<insns-zip>>
+| &#10003; |          |  unzip       | <<insns-unzip>>
 |===
 
 
-[[crypto_scalar_ext_zkg]]
+[[crypto_scalar_ext_zkg,Zkg]]
 === `Zkg` - Carryless multiply instructions
 
 Constant time carry-less multiply for Galois/Counter Mode.
@@ -76,11 +76,11 @@ across other instructions.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; |  clmul       | <<#insn-clmul>>
-| &#10003; | &#10003; |  clmulh      | <<#insn-clmulh>>
+| &#10003; | &#10003; |  clmul       | <<insns-clmul>>
+| &#10003; | &#10003; |  clmulh      | <<insns-clmulh>>
 |===
 
-[[crypto_scalar_ext_zkr]]
+[[crypto_scalar_ext_zkr,Zkr]]
 === `Zkr` - Entropy Source Extension
 
 Entropy source for seeding random number generators.
@@ -100,7 +100,7 @@ See <<crypto_scalar_es>> for a complete explanation.
 |===
 
 
-[[crypto_scalar_ext_zkne]]
+[[crypto_scalar_ext_zkne,Zkne]]
 === `Zkne` - NIST Suite: AES Encryption
 
 Instructions for accelerating the encryption and key-schedule functions of
@@ -113,15 +113,15 @@ the AES block cipher.
 |Mnemonic
 |Instruction
 
-| &#10003; |          | aes32esi     | <<#insn-aes32esi>>
-| &#10003; |          | aes32esmi    | <<#insn-aes32esmi>>
-|          | &#10003; | aes64es      | <<#insn-aes64es>>
-|          | &#10003; | aes64esm     | <<#insn-aes64esm>>
-|          | &#10003; | aes64ks1i    | <<#insn-aes64ks1i>>
-|          | &#10003; | aes64ks2     | <<#insn-aes64ks2>>
+| &#10003; |          | aes32esi     | <<insns-aes32esi>>
+| &#10003; |          | aes32esmi    | <<insns-aes32esmi>>
+|          | &#10003; | aes64es      | <<insns-aes64es>>
+|          | &#10003; | aes64esm     | <<insns-aes64esm>>
+|          | &#10003; | aes64ks1i    | <<insns-aes64ks1i>>
+|          | &#10003; | aes64ks2     | <<insns-aes64ks2>>
 |===
 
-[[crypto_scalar_ext_zknd]]
+[[crypto_scalar_ext_zknd,Zknd]]
 === `Zknd` - NIST Suite: AES Decryption
 
 Instructions for accelerating the decryption and key-schedule functions of
@@ -134,16 +134,16 @@ the AES block cipher.
 |Mnemonic
 |Instruction
 
-| &#10003; |          | aes32dsi     | <<#insn-aes32dsi>>
-| &#10003; |          | aes32dsmi    | <<#insn-aes32dsmi>>
-|          | &#10003; | aes64ds      | <<#insn-aes64ds>>
-|          | &#10003; | aes64dsm     | <<#insn-aes64dsm>>
-|          | &#10003; | aes64im      | <<#insn-aes64im>>
-|          | &#10003; | aes64ks1i    | <<#insn-aes64ks1i>>
-|          | &#10003; | aes64ks2     | <<#insn-aes64ks2>>
+| &#10003; |          | aes32dsi     | <<insns-aes32dsi>>
+| &#10003; |          | aes32dsmi    | <<insns-aes32dsmi>>
+|          | &#10003; | aes64ds      | <<insns-aes64ds>>
+|          | &#10003; | aes64dsm     | <<insns-aes64dsm>>
+|          | &#10003; | aes64im      | <<insns-aes64im>>
+|          | &#10003; | aes64ks1i    | <<insns-aes64ks1i>>
+|          | &#10003; | aes64ks2     | <<insns-aes64ks2>>
 |===
 
-[[crypto_scalar_ext_zknh]]
+[[crypto_scalar_ext_zknh,Zknh]]
 === `Zknh` - NIST Suite: Hash Function Instructions
 
 Instructions for accelerating the SHA2 family of hash functions.
@@ -155,23 +155,23 @@ Instructions for accelerating the SHA2 family of hash functions.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; | sha256sig0   | <<#insn-sha256sig0>>
-| &#10003; | &#10003; | sha256sig1   | <<#insn-sha256sig1>>
-| &#10003; | &#10003; | sha256sum0   | <<#insn-sha256sum0>>
-| &#10003; | &#10003; | sha256sum1   | <<#insn-sha256sum1>>
-| &#10003; |          | sha512sig0h  | <<#insn-sha512sig0h>>
-| &#10003; |          | sha512sig0l  | <<#insn-sha512sig0l>>
-| &#10003; |          | sha512sig1h  | <<#insn-sha512sig1h>>
-| &#10003; |          | sha512sig1l  | <<#insn-sha512sig1l>>
-| &#10003; |          | sha512sum0r  | <<#insn-sha512sum0r>>
-| &#10003; |          | sha512sum1r  | <<#insn-sha512sum1r>>
-|          | &#10003; | sha512sig0   | <<#insn-sha512sig0>>
-|          | &#10003; | sha512sig1   | <<#insn-sha512sig1>>
-|          | &#10003; | sha512sum0   | <<#insn-sha512sum0>>
-|          | &#10003; | sha512sum1   | <<#insn-sha512sum1>>
+| &#10003; | &#10003; | sha256sig0   | <<insns-sha256sig0>>
+| &#10003; | &#10003; | sha256sig1   | <<insns-sha256sig1>>
+| &#10003; | &#10003; | sha256sum0   | <<insns-sha256sum0>>
+| &#10003; | &#10003; | sha256sum1   | <<insns-sha256sum1>>
+| &#10003; |          | sha512sig0h  | <<insns-sha512sig0h>>
+| &#10003; |          | sha512sig0l  | <<insns-sha512sig0l>>
+| &#10003; |          | sha512sig1h  | <<insns-sha512sig1h>>
+| &#10003; |          | sha512sig1l  | <<insns-sha512sig1l>>
+| &#10003; |          | sha512sum0r  | <<insns-sha512sum0r>>
+| &#10003; |          | sha512sum1r  | <<insns-sha512sum1r>>
+|          | &#10003; | sha512sig0   | <<insns-sha512sig0>>
+|          | &#10003; | sha512sig1   | <<insns-sha512sig1>>
+|          | &#10003; | sha512sum0   | <<insns-sha512sum0>>
+|          | &#10003; | sha512sum1   | <<insns-sha512sum1>>
 |===
 
-[[crypto_scalar_ext_zksed]]
+[[crypto_scalar_ext_zksed,Zksed]]
 === `Zksed` - ShangMi Suite: SM4 Block Cipher Instructions
 
 Instructions for accelerating the SM4 Block Cipher.
@@ -186,11 +186,11 @@ extension for it.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; | sm4ed        | <<#insn-sm4ed>>
-| &#10003; | &#10003; | sm4ks        | <<#insn-sm4ks>>
+| &#10003; | &#10003; | sm4ed        | <<insns-sm4ed>>
+| &#10003; | &#10003; | sm4ks        | <<insns-sm4ks>>
 |===
 
-[[crypto_scalar_ext_zksh]]
+[[crypto_scalar_ext_zksh,Zksh]]
 === `Zksh` - ShangMi Suite: SM3 Hash Function Instructions
 
 Instructions for accelerating the SM3 hash function.
@@ -202,8 +202,8 @@ Instructions for accelerating the SM3 hash function.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; | sm3p0        | <<#insn-sm3p0>>
-| &#10003; | &#10003; | sm3p1        | <<#insn-sm3p1>>
+| &#10003; | &#10003; | sm3p0        | <<insns-sm3p0>>
+| &#10003; | &#10003; | sm3p1        | <<insns-sm3p1>>
 |===
 
 

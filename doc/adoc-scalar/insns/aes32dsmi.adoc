@@ -1,0 +1,56 @@
+[#insns-aes32dsmi, reftext="AES middle round decrypt (RV32)"]
+==== aes32dsmi
+
+Synopsis::
+AES middle round decryption instruction for RV32.
+
+Mnemonic::
+aes32dsmi rt, rs2, bs
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x33},
+{bits: 5, name: 0x0},
+{bits: 3, name: 0x0},
+{bits: 5, name: 'rt'},
+{bits: 5, name: 'rs2'},
+{bits: 5, name: 0x1f},
+{bits: 2, name: 'bs'},
+]}
+....
+
+Description:: 
+This instruction sources a single byte from `rs2` according to `bs`.
+To this it applies the inverse AES SBox operation, and a partial inverse
+MixColumn, before XOR'ing the result with `rs1`.
+
+Operation::
+[source,sail]
+--
+function clause execute (AES32DSMI(bs, rs2, rt))={
+  let rs1_val : xlenbits = X(rt);
+  let rs2_val : xlenbits = X(rs2);
+  let shamt   : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
+  let si      : bits(8)  = (rs2_val >> shamt)[7..0]; /* SBox Input */
+  let so      : bits(8)  = aes_sbox_inv(si);
+  let mixed   : xlenbits = aes_mixcolumn_byte_inv(so);
+  let result  : xlenbits = rs1_val ^ (mixed << shamt) ^ (mixed >> (0b100000 - shamt));
+  X(rt) = result; RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zknd>>
+| v0.9.0
+| Frozen
+|===
+
+

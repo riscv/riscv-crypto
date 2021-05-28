@@ -1,0 +1,56 @@
+[#insns-aes64im, reftext="AES Decrypt KeySchedule MixColumns (RV64)"]
+==== aes64im
+
+Synopsis::
+This instruction accelerates the inverse MixColumns step of the AES
+Block Cipher, and is used to aid creation of the decryption KeySchedule.
+
+Mnemonic::
+aes64im rd, rs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 0x13},
+{bits: 5, name: 'rd'},
+{bits: 3, name: 0x1},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 0x0},
+{bits: 5, name: 0x18},
+{bits: 2, name: 0x0},
+]}
+....
+
+Description:: 
+The instruction applies the inverse MixColumns
+transformation to two columns of the state array, packed into a single
+64-bit register.
+It is used to create the inverse cipher KeySchedule, according to
+the equivalent inverse cipher construction in
+cite:[nist:fips:197] (Page 23, Section 5.3.5).
+
+Operation::
+[source,sail]
+--
+function clause execute (AES64IM(rs1, rd)) = {
+  let w0 : bits(32) = aes_mixcolumn_inv(X(rs1)[31.. 0]);
+  let w1 : bits(32) = aes_mixcolumn_inv(X(rs1)[63..32]);
+  X(rd)  = w1 @ w0;
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<crypto_scalar_ext_zknd>>
+| v0.9.0
+| Frozen
+|===
+
+
