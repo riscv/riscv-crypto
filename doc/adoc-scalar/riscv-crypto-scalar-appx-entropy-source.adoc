@@ -13,7 +13,7 @@ governed by numerous standards and technical requirements.
 
 A driving design goal for our architecture was for it to be easy to
 implement, yet compatible with current versions of FIPS 140-3
-cite:[NI19] and NIST SP 800-90B cite:[TuBaKe+18], significantly
+cite:[NI19] and NIST SP 800-90B cite:[TuBaKe:18], significantly
 updated standards that are only coming into use in 2020. Naturally,
 the architecture should also support other RNG frameworks such as
 German AIS 20 / 31 cite:[KiSc01,KiSc11] which is widely used
@@ -26,15 +26,15 @@ AIS-31 discusses Shannon entropy as well.
 
 These standards set many of the technical requirements for the design,
 and we use their terminology if possible.
-The delineation of various components is illustrated in Figure
-<<crypto_scalar_es_fig:rng_tikz>>.
+The delineation of various components is illustrated in
+<<crypto_scalar_es_fig_rng>>.
 
 
 [[crypto_scalar_appx_es_intro-es]]
 ==== Entropy Source (ES)
 
 Physical sources of true randomness are called Entropy Sources (ES)
-cite:[TuBaKe+18]. They are built by sampling and processing data
+cite:[TuBaKe:18]. They are built by sampling and processing data
 from a noise source (<<crypto_scalar_appx_es_noise_sources>>). Since these
 are directly based on natural phenomena and are subject to
 environmental conditions (which may be adversarial), they require
@@ -91,20 +91,14 @@ This also illustrates that the seed/key needs to be long enough and
 come from a trusted Entropy Source. The DRBG should still be frequently
 refreshed (reseeded) for forward and backward security.
 
-....
-TODO
-\begin{figure}[tb]
-\centering
-\input{../diagrams/rng_tikz.tex}
-\caption{PollEntropy provides an Entropy Source (ES) only, not a stateful
-    random number generator. As a result, it can support arbitrary
-    security levels. Cryptographic (AES, SHA-2/3) ISA Extension
-    instructions can be used to construct high-speed DRBGs that are
-    seeded from the entropy source.}
-%   \Description{Illustration of PollEntropy at the ISA Boundary.}
-\label{fig:rng_tikz}
-\end{figure}
-....
+[[crypto_scalar_es_fig_rng,reftext="Entropy Source Components"]]
+====
+image::es_dataflow.svg[align="center"]
+PollEntropy provides an Entropy Source (ES) only, not a stateful random
+number generator. As a result, it can support arbitrary security levels.
+Cryptographic (AES, SHA-2/3) ISA Extension instructions can be used to
+construct high-speed DRBGs that are seeded from the entropy source.
+====
 
 === Specific Rationale and Considerations
 
@@ -142,7 +136,7 @@ cryptographically ("perfectly") in ratio 2:1. This is our "safety
 margin" for non-cryptographic conditioners.
 
 Note that the min-entropy assessment methodology in SP 800-90B
-cite:[TuBaKe+18] also has a safety margin in its confidence intervals,
+cite:[TuBaKe:18] also has a safety margin in its confidence intervals,
 and therefore there must be consistently _more than_ 8 bits of
 entropy per 16-bit word. In practice, we recommend the
 distribution to be significantly closer to uniform to satisfy
@@ -154,12 +148,12 @@ specified for technical reasons related to SP 800-90B itself;
 non-vetted conditioners may offer similar security.
 
 The 128-bit output block size was selected because that is the output
-size of the CBC-MAC conditioner specified in cite:[TuBaKe+18] and also
+size of the CBC-MAC conditioner specified in cite:[TuBaKe:18] and also
 the smallest key size we expect to see in applications.
 
 ==== (<<crypto_scalar_es_req>>) E2, IID Requirement:
 
-IID is an optional requirement in SP 800-90B cite:[TuBaKe+18] but it
+IID is an optional requirement in SP 800-90B cite:[TuBaKe:18] but it
 is needed to prevent information leakage between different entities that
 possibly share the same entropy source. It also significantly
 simplifies certification and vendor-independent driver development.
@@ -189,8 +183,8 @@ statistical features.
 Our approach is informed by the experience of designing and implementing
 cryptographic protocols. Some of the most devastating practical attacks
 against real-life cryptosystems have used inconsequential-looking
-additional information, such as padding error messages cite:[BaFoKa+12]
-or timing information cite:[MoSuEi+20]. In cryptography, such
+additional information, such as padding error messages cite:[BaFoKa:12]
+or timing information cite:[MoSuEi:20]. In cryptography, such
 out-of-band information sources  are called "oracles."
 
 This also applies to the raw noise source. The raw source interface has
@@ -289,7 +283,7 @@ Steps 1-4 (possibly 5) are considered to be part of the Entropy
 Source (ES) and provided by the `pollentropy` instruction.
 Adding the software-side cryptographic steps 5-6 and control logic
 complements it into a True Random Number Generator (TRNG).
-%   This information flow is illustrated by Figure <<crypto_scalar_es_fig:rng_tikz>>.
+This information flow is illustrated by <<crypto_scalar_es_fig_rng>>.
 
 As a general rule, RISC-V specifies the ISA only. We provide some
 additional requirements so that portable, vendor-independent middleware
@@ -301,7 +295,7 @@ While we do not require entropy source implementations to be
 certified designs, we do expect that they behave in a compatible manner
 and do not create unnecessary security risks to users. Self-evaluation
 and testing following appropriate security standards is usually needed
-to achieve this. NIST has made its SP 800-90B cite:[TuBaKe+18] min-entropy
+to achieve this. NIST has made its SP 800-90B cite:[TuBaKe:18] min-entropy
 estimation package freely available footnote:[EntropyAssessment:
 \url{https://github.com/usnistgov/SP800-90B_EntropyAssessment}] and
 similar free tools are also available footnote:[(In German)
@@ -323,11 +317,11 @@ The most common entropy source type in production use today is
 based on "free running" ring oscillators and their timing jitter.
 Here, an odd number of inverters is connected into a loop from which
 noise source bits are sampled in relation to a reference clock
-cite:[BaLuMi+11]. The sampled bit sequence may be expected to be
+cite:[BaLuMi:11]. The sampled bit sequence may be expected to be
 relatively uncorrelated (close to IID) if the sample rate is suitably low
 cite:[KiSc11]. However further processing is usually required.
 
-AMD cite:[AM17], ARM cite:[AR17], and IBM cite:[LiBaBo+13] are
+AMD cite:[AM17], ARM cite:[AR17], and IBM cite:[LiBaBo:13] are
 examples of ring oscillator TRNGs intended for high-security
 applications.
 
@@ -339,8 +333,8 @@ oscillator-based category.
 
 The main benefits of ring oscillators are: (1) They can be implemented
 with standard cell libraries without external components --
-and even on FPGAs cite:[VaFiAu+10], (2) there is an established theory
-for their behavior cite:[HaLe98,HaLiLe99,BaLuMi+11], and (3) ample
+and even on FPGAs cite:[VaFiAu:10], (2) there is an established theory
+for their behavior cite:[HaLe98,HaLiLe99,BaLuMi:11], and (3) ample
 precedent exists for testing and certifying them at the highest security
 levels.
 
@@ -373,22 +367,22 @@ described as a Shot Noise generator).
 It may be possible to certify more exotic noise sources and designs,
 although their stochastic model needs to be equally well understood
 and their CPU interfaces must be secure.
-See Section <<crypto_scalar_es_quantum>> for a discussion of Quantum entropy
-sources.
+See Section <<crypto_scalar_appx_es_quantum>> for a discussion of Quantum
+entropy sources.
 
 
 ==== Samplers and GetNoise
 
 It is necessary to verify that the noise source and sampler output
 matches with their stochastic models. This is usually
-done in a laboratory setting since NIST SP 800-90B cite:[TuBaKe+18]
+done in a laboratory setting since NIST SP 800-90B cite:[TuBaKe:18]
 requires that the noise source in protected in production devices.
 We are leaving access as a vendor-specific matter but we urge them to
 protect the raw source and to make it unavailable to casual users.
 
 *Rationale:*
 Samplers can generate vast amounts of data. NIST SP 800-90B
-cite:[TuBaKe+18] defines a conceptual interface `GetNoise()`
+cite:[TuBaKe:18] defines a conceptual interface `GetNoise()`
 for the raw output and also anticipates that the actual
 interfaces "will depend on the entropy source deployed."
 
@@ -412,7 +406,7 @@ in the source’s statistical characteristics [...]
 
 If NIST SP 800-90B certification is required, the hardware
 should implement at least the health tests defined in Section
-4.4 of cite:[TuBaKe+18]: repetition count test and adaptive
+4.4 of cite:[TuBaKe:18]: repetition count test and adaptive
 proportion test.
 
 Health monitoring requires some state information related
@@ -420,7 +414,7 @@ to the noise source to be maintained. The tests should be designed
 in a way that a specific number of samples guarantees a state
 flush (no hung states). We suggest flush size `W \leq 1024` to
 match with the NIST SP 800-90B required tests (See Section 4.4 in
-cite:[TuBaKe+18]). The state is also fully zeroized in a system reset.
+cite:[TuBaKe:18]). The state is also fully zeroized in a system reset.
 
 *Rationale:*
 The two mandatory tests can be built with minimal circuitry.
@@ -435,7 +429,7 @@ counted; cutoff values are defined in the standard. We see that the
 structure of the mandatory tests is such that, if well implemented,
 no information is carried beyond a limit of `W` samples.
 
-Section 4.5 of cite:[TuBaKe+18] explicitly permits additional
+Section 4.5 of cite:[TuBaKe:18] explicitly permits additional
 developer-defined tests and several more were defined in early
 versions of FIPS 140-1 before being "crossed out." The choice
 of additional tests depends on the nature and implementation of the
@@ -470,8 +464,8 @@ A permanent error condition should result in `DEAD` state.
 [[crypto_scalar_appx_es_noncrypto]]
 ==== Non-cryptographic Conditioners
 
-As noted in Section <<crypto_scalar_es_intro-cond>>, physical randomness sources
-generally require a post-processing step called _conditioning_ to
+As noted in Section <<crypto_scalar_appx_es_intro-cond>>, physical randomness
+sources generally require a post-processing step called _conditioning_ to
 meet the desired quality requirements, which  are outlined in Section
 <<crypto_scalar_es_req>>.
 
@@ -534,7 +528,7 @@ or considered "full entropy."
 Examples of cryptographic conditioners include the random pool
 of the Linux operating system, secure hash functions (SHA-2/3,
 SHAKE cite:[NI15,NI15A] ),
-and the AES-based CBC-MAC construction of SP 800-90B cite:[TuBaKe+18].
+and the AES-based CBC-MAC construction of SP 800-90B cite:[TuBaKe:18].
 
 In some constructions, such as the Linux RNG and SHA-3/SHAKE cite:[NI15]
 based generators the cryptographic conditioning and output (DRBG)
@@ -638,7 +632,7 @@ attacks are still exponential to key size cite:[Gr96].
 
 As an example, the original Intel RNG cite:[Me18], whose output
 generation is based on AES-128 can be attacked using Grover's algorithm
-with approximately square-root effort cite:[JaNaRo+20].
+with approximately square-root effort cite:[JaNaRo:20].
 While even "64-bit" quantum security is extremely difficult to
 break, many applications specify a higher security requirement.
 NIST cite:[NI16] defines AES-128 to be "Category 1" equivalent

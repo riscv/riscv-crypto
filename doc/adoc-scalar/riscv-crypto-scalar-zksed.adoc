@@ -1,0 +1,19 @@
+[[crypto_scalar_ext_zksed,Zksed]]
+=== `Zksed` - ShangMi Suite: SM4 Block Cipher Instructions
+
+Instructions for accelerating the SM4 Block Cipher.
+Note that unlike AES, this cipher uses the same core operation for
+encryption and decryption, hence there is only one
+extension for it.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; | sm4ed        | <<insns-sm4ed>>
+| &#10003; | &#10003; | sm4ks        | <<insns-sm4ks>>
+|===
+

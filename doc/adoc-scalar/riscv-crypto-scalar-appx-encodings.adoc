@@ -1,6 +1,0 @@
-[appendix]
-[[crypto_scalar_appx_encodings]]
-== Instruction Encodings
-
-NOTE: Needs converting from LaTeX
-

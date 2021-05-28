@@ -98,7 +98,9 @@ in dedicated security devices.
 [[crypto_scalar_es_polling]]
 === Polling Mechanism with WFI
 
-.Entropy Source state transition diagram.
+[[crypto_scalar_es_state,reftext="Entropy Source State Transition Diagram"]]
+====
+image::es_state.svg[title="Entropy Source state transition diagram.", align="center"]
 Normally the operational state alternates between WAIT
 (no data) and ES16, which means that 16 bits of randomness (seed)
 has been polled. BIST (Built-in Self-Test) only occurs after reset
@@ -106,10 +108,7 @@ or to signal a non-fatal self-test alarm (if reached after WAIT or
 ES16). DEAD is an unrecoverable error state.
 In test mode (when GetNoise is active) WAIT and ES16 states are
 unavailable in PollEntropy.
-[graphviz, , svg]
-....
-digraph {TODO}
-....
+====
 
 The diagram above illustrates operational
 state (`OPST`) transitions. The state is usually either `WAIT` or
@@ -156,7 +155,7 @@ testing) is just a part of this process.
 
 The specification of entropy source requirements is complicated by the
 existence of two slightly conflicting standards -- NIST SP 800-90B
-cite:[TuBaKe+18] for FIPS 140-3 and AIS 31 cite:[KiSc11] for Common
+cite:[TuBaKe:18] for FIPS 140-3 and AIS 31 cite:[KiSc11] for Common
 Criteria evaluations. RISC-V hardware vendors may design their entropy
 sources to meet *either one of these standards* (as different type
 of evidence is required for each certification). It is also possible for
@@ -193,7 +192,7 @@ This usually requires post-processing of noise in hardware.
 [NOTE]
 ====
 NIST SP 800-90B
-cite:[TuBaKe+18] and its  FIPS 140-3 Implementation Guidance
+cite:[TuBaKe:18] and its  FIPS 140-3 Implementation Guidance
 cite:[NICC20] (Section D.K.) are being revised at the time of writing.
 The type of appropriate post-processing for IID track depends on
 the physical noise source. Some simple post-processing methods are
@@ -205,11 +204,11 @@ required in hardware, forming a hardware-software conditioning chain.
 * *E1 Entropy Requirement* - 
 Each 16-bit output sample `seed` must have more than 8 bits of
 independent, unpredictable randomness. This minimum requirement is
-satisfied if (in a NIST SP 800-90B cite:[TuBaKe+18] assessment) 128
+satisfied if (in a NIST SP 800-90B cite:[TuBaKe:18] assessment) 128
 bits of output entropy can be obtained from each 256-bit
 (`16*16` bits) `pollentropy` output sequence via a vetted
 cryptographic conditioning algorithm (see Section 3.1.5.1.2 in
-cite:[TuBaKe+18]). This means that the actual SP 800-90B entropy
+cite:[TuBaKe:18]). This means that the actual SP 800-90B entropy
 assessment must yield significantly more than 8 bits (vendors should
 aim at 16).
 Driver developers may make this conservative assumption but are not
@@ -222,7 +221,7 @@ The output must be close to _Independent and Identically Distributed_
 time and that output words convey little information about each other.
 This requirement is satisfied if the construction of the physical source
 and sampling mechanism suggests nothing against the IID assumption
-and the IID tests in Section 5 of NIST SP 800-90B cite:[TuBaKe+18] are
+and the IID tests in Section 5 of NIST SP 800-90B cite:[TuBaKe:18] are
 consistently passed.
 
 [NOTE]

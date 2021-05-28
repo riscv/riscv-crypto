@@ -1,0 +1,22 @@
+[[crypto_scalar_ext_zknd,Zknd]]
+=== `Zknd` - NIST Suite: AES Decryption
+
+Instructions for accelerating the decryption and key-schedule functions of
+the AES block cipher.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; |          | aes32dsi     | <<insns-aes32dsi>>
+| &#10003; |          | aes32dsmi    | <<insns-aes32dsmi>>
+|          | &#10003; | aes64ds      | <<insns-aes64ds>>
+|          | &#10003; | aes64dsm     | <<insns-aes64dsm>>
+|          | &#10003; | aes64im      | <<insns-aes64im>>
+|          | &#10003; | aes64ks1i    | <<insns-aes64ks1i>>
+|          | &#10003; | aes64ks2     | <<insns-aes64ks2>>
+|===
+

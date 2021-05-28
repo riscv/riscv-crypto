@@ -1,0 +1,21 @@
+[[crypto_scalar_ext_zkne,Zkne]]
+=== `Zkne` - NIST Suite: AES Encryption
+
+Instructions for accelerating the encryption and key-schedule functions of
+the AES block cipher.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; |          | aes32esi     | <<insns-aes32esi>>
+| &#10003; |          | aes32esmi    | <<insns-aes32esmi>>
+|          | &#10003; | aes64es      | <<insns-aes64es>>
+|          | &#10003; | aes64esm     | <<insns-aes64esm>>
+|          | &#10003; | aes64ks1i    | <<insns-aes64ks1i>>
+|          | &#10003; | aes64ks2     | <<insns-aes64ks2>>
+|===
+

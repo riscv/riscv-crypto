@@ -1,0 +1,29 @@
+[[crypto_scalar_ext_zknh,Zknh]]
+=== `Zknh` - NIST Suite: Hash Function Instructions
+
+Instructions for accelerating the SHA2 family of cryptographic hash functions,
+as specified in cite:[nist:fips:180:4].
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; | sha256sig0   | <<insns-sha256sig0>>
+| &#10003; | &#10003; | sha256sig1   | <<insns-sha256sig1>>
+| &#10003; | &#10003; | sha256sum0   | <<insns-sha256sum0>>
+| &#10003; | &#10003; | sha256sum1   | <<insns-sha256sum1>>
+| &#10003; |          | sha512sig0h  | <<insns-sha512sig0h>>
+| &#10003; |          | sha512sig0l  | <<insns-sha512sig0l>>
+| &#10003; |          | sha512sig1h  | <<insns-sha512sig1h>>
+| &#10003; |          | sha512sig1l  | <<insns-sha512sig1l>>
+| &#10003; |          | sha512sum0r  | <<insns-sha512sum0r>>
+| &#10003; |          | sha512sum1r  | <<insns-sha512sum1r>>
+|          | &#10003; | sha512sig0   | <<insns-sha512sig0>>
+|          | &#10003; | sha512sig1   | <<insns-sha512sig1>>
+|          | &#10003; | sha512sum0   | <<insns-sha512sum0>>
+|          | &#10003; | sha512sum1   | <<insns-sha512sum1>>
+|===
+

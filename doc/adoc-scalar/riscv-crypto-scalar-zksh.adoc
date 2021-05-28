@@ -1,0 +1,16 @@
+[[crypto_scalar_ext_zksh,Zksh]]
+=== `Zksh` - ShangMi Suite: SM3 Hash Function Instructions
+
+Instructions for accelerating the SM3 hash function.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; | sm3p0        | <<insns-sm3p0>>
+| &#10003; | &#10003; | sm3p1        | <<insns-sm3p1>>
+|===
+
