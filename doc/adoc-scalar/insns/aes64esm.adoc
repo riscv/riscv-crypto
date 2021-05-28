@@ -1,5 +1,5 @@
 [#insns-aes64esm, reftext="AES encrypt middle round instruction (RV64)"]
-==== aes64esm
+=== aes64esm
 
 Synopsis::
 AES middle round encryption instruction for RV64.

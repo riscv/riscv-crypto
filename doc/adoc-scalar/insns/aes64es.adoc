@@ -1,5 +1,5 @@
 [#insns-aes64es, reftext="AES encrypt final round instruction (RV64)"]
-==== aes64es
+=== aes64es
 
 Synopsis::
 AES final round encryption instruction for RV32.

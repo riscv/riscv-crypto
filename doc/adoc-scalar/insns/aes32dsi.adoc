@@ -1,5 +1,5 @@
 [#insns-aes32dsi, reftext="AES final round decrypt (RV32)"]
-==== aes32dsi
+=== aes32dsi
 
 Synopsis::
 AES final round decryption instruction for RV32.

@@ -1,5 +1,5 @@
 [#insns-sha256sum1, reftext="SHA2-256 Sum1 instruction"]
-==== sha256sum1
+=== sha256sum1
 
 Synopsis::
 Implements the Sum1 transformation function as used in

@@ -1,5 +1,5 @@
 [#insns-sha256sig1, reftext="SHA2-256 Sigma1 instruction"]
-==== sha256sig1
+=== sha256sig1
 
 Synopsis::
 Implements the Sigma1 transformation function as used in

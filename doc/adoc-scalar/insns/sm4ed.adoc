@@ -1,5 +1,5 @@
 [#insns-sm4ed, reftext="SM4 Encrypt/Decrypt Instruction"]
-==== sm4ed
+=== sm4ed
 
 Synopsis::
 Accelerates the block encrypt/decrypt operation of the SM4 block cipher
@@ -32,15 +32,12 @@ This instruction exists on RV32 and RV64 base architectures.
 On RV64, the 32-bit result is zero extended upto XLEN bits.
 
 .Architecture Note
-[NOTE,caption="SH"]
+[WARNING,caption="SH"]
 ====
-The instructions source their destination register from
-bits `19:15` of the encoding, rather than the usual `11:7`.
-This is because the instructions are designed to be used such that
-the destination register is always the same as `rs1`.
-See Appendix <<crypto_scalar_encodings>> for more information.
-*This is expected to change* in a future release to maintain
+The encoding of this instruction will change in a future release to maintain
 consistency with the base ISA.
+The `rt` field will be replaced with the normal `rd`,`rs1` fields, making
+it a standard R-type instruction.
 ====
 
 .Supporting Material

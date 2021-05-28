@@ -1,5 +1,5 @@
 [#insns-sha512sig1, reftext="SHA2-512 Sigma1 instruction (RV64)"]
-==== sha512sig1
+=== sha512sig1
 
 Synopsis::
 Implements the Sigma1 transformation function as used in

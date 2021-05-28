@@ -1,5 +1,5 @@
 [#insns-aes64ds, reftext="AES decrypt final round (RV64)"]
-==== aes64dsm
+=== aes64dsm
 
 Synopsis::
 AES final round decryption instruction for RV64.

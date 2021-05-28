@@ -1,5 +1,5 @@
 [#insns-sha256sum0, reftext="SHA2-256 Sum0 instruction"]
-==== sha256sum0
+=== sha256sum0
 
 Synopsis::
 Implements the Sum0 transformation function as used in

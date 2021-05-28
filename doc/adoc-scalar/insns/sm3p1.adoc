@@ -1,5 +1,5 @@
 [#insns-sm3p1, reftext="SM3 P1 transform"]
-==== sm3p1
+=== sm3p1
 
 Synopsis::
 Implements the _P1_ transformation function as used in

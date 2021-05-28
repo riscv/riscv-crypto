@@ -1,5 +1,5 @@
 [#insns-aes64im, reftext="AES Decrypt KeySchedule MixColumns (RV64)"]
-==== aes64im
+=== aes64im
 
 Synopsis::
 This instruction accelerates the inverse MixColumns step of the AES

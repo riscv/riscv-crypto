@@ -1,5 +1,5 @@
 [#insns-sha512sig1l, reftext="SHA2-512 Sigma1 low (RV32)"]
-==== sha512sig1l
+=== sha512sig1l
 
 Synopsis::
 Implements the _low half_ of the Sigma1 transformation, as

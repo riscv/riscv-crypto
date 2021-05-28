@@ -1,5 +1,5 @@
 [#insns-sm3p0, reftext="SM3 P0 transform"]
-==== sm3p0
+=== sm3p0
 
 Synopsis::
 Implements the _P0_ transformation function as used in

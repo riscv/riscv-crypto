@@ -1,5 +1,5 @@
 [#insns-aes64ks1i, reftext="AES Key Schedule Instruction 1 (RV64)"]
-==== aes64ks1i
+=== aes64ks1i
 
 Synopsis::
 This instruction implements part of the KeySchedule operation for the

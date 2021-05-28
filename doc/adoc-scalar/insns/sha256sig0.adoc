@@ -1,5 +1,5 @@
 [#insns-sha256sig0, reftext="SHA2-256 Sigma0 instruction"]
-==== sha256sig0
+=== sha256sig0
 
 Synopsis::
 Implements the Sigma0 transformation function as used in

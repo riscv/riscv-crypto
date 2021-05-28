@@ -1,5 +1,5 @@
 [#insns-aes32dsmi, reftext="AES middle round decrypt (RV32)"]
-==== aes32dsmi
+=== aes32dsmi
 
 Synopsis::
 AES middle round decryption instruction for RV32.
@@ -25,6 +25,15 @@ Description::
 This instruction sources a single byte from `rs2` according to `bs`.
 To this it applies the inverse AES SBox operation, and a partial inverse
 MixColumn, before XOR'ing the result with `rs1`.
+
+.Architecture Note
+[WARNING,caption="SH"]
+====
+The encoding of this instruction will change in a future release to maintain
+consistency with the base ISA.
+The `rt` field will be replaced with the normal `rd`,`rs1` fields, making
+it a standard R-type instruction.
+====
 
 Operation::
 [source,sail]
