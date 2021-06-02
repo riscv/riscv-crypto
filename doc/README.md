@@ -5,17 +5,20 @@
 
 ---
 
-This directory contains two types of information:
+This directory contains the official draft specification, in
+[AsciiDoc](https://asciidoctor.org/) form.
+The specification is split into two components: Scalar+Entropy Source and
+Vector.
 
-- The official draft specification, in LaTeX form.
-  The specification is split into two components: Scalar+Entropy Source and
-  Vector.
+To install the relevent tools for building a PDF document from the
+AsciiDoc source, follow the instructions 
+[here](https://github.com/riscv/docs-templates)
 
-  Both can be build by running:
+- Both specifications can be built by running:
   
   ```sh
   source bin/conf.sh
-  git submodule update --init extern/sail-riscv
+  git submodule update --init extern/sail-riscv extern/riscv-opcodes
   make specs
   ```
   from the root project of the directory.
@@ -27,8 +30,8 @@ This directory contains two types of information:
   Individual versions can be built by running:
 
   ```sh
-  make -C doc/ spec-scalar
-  make -C doc/ spec-vector
+  make -C doc/scalar all
+  make -C doc/vector all
   ```
 
 - Alternatively, pre-built versions corresponding to draft releases
