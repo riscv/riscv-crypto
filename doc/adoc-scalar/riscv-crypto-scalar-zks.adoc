@@ -1,0 +1,18 @@
+[[crypto_scalar_ext_zks,Zks]]
+=== `Zks` - ShangMi Algorithm Suite
+
+This extension is shorthand for the following set of other extensions:
+
+[%header,cols="^1,4"]
+|===
+|Included Extension
+|Description
+
+| <<crypto_scalar_ext_zkb>>   | Bitmanipulation instructions for cryptography.
+| <<crypto_scalar_ext_zkg>>   | Carryless multiply instructions.
+| <<crypto_scalar_ext_zksed>> | SM4 block cipher instructions.
+| <<crypto_scalar_ext_zksh>>  | SM3 hash function instructions.
+|===
+
+A core which implements `Zks` must implement all of the above extensions.
+

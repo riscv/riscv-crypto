@@ -128,6 +128,9 @@ include::riscv-crypto-scalar-zknh.adoc[]
 include::riscv-crypto-scalar-zksed.adoc[]
 include::riscv-crypto-scalar-zksh.adoc[]
 include::riscv-crypto-scalar-zkr.adoc[]
+include::riscv-crypto-scalar-zkn.adoc[]
+include::riscv-crypto-scalar-zks.adoc[]
+include::riscv-crypto-scalar-k.adoc[]
 
 // ------------------------------------------------------------
 
