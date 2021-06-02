@@ -18,7 +18,7 @@ actual model to give canonical descriptions of instruction
 functionality.
 Each instruction is accompanied by its expression in Sail, and includes
 calls to supporting functions which are too verbose to include directly
-in the specificaiton.
+in the specification.
 This supporting code is listed in
 <<crypto_scalar_appx_sail>>.
 The 

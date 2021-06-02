@@ -36,7 +36,7 @@ that Zkt instructions do not leak information about processed secret data
 (plaintext, keying information, or other "sensitive security parameters" --
 FIPS 140-3 term) through differences in execution latency. Zkt does _not_
 define a set of instructions available in the core; it just restricts the
-behavior of certain instructions if those are implemented.
+behaviour of certain instructions if those are implemented.
 
 Currently, the scope of this document is within scalar RV32/RV64 processors.
 Vector cryptography instructions (and appropriate vector support instructions)
@@ -51,21 +51,21 @@ middleware due to the limitations of other ISA processors.
 The stated goal is that OpenSSL, BoringSSL (Android), the Linux Kernel,
 and similar trusted software will not have directly observable
 timing side channels when compiled and running on a Zkt-enabled RISC-V target.
-The Zkt extension explicitly formalizes the latency assumptions made by
+The Zkt extension explicitly formalises the latency assumptions made by
 cryptography developers.
 
 .Note to software developers
 [WARNING,caption="SH"]
 ====
 Programming techniques can only mitigate leakage directly caused by
-arithmetic, caches, and branches. Other ISAs have had microarchitectural
+arithmetic, caches, and branches. Other ISAs have had micro-architectural
 issues such as Spectre, Meltdown, Speculative Store Bypass, Rogue System
 Register Read, Lazy FP State Restore, Bounds Check Bypass Store, TLBleed,
 and L1TF/Foreshadow, etc. See e.g.
 link:https://github.com/nsacyber/Hardware-and-Firmware-Security-Guidance[NSA Hardware and Firmware Security Guidance]
 
 It is not within the remit of this proposal to mitigate these
-_microarchitectural_ leakages.
+_micro-architectural_ leakages.
 ====
 
 
@@ -82,13 +82,13 @@ in systems where a binary loader modifies the executable for purposes of
 relocation -- and it is desirable to keep the execution location (PC) secret.
 This is why instructions such as LUI, AUIPC, and ADDI are on the list.
 * Floating point (F, D, Q, L extensions) are excluded from the constant-time
-requirement at the moment as they have very few applications in standardized
+requirement at the moment as they have very few applications in standardised
 cryptography. We may consider adding D (double precision) add, sub, multiply
 as a constant time requirement on those targets that have D -- in case an
 algorithm (such as the PQC Signature algorithm Falcon) becomes critical.
-* Timing attacks are much more powerful than was realized before the 2010s,
+* Timing attacks are much more powerful than was realised before the 2010s,
 which has led to a significant mitigation effort in current cryptographic
-codebases.
+code-bases.
 * Cryptography developers use static and dynamic security testing tools
 to trace the handling of secret information and detect occasions where it
 influences a branch or is used for a table lookup.
@@ -99,14 +99,14 @@ modifying any other variable/register turns that into a secret too.
 If a secret ends up in address calculation affecting a load or store, that
 is a violation. If a secret affects a branch's condition, that is also a
 violation. A secret variable location or register becomes a non-secret via
-specific zeroization/sanitization or by being declared ciphertext 
+specific zeroization/sanitisation or by being declared ciphertext 
 (or otherwise no-longer-secret information). In essence, secrets can only
 "touch" instructions on the Zkt list while they are secrets.
 *  Cryptographers typically assume division to be variable-time (while
 multiplication is constant time) and implement their Montgomery reduction
 routines with that assumption.
-* Open item: We could make division ‚Äúhalf-constant time‚Äù by requiring that
-div and rem latency is independent of the dividend (rs1). Different values of
+* Open item: We could make division ‚Äúhalf-constant timeÄù by requiring that
+`div*` and `rem*` latency is independent of the dividend (rs1). Different values of
 rs2 (e.g. 0) may have a different latency.
 * Zicsr, Zifencei excluded, apart from specific formats related to Krypto and
 timing, to be discussed.
@@ -213,7 +213,7 @@ Multiplication is included; division and remaindering excluded.
 
 ===    RVC (Compressed)
 
-Same criteria as in RVI. Organized by ‚Äúquadrants‚Äù
+Same criteria as in RVI. Organised by ‚ÄúquadrantsÄù
 
 [%header,cols="^1,^1,4,8"]
 |===
@@ -295,7 +295,7 @@ The <<crypto_scalar_zkb>> subset of bitmanip in its entirety included.
 [NOTE,caption="SH"]
 ====
 Recall that `rev`, `zip` and `unzip` are pseudo-instructions representing
-specific instances of `grevi`, `shfli` and `unshfli` respectivley.
+specific instances of `grevi`, `shfli` and `unshfli` respectively.
 ====
 
 [%header,cols="^1,^1,4,8"]

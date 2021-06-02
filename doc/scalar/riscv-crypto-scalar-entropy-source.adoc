@@ -17,12 +17,12 @@ cite:[SaNeMa20].
 [[crypto_scalar_es_pollentropy]]
 === PollEntropy Instruction
 
-The main ISA-level interface consists of a single pseudoinstruction,
+The main ISA-level interface consists of a single pseudo-instruction,
 `pollentropy`,
 which returns a 32/64-bit value in a CPU register. It is invoked in
 _Machine Mode_ (which may be the only mode) as follows:
 
-Memonic::
+Mnemonic::
 pollentropy rd
 
 It is an alias for `csrrs rd, mentropy, x0`
@@ -196,7 +196,7 @@ cite:[TuBaKe:18] and its  FIPS 140-3 Implementation Guidance
 cite:[NICC20] (Section D.K.) are being revised at the time of writing.
 The type of appropriate post-processing for IID track depends on
 the physical noise source. Some simple post-processing methods are
-currently considered to be part of the sampling ("digitization")
+currently considered to be part of the sampling ("digitisation")
 step of the process. Vetted or non-vetted conditioning may also be
 required in hardware, forming a hardware-software conditioning chain.
 ====
@@ -308,12 +308,12 @@ source will enter a no-output `DEAD` state.
 
 * T2 *Continuous checks.* If an error is detected in continuous tests or
 environmental sensors, the entropy source will enter a no-output state.
-We define that a non-critical alarm is signaled if the entropy source
+We define that a non-critical alarm is signalled if the entropy source
 returns to `BIST` state from live (`WAIT` or `ES16`) states. Such a
 `BIST` alarm should be latched until polled at least once. Critical
 failures will result in `DEAD` state immediately. A hardware-based
 continuous testing mechanism must not make statistical information
-externally available, and it must be zeroized periodically or upon
+externally available, and it must be zeroised periodically or upon
 demand via reset, power-up, or similar signal.
 
 * T3 *Fatal error states,* Since the security of most cryptographic
@@ -330,12 +330,12 @@ if its secure operation can’t be guaranteed.
 The optional GetNoise interface allows access to "raw noise" and is
 intended for manufacturer tests and validation of security
 modules. It is must not be used as a source of randomness or for other
-production use. Its contents and behavior must be interpreted in the
+production use. Its contents and behaviour must be interpreted in the
 context of mvendorid, marchid, and mimpid CSR identifiers, so is
 effectively "custom".
 
 The interface consists of the mnoise machine-mode CSR, which (unlike
-mentropy) is read-write. We define a pseudoinstruction for reading it:
+mentropy) is read-write. We define a pseudo-instruction for reading it:
 
 Mnemonic::
 getnoise rd 
@@ -362,7 +362,7 @@ When not implemented (e.g., in virtual machines), can permanently read
 zero (`0x00000000`). When available, but `NOISE_TEST = 0`, can return a
 nonzero constant such as `0x00000001`.
 
-The behavior of other input and output bits is left to the vendor.
+The behaviour of other input and output bits is left to the vendor.
 Although not used in production, we recommend that the instruction is
 always non-blocking.
 

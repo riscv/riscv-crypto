@@ -9,7 +9,7 @@ This extension is shorthand for the following set of other extensions:
 |Description
 
 | <<crypto_scalar_ext_zkb>>   | Bitmanipulation instructions for cryptography.
-| <<crypto_scalar_ext_zkg>>   | Carryless multiply instructions.
+| <<crypto_scalar_ext_zkg>>   | Carry-less multiply instructions.
 | <<crypto_scalar_ext_zksed>> | SM4 block cipher instructions.
 | <<crypto_scalar_ext_zksh>>  | SM3 hash function instructions.
 |===

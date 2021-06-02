@@ -2,7 +2,7 @@
 [[crypto_scalar_appx_materials]]
 == Supplementary Materials 
 
-While ths document contains the specifications for the RISC-V cryptography
+While this document contains the specifications for the RISC-V cryptography
 extensions, numerous supplementary materials and example codes have
 also been developed.
 All of the materials related to the RISC-V Cryptography
@@ -14,7 +14,7 @@ https://github.com/riscv/riscv-crypto
 
 * `doc/supp/`
   Contains supplementary information and recommendations for implementers of
-  software and hardare.
+  software and hardware.
 
 * `benchmarks/`
   Example software implementations.

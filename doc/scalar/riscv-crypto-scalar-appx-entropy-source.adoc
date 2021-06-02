@@ -47,14 +47,14 @@ such security controls.
 
 Raw physical randomness (noise) sources are rarely statistically
 perfect and some generate very large amounts of bits, which need to be
-"debiased" and reduced to a smaller number of bits. This process is
+"de-biased" and reduced to a smaller number of bits. This process is
 called conditioning. A secure hash function is an example of a
 cryptographic conditioner. It is important to note that even though
 hashing may make the output look more random, it does not increase its
 entropy content.
 
 Non-cryptographic conditioners and extractors such as von Neumann's
-"debiased coin tossing" cite:[Ne51] are easier to implement
+"de-biased coin tossing" cite:[Ne51] are easier to implement
 efficiently but may reduce entropy content (in individual bits removed)
 more than cryptographic hashes which mix the input entropy very efficiently.
 However, they are not based on computational hardness assumptions and
@@ -105,7 +105,7 @@ construct high-speed DRBGs that are seeded from the entropy source.
 ==== (<<crypto_scalar_es_pollentropy>>) PollEntropy:
 
 An entropy source does not require a high-bandwidth interface;
-a single DRBG source initialization only requires 512 bits
+a single DRBG source initialisation only requires 512 bits
 (256 bits of entropy) and the DRBG state can be shared by any number of
 callers. Once initiated, a DRBG requires new randomness only for the
 purposes of forward security.
@@ -170,12 +170,12 @@ standards and applications. The 256-bit requirement maps to
 "Security Strength Categories" in cite:[NI16]) and TOP SECRET schemes
 in Suite B and the newer U.S. Government CNSA Suite cite:[NS15].
 
-*Source anonymization.*
+*Source anonymisation.*
 In some cases, an entropy source (or the circuit that interfaces it)
 may have a uniquely identifiable hardware "signature." This can be
 harmless or even useful in some applications (as random sources may
-exhibit PUF-like features) but highly undesirable in others (anonymized
-virtualized environments and enclaves). A DRBG masks such
+exhibit PUF-like features) but highly undesirable in others (anonymised
+virtualised environments and enclaves). A DRBG masks such
 statistical features.
 
 ==== (<<crypto_scalar_es_security_controls>>) Security Controls:
@@ -196,11 +196,11 @@ operational at the same time.
 The noise source state shall be protected from adversarial
 knowledge or influence to the greatest extent possible. The methods
 used for this shall be documented, including a description of the
-(conceptual) security boundaryâ€™s role in protecting the noise source
+(conceptual) security boundary€™s role in protecting the noise source
 from adversarial observation or influence.
 
 The role of the RISC-V ISA implementation is to try to ensure that the
-hardware-software interface minimizes avenues for adversarial information
+hardware-software interface minimises avenues for adversarial information
 flow; all status information that is unnecessary in normal operation
 should be eliminated. We specifically urge implementers against creating
 unnecessary information flows ("status oracles") via the custom bits
@@ -210,7 +210,7 @@ be considered from an adversarial viewpoint and implemented only if they
 are truly necessary and their security impact can be fully understood.
 
 For example, the entropy polling interface may not be "constant time."
-The polling mechanism can be modeled as a rejection sampler; such a
+The polling mechanism can be modelled as a rejection sampler; such a
 timing oracle can reveal information about the noise source and the
 rejection criteria, but usually not the random output itself.
 If these are correlated, additional countermeasures are necessary.
@@ -232,10 +232,10 @@ should be aimed at damage control -- to prevent weak crypto keys from
 being generated.
 
 The statistical nature of some tests makes "type-1" false
-positives a possibility. There may also be requirements for signaling
+positives a possibility. There may also be requirements for signalling
 of non-fatal alarms; AIS 31 specifies "noise alarms" that can go off
 with non-negligible probability even if the device is functioning
-correctly; these can be signaled with `BIST`.
+correctly; these can be signalled with `BIST`.
 There rarely is anything that can or should be done about a non-fatal
 alarm condition in an operator-free, autonomous system.
 
@@ -267,7 +267,7 @@ at the entire information flow since each step is interconnected.
 
 * *A Noise Source* generates private, unpredictable signals
   from stable and well-understood physical random events.
-* *Sampling* digitizes the noise signal into a raw stream of
+* *Sampling* digitises the noise signal into a raw stream of
   bits. This raw data also needs to be protected by the design.
 * *Continuous health tests* ensure that the noise source
   and its environment meet their operational parameters.
@@ -334,16 +334,16 @@ oscillator-based category.
 The main benefits of ring oscillators are: (1) They can be implemented
 with standard cell libraries without external components --
 and even on FPGAs cite:[VaFiAu:10], (2) there is an established theory
-for their behavior cite:[HaLe98,HaLiLe99,BaLuMi:11], and (3) ample
+for their behaviour cite:[HaLe98,HaLiLe99,BaLuMi:11], and (3) ample
 precedent exists for testing and certifying them at the highest security
 levels.
 
 Ring oscillators also have well-known implementation pitfalls.
 Their output is sometimes highly dependent on temperature,
-which must be taken into account in testing and modeling.
-If the ring oscillator construction is parallelized, it is important
+which must be taken into account in testing and modelling.
+If the ring oscillator construction is parallelised, it is important
 that the number of stages and/or inverters in each chain is coprime to
-avoid entropy reduction due to harmonic "Huyghens synchronization"
+avoid entropy reduction due to harmonic "Huyghens synchronisation"
 cite:[Ba86].
 Such harmonics can also be inserted maliciously in a frequency
 injection attack, which can have devastating results cite:[MaMo09].
@@ -353,7 +353,7 @@ electrical filters, and usage of a differential oscillator may help.
 ==== Shot Noise.
 
 A category of random sources consisting of discrete events
-and modeled as a Poisson process is called "shot noise."
+and modelled as a Poisson process is called "shot noise."
 There's a long-established precedent of certifying them; the
 AIS 31 document cite:[KiSc11] itself offers reference designs based on
 noisy diodes. Shot noise sources are often more resistant to
@@ -398,7 +398,7 @@ collect raw data. The testing laboratory is required [...] to
 present a rationale why the data collections methods will not alter
 the statistical properties
 of the noise source or explain how to account for any change
-in the sourceâ€™s statistical characteristics [...]
+in the source€™s statistical characteristics [...]
 
 
 [[crypto_scalar_appx_es_cont-tests]]
@@ -414,7 +414,7 @@ to the noise source to be maintained. The tests should be designed
 in a way that a specific number of samples guarantees a state
 flush (no hung states). We suggest flush size `W \leq 1024` to
 match with the NIST SP 800-90B required tests (See Section 4.4 in
-cite:[TuBaKe:18]). The state is also fully zeroized in a system reset.
+cite:[TuBaKe:18]). The state is also fully zeroised in a system reset.
 
 *Rationale:*
 The two mandatory tests can be built with minimal circuitry.
@@ -422,7 +422,7 @@ Full histograms are not required, only simple counter registers:
 repetition count, window count, and sample count.
 Repetition count is reset every time the output sample value
 changes; if the count reaches a certain cutoff limit, a noise alarm
-(`BIST`) or failure (`DEAD`) is signaled. Window counter is
+(`BIST`) or failure (`DEAD`) is signalled. Window counter is
 used to save every W'th output (typically `W \in { 512, 1024 }`.)
 The frequency of this reference sample in the following window is
 counted; cutoff values are defined in the standard. We see that the
@@ -456,7 +456,7 @@ alarm condition in an operator-free, autonomous system. However,
 AIS 31 allows the DRBG component to keep running despite a failure in
 its Entropy Source, so we suggest re-entering temporary `BIST`
 state (Section <<crypto_scalar_es_security_controls>>) to signal a non-fatal
-statistical error if such (non-actionable) signaling is necessary.
+statistical error if such (non-actionable) signalling is necessary.
 Drivers and applications can react to this appropriately (or simply
 log it) but it will not directly affect the availability of the TRNG.
 A permanent error condition should result in `DEAD` state.
@@ -486,7 +486,7 @@ Entropy) and to guarantee that the samples are independent
   less than 25% of original but the output is provably unbiased
   (assuming independence).
 * Blum's extractor cite:[Bl86] can be used on sources
-  whose behavior resembles N-state Markov chains. If its
+  whose behaviour resembles N-state Markov chains. If its
   assumptions hold, it also removes dependencies, creating an IID
   source.
 * Other linear and non-linear correctors such as those
@@ -507,10 +507,10 @@ They do not require computational hardness assumptions.
 In some cases, an entropy source (and the circuit that implements it)
 may have a uniquely identifiable hardware "signature." This can be
 harmless or even useful in some applications (as random sources may
-exhibit PUF-like features) but highly undesirable in others (anonymized
-virtualized environments and enclaves).
+exhibit PUF-like features) but highly undesirable in others (anonymised
+virtualised environments and enclaves).
 
-Such virtualized environments are probably better off just using
+Such virtualised environments are probably better off just using
 `/dev/urandom` of the host rather than sharing the host's
 hardware-backed Entropy Source to the guest environment. Also note the
 source entropy requirement (<<crypto_scalar_es_req>>, Secret State)
@@ -586,7 +586,7 @@ foreseeable future.
 A Quantum Random Number Generator (QRNG) is a TRNG whose source of
 randomness can be unambiguously identified to be a _specific_
 quantum phenomenon such as quantum state superposition, quantum state
-entanglement, Heisenberg uncertainty, quantum tunneling, spontaneous
+entanglement, Heisenberg uncertainty, quantum tunnelling, spontaneous
 emission, or radioactive decay cite:[IT19].
 
 Direct quantum entropy is theoretically the best possible kind of
@@ -596,10 +596,10 @@ is that the relative amount of quantum and classical physics involved is
 difficult to quantify for a classical TRNG.
 
 QRNGs are designed in a way that allows the amount of quantum-origin
-entropy to be modeled and estimated. This distinction is important in
+entropy to be modelled and estimated. This distinction is important in
 the security model used by QKD (Quantum Key Distribution) security
 mechanisms which can be used to protect the physical layer (such as
-fiber optic cables) against interception by using quantum mechanical
+fibre optic cables) against interception by using quantum mechanical
 effects directly.
 
 This security model means that many of the available

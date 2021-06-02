@@ -43,7 +43,7 @@ it a standard R-type instruction.
 .Supporting Material
 [NOTE,caption="SH"]
 ====
-These instrucitons were derived from work in cite:[MJS:LWAES:20].
+These instructions were derived from work in cite:[MJS:LWAES:20].
 ====
 
 Operation::

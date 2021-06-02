@@ -9,9 +9,9 @@ derived, or where they were contributed from.
 
 === AES Instructions
 
-The 32-bit instrucitons were derived from work in cite:[MJS:LWAES:20] and
+The 32-bit instructions were derived from work in cite:[MJS:LWAES:20] and
 contributed to the RISC-V cryptography extension.
-The 64-bit instructions were developed collaborativley by task group
+The 64-bit instructions were developed collaboratively by task group
 members on our mailing list.
 
 Supporting material, including rationale and a design space exploration
@@ -30,12 +30,12 @@ in cite:[MJS:LWSHA:20], before being contributed in the same way.
 
 === SM3 and SM4 Instructions
 
-The SM4 instrucitons were derived from work in cite:[MJS:LWAES:20], and
+The SM4 instructions were derived from work in cite:[MJS:LWAES:20], and
 are hence very similar to the RV32 AES instructions.
 
-The SM3 instrucitons were inspired by the SHA2 instructions, and
+The SM3 instructions were inspired by the SHA2 instructions, and
 based on development work done in cite:[MJS:LWSHA:20], before being
-contriubted to the RISC-V cryptography extension.
+contributed to the RISC-V cryptography extension.
 
 [[crypto_scalar_zkb]]
 === Bitmanip Instructions for Cryptography
