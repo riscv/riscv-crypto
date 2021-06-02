@@ -105,7 +105,7 @@ specific zeroization/sanitisation or by being declared ciphertext
 *  Cryptographers typically assume division to be variable-time (while
 multiplication is constant time) and implement their Montgomery reduction
 routines with that assumption.
-* Open item: We could make division ‚Äúhalf-constant timeÄù by requiring that
+* Open item: We could make division half-constant time by requiring that
 `div*` and `rem*` latency is independent of the dividend (rs1). Different values of
 rs2 (e.g. 0) may have a different latency.
 * Zicsr, Zifencei excluded, apart from specific formats related to Krypto and
@@ -213,7 +213,7 @@ Multiplication is included; division and remaindering excluded.
 
 ===    RVC (Compressed)
 
-Same criteria as in RVI. Organised by ‚ÄúquadrantsÄù
+Same criteria as in RVI. Organised by quadrants.
 
 [%header,cols="^1,^1,4,8"]
 |===

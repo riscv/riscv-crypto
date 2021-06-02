@@ -196,7 +196,7 @@ operational at the same time.
 The noise source state shall be protected from adversarial
 knowledge or influence to the greatest extent possible. The methods
 used for this shall be documented, including a description of the
-(conceptual) security boundary€™s role in protecting the noise source
+(conceptual) security boundarys role in protecting the noise source
 from adversarial observation or influence.
 
 The role of the RISC-V ISA implementation is to try to ensure that the
@@ -398,7 +398,7 @@ collect raw data. The testing laboratory is required [...] to
 present a rationale why the data collections methods will not alter
 the statistical properties
 of the noise source or explain how to account for any change
-in the source€™s statistical characteristics [...]
+in the sources statistical characteristics [...]
 
 
 [[crypto_scalar_appx_es_cont-tests]]
