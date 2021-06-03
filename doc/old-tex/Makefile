@@ -43,11 +43,9 @@ OPCODES_BASE_RV64 = \
 #
 # Machine readable opcode descriptions for scalar crypto
 
-OPCODES_CRYPTO_SCALAR_RV32 = $(REPO_HOME)/tools/opcodes-crypto-scalar-rv32
-
-OPCODES_CRYPTO_SCALAR_RV64 = $(REPO_HOME)/tools/opcodes-crypto-scalar-rv64
-
-OPCODES_CRYPTO_SCALAR_BOTH = $(REPO_HOME)/tools/opcodes-crypto-scalar-both
+OPCODES_CRYPTO_SCALAR_RV32 = $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv32k
+OPCODES_CRYPTO_SCALAR_RV64 = $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv64k
+OPCODES_CRYPTO_SCALAR_BOTH = $(REPO_HOME)/extern/riscv-opcodes/opcodes-rvk
 
 OPCODES_CRYPTO_SCALAR_ALL  = \
     $(OPCODES_CRYPTO_SCALAR_BOTH) \
