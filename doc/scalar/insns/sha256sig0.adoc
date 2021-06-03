@@ -18,7 +18,7 @@ Encoding::
 {bits: 5, name: 'rs1'},
 {bits: 5, name: 0x2},
 {bits: 5, name: 0x8},
-{bits: 2, name: 0x0},
+{bits: 2, name: '0'},
 ]}
 ....
 
