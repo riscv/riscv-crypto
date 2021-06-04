@@ -14,31 +14,24 @@ generate truly random bits.
 See <<crypto_scalar_appx_es>> for rationale and further discussion.
 This section is also supported by cite:[SaNeMa20,SaNeMa21].
 
+[[crypto_scalar_sentropy]]
+=== `sentropy` CSR
 
-[[crypto_scalar_es_pollentropy]]
-=== PollEntropy Instruction
-
-The main ISA-level interface consists of a single pseudo-instruction,
-`pollentropy`, which returns a 32/64-bit value in a CPU register.
-It is invoked in _Machine Mode_ (which may be the only mode) as follows:
-
-Mnemonic::
-pollentropy rd
-
-It is an alias for `csrrs rd, sentropy, x0`
-
-`pollentropy` reads `XLEN` bits from the sentropy read-only CSR described
-in the table below.
-It is available in Machine Mode (M-mode may be the only mode) or
-optionally in Supervisor (S) Mode. See access control notes in
-<<crypto_scalar_es_access>>.
-
-.The sentropy CSR. 
-
-The sentropy CSR is temporarily assigned at Custom read-only S-Mode address
+The `sentropy` CSR is temporarily assigned at Custom read-only S-Mode address
 `0xDC0`. The expectation is that it will be assigned in read-only
 standard S-Mode ranges `0xD00`-`0xDBF`. (Previous versions of this document
 had the interface at `mentropy` at read-only M-mode address `0xF15`.)
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 16, name: 'seed'},
+{bits:  8, name: 'custom'},
+{bits:  6, name: 'reserved'},
+{bits:  2, name: 'OPST'},
+]}
+....
 
 [%autowidth.stretch,cols="^,^,<",options="header",]
 |=======================================================================
@@ -55,11 +48,21 @@ had the interface at `mentropy` at read-only M-mode address `0xF15`.)
 |`15: 0` |`seed` |16 bits of randomness, only when `OPST=ES16`.
 |=======================================================================
 
-The instruction is *non-blocking* and returns immediately, either with
-two status bits `sentropy[31:30]` = `OPST` set to `ES16` (01),
+The status bits `sentropy[31:30]` = `OPST` are set to `ES16` (01),
 indicating successful polling, or with *no* entropy and one of three
 polling failure statuses `BIST` (00), `WAIT` (10), or `DEAD` (11),
 discussed below.
+Reads of `sentropy` are *non-blocking* and return immediately.
+The access does not stall until an `ES16` status can be returned.
+
+[NOTE]
+====
+Reading `sentropy` is defined as non-blocking because it is expected
+to be used as a polling interface.
+Implementers can hence create _"fast"_ paths within cores to read
+`sentropy` without any latency overhead which might normally be
+associated with CSR accesses.
+====
 
 [IMPORTANT]
 ====
@@ -70,9 +73,9 @@ keying material. We suggest entropy output to be post-processed in
 blocks of at least 256 bits, with a 128-bit resulting output block.
 ====
 
-When `OPST` is not `ES16`, `seed` should be set to 0.
+When `OPST` is not `ES16`, `seed` must be set to 0.
 An implementation may safely set reserved and custom bits to zeros.
-A polling software interface should ignore their contents.
+A polling software interface must ignore their contents.
 
 The Status Bits at `sentropy[31:30]`=`OPST`:
 
@@ -101,6 +104,25 @@ fault, a security issue, or (extremely rarely) a type-1 statistical
 false positive in the continuous testing procedures. In case of a fatal
 failure, an immediate lockdown may also be an appropriate response in
 dedicated security devices.
+
+[[crypto_scalar_es_pollentropy]]
+=== PollEntropy Instruction
+
+Synopsis::
+The main ISA-level interface consists of a single pseudo-instruction,
+`pollentropy`, which returns a 32/64-bit value in a CPU register.
+
+Mnemonic::
+pollentropy rd
+
+It is an alias for `csrrs rd, sentropy, x0`
+
+Description::
+`pollentropy` reads `XLEN` bits from the 
+<<crypto_scalar_sentropy,`sentropy`>> CSR into `rd`.
+It is available in Machine Mode (M-mode may be the only mode) or
+optionally in Supervisor (S) Mode. See access control notes in
+<<crypto_scalar_es_access>>.
 
 
 [[crypto_scalar_es_polling]]
@@ -145,7 +167,7 @@ There is no need to poll after a `DEAD` state.
 Output `seed` from `pollentropy` is not necessarily fully conditioned
 randomness due to hardware and energy limitations of smaller, low-powered
 implementations. However, minimum requirements are defined.
-A caller should not use the output directly but poll twice the amount
+A caller must not use the output directly but poll twice the amount
 of required entropy, cryptographically condition (hash) it, and use that
 to seed a cryptographic DRBG.
 
@@ -244,11 +266,20 @@ The optional GetNoise interface allows access to "raw noise" and is
 intended for manufacturer tests and validation of physical entropy source
 modules. It is must not be used as a source of randomness or for other
 production use. The contents and behavior of the register must be interpreted
-in the context of `mvendorid`, `marchid`, and `mimpid` CSR identifiers,
-so it is almost a "custom" instruction -- apart from the test mode indicator.
+in the context of `mvendorid`, `marchid`, and `mimpid` CSR identifiers.
 
-The interface consists of the mnoise machine-mode CSR, which (unlike
-`sentropy`) is read-write. We define a pseudo-instruction for reading it:
+The interface consists of a read-write machine-mode CSR `mnoise`:
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 31, name: 'custom'},
+{bits: 1, name: 'NOISE_TEST'},
+]}
+....
+
+We define a pseudo-instruction for reading it:
 
 Mnemonic::
 getnoise rd 
@@ -261,18 +292,19 @@ enabling/disabling this interface. This is because the test interface
 effectively disables `pollentropy`; this way, a soft reset can also reset
 the test interface.
 
-The `mnoise` CSR uses address 0x7A9, indicating it is a standard
+The `mnoise` CSR uses address `0x7A9`, indicating it is a standard
 read-write machine-mode CSR. This places it adjacently to debug/trace
 CSRs, indicating that it is not expected to be used in production.
 
-When `NOISE_TEST = 1` in and mnoise, and sentropy *must not* return
+When `NOISE_TEST = 1` in and `mnoise`, and `sentropy` *must not* return
 anything via `ES16`; it should be in `BIST` state unless the source
 is `DEAD`. When `NOISE_TEST` is again disabled, the entropy source
 shall return from `BIST` via an appropriate zeroization and self-test
 mechanism.
 
 When not implemented (e.g., in virtual machines), can permanently read
-zero (`0x00000000`). When available, but `NOISE_TEST = 0`, can return a
+zero (`0x00000000`) and ignore writes.
+When available, but `NOISE_TEST = 0`, can return a
 nonzero constant (e.g. `0x00000001`) but no noise samples.
 
 The behavior of other input and output bits is left to the vendor.
@@ -310,8 +342,7 @@ which uses an M-mode CSR.
 If both S-mode and `mseccfg` are not available in a system, then
 access to the entropy source is M-Mode only.  Bit value `SKES=1` will
 allow direct access to the entropy source from S-mode, while `SKES=0`
-leads to an illegal instruction trap when `pollentropy` is called
-in S-mode.
+leads to an illegal instruction trap when `sentropy` is accessed.
 
 ==== Hypervisor Trap and Emulate
 
@@ -332,7 +363,8 @@ footprint of such a manager, and may also limit the entropy available.
 Hence direct S-Mode access is often preferable in standard (non-virtual)
 configurations that consider an S-level kernel to be a trusted component.
 
-The direct SKES option allows one to draw a security boundary around an
+The direct `mseccfg.SKES` option allows one to draw a security boundary
+around an
 S-mode component in relation to SSP flows, which is helpful when
 implementing trusted enclaves. Such modules can enforce the entire key
 lifecycle from birth (in the entropy source) to death (zeroization) to occur
