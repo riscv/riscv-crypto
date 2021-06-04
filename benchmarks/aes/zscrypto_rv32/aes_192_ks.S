@@ -67,10 +67,10 @@ aes_192_enc_key_schedule:       // a0 - uint32_t rk [AES_192_RK_WORDS]
     xor     C0, C0, RCT         // c0 ^= rcp
 
     ROR32I T1, T2, C5, 8        // tr = ROR32(c3, 8)
-    aes32esi C0, T1, 0   // tr = sbox(tr)
-    aes32esi C0, T1, 1   //
-    aes32esi C0, T1, 2   //
-    aes32esi C0, T1, 3   //
+    aes32esi C0, C0, T1, 0   // tr = sbox(tr)
+    aes32esi C0, C0, T1, 1   //
+    aes32esi C0, C0, T1, 2   //
+    aes32esi C0, C0, T1, 3   //
 
     xor     C1, C1, C0          // C1 ^= C0
     xor     C2, C2, C1          // C2 ^= C1
@@ -123,16 +123,16 @@ aes_192_dec_key_schedule:           // a0 - uint32_t rk [AES_192_RK_WORDS]
         lw   T0, 0(RKP)              // Load key word
 
         li        T1, 0
-        aes32esi  T1, T0, 0          // Sub Word Forward
-        aes32esi  T1, T0, 1 
-        aes32esi  T1, T0, 2
-        aes32esi  T1, T0, 3
+        aes32esi  T1, T1, T0, 0      // Sub Word Forward
+        aes32esi  T1, T1, T0, 1 
+        aes32esi  T1, T1, T0, 2
+        aes32esi  T1, T1, T0, 3
 
         li        T0, 0
-        aes32dsmi T0, T1, 0          // Sub Word Inverse & Inverse MixColumns
-        aes32dsmi T0, T1, 1
-        aes32dsmi T0, T1, 2
-        aes32dsmi T0, T1, 3
+        aes32dsmi T0, T0, T1, 0      // Sub Word Inverse & Inverse MixColumns
+        aes32dsmi T0, T0, T1, 1
+        aes32dsmi T0, T0, T1, 2
+        aes32dsmi T0, T0, T1, 3
 
         sw   T0, 0(RKP)             // Store key word.
 

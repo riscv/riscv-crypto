@@ -182,7 +182,10 @@ class Instruction(object):
             if(isinstance(f,Operand)):
                 print("{bits: %d, name: '%s'}," % (len(f),f.name))
             else:
-                print("{bits: %d, name: %s}," % (len(f),f.hex))
+                h = f.hex
+                if h=='0x0':
+                    h='0'
+                print("{bits: %d, name: %s}," % (len(f),h))
         print("]}")
         print("....")
 
@@ -194,7 +197,7 @@ class EncodingParser(object):
     known_operands = {
         # name             name       , hi, lo, b   , sail
         "bs"      : Operand("bs"      , 31, 30,"w"  , "bits(2)"  ),
-        "rcon"    : Operand("rcon"    , 23, 20,"W"  , "bits(4)"  ),
+        "rnum"    : Operand("rnum"    , 23, 20,"W"  , "bits(4)"  ),
         "rd"      : Operand("rd"      , 11,  7,"d"  , "regidx"   ),
         "rs1"     : Operand("rs1"     , 19, 15,"s"  , "regidx"   ),
         "rt"      : Operand("rt"      , 19, 15,"s"  , "regidx"   ),
@@ -425,6 +428,7 @@ def print_match_mask_defines(instrs):
 def cmd_wavedrom(instrs):
     for i in instrs:
         i.wavedrom()
+    return True
 
 def cmd_spike(instrs):
     """

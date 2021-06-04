@@ -7,9 +7,9 @@ specs:
 	$(MAKE) -C $(REPO_HOME)/doc/ specs
 
 
-OPCODES_SPEC_SCALAR = $(REPO_HOME)/tools/opcodes-crypto-scalar-both \
-                      $(REPO_HOME)/tools/opcodes-crypto-scalar-rv32 \
-                      $(REPO_HOME)/tools/opcodes-crypto-scalar-rv64
+OPCODES_SPEC_SCALAR = $(REPO_HOME)/extern/riscv-opcodes/opcodes-rvk   \
+                      $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv32k \
+                      $(REPO_HOME)/extern/riscv-opcodes/opcodes-rv64k
 OPCODES_SPEC_VECTOR = $(REPO_HOME)/tools/opcodes-crypto-vector
 
 PARSEOPCODES = python3 $(REPO_HOME)/bin/better_parse_opcodes.py

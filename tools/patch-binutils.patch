@@ -49,7 +49,7 @@ index 541815ba7e..9ecaa73656 100644
  	    case 'd':		/* Destination register.  */
  	    case 's':		/* Source register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 1d2e46aaad..920ab31e90 100644
+index 1d2e46aaad..4a4cb8b88d 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
 @@ -339,6 +339,70 @@
@@ -61,9 +61,9 @@ index 1d2e46aaad..920ab31e90 100644
 +#define MATCH_POLLENTROPY 0xf1502073
 +#define MASK_GETNOISE  0xfffff07f
 +#define MATCH_GETNOISE 0x7a902073
-+#define MASK_SM4ED  0x3e007fff
++#define MASK_SM4ED  0x3e00707f
 +#define MATCH_SM4ED 0x30000033
-+#define MASK_SM4KS  0x3e007fff
++#define MASK_SM4KS  0x3e00707f
 +#define MATCH_SM4KS 0x34000033
 +#define MASK_SM3P0  0xfff0707f
 +#define MATCH_SM3P0 0x10801013
@@ -77,13 +77,13 @@ index 1d2e46aaad..920ab31e90 100644
 +#define MATCH_SHA256SIG0 0x10201013
 +#define MASK_SHA256SIG1  0xfff0707f
 +#define MATCH_SHA256SIG1 0x10301013
-+#define MASK_AES32ESMI  0x3e007fff
++#define MASK_AES32ESMI  0x3e00707f
 +#define MATCH_AES32ESMI 0x36000033
-+#define MASK_AES32ESI  0x3e007fff
++#define MASK_AES32ESI  0x3e00707f
 +#define MATCH_AES32ESI 0x32000033
-+#define MASK_AES32DSMI  0x3e007fff
++#define MASK_AES32DSMI  0x3e00707f
 +#define MATCH_AES32DSMI 0x3e000033
-+#define MASK_AES32DSI  0x3e007fff
++#define MASK_AES32DSI  0x3e00707f
 +#define MATCH_AES32DSI 0x3a000033
 +#define MASK_SHA512SUM0R  0xfe00707f
 +#define MATCH_SHA512SUM0R 0x50000033
@@ -173,7 +173,7 @@ index 96189d97d0..0be48518ef 100644
  	case 'z':
  	  print (info->stream, "%s", riscv_gpr_names[0]);
 diff --git a/opcodes/riscv-opc.c b/opcodes/riscv-opc.c
-index 3a59630101..e3e364b792 100644
+index 3a59630101..a1654d93a3 100644
 --- a/opcodes/riscv-opc.c
 +++ b/opcodes/riscv-opc.c
 @@ -499,19 +499,19 @@ const struct riscv_opcode riscv_opcodes[] =
@@ -313,18 +313,18 @@ index 3a59630101..e3e364b792 100644
 +
 +{"pollentropy"  , 0, INSN_CLASS_I,        "d", MATCH_POLLENTROPY, MASK_POLLENTROPY, match_opcode, 0},
 +{"getnoise"     , 0, INSN_CLASS_I,        "d", MATCH_GETNOISE, MASK_GETNOISE, match_opcode, 0},
-+{"sm4ed"        , 0, INSN_CLASS_I,    "s,t,w", MATCH_SM4ED, MASK_SM4ED, match_opcode, 0},
-+{"sm4ks"        , 0, INSN_CLASS_I,    "s,t,w", MATCH_SM4KS, MASK_SM4KS, match_opcode, 0},
++{"sm4ed"        , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SM4ED, MASK_SM4ED, match_opcode, 0},
++{"sm4ks"        , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_SM4KS, MASK_SM4KS, match_opcode, 0},
 +{"sm3p0"        , 0, INSN_CLASS_I,      "d,s", MATCH_SM3P0, MASK_SM3P0, match_opcode, 0},
 +{"sm3p1"        , 0, INSN_CLASS_I,      "d,s", MATCH_SM3P1, MASK_SM3P1, match_opcode, 0},
 +{"sha256sum0"   , 0, INSN_CLASS_I,      "d,s", MATCH_SHA256SUM0, MASK_SHA256SUM0, match_opcode, 0},
 +{"sha256sum1"   , 0, INSN_CLASS_I,      "d,s", MATCH_SHA256SUM1, MASK_SHA256SUM1, match_opcode, 0},
 +{"sha256sig0"   , 0, INSN_CLASS_I,      "d,s", MATCH_SHA256SIG0, MASK_SHA256SIG0, match_opcode, 0},
 +{"sha256sig1"   , 0, INSN_CLASS_I,      "d,s", MATCH_SHA256SIG1, MASK_SHA256SIG1, match_opcode, 0},
-+{"aes32esmi"    ,32, INSN_CLASS_I,    "s,t,w", MATCH_AES32ESMI, MASK_AES32ESMI, match_opcode, 0},
-+{"aes32esi"     ,32, INSN_CLASS_I,    "s,t,w", MATCH_AES32ESI, MASK_AES32ESI, match_opcode, 0},
-+{"aes32dsmi"    ,32, INSN_CLASS_I,    "s,t,w", MATCH_AES32DSMI, MASK_AES32DSMI, match_opcode, 0},
-+{"aes32dsi"     ,32, INSN_CLASS_I,    "s,t,w", MATCH_AES32DSI, MASK_AES32DSI, match_opcode, 0},
++{"aes32esmi"    , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_AES32ESMI, MASK_AES32ESMI, match_opcode, 0},
++{"aes32esi"     , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_AES32ESI, MASK_AES32ESI, match_opcode, 0},
++{"aes32dsmi"    , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_AES32DSMI, MASK_AES32DSMI, match_opcode, 0},
++{"aes32dsi"     , 0, INSN_CLASS_I,  "d,s,t,w", MATCH_AES32DSI, MASK_AES32DSI, match_opcode, 0},
 +{"sha512sum0r"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SUM0R, MASK_SHA512SUM0R, match_opcode, 0},
 +{"sha512sum1r"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SUM1R, MASK_SHA512SUM1R, match_opcode, 0},
 +{"sha512sig0l"  ,32, INSN_CLASS_I,    "d,s,t", MATCH_SHA512SIG0L, MASK_SHA512SIG0L, match_opcode, 0},
