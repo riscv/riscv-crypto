@@ -26,6 +26,8 @@ Description::
 This instruction is supported for the RV64 base architecture.
 It implements the Sigma1 transform of the SHA2-512 hash function.
 cite:[nist:fips:180:4].
+This instruction must _always_ be implemented such that it's execution
+latency does not depend on the data being operated on.
 
 Operation::
 [source,sail]
@@ -44,6 +46,12 @@ Included in::
 |Lifecycle state
 
 | <<crypto_scalar_ext_zknh>>
+| v0.9.2
+| Frozen
+| <<crypto_scalar_ext_zkn>>
+| v0.9.2
+| Frozen
+| <<crypto_scalar_ext_zk>>
 | v0.9.2
 | Frozen
 |===

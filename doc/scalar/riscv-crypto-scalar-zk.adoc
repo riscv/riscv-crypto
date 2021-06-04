@@ -1,0 +1,17 @@
+[[crypto_scalar_ext_zk,Zk]]
+=== `Zk` - Standard scalar cryptography extension
+
+This extension is shorthand for the following set of other extensions:
+
+[%header,cols="^1,4"]
+|===
+|Included Extension
+|Description
+
+| <<crypto_scalar_ext_zkn>>  | NIST Algorithm suite extension.
+| <<crypto_scalar_ext_zkr>>  | Entropy Source extension.
+| <<crypto_scalar_zkt,Zkt>>  | Data independent execution latency extension.
+|===
+
+A core which implements `Zk` must implement all of the above extensions.
+

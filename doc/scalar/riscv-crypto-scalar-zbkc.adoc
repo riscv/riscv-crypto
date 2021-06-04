@@ -1,8 +1,8 @@
-[[crypto_scalar_ext_zkg,Zkg]]
-=== `Zkg` - Carry-less multiply instructions
+[[crypto_scalar_ext_zbkc,Zbkc]]
+=== `Zbkc` - Carry-less multiply instructions
 
 Constant time carry-less multiply for Galois/Counter Mode.
-These are separated from the <<crypto_scalar_ext_zkb>> because they
+These are separated from the <<crypto_scalar_ext_zbkb>> because they
 have a considerable implementation overhead which cannot be amortised
 across other instructions.
 

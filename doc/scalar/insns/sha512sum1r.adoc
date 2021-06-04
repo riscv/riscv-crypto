@@ -27,6 +27,8 @@ This instruction is implemented on RV32 only.
 Used to compute the Sum1 transform of the SHA2-512 hash function.
 The transform is a 64-bit to 64-bit function, so the input and output
 is represented by two 32-bit registers.
+This instruction must _always_ be implemented such that it's execution
+latency does not depend on the data being operated on.
 
 [TIP]
 .Note to software developers
@@ -58,6 +60,12 @@ Included in::
 |Lifecycle state
 
 | <<crypto_scalar_ext_zknh>>
+| v0.9.2
+| Frozen
+| <<crypto_scalar_ext_zkn>>
+| v0.9.2
+| Frozen
+| <<crypto_scalar_ext_zk>>
 | v0.9.2
 | Frozen
 |===

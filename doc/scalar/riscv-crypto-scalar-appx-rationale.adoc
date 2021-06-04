@@ -45,7 +45,11 @@ and cryptographic hash functions are well supported by the
 RISC-V Bitmanip cite:[riscv:bitmanip:repo] extension.
 
 NOTE: This section repeats much of the information in
-<<crypto_scalar_ext_zkb>>, but includes more rationale.
+<<crypto_scalar_ext_zbkb>>,
+<<crypto_scalar_ext_zbkc>>
+and
+<<crypto_scalar_ext_zbkx>>,
+but includes more rationale.
 
 We proposed that the scalar cryptographic extension _reuse_ a
 subset of the instructions from the Bitmanip extension directly.

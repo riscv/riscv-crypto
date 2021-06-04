@@ -120,8 +120,9 @@ operate in. NIST ciphers are a part of most standardised internet
 protocols, while ShangMi ciphers are required for use in China.
 ====
 
-include::riscv-crypto-scalar-zkb.adoc[]
-include::riscv-crypto-scalar-zkg.adoc[]
+include::riscv-crypto-scalar-zbkb.adoc[]
+include::riscv-crypto-scalar-zbkc.adoc[]
+include::riscv-crypto-scalar-zbkx.adoc[]
 include::riscv-crypto-scalar-zknd.adoc[]
 include::riscv-crypto-scalar-zkne.adoc[]
 include::riscv-crypto-scalar-zknh.adoc[]
@@ -130,7 +131,7 @@ include::riscv-crypto-scalar-zksh.adoc[]
 include::riscv-crypto-scalar-zkr.adoc[]
 include::riscv-crypto-scalar-zkn.adoc[]
 include::riscv-crypto-scalar-zks.adoc[]
-include::riscv-crypto-scalar-k.adoc[]
+include::riscv-crypto-scalar-zk.adoc[]
 
 // ------------------------------------------------------------
 

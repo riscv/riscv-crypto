@@ -1,0 +1,20 @@
+[[crypto_scalar_ext_zbkx,Zbkx]]
+=== `Zbkx` - Crossbar permutation instructions
+
+These instructions are useful for implementing SBoxes in constant time, and
+potentially with DPA protections.
+These are separated from the <<crypto_scalar_ext_zbkb>> because they
+have a implementation overhead which cannot be amortised
+across other instructions.
+
+[%header,cols="^1,^1,4,8"]
+|===
+|RV32
+|RV64
+|Mnemonic
+|Instruction
+
+| &#10003; | &#10003; |  xperm.b     | <<insns-xperm.b>>
+| &#10003; | &#10003; |  xperm.n     | <<insns-xperm.n>>
+|===
+

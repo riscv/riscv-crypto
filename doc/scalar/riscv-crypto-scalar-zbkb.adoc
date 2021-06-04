@@ -1,5 +1,5 @@
-[[crypto_scalar_ext_zkb,Zkb]]
-=== `Zkb` - Bitmanip instructions for Cryptography
+[[crypto_scalar_ext_zbkb,Zbkb]]
+=== `Zbkb` - Bitmanip instructions for Cryptography
 
 These are a subset of the Bitmanipulation Extension which are particularly
 useful for Cryptography.
@@ -11,8 +11,6 @@ useful for Cryptography.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; |  xperm.n     | <<insns-xperm.n>>
-| &#10003; | &#10003; |  xperm.b     | <<insns-xperm.b>>
 | &#10003; | &#10003; |  ror         | <<insns-ror>>
 | &#10003; | &#10003; |  rol         | <<insns-rol>>
 | &#10003; | &#10003; |  rori        | <<insns-rori>>
@@ -23,13 +21,10 @@ useful for Cryptography.
 | &#10003; | &#10003; |  orn         | <<insns-orn>>
 | &#10003; | &#10003; |  xnor        | <<insns-xnor>>
 | &#10003; | &#10003; |  pack        | <<insns-pack>>
-| &#10003; | &#10003; |  packu       | <<insns-packu>>
 | &#10003; | &#10003; |  packh       | <<insns-packh>>
 |          | &#10003; |  packw       | <<insns-packw>>
-|          | &#10003; |  packuw      | <<insns-packuw>>
 | &#10003; | &#10003; |  rev.b       | <<insns-rev.b>>
 | &#10003; | &#10003; |  rev8        | <<insns-rev8>>
-|          | &#10003; |  rev8.w      | <<insns-rev8.w>>
 | &#10003; |          |  zip         | <<insns-zip>>
 | &#10003; |          |  unzip       | <<insns-unzip>>
 |===
