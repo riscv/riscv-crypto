@@ -3,7 +3,7 @@
 
 Synopsis::
 Accelerates the block encrypt/decrypt operation of the SM4 block cipher
-cite:[block:sm4:1, ietf:sm4].
+cite:[gbt:sm4, iso:sm4].
 
 Mnemonic::
 sm4ed rd, rs1, rs2, bs

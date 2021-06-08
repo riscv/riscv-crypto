@@ -3,7 +3,7 @@
 
 Synopsis::
 Accelerates the Key Schedule operation of the SM4 block cipher
-cite:[block:sm4:1, ietf:sm4].
+cite:[gbt:sm4, iso:sm4].
 
 Mnemonic::
 sm4ks rd, rs1, rs2, bs

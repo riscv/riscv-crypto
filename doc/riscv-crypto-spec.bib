@@ -35,33 +35,82 @@
 % NIST Specifications and recommendations
 % -----------------------------------------------------------------
 
-@article{nist:gcm,
-  title={NIST Special Publication 800-38D: Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC},
-  author={Dworkin, Morris},
-  journal={US National Institute of Standards and Technology http://csrc.nist. gov/publications/nistpubs/800-38D/SP-800-38D.pdf},
-  year={2007}
+@misc{nist:gcm,
+  author        = {Morris Dworkin},
+  title         = {Recommendation for Block Cipher Modes of Operation:
+                  {Galois}/{Counter} {Mode} ({GCM}) and {GMAC}},
+  howpublished  = {NIST Special Publication SP 800-38D},
+  url           = {https://doi.org/10.6028/NIST.SP.800-38D},
+  month         = {November},
+  year          = {2007}
 }
 
 @misc{nist:fips:180:4,
-  title        = {Secure Hash Standard (SHS)},
-  howpublished = {National Institute of Standards and Technology (NIST) Federal Information Processing Standard (FIPS) 180-4},
-  year         = {2015},
-  url          = {https://csrc.nist.gov/publications/detail/fips/180/4/final}
+  author        = {{NIST}},
+  title         = {Secure Hash Standard ({SHS})},
+  howpublished  = {Federal Information Processing Standards Publication FIPS 180-4},
+  url           = {https://doi.org/10.6028/NIST.FIPS.180-4},
+  month         = {August},
+  year          = {2015}
 }
 
 
 @misc{nist:fips:197,
-  title        = {Advanced Encryption Standard (AES)},
-  howpublished = {National Institute of Standards and Technology (NIST) Federal Information Processing Standard (FIPS) 197},
-  year         = {2001},
-  url          = {https://www.nist.gov/publications/advanced-encryption-standard-aes}
+  author		= {{NIST}},
+  title         = {{Advanced} {Encryption} {Standard} ({AES})},
+  howpublished  = {Federal Information Processing Standards Publication FIPS
+                  197},
+  url           = {https://doi.org/10.6028/NIST.FIPS.197},
+  month         = {November},
+  year          = {2001}
 }
 
 @misc{nist:fips:202,
-  title        = {SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions},
-  howpublished = {National Institute of Standards and Technology (NIST) Federal Information Processing Standard (FIPS) 202},
-  year         = {2015},
-  url          = {https://csrc.nist.gov/publications/detail/fips/202/final}
+  author        = {{NIST}},
+  title         = {{SHA}-3 Standard: Permutation-Based Hash and Extendable-Output Functions},
+  howpublished  = {Federal Information Processing Standards Publication FIPS
+                  202},
+  url           = {https://doi.org/10.6028/NIST.FIPS.202},
+  month         = {August},
+  year          = {2015}
+}
+
+%
+% PRC Standards (which are also ISO/IEC standards)
+% -----------------------------------------------------------------
+
+
+@Misc{gbt:sm3,
+  title         = {{GB}/{T} 32905-2016: {SM3} Cryptographic Hash Algorithm},
+  howpublished  = {Also {GM}/{T} 0004-2012. Standardization Administration of China},
+  url           = {http://www.gmbz.org.cn/upload/2018-07-24/1532401392982079739.pdf},
+  month         = {August},
+  year          = {2016}
+}
+
+@Misc{gbt:sm4,
+  title         = {{GB}/{T} 32907-2016: {SM4} Block Cipher Algorithm},
+  howpublished	= {Also {GM}/{T} 0002-2012. Standardization Administration of China},
+  url           = {http://www.gmbz.org.cn/upload/2018-04-04/1522788048733065051.pdf},
+  month         = {August},
+  year          = {2016}
+}
+
+@Misc{iso:sm3,
+  author        = {ISO/IEC},
+  title         = {IT Security techniques -- Hash-functions -- Part 3:
+  						Dedicated hash-functions},
+  howpublished  = {{ISO}/{IEC} Standard 10118-3:2018},
+  year          = {2018}
+}
+
+@Misc{iso:sm4,
+  author        = {ISO/IEC},
+  title         = {Information technology -- Security techniques --
+                  Encryption algorithms -- Part 3: Block ciphers. {Amendment}
+                  2: {SM4}},
+  howpublished  = {{ISO}/{IEC} Standard 18033-3:2010/DAmd 2 (en)},
+  year          = {2018}
 }
 
 
@@ -218,12 +267,6 @@ pages={109-136}
   organization={Springer}
 }
 
-@misc{block:sm4:1,
-    title="The SM4 Block Cipher Algorithm And Its Modes Of Operations",
-    note="Retrieved 26th March, 2020",
-    howpublished="\url{https://tools.ietf.org/id/draft-crypto-sm4-00.html}"
-}
-
 @inproceedings{block:camellia,
   title={Camellia: A 128-bit block cipher suitable for multiple platforms—design andanalysis},
   author={Aoki, Kazumaro and Ichikawa, Tetsuya and Kanda, Masayuki and Matsui, Mitsuru and Moriai, Shiho and Nakajima, Junko and Tokita, Toshio},
@@ -266,17 +309,6 @@ pages={109-136}
     note     = "Retrieved 26th March, 2020.",
 }
 
-@misc{ietf:sm3,
-    title="The SM3 Cryptographic Hash Function",
-    note="Retrieved 12th March, 2020",
-    howpublished="\url{https://tools.ietf.org/id/draft-oscca-cfrg-sm3-02.html}"
-}
-
-@misc{ietf:sm4,
-    title="The SM4 Block Cipher Algorithm And Its Modes Of Operations",
-    note="Retrieved 26th March, 2020",
-    howpublished="\url{https://tools.ietf.org/id/draft-crypto-sm4-00.html}"
-}
 
 @article{tls:1.3,
   title={The transport layer security (TLS) protocol version 1.3},
@@ -727,7 +759,7 @@ pages={109-136}
   month		= {May},
   year		= {2021}
 }
-
+10.1007/978-3-540-71039-4\_21
 @InProceedings{	  La08,
   author	= {Patrick Lacharme},
   title		= {Post-Processing Functions for a Biased Physical Random
@@ -809,40 +841,6 @@ pages={109-136}
   year		= {2020}
 }
 
-@Misc{		  NI01,
-  author	= {{NIST}},
-  title		= {{Advanced} {Encryption} {Standard} ({AES})},
-  howpublished	= {Federal Information Processing Standards Publication FIPS
-		  197},
-  doi		= {10.6028/NIST.FIPS.197},
-  publisher	= {{NIST}},
-  month		= {November},
-  year		= {2001}
-}
-
-@Misc{		  NI15,
-  author	= {{NIST}},
-  title		= {{SHA}-3 Standard: Permutation-Based Hash and
-		  Extendable-Output Functions},
-  howpublished	= {Federal Information Processing Standards Publication FIPS
-		  202},
-  doi		= {10.6028/NIST.FIPS.202},
-  publisher	= {{NIST}},
-  month		= {August},
-  year		= {2015}
-}
-
-@Misc{		  NI15A,
-  author	= {{NIST}},
-  title		= {Secure Hash Standard ({SHS})},
-  howpublished	= {Federal Information Processing Standards Publication FIPS
-		  180-4},
-  doi		= {10.6028/NIST.FIPS.180-4},
-  publisher	= {{NIST}},
-  month		= {August},
-  year		= {2015}
-}
-
 @Misc{		  NI16,
   author	= {{NIST}},
   title		= {Submission Requirements and Evaluation Criteria for the
@@ -859,8 +857,7 @@ pages={109-136}
   title		= {Security Requirements for Cryptographic Modules},
   howpublished	= {Federal Information Processing Standards Publication FIPS
 		  140-3},
-  doi		= {10.6028/NIST.FIPS.140-3},
-  publisher	= {{NIST}},
+  url       = {https://doi.org/10.6028/NIST.FIPS.140-3},
   month		= {March},
   year		= {2019}
 }
@@ -975,7 +972,6 @@ pages={109-136}
   url		= {https://arxiv.org/abs/2002.07041},
   publisher	= {IEEE},
   month		= {August},
-  pages		= {To appear},
   year		= {2020}
 }
 

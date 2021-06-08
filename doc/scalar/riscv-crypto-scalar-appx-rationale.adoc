@@ -274,7 +274,7 @@ National ciphers using 8-bit SBoxes include:
 Camellia cite:[block:camellia] (Japan), 
 Aria cite:[block:aria] (Korea),
 AES cite:[nist:fips:197] (USA, Belgium),
-SM4 cite:[block:sm4:1] (China)
+SM4 cite:[gbt:sm4] (China)
 Kuznyechik (Russia).
 
 All of these SBoxes can be implemented efficiently, in constant

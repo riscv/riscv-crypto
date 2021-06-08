@@ -100,8 +100,9 @@ allows the attacker to compute future or past outputs.
 
 Cryptographic PRNGs are also known as Deterministic Random Bit
 Generators (DRBGs), a term used by SP 800-90A cite:[BaKe15]. A strong
-cryptographic algorithm such as AES cite:[NI01] or SHA-2/3
-cite:[NI15,NI15A] is used to produce random bits from a seed. The secret
+cryptographic algorithm such as AES cite:[nist:fips:197] or SHA-2/3
+cite:[nist:fips:202,nist:fips:180:4]
+is used to produce random bits from a seed. The secret
 seed material is like a cryptographic key; determining the seed
 from the DRBG output is as hard as breaking AES or a strong hash function.
 This also illustrates that the seed/key needs to be long enough and
@@ -612,10 +613,10 @@ or considered "full entropy."
 
 Examples of cryptographic conditioners include the random pool
 of the Linux operating system, secure hash functions (SHA-2/3,
-SHAKE cite:[NI15,NI15A] ), and the AES-based CBC-MAC construction in 
+SHAKE cite:[nist:fips:202,nist:fips:180:4] ), and the AES-based CBC-MAC construction in 
 Appendix F, SP 800-90B cite:[TuBaKe:18].
 
-In some constructions, such as the Linux RNG and SHA-3/SHAKE cite:[NI15]
+In some constructions, such as the Linux RNG and SHA-3/SHAKE cite:[nist:fips:202]
 based generators, the cryptographic conditioning and output (DRBG)
 generation are provided by the same component.
 
@@ -644,7 +645,7 @@ components and the DRBG as a whole. These are significantly easier to
 implement in software than in hardware. In addition to the directly
 certifiable SP 800-90A DRBGs, a Linux-style random pool construction
 based on ChaCha20 cite:[Mu20] can be used, or an appropriate construction
-based on SHAKE256 cite:[NI15].
+based on SHAKE256 cite:[nist:fips:202].
 
 These are just recommendations; programmers can adjust the usage of the
 CPU Entropy Source to meet future requirements.
