@@ -346,7 +346,7 @@ leads to an illegal instruction trap when `sentropy` is accessed.
 
 ==== Hypervisor Trap and Emulate
 
-The hypervisor (or other M-mode elements) can trap and feed an S-Mode guest
+The hypervisor (or M-mode elements) can trap and feed an S-Mode guest
 virtual entropy source words (<<crypto_scalar_es_req_virt>>).
 Virtualization requires both conditioning and DRBG processing of
 physical entropy output. This is recommended if a single entropy
