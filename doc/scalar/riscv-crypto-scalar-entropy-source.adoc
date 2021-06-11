@@ -17,10 +17,11 @@ This section is also supported by cite:[SaNeMa20,SaNeMa21].
 [[crypto_scalar_sentropy]]
 === `sentropy` CSR
 
-The `sentropy` CSR is temporarily assigned at Custom read-only S-Mode address
-`0xDC0`. The expectation is that it will be assigned in read-only
-standard S-Mode ranges `0xD00`-`0xDBF`. (Previous versions of this document
-had the interface at `mentropy` at read-only M-mode address `0xF15`.)
+`sentropy` is a read-only S-Mode CSR at address `0xDBF`
+
+NOTE: This address many change before the extension is ratified.
+
+NOTE: Previous versions of this document had the interface at `mentropy` at read-only M-mode address `0xF15`.
 
 Encoding::
 [wavedrom, , svg]
@@ -118,12 +119,18 @@ pollentropy rd
 It is an alias for `csrrs rd, sentropy, x0`
 
 Description::
-`pollentropy` reads `XLEN` bits from the 
+`pollentropy` reads `XLEN` bits from the
 <<crypto_scalar_sentropy,`sentropy`>> CSR into `rd`.
 It is available in Machine Mode (M-mode may be the only mode) or
 optionally in Supervisor (S) Mode. See access control notes in
 <<crypto_scalar_es_access>>.
 
+NOTE: Access to `sentropy` using other CSR access instructions is still
+permitted, and all normal access control rules to a read-only, Supervisor
+mode CSR still apply. Software should _only_ access `sentropy`
+using the pseudo-instruction. This allows implementers to more easily create
+faster access paths to `sentropy`, without any of the more heavyweight
+logic associated with other CSR accesses.
 
 [[crypto_scalar_es_polling]]
 === Polling Mechanism
@@ -142,7 +149,7 @@ unavailable in PollEntropy.
 
 The diagram above illustrates operational state (`OPST`) transitions.
 The state is usually either `WAIT` or `ES16`. There are no mandatory
-interrupts. 
+interrupts.
 
 
 We recommend against busy-loop polling on the entropy source. Even though
@@ -153,8 +160,8 @@ drivers to benefit from masked signals that release the program flow
 from a `wfi` instruction without causing an interrupt handler to be invoked.
 
 As a minimum requirement for portable drivers in microcontrollers,
-a `WAIT` or `BIST` from `pollentropy` should be followed by a `wfi`
-before another `pollentropy` instruction is issued. 
+a `WAIT` or `BIST` from `sentropy` should be followed by a `wfi`
+before another `sentropy` instruction is issued.
 
 Higher-end systems generally perform opportunistic polling as a part of their
 entropy gathering processes.
@@ -164,7 +171,7 @@ There is no need to poll after a `DEAD` state.
 [[crypto_scalar_es_req]]
 === Entropy Source Requirements
 
-Output `seed` from `pollentropy` is not necessarily fully conditioned
+The output `seed` from `sentropy` is not necessarily fully conditioned
 randomness due to hardware and energy limitations of smaller, low-powered
 implementations. However, minimum requirements are defined.
 A caller must not use the output directly but poll twice the amount
@@ -182,11 +189,11 @@ Depending on the implementation and process instance, the source can be one of
 three things:
 
 *	<<crypto_scalar_es_req_90b>>: A physical entropy source meeting
-	NIST SP 800-90B cite:[TuBaKe:18] criteria with evaluated min-entropy 
+	NIST SP 800-90B cite:[TuBaKe:18] criteria with evaluated min-entropy
 	level 192 per 256 output bits (min-entropy rate 0.75).
 	
 *	<<crypto_scalar_es_req_ptg2>>: A physical entropy source meeting AIS-31
-	PTG.2 cite:[KiSc11] criteria, implying average Shannon entropy rate 0.997. 
+	PTG.2 cite:[KiSc11] criteria, implying average Shannon entropy rate 0.997.
 
 *	<<crypto_scalar_es_req_virt>>: Virtual environments should *not* make
 	physical entropy sources directly available but provide a virtual entropy
@@ -203,8 +210,8 @@ test mode, and failure as required by respective standards.
 
 The interface requirement is satisfied if 128 bits of full entropy can be
 obtained from each 256-bit (16*16 -bit) successful, but possibly
-non-consecutive `pollentropy` ES16 output sequence using a vetted conditioning
-algorithm such as a cryptographic hash 
+non-consecutive `sentropy` ES16 output sequence using a vetted conditioning
+algorithm such as a cryptographic hash
 (See Section 3.1.5.1.2, cite:[TuBaKe:18]).
 
 Rather than attempting to define all the properties that the entropy source
@@ -236,10 +243,10 @@ can be obtained after conditioning, as in <<crypto_scalar_es_req_90b>>.
 [[crypto_scalar_es_req_virt]]
 ==== Virtual Sources: Security Requirement
 
-A virtual source traps the `pollentropy` instruction or otherwise
+A virtual source traps access to the `sentropy` CSR or otherwise
 implements it in software using a fully seeded DRBG with at least 256-bit
 security. A virtual source is intended especially for guest operating
-systems, sandboxes, emulators, and similar use cases. 
+systems, sandboxes, emulators, and similar use cases.
 
 A virtual source is not a physical entropy source but provides additional
 protection against covert channels, depletion attacks, and host
@@ -254,7 +261,7 @@ on a block cipher with a 256-bit key (e.g., AES 256). Cryptographic
 post-processing is still required, and the min-entropy prediction
 probability 2^-192^ applies within this computational limit.
 
-Any implementation of `pollentropy` that limits the security
+Any implementation of `sentropy` that limits the security
 strength shall not reduce it to less than 256 bits. If the security
 level is under 256 bits, then the interface must not be available.
 
@@ -275,21 +282,21 @@ Encoding::
 ....
 {reg:[
 {bits: 31, name: 'custom'},
-{bits: 1, name: 'NOISE_TEST'},
+{bits: 1, name: 'NT'},
 ]}
 ....
 
 We define a pseudo-instruction for reading it:
 
 Mnemonic::
-getnoise rd 
+getnoise rd
 
 It is an alias for `csrrs rd, mnoise, x0`.
 
 The Entropy Source ISE defines the semantics of only a single bit,
 `mnoise[31]`, which is named `NOISE_TEST`. The only universal function is for
 enabling/disabling this interface. This is because the test interface
-effectively disables `pollentropy`; this way, a soft reset can also reset
+effectively disables `sentropy`; this way, a soft reset can also reset
 the test interface.
 
 The `mnoise` CSR uses address `0x7A9`, indicating it is a standard
@@ -314,14 +321,14 @@ always non-blocking.
 [[crypto_scalar_es_access]]
 === Access Control via `mseccfg.SKES`
 
-The `pollentropy` instruction is not available to general user
+The `sentropy` CSR is not available to general user
 processes, and the raw source interface has been delegated to a
 vendor-specific test interface. The test interface and the main
 interface must not be operational at the same time.
 
 The table below summarizes the access patterns in relation
 to the basic RISC-V privilege levels. S-mode access to the
-entropy source is controlled via `mseccfg.SKES` bit. This is bit 8 
+entropy source is controlled via `mseccfg.SKES` bit. This is bit 8
 of `mseccnf` at CSR address `0x390` cite:[KoXiHu:21].
 
 .Entropy Source Access Control.
@@ -330,23 +337,45 @@ of `mseccnf` at CSR address `0x390` cite:[KoXiHu:21].
 |=======================================================================
 |Mode |PE   |GN  |Description
 
-|*M*  |Yes  |Opt. | Both the `pollentropy` and the optional `getnoise` interface are available in machine mode.
+|*M*
+|Yes
+|Opt.
+|Both the `sentropy` and the optional `mnoise` interface are available
+ in machine mode.
 
-|*S*  |SKES |No  | S-mode may access `pollentropy` directly if `mseccfg.SKES=1`, otherwise `pollentropy` will trap. Supervisor mode may not access `getnoise`,
-which uses an M-mode CSR.
+|*S*, *HS*
+|SKES
+|No
+| S and HS mode and may access `sentropy` directly if `mseccfg.SKES=1`,
+  otherwise accesses to `sentropy` will trap with an Illegal Opcode Exception.
+  S and HS mode may not access `mnoise`.
 
-|*U*  |No   |No  |There must be no direct access to `pollentropy` or `getnoise` output from U-mode. 
+|*U*, *VS*, *VU*
+|No
+|No
+|There must be no direct access to `sentropy` or `mnoise` output from
+ U-mode.
 
 |=======================================================================
 
-If both S-mode and `mseccfg` are not available in a system, then
-access to the entropy source is M-Mode only.  Bit value `SKES=1` will
-allow direct access to the entropy source from S-mode, while `SKES=0`
-leads to an illegal instruction trap when `sentropy` is accessed.
+Note that the `HS`, `VS` and `VU` modes are present in systems with the
+Hypervisor (`H`) extension implemented.
+
+If `S` / `HS` are implemented, then `SKES=1` will
+allow direct access to the entropy source from `S` and `HS` mode,
+while `SKES=0`  leads to an illegal instruction exception when `sentropy`
+is accessed.
+If both `S` and `HS` mode and `mseccfg` are not implemented in a system, then
+access to the entropy source is M-mode only.
+
+Implementations may implement `mseccfg` such that `SKES` is a read-only
+constant value.
+Software may discover if access to `sentropy` can be enable in `S` and `HS`
+mode by writing a `1` to `SKES` and reading back the result.
 
 ==== Hypervisor Trap and Emulate
 
-The hypervisor (or M-mode elements) can trap and feed an S-Mode guest
+The hypervisor (or M-mode elements) can trap and feed less privileged guest
 virtual entropy source words (<<crypto_scalar_es_req_virt>>).
 Virtualization requires both conditioning and DRBG processing of
 physical entropy output. This is recommended if a single entropy
@@ -360,12 +389,13 @@ attacks and also lessens the risk from covert channels.
 The trap-and-emulate requirement for a conditioner and DRBG implementation
 at a higher level introduces some latency, grows the stateful memory
 footprint of such a manager, and may also limit the entropy available.
-Hence direct S-Mode access is often preferable in standard (non-virtual)
-configurations that consider an S-level kernel to be a trusted component.
+Hence direct S and HS Mode access is often preferable in standard
+(non-virtual) configurations that consider an S-level kernel to be a trusted
+component.
 
 The direct `mseccfg.SKES` option allows one to draw a security boundary
 around an
-S-mode component in relation to SSP flows, which is helpful when
+S or HS mode component in relation to SSP flows, which is helpful when
 implementing trusted enclaves. Such modules can enforce the entire key
 lifecycle from birth (in the entropy source) to death (zeroization) to occur
 without the key being passed across the boundary to external code.
