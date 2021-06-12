@@ -19,7 +19,7 @@ Encoding::
 {bits: 4, name: 'rnum'},
 {bits: 1, name: 0x1},
 {bits: 5, name: 0x18},
-{bits: 2, name: 0},
+{bits: 2, name: '0'},
 ]}
 ....
 
