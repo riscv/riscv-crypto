@@ -1,11 +1,11 @@
 [#insns-aes64ds, reftext="AES decrypt final round (RV64)"]
-=== aes64dsm
+=== aes64ds
 
 Synopsis::
 AES final round decryption instruction for RV64.
 
 Mnemonic::
-aes64dsm rd, rs1, rs2
+aes64ds rd, rs1, rs2
 
 Encoding::
 [wavedrom, , svg]
