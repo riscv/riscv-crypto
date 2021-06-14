@@ -99,7 +99,6 @@ RV32:
 RV64:
     rev.b   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
     rev8    rd, rs1 // grevi rd, rs1, 56 - Reverse bytes in 64-bit word
-    rev8.w  rd, rs1 // grevi rd, rs1, 24 - Reverse bytes in 32-bit words
 ----
 
 The scalar cryptography extension provides the following instructions for
@@ -209,7 +208,6 @@ Software based power/EM side-channel countermeasures based on masking.
 ----
 RV32, RV64:                         RV64: 
     pack   rd, rs1, rs2                 packw  rd, rs1, rs2
-    packu  rd, rs1, rs2                 packuw rd, rs1, rs2
     packh  rd, rs1, rs2
 ----
 
