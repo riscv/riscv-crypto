@@ -14,7 +14,7 @@ across other instructions.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; |  xperm.b     | <<insns-xperm.b>>
-| &#10003; | &#10003; |  xperm.n     | <<insns-xperm.n>>
+| &#10003; | &#10003; |  xperm.b     | <<insns-xpermb>>
+| &#10003; | &#10003; |  xperm.n     | <<insns-xpermn>>
 |===
 

@@ -16,3 +16,6 @@
 [submodule "extern/riscv-docs-templates"]
 	path = extern/riscv-docs-templates
 	url = https://github.com/riscv/docs-templates/
+[submodule "extern/riscv-bitmanip"]
+	path = extern/riscv-bitmanip
+	url = https://github.com/ben-marshall/riscv-bitmanip.git
