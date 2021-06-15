@@ -347,7 +347,7 @@ of `mseccfg` at CSR address `0x390` cite:[KoXiHu:21].
 |SKES
 |No
 | S and HS mode may access `sentropy` directly if `mseccfg.SKES=1`,
-  otherwise accesses to `sentropy` will trap with an Illegal Opcode Exception.
+  otherwise accesses to `sentropy` will trap with an Illegal Instruction Exception.
   S and HS mode may not access `mnoise`.
 
 |*U*, *VS*, *VU*
