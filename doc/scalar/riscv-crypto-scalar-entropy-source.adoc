@@ -329,7 +329,7 @@ interface must not be operational at the same time.
 The table below summarizes the access patterns in relation
 to the basic RISC-V privilege levels. S-mode access to the
 entropy source is controlled via `mseccfg.SKES` bit. This is bit 8
-of `mseccnf` at CSR address `0x390` cite:[KoXiHu:21].
+of `mseccfg` at CSR address `0x390` cite:[KoXiHu:21].
 
 .Entropy Source Access Control.
 
