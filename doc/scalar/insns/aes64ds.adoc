@@ -59,13 +59,13 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<crypto_scalar_ext_zknd>>
+| <<zknd>>
 | v0.9.3
 | Frozen
-| <<crypto_scalar_ext_zkn>>
+| <<zkn>>
 | v0.9.3
 | Frozen
-| <<crypto_scalar_ext_zk>>
+| <<zk>>
 | v0.9.3
 | Frozen
 |===

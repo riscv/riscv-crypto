@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zkn,Zkn]]
+[[zkn,Zkn]]
 === `Zkn` - NIST Algorithm Suite
 
 This extension is shorthand for the following set of other extensions:
@@ -8,12 +8,12 @@ This extension is shorthand for the following set of other extensions:
 |Included Extension
 |Description
 
-| <<crypto_scalar_ext_zbkb>>  | Bitmanipulation instructions for cryptography.
-| <<crypto_scalar_ext_zbkc>>  | Carry-less multiply instructions.
-| <<crypto_scalar_ext_zbkx>>  | Cross-bar Permutation instructions.
-| <<crypto_scalar_ext_zkne>>  | AES encryption instructions.
-| <<crypto_scalar_ext_zknd>>  | AES decryption instructions.
-| <<crypto_scalar_ext_zknh>>  | SHA2 hash function instructions.
+| <<zbkb>>  | Bitmanipulation instructions for cryptography.
+| <<zbkc>>  | Carry-less multiply instructions.
+| <<zbkx>>  | Cross-bar Permutation instructions.
+| <<zkne>>  | AES encryption instructions.
+| <<zknd>>  | AES decryption instructions.
+| <<zknh>>  | SHA2 hash function instructions.
 |===
 
 A core which implements `Zkn` must implement all of the above extensions.

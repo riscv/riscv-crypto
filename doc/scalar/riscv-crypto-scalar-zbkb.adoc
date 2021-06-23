@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zbkb,Zbkb]]
+[[zbkb,Zbkb]]
 === `Zbkb` - Bitmanip instructions for Cryptography
 
 These are a subset of the Bitmanipulation Extension which are particularly

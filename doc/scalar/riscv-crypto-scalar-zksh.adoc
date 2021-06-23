@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zksh,Zksh]]
+[[zksh,Zksh]]
 === `Zksh` - ShangMi Suite: SM3 Hash Function Instructions
 
 Instructions for accelerating the SM3 hash function.

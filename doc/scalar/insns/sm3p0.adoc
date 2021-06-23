@@ -52,10 +52,10 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<crypto_scalar_ext_zksh>>
+| <<zksh>>
 | v0.9.3
 | Frozen
-| <<crypto_scalar_ext_zks>>
+| <<zks>>
 | v0.9.3
 | Frozen
 |===

@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zknh,Zknh]]
+[[zknh,Zknh]]
 === `Zknh` - NIST Suite: Hash Function Instructions
 
 Instructions for accelerating the SHA2 family of cryptographic hash functions,

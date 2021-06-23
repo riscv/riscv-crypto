@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zks,Zks]]
+[[zks,Zks]]
 === `Zks` - ShangMi Algorithm Suite
 
 This extension is shorthand for the following set of other extensions:
@@ -8,11 +8,11 @@ This extension is shorthand for the following set of other extensions:
 |Included Extension
 |Description
 
-| <<crypto_scalar_ext_zbkb>>  | Bitmanipulation instructions for cryptography.
-| <<crypto_scalar_ext_zbkc>>  | Carry-less multiply instructions.
-| <<crypto_scalar_ext_zbkx>>  | Cross-bar Permutation instructions.
-| <<crypto_scalar_ext_zksed>> | SM4 block cipher instructions.
-| <<crypto_scalar_ext_zksh>>  | SM3 hash function instructions.
+| <<zbkb>>  | Bitmanipulation instructions for cryptography.
+| <<zbkc>>  | Carry-less multiply instructions.
+| <<zbkx>>  | Cross-bar Permutation instructions.
+| <<zksed>> | SM4 block cipher instructions.
+| <<zksh>>  | SM3 hash function instructions.
 |===
 
 A core which implements `Zks` must implement all of the above extensions.

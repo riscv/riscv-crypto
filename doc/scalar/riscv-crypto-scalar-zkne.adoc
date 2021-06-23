@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zkne,Zkne]]
+[[zkne,Zkne]]
 === `Zkne` - NIST Suite: AES Encryption
 
 Instructions for accelerating the encryption and key-schedule functions of

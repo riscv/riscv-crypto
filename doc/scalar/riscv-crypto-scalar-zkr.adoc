@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zkr,Zkr]]
+[[zkr,Zkr]]
 === `Zkr` - Entropy Source Extension
 
 Entropy source for seeding random number generators.

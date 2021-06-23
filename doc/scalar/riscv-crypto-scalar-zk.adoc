@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zk,Zk]]
+[[zk,Zk]]
 === `Zk` - Standard scalar cryptography extension
 
 This extension is shorthand for the following set of other extensions:
@@ -8,8 +8,8 @@ This extension is shorthand for the following set of other extensions:
 |Included Extension
 |Description
 
-| <<crypto_scalar_ext_zkn>>  | NIST Algorithm suite extension.
-| <<crypto_scalar_ext_zkr>>  | Entropy Source extension.
+| <<zkn>>  | NIST Algorithm suite extension.
+| <<zkr>>  | Entropy Source extension.
 | <<crypto_scalar_zkt,Zkt>>  | Data independent execution latency extension.
 |===
 

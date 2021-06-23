@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zksed,Zksed]]
+[[zksed,Zksed]]
 === `Zksed` - ShangMi Suite: SM4 Block Cipher Instructions
 
 Instructions for accelerating the SM4 Block Cipher.

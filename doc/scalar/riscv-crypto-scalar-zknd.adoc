@@ -1,4 +1,4 @@
-[[crypto_scalar_ext_zknd,Zknd]]
+[[zknd,Zknd]]
 === `Zknd` - NIST Suite: AES Decryption
 
 Instructions for accelerating the decryption and key-schedule functions of
