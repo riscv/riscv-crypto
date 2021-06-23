@@ -373,6 +373,18 @@ constant value.
 Software may discover if access to `sentropy` can be enable in `S` and `HS`
 mode by writing a `1` to `SKES` and reading back the result.
 
+`mseccfg` exists if `Zkr` is implemented, or if it is required by other
+processor features (e.g. PMP enhancements).footnote:[
+More information on the `mseccfg` CSR may be found in the
+link:https://docs.google.com/document/d/1Mh_aiHYxemL0umN3GTTw8vsbmzHZ_nxZXgjgOUzbvc8/edit#heading=h.hw4f0hsg3t3[PMP Enhancements for memory access and execution prevention on Machine mode] proposal.
+]
+If `Zkr` is _not_ implemented, the `SKES` bit must be hardwired
+to zero.
+If `Zkr` is the only implemented feature requiring `mseccfg`,
+then all bits other than `SKES` must be hardwired to zero, or
+otherwise set according to the relevant specifications for a not implemented
+feature.
+
 ==== Hypervisor Trap and Emulate
 
 The hypervisor (or M-mode elements) can trap and feed less privileged guest
