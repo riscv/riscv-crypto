@@ -61,13 +61,13 @@ Included in::
 |Lifecycle state
 
 | <<crypto_scalar_ext_zknd>>
-| v0.9.2
+| v0.9.3
 | Frozen
 | <<crypto_scalar_ext_zkn>>
-| v0.9.2
+| v0.9.3
 | Frozen
 | <<crypto_scalar_ext_zk>>
-| v0.9.2
+| v0.9.3
 | Frozen
 |===
 
