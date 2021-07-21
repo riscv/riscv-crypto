@@ -13,7 +13,8 @@ Hence,  all of the instructions in <<zbkx>> have their complete specification
 included in this document.
 This is to make the specification complete as a standalone document.
 Inevitably there might be small divergences between the Bitmanip and
-Scalar Cryptography specification documents.
+Scalar Cryptography specification documents as they move at different
+paces.
 When this happens, assume that the Bitmanip specification has the
 most up-to-date version of Bitmanip instructions.
 This is an unfortunate but neccessary stop-gap while Scalar Cryptography

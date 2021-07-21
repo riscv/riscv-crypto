@@ -13,7 +13,8 @@ in this document, including those _not_ present in the initial
 Bitmanip ratification package.
 This is to make the specification complete as a standalone document.
 Inevitably there might be small divergences between the Bitmanip and
-Scalar Cryptography specification documents.
+Scalar Cryptography specification documents as they move at different
+paces.
 When this happens, assume that the Bitmanip specification has the
 most up-to-date version of Bitmanip instructions.
 This is an unfortunate but neccessary stop-gap while Scalar Cryptography
