@@ -29,7 +29,7 @@ A byte is extracted from `rs2` based on `bs`, to which the SBox and
 linear layer transforms are applied, before the result is XOR'd with
 `rt` and written back to `rd`.
 This instruction exists on RV32 and RV64 base architectures.
-On RV64, the 32-bit result is zero extended upto XLEN bits.
+On RV64, the 32-bit result is sign extended upto XLEN bits.
 This instruction must _always_ be implemented such that it's execution
 latency does not depend on the data being operated on.
 
@@ -44,7 +44,7 @@ function clause execute (SM4KS (bs,rs2,rs1,rd)) = {
                              ((x & 0x00000001) << 23) ^ ((x & 0x000000F8) << 13) ;
   let z     : bits(32) = (y << shamt) ^ (y >> (0b100000 - shamt));
   let result: bits(32) = z ^ X(rs1)[31..0];
-  X(rd) = EXTZ(result);
+  X(rd) = EXTS(result);
   RETIRE_SUCCESS
 }
 --

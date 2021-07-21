@@ -40,7 +40,7 @@ Operation::
 function clause execute (SM3P0(rs1, rd)) = {
   let r1     : bits(32) = X(rs1)[31..0];
   let result : bits(32) =  r1 ^ rol32(r1,  9) ^ rol32(r1, 17);
-  X(rd) = EXTZ(result);
+  X(rd) = EXTS(result);
   RETIRE_SUCCESS
 }
 --

@@ -46,7 +46,7 @@ Operation::
 [source,sail]
 --
 function clause execute (SHA512SIG0L(rs2, rs1, rd)) = {
-  X(rd) = EXTZ((X(rs1) >>  1) ^ (X(rs1) >>  7) ^ (X(rs1) >>  8) ^
+  X(rd) = EXTS((X(rs1) >>  1) ^ (X(rs1) >>  7) ^ (X(rs1) >>  8) ^
                (X(rs2) << 31) ^ (X(rs2) << 25) ^ (X(rs2) << 24) );
   RETIRE_SUCCESS
 }

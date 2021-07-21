@@ -32,11 +32,11 @@ Operation::
 [source,sail]
 --
 function clause execute (AES32ESI (bs,rs2,rs1,rd)) = {
-  let shamt   : bits(6)  = (0b0 @ bs @ 0b000); /* shamt = bs*8 */
-  let si      : bits(8)  = (X(rs2) >> shamt)[7..0]; /* SBox Input */
+  let shamt   : bits( 5) = bs @ 0b000; /* shamt = bs*8 */
+  let si      : bits( 8) = (X(rs2)[31..0] >> shamt)[7..0]; /* SBox Input */
   let so      : bits(32) = 0x000000 @ aes_sbox_fwd(si);
-  let result  : xlenbits = X(rs1) ^ (so << shamt) ^ (so >> (0b100000 - shamt));
-  X(rd) = result; RETIRE_SUCCESS
+  let result  : bits(32) = X(rs1)[31..0] ^ rol32(so, unsigned(shamt));
+  X(rd) = EXTS(result); RETIRE_SUCCESS
 }
 --
 

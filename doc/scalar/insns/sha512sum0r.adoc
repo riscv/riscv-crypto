@@ -46,7 +46,7 @@ Operation::
 [source,sail]
 --
 function clause execute (SHA512SUM0R(rs2, rs1, rd)) = {
-  X(rd) = EXTZ((X(rs1) << 25) ^ (X(rs1) << 30) ^ (X(rs1) >> 28) ^
+  X(rd) = EXTS((X(rs1) << 25) ^ (X(rs1) << 30) ^ (X(rs1) >> 28) ^
                (X(rs2) >>  7) ^ (X(rs2) >>  2) ^ (X(rs2) <<  4) );
   RETIRE_SUCCESS
 }
