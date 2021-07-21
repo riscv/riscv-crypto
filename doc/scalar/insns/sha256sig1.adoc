@@ -26,7 +26,7 @@ Description::
 This instruction is supported for both RV32 and RV64 base architectures.
 For RV32, the entire `XLEN` source register is operated on.
 For RV64, the low `32` bits of the source register is operated on, and the
-result zero extended.
+result sign extended to `XLEN` bits.
 Though named for SHA2-256, the instruction works for both the
 SHA2-224 and SHA2-256 parameterisations as described in
 cite:[nist:fips:180:4].
