@@ -100,12 +100,24 @@ include::riscv-crypto-scalar-policies.adoc[]
 The group of extensions introduced by the Scalar Cryptography Instruction Set
 Extension is listed here.
 
-Presence of the cryptography extension in any form is indicated by bit
-`10` of the MISA CSR. i.e. bit `K`, because `C` is taken
+If the `K` bit (i.e. bit 10) of the `MISA` CSR is set, this indicates that
+at-least one cryptography extension (as listed below) is implemented.
+This will also covers future cryptography extensions; for example, the
+future vector cryptography extension.
+
+[NOTE]
+====
+We use `K`, because `C` is taken
 and `K` is for _Kappa_, the first letter of the ancient Greek word
-_kruptós_, meaning _hidden_. Detection of fine-grained functionality
-uses the mechanisms defined by the tech-config RISC-V Task Group. At the
-time of writing, these mechanisms are still being defined.
+_kruptós_, meaning _hidden_.
+====
+
+If `MISA.K` is clear, then no cryptography related extensions are
+implemented.
+
+Detection of individual cryptography extensions
+uses the mechanisms defined by the tech-config RISC-V Task Group.
+At the time of writing, these mechanisms are still a work in progress.
 
 .A note on extension rationale
 [NOTE, caption="SH"]
