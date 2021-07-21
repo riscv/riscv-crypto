@@ -29,9 +29,7 @@ addition steps of the AES block cipher Key Schedule.
 This instruction must _always_ be implemented such that it's execution
 latency does not depend on the data being operated on.
 Note that `rnum` must be in the range `0x0..0xA`.
-The values `0xB..0xF` do not decode to `aes64ks1i`, and may cause an
-Illegal Instruction Exception to be raised, depending on the other
-instructions implemented.
+The values `0xB..0xF` are reserved.
 
 Operation::
 [source,sail]
