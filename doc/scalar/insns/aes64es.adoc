@@ -2,7 +2,7 @@
 === aes64es
 
 Synopsis::
-AES final round encryption instruction for RV32.
+AES final round encryption instruction for RV64.
 
 Mnemonic::
 aes64es rd, rs1, rs2
