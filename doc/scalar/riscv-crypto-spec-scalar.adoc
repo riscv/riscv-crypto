@@ -115,9 +115,16 @@ _kruptós_, meaning _hidden_.
 If `MISA.K` is clear, then no cryptography related extensions are
 implemented.
 
-Detection of individual cryptography extensions
-uses the mechanisms defined by the tech-config RISC-V Task Group.
+If the `MISA.K` bit is writable, then setting / clearing it will
+enable / disable _all_ cryptography related extensions.
+
+Detection of individual cryptography extensions uses the
+unified software-based RISC-V discovery method.
+
+[NOTE]
+====
 At the time of writing, these mechanisms are still a work in progress.
+====
 
 .A note on extension rationale
 [NOTE, caption="SH"]
