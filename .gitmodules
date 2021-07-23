@@ -7,9 +7,6 @@
 [submodule "extern/riscv-isa-sim"]
 	path = extern/riscv-isa-sim
 	url = https://github.com/riscv/riscv-isa-sim.git
-[submodule "extern/sail-riscv"]
-	path = extern/sail-riscv
-	url = https://github.com/ben-marshall/sail-riscv.git
 [submodule "extern/riscv-compliance"]
 	path = extern/riscv-arch-test
 	url = https://github.com/riscv/riscv-compliance.git
