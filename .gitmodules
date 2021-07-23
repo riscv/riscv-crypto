@@ -16,3 +16,6 @@
 [submodule "extern/riscv-bitmanip"]
 	path = extern/riscv-bitmanip
 	url = https://github.com/ben-marshall/riscv-bitmanip.git
+[submodule "extern/sail-riscv"]
+	path = extern/sail-riscv
+	url = git@github.com:ben-marshall/sail-riscv
