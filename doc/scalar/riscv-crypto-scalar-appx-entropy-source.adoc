@@ -1,11 +1,73 @@
 [appendix]
 [[crypto_scalar_appx_es]]
 
-== Entropy Source Rationale
+== Entropy Source Rationale and Recommendations
 
 The security of cryptographic systems is based on secret bits and keys.
 These bits need to be random and originate from cryptographically secure
-Random Bit Generators (RBGs). 
+Random Bit Generators (RBGs). An Entropy Source (ES) is required to
+construct secure RBGs.
+
+This appendix focuses on the rationale, security, self-certification, and
+implementation aspects of entropy sources. Hence we also discuss non-ISA
+(non-normative) system features that may be needed for cryptographic
+standards compliance and security testing.
+
+===	A Design and Self-Certification Checklist
+
+While entropy source implementations do not have to be certified
+designs, RISC-V expects that they behave in a compatible manner and do not
+create unnecessary security risks to users. Self-evaluation and testing
+following appropriate security standards is usually needed to achieve this.
+
+*	*Architectural Tests.* Verify RISC-V requirements in this specification,
+	such as the entropy source state transitions (<<crypto_scalar_sentropy>>)
+	and access control (<<crypto_scalar_es_access>>). The scope of RISC-V
+	architectural tests are those behaviors that are independent of the
+	entropy source details (a smoke test ES module may be sufficient).
+*	*Technical justification for entropy.* This may take the form of a
+	stochastic model or a heuristic argument that explains why the noise
+	source output is from a random rather than pseudorandom (deterministic)
+	process and also not observable or guessable. A complete physical model is
+	typically not necessary; research literature can be cited. For example,
+	good ring oscillator noise is not merely random-looking but
+	derives some amount of physical entropy from local, spontaneously
+	occurring Johnson-Nyquist thermal noise cite:[Sa21].
+*	*Design Review.* An entropy source is more than a noise source, and has
+	features such as health tests (<<crypto_scalar_es_security_controls>>),
+	a conditioner (<<crypto_scalar_appx_es_intro-cond>>), and a security
+	boundary with clearly defined interfaces. One may tabulate the SHALL
+	statements of SP 800-90B cite:[TuBaKe:18], FIPS 140-3 Implementation
+	Guidance cite:[NICC21], AIS-31 cite:[KiSc11] or other standards being
+	used. Simpler, non-official checklist tables are available:
+	https://github.com/usnistgov/90B-Shall-Statements
+*	*Experimental Tests.* The raw noise source is subjected to entropy
+	estimation (H~original~).The interface described in 
+	<<crypto_scalar_es_getnoise>> can used be to record a dataset for this
+	purpose. For SP 800-90B, NIST has made its min-entropy estimation
+	package freely available:
+	https://github.com/usnistgov/SP800-90B_EntropyAssessment
+*	*Conditioner and Health Test Design.* One needs to show that the
+	conditioner and health test components work appropriately to either
+	meet the ES16 output requirements of <<crypto_scalar_es_req>>
+	or fail (BIST / DEAD).
+*	**Resilience.** Above physical engineering steps should consider the
+	operational environment of the device, which may be unexpected or
+	hostile -- actively attempting to exploit vulnerabilities in the design.
+
+See <<crypto_scalar_appx_es_implementation>> for a discussion of various 
+implementation options.
+
+NOTE: It is one of the goals of the RISC-V Entropy Source specification
+that a standard 90B Entropy Source Module or AIS-31 RNG IP may be licensed
+from a third party and integrated with a RISC-V processor design. Compared
+to older (FIPS 140-2) RNG and DRBG Modules, an entropy source module may
+have a relatively small area (just a few thousand NAND2 gate equivalent) as an
+Entropy Source circuit itself does not need to contain components such as AES.
+The availability of such IP modules is increasing as in 2021, CMVP is
+introducing a separate Entropy Source Validation Scope. This allows entropy
+source validations to be re-used for different (FIPS 140-3) modules that
+contain ("consume") them.
 
 
 === Standards and Terminology
@@ -25,12 +87,12 @@ entropy source design, and we use their terminology if possible.
 
 [[crypto_scalar_es_fig_rng,reftext="TRNG Components"]]
 ====
-image::es_dataflow.svg[align="center"]
-PollEntropy provides an Entropy Source (ES) only, not a stateful
+image::es_dataflow.svg[align="center",scaledwidth=50%]
+The `sentropy` CSR provides an Entropy Source (ES), not a stateful
 random number generator. As a result, it can support arbitrary
-security levels. Cryptographic (AES, SHA-2/3) ISA Extension
-instructions can be used to construct high-speed DRBGs that are
-seeded from the entropy source.
+security levels. Cryptographic (AES, SHA-2/3) ISA Extensions
+can be used to construct high-speed DRBGs that are seeded from the
+entropy source.
 ====
 
 
@@ -44,7 +106,7 @@ Sources (ES) for cryptographic purposes.
 The specification of RISC-V entropy source requirements is complicated
 by the existence of two major, slightly conflicting standards:
 NIST SP 800-90B cite:[TuBaKe:18] (<<crypto_scalar_es_req_90b>>)
-for U.S. Federal FIPS 140-3 cite:[NI19] evaluations and 
+for U.S. Federal FIPS 140-3 cite:[NI19] evaluations and
 BSI AIS-31 cite:[KiSc01,KiSc11] (<<crypto_scalar_es_req_ptg2>>) used
 in high-security Common Criteria evaluations.
 
@@ -53,7 +115,7 @@ source (<<crypto_scalar_appx_es_noise_sources>>). Since these are
 directly based on natural phenomena and are subject to environmental
 conditions (which may be adversarial), they require features and sensors
 that monitor the "health" and quality of those sources. Monitoring
-is mandated by both the SP 800-90B and AIS-31 standards. 
+is mandated by both the SP 800-90B and AIS-31 standards.
 See <<crypto_scalar_es_security_controls>> for a discussion about
 such security controls.
 
@@ -84,7 +146,7 @@ discussion.
 Pseudorandom Number Generators (PRNGs) use deterministic mathematical
 formulas to create abundant random numbers from a smaller amount of
 "seed" randomness. PRNGs are also divided into cryptographic and
-non-cryptographic ones. 
+non-cryptographic ones.
 
 Non-cryptographic PRNGs, such as LFSRs and the linear-congruential
 generators found in many programming libraries, may generate statistically
@@ -112,7 +174,13 @@ refreshed (reseeded) for forward and backward security.
 
 === Specific Rationale and Considerations
 
-==== (<<crypto_scalar_es_pollentropy>>) PollEntropy
+
+==== (<<crypto_scalar_sentropy>>) The `sentropy` CSR
+
+The interface was designed to be simple so that a vendor- and
+device-independent driver component (e.g., in Linux kernel,
+embedded firmware, or a cryptographic  library) may use the CSR to
+generate truly random bits.
 
 An entropy source does not require a high-bandwidth interface;
 a single DRBG source initialization only requires 512 bits
@@ -123,7 +191,7 @@ the risk of state compromise.
 A blocking instruction may be easier to use, but most users should
 be querying a (D)RBG instead of an entropy source.
 Without a polling-style mechanism, the entropy source could hang for
-thousands of cycles under some circumstances. The `wfi`
+thousands of cycles under some circumstances. A `wfi` ot `pause`
 mechanism (at least potentially) allows energy-saving sleep on MCUs
 and context switching on higher-end CPUs.
 
@@ -157,8 +225,8 @@ Shannon entropy is much larger.
 
 In FIPS 140-3 / SP 800-90 classification, an RBG2(P) construction is a
 cryptographically secure RBG with continuous access to a physical entropy
-source (`pollentropy`) and output generated by a fully seeded, secure DRBG.
-The entropy source can also be used to build RBG3 
+source (`sentropy`) and output generated by a fully seeded, secure DRBG.
+The entropy source can also be used to build RBG3
 full entropy sources cite:[BaKeRo:21]. The concatenation of output words
 corresponds to the `Get_ES_Bitstring` function.
 
@@ -175,11 +243,10 @@ by vendor-defined tests.
 
 ==== (<<crypto_scalar_es_req_ptg2>>) BSI AIS-31
 
-PTG.2 is one of the security and functionality classes defined in 
+PTG.2 is one of the security and functionality classes defined in
 BSI AIS 20/31 cite:[KiSc11]. The PTG.2 source requirements work as a
-building block for other types of BSI generators (e.g., DRBGs, or 
+building block for other types of BSI generators (e.g., DRBGs, or
 PTG.3 TRNG with appropriate software post-processing).
-
 
 For validation purposes, the PTG.2 requirements may be mapped to
 security controls T1-3 (<<crypto_scalar_es_security_controls>>) and the
@@ -211,7 +278,7 @@ necessarily so. The technical validation process is somewhat different.
 ==== (<<crypto_scalar_es_req_virt>>) Virtual Sources
 
 All sources that are not direct physical sources meeting the SP 800-90B
-or the AIS-31 PTG.2 sources need to meet the security requirements 
+or the AIS-31 PTG.2 sources need to meet the security requirements
 of virtual entropy sources. It is assumed that a virtual entropy source
 is not a limiting, shared bandwidth resource (but a software DRBG).
 
@@ -223,37 +290,50 @@ standards and applications. The 256-bit requirement maps to
 "Security Strength Categories" in cite:[NI16]) and TOP SECRET schemes
 in Suite B and the newer U.S. Government CNSA Suite cite:[NS15].
 
-
+[[crypto_scalar_appx_es_access]]
 ==== (<<crypto_scalar_es_access>>) Security Considerations for Direct Hardware Access
+
 
 The ISA implementation and system design must try to ensure that the
 hardware-software interface minimizes avenues for adversarial
 information flow even if not explicitly forbidden in the specification.
 
+For security, virtualization requires both conditioning and DRBG processing
+of physical entropy output. It is recommended if a single physical entropy
+source is shared between multiple different virtual machnies or if the 
+guest OS is untrusted. A virtual entropy source is significantly more
+resistant to depletion attacks and also lessens the risk from covert channels.
+
+The direct `mseccfg.SKES` option allows one to draw a security boundary
+around an `S` or `HS` mode component in relation to SSP flows, which is
+helpful when implementing trusted enclaves. Such modules can enforce the
+entire key lifecycle from birth (in the entropy source) to death
+(zeroization) to occur without the key being passed across the boundary
+to external code.
+
 *Depletion.*
 Active polling may deny the entropy source to another simultaneously
-running instance. This can (for example) delay the instantiation of that
-instance if it requires entropy to initialize fully.
+running consumer. This can (for example) delay the instantiation of that
+virtual machine if it requires entropy to initialize fully.
 
 *Covert Channels.*
 Direct access to a component such as the entropy source can be used to
 establish communication channels across security boundaries. Active
-polling from one instance makes the resource unavailable to another
-(which is polling infrequently). Such interactions can be used to
-establish low-bandwidth channels.
+polling from one consumer makes the resource unavailable WAIT instead of
+ES16 to another (which is polling infrequently). Such interactions can
+be used to establish low-bandwidth channels.
 
 *Hardware Fingerprinting.*
-An entropy source (and its noise source circuits)
-may have a uniquely identifiable hardware "signature." This can be
-harmless or even useful in some applications (as random sources may
-exhibit PUF-like features) but highly undesirable in others (anonymized
-virtualized environments and enclaves). A DRBG masks such
-statistical features.
+An entropy source (and its noise source circuits) may have a uniquely
+identifiable hardware "signature." This can be harmless or even useful
+in some applications (as random sources may exhibit PUF-like features)
+but highly undesirable in others (anonymized virtualized environments
+and enclaves). A DRBG masks such statistical features.
 
 *Side Channels.*
-Some of the most devastating practical attacks
-against real-life cryptosystems have used inconsequential-looking
-additional information, such as padding error messages cite:[BaFoKa:12]
+Some of the most devastating practical attacks against real-life
+cryptosystems have used inconsequential-looking additional
+information, such as padding error messages cite:[BaFoKa:12]
 or timing information cite:[MoSuEi:20].
 
 We urge implementers against creating unnecessary information flows
@@ -265,7 +345,7 @@ the better.
 As an example of side-channel analysis, we note that the entropy
 polling interface is typically not "constant time." One needs to
 analyze what kind of information is revealed via the timing oracle;
-one way of doing it is to model `pollentropy` as a rejection
+one way of doing it is to model `sentropy` as a rejection
 sampler. Such a timing oracle can reveal information about the noise
 source type and entropy source usage, but usually
 not about the random output `seed` words themselves. If it does,
@@ -279,7 +359,7 @@ The primary purpose of a cryptographic entropy source is to produce
 secret keying material. In almost all cases, a hardware entropy source
 must implement appropriate _security controls_ to guarantee
 unpredictability, prevent leakage, detect attacks, and deny adversarial
-control over the entropy output or ts generation mechanism. Explicit 
+control over the entropy output or ts generation mechanism. Explicit
 security controls are required for security testing and certification.
 
 Many of the security controls built into the device are called "health
@@ -297,9 +377,10 @@ damage control (prevent weak crypto keys from being generated).
 Additional "debug" mechanisms may be implemented if necessary, but
 then the device must be outside production use.
 
-We define three specific testing requirements T1-T3. The testing requirement
+We discuss three specific testing requirements T1-T3. The testing requirement
 follows from the definition of an Entropy Source; without it, the module is
 simply a noise source and can't be trusted to safely generate keying material.
+
 
 ==== T1: On-demand testing
 
@@ -318,7 +399,7 @@ them in the field (the term is a throwback to an age of discrete,
 non-autonomous crypto devices with human operators).
 
 
-==== T2: Continuous checks 
+==== T2: Continuous checks
 
 If an error is detected in continuous tests or
 environmental sensors, the entropy source will enter a no-output state.
@@ -388,7 +469,7 @@ To guarantee that no sensitive data is read twice and that different
 callers don’t get correlated output, it is suggested that hardware
 implements _wipe-on-read_ on the randomness pathway during each read
 (successful poll). For the same reasons, only complete and fully
-processed random words shall be made available via `pollentropy`.
+processed random words shall be made available via `sentropy`.
 
 This also applies to the raw noise source. The raw source interface has
 been delegated to an optional vendor-specific test interface.
@@ -410,10 +491,11 @@ SP 800-90B and other security standards mandate protection of
 noise bits from observation and also influence.
 
 
+[[crypto_scalar_appx_es_implementation]]
 === Implementation Strategies
 
 As a general rule, RISC-V specifies the ISA only. We provide some
-additional requirements so that portable, vendor-independent middleware
+additional suggestions so that portable, vendor-independent middleware
 and kernel components can be created. The actual hardware implementation
 and certification are left to vendors and circuit designers;
 the discussion in this Section is purely informational.
@@ -436,21 +518,10 @@ at the entire information flow.
   generate bits on demand (without revealing the seed/state).
 
 Steps 1-4 (possibly 5) are considered to be part of the Entropy
-Source (ES) and provided by the `pollentropy` instruction.
+Source (ES) and provided by the `sentropy` CSR.
 Adding the software-side cryptographic steps 5-6 and control logic
 complements it into a True Random Number Generator (TRNG).
 
-While we do not require entropy source implementations to be
-certified designs, we do expect that they behave in a compatible manner
-and do not create unnecessary security risks to users. Self-evaluation
-and testing following appropriate security standards is usually needed
-to achieve this. NIST has made its SP 800-90B cite:[TuBaKe:18] min-entropy
-estimation package freely available footnote:[SP 800-90B Entropy Assessment:
-https://github.com/usnistgov/SP800-90B_EntropyAssessment] and
-similar free tools are also available footnote:[(In German)
-AIS 31-Implementierung in JAVA:
-https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Zertifizierung/Interpretationen/AIS_31_testsuit_zip]
-for AIS 31 cite:[KiSc11].
 
 [[crypto_scalar_appx_es_noise_sources]]
 ==== Ring Oscillators
@@ -547,7 +618,7 @@ Especially if a non-cryptographic conditioner is used in hardware,
 it is possible that the AIS 31 cite:[KiSc11] online tests are
 implemented by driver software. They can also be implemented in hardware.
 For some security profiles, AIS 31 mandates that their tolerances are
-set in a way that the probability of an alarm is at least `10^{-6}`
+set in a way that the probability of an alarm is at least 10^-6^
 yearly under "normal usage." Such requirements are problematic
 in modern applications since their probability is too high for
 critical systems.
@@ -596,38 +667,40 @@ in the entropy source, even though the software driver still needs
 a cryptographic conditioner, too (<<crypto_scalar_es_req>>).
 
 *Rationale:*
-The main advantage of non-cryptographic filters is in their
+The main advantage of non-cryptographic extractors is in their
 energy efficiency, relative simplicity, and amenability to mathematical
 analysis. If well designed, they can be evaluated in
 conjunction with a stochastic model of the noise source itself.
 They do not require computational hardness assumptions.
 
+
 [[crypto_scalar_appx_es_crypto-cond]]
 ==== Cryptographic Conditioners
 
-Cryptographic conditioners are always required on the software side of
-the PollEntropy ISA boundary. They may also be implemented on the
-hardware side if necessary. In any case, the PollEntropy output must
+For secure use, cryptographic conditioners are always required on the
+software side of the ISA boundary. They may also be implemented on the
+hardware side if necessary. In any case, the `sentropy` ES16 output must
 always be compressed 2:1 (or more) before being used as keying material
 or considered "full entropy."
 
-Examples of cryptographic conditioners include the random pool
-of the Linux operating system, secure hash functions (SHA-2/3,
-SHAKE cite:[nist:fips:202,nist:fips:180:4] ), and the AES-based CBC-MAC construction in 
-Appendix F, SP 800-90B cite:[TuBaKe:18].
+Examples of cryptographic conditioners include the random pool of the
+Linux operating system, secure hash functions (SHA-2/3, SHAKE
+cite:[nist:fips:202,nist:fips:180:4] ), and the AES-based CBC-MAC
+construction in  Appendix F, SP 800-90B cite:[TuBaKe:18].
 
-In some constructions, such as the Linux RNG and SHA-3/SHAKE cite:[nist:fips:202]
-based generators, the cryptographic conditioning and output (DRBG)
-generation are provided by the same component.
+In some constructions, such as the Linux RNG and SHA-3/SHAKE
+cite:[nist:fips:202] based generators, the cryptographic conditioning
+and output (DRBG) generation are provided by the same component.
 
 For many low-power targets constructions the type of hardware AES CBC-MAC
 conditioner used by Intel cite:[Me18] and AMD cite:[AM17] would be too
-complex and energy-hungry to implement solely to serve `pollentropy`.
+complex and energy-hungry to implement solely to serve `sentropy`.
 On the other hand, simpler non-cryptographic conditioners may be too
 wasteful on input entropy if high-quality random output is required --
-ARM TrustZone TRBG cite:[AR17] outputs only 10Kbit/sec at 200 MHz.
+(ARM TrustZone TRBG cite:[AR17] outputs only 10Kbit/sec at 200 MHz.)
 Hence a resource-saving compromise is made between hardware and software
 generation.
+
 
 [[crypto_scalar_appx_es_drbgs]]
 ==== The Final Random: DRBGs
@@ -711,8 +784,8 @@ in the case of the Blum-Blum-Shub generator cite:[BlBlSh86].
 Most symmetric algorithms are not affected as the best quantum
 attacks are still exponential to key size cite:[Gr96].
 
-As an example, the original Intel RNG cite:[Me18], whose output
-generation is based on AES-128, can be attacked using Grover's algorithm
+As an example, the original Intel RNG cite:[Me18], whose output generation
+is based on AES-128, can be attacked using Grover's algorithm
 with approximately square-root effort cite:[JaNaRo:20].
 While even "64-bit" quantum security is extremely difficult to
 break, many applications specify a higher security requirement.
@@ -721,4 +794,61 @@ post-quantum security, while AES-256 is "Category 5" (highest).
 We avoid this possible future issue by exposing direct access
 to the entropy source which can derive its security from
 information-theoretic assumptions only.
+
+
+[[crypto_scalar_es_getnoise]]
+=== Suggested GetNoise Test Interface
+
+Compliance and health testing of entropy sources requires access to raw,
+unconditioned, noise samples. This conceptual test interface is named
+GetNoise in Section 2.3.2 of NIST SP 800-90B cite:[TuBaKe:18]; this
+is not a name of an instruction or pseudoinstruction.
+
+In order for shared drivers to be able to accommodate the test interface
+in a secure fashion, we suggest that it is implemented as a custom, M-mode
+CSR, denoted here as `mnoise`. This is to facilitate the use of shared
+RISC-V self-certification scripts for entropy sources.
+
+This interface is not intended to be used as a source of randomness or for
+other production use. We define the semantics for single bit for this custom interface, `mnoise[31]`, which is named `NOISE_TEST`. 
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 31, name: 'custom (raw noise samples and parameters)'},
+{bits: 1, name: 'NT'},
+]}
+....
+
+
+When `NOISE_TEST = 1` in `mnoise`, `sentropy` *must not* return
+anything via `ES16`; it should be in `BIST` state unless the source
+is `DEAD`. When `NOISE_TEST` is again disabled, the entropy source
+shall return from `BIST` via an appropriate zeroization and self-test
+mechanism.
+
+The behavior of other input and output bits is left to the vendor.
+Although not used in production, we recommend that the instruction is
+always non-blocking. Other contents and behavior of the register can be
+intepreted in the context of `mvendorid`, `marchid`, and `mimpid`
+CSR identifiers.
+
+When not implemented (e.g., in virtual machines), `mnoise` can permanently
+read zero (`0x00000000`) and ignore writes.
+When available, but `NOISE_TEST = 0`, `mnoise` can return a
+nonzero constant (e.g. `0x00000001`) but no noise samples.
+
+[[crypto_scalar_es_noistest,reftext="Custom Entropy Test Mode Diagram"]]
+====
+image::es_noisetest.svg[title="Entropy source can't be read in test mode.", align="center",scaledwidth=66%]
+In `NOISE_TEST` mode, the WAIT and ES16 `sentropy` states are unreachable,
+and no entropy is output. Implementation of test interfaces that directly
+affect ES16 entropy output from the `sentropy` interface is discouraged.
+Such vendor test interfaces have been exploited in attacks. For example,
+an ECDSA cite:[nist:fips:186:4] signature process without sufficient
+entropy will not only create an insecure signature but can also reveal
+the secret signing key. Even a temporary lapse in ES16 security may break
+the security of the entire system.
+====
 
