@@ -88,7 +88,7 @@
 \draw[gray,->] (deadn.e) -- (dead2);
 
 \node[state,dashed,align=center] (getnoise) at (5,-3)
-    { {\small GetNoise active:}\\{\small {\bf no} PollEntropy}};
+    { {\small GetNoise active:}\\{\small {\bf No} ES16 output.}};
 
 \end{tikzpicture}
 
