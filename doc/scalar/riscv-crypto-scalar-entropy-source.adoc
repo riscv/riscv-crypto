@@ -21,7 +21,7 @@ output can be used. For further references, see cite:[SaNeMa20,SaNeMa21].
 `sentropy` is an S-Mode CSR at address `0x9XX` _(XXX Preliminary Assignment)_.
 
 For security reasons, it is essential that secret entropy words are not
-made available multiple times. Hence polling (reading) also must to have
+made available multiple times. Hence polling (reading) must also have
 the side effect of clearing the entropy source. This can be accomplished
 with an instruction such as `csrrw rd, sentropy, x0`.
 
