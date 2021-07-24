@@ -1,0 +1,94 @@
+%   es_noisetest.tikz
+%   2020-06-26  Markku-Juhani O. Saarinen <mjos@pqshield.com>
+%	CONTRIBUTED TO PUBLIC DOMAIN
+
+\begin{tikzpicture}[>=latex,scale=1.0]
+\tikzset{every state/.append style={rectangle, thick, rounded corners}};
+
+%   NOISE_TEST = 0
+
+\draw[draw=none,fill=gray!10] (-1.5,0) rectangle ++(3,0.5) node[pos=0.5]
+    {\small\tt NOISE\_TEST = 0};
+
+\node[align=center] (reset) at (0,-0.5) {reset};
+\node[state,fill=cyan!10] (bist) at (0,-1.5) {BIST};
+
+\node[state,fill=yellow!20] (wait) at (-1,-3) {WAIT};
+
+\node[state,fill=green!20] (es16) at (1,-3) {ES16};
+
+\node[align=center] (seed) at (2,-3) {{seed}\\{ok!}};
+
+\node[state,fill=red!20] (dead) at (0,-4.5) {DEAD};
+
+\node[align=center] (dead2) at (0,-5.5) {\em stays dead!};
+
+\draw[->] (reset) to (bist);
+\draw[->] (bist) to (wait);
+\draw[->] (bist) to (es16);
+
+\draw[->, bend left] (wait) to (es16);
+\draw[->, bend left] (es16) to (wait);
+
+\draw[color=red,dashed,->] (bist) .. controls (-2.5,-2.5) and (-2.5,-3.5) .. (dead);
+
+\draw[color=red,dashed,->] (wait) to (dead);
+\draw[color=red,dashed,->] (es16) to (dead);
+
+\draw[->] (dead) .. controls ++(0.15,-0.85) and ++(-0.15,-0.85) .. (dead);
+
+\node[color=red,align=center] at (-1.5,-4.5) {{\it fatal}\\{\it error}};
+
+\draw[color=blue,densely dotted,->] (bist) .. controls ++(-0.85,-0.15)
+    and ++(-0.85,0.15) .. (bist);
+
+\draw[color=blue,densely dotted,->] (wait) .. controls (-1.0,-2.7)
+    and (-1.0,-2.2) .. (bist);
+
+\draw[color=blue,densely dotted,->] (es16) .. controls (1.0,-2.7)
+    and (1.0,-2.2) .. (bist);
+
+\node[color=blue,align=center] at (1.5,-2.0) {{\it non-fatal}\\{\it alarm}};
+
+%   NOISE_TEST = 1
+
+\draw[dashed,gray] (2.5,-1) -- (2.5,-5);
+
+\draw[draw=none,fill=gray!10] (3.5,0) rectangle ++(3,0.5) node[pos=0.5]
+    {\small\tt NOISE\_TEST = 1};
+
+\node[state,fill=cyan!10] (bist2) at (5,-1.5) {BIST};
+
+\draw[color=blue,densely dotted,->] (bist2) .. controls ++(0.85,0.15)
+    and ++(0.85,-0.15) .. (bist2);
+
+\node[state,fill=red!20] (dead2) at (5,-4.5) {DEAD};
+
+\draw[->] (dead2) .. controls ++(0.15,-0.85) and ++(-0.15,-0.85) .. (dead2);
+
+\draw[color=red,dashed,->] (bist2) .. controls (7.5,-2.5) and (7.5,-3.5) .. (dead2);
+
+
+\draw[gray,->] (bist2) .. controls (3,-0.7) and (2,-0.7) .. (bist)
+    node[pos=.5,above] {\small test mode disabled};
+
+\draw[gray,->] (dead2) .. controls (3,-5.2) and (2,-5.2) .. (dead)
+    node[pos=.5,below] {\small test mode disabled};
+
+\node[right,color=gray] (enable) at (2.5,-1.3) {\small\underline{enabled:}};
+\node[right,color=gray] (bistn) at (2.5,-1.7) {\small BIST};
+\node[right,color=gray] (waitn) at (2.5,-2.1) {\small WAIT};
+\node[right,color=gray] (es16n) at (2.5,-2.5) {\small ES16};
+
+\node[right,color=gray] (deadn) at (2.5,-4.5) {\small DEAD};
+
+\draw[gray,->] (bistn.e) -- (bist2);
+\draw[gray,->] (waitn.e) -- (bist2);
+\draw[gray,->] (es16n.e) -- (bist2);
+\draw[gray,->] (deadn.e) -- (dead2);
+
+\node[state,dashed,align=center] (getnoise) at (5,-3)
+    { {\small GetNoise active:}\\{\small {\bf no} PollEntropy}};
+
+\end{tikzpicture}
+
