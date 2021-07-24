@@ -203,8 +203,8 @@ AMD cite:[Sa19]).
 
 The 16-bit bandwidth was a compromise motivated by the desire to
 provide redundancy in the return value, some protection against
-potential Power/EM leakage (further alleviated by the 2:1
-cryptographic conditioning discussed in Section \ref{sec:req-es]),
+potential Power/EM leakage (further alleviated by the 2:1 cryptographic
+conditioning discussed in <<crypto_scalar_appx_es_crypto-cond>>),
 and the desire to have all of the bits "in the same place" on
 both RV32 and RV64 architectures for programming convenience.
 
