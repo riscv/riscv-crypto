@@ -21,10 +21,13 @@ create unnecessary security risks to users. Self-evaluation and testing
 following appropriate security standards is usually needed to achieve this.
 
 *	*Architectural Tests.* Verify RISC-V requirements in this specification,
-	such as the entropy source state transitions (<<crypto_scalar_sentropy>>)
-	and access control (<<crypto_scalar_es_access>>). The scope of RISC-V
-	architectural tests are those behaviors that are independent of the
-	entropy source details (a smoke test ES module may be sufficient).
+	such as that `sentropy` ES16 seed words can only be read once, and that
+	the state transitions (<<crypto_scalar_sentropy>>,
+	<<crypto_scalar_es_getnoise>>) and
+	access control (<<crypto_scalar_es_access>>) are correctly implemented.
+	The scope of RISC-V architectural tests are those behaviors that 
+	are independent of the entropy source details (a smoke test ES module
+	may be sufficient for this).
 *	*Technical justification for entropy.* This may take the form of a
 	stochastic model or a heuristic argument that explains why the noise
 	source output is from a random rather than pseudorandom (deterministic)

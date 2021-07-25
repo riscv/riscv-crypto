@@ -18,12 +18,13 @@ output can be used. For further references, see cite:[SaNeMa20,SaNeMa21].
 [[crypto_scalar_sentropy]]
 === The `sentropy` CSR
 
-`sentropy` is an S-Mode CSR at address `0x9XX` _(XXX Preliminary Assignment)_.
+`sentropy` is an S-Mode CSR at address `0x546` _(XXX Preliminary)_.
 
 For security reasons, it is essential that secret entropy words are not
 made available multiple times. Hence polling (reading) must also have
 the side effect of clearing the entropy source. This can be accomplished
-with an instruction such as `csrrw rd, sentropy, x0`.
+with an instruction such as `csrrw rd, sentropy, x0`. A read-only
+access to this CSR causes an Illegal Instruction Exception _(XXX)_.
 
 Encoding::
 [wavedrom, , svg]
