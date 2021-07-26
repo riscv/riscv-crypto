@@ -18,13 +18,9 @@ output can be used. For further references, see cite:[SaNeMa20,SaNeMa21].
 [[crypto_scalar_sentropy]]
 === The `sentropy` CSR
 
-`sentropy` is an S-Mode CSR at address `0x546` _(XXX Preliminary)_.
-
-For security reasons, it is essential that secret entropy words are not
-made available multiple times. Hence polling (reading) must also have
-the side effect of clearing the entropy source. This can be accomplished
-with an instruction such as `csrrw rd, sentropy, x0`. A read-only
-access to this CSR causes an Illegal Instruction Exception _(XXX)_.
+The entropy source is accessed via S Mode CSR `sentropy` at address `0x546`.
+It must be read (polled) with a destructive instruction such as 
+`csrrw rd, sentropy, x0`.
 
 Encoding::
 [wavedrom, , svg]
@@ -57,9 +53,20 @@ indicating successful polling, or with *no* entropy and one of three
 polling failure statuses `BIST` (00), `WAIT` (01), or `DEAD` (11),
 discussed below.
 
-Each returned `ES16` represents unique randomness, even if its
+Each returned `ES16` `seed` represents unique randomness, even if its
 numerical value is the same as that of a previously polled `ES16` value.
 The security requirements of output are defined in <<crypto_scalar_es_req>>.
+
+For security reasons, the interface guarantees that secret entropy
+words are not made available multiple times. Hence polling (reading) must
+also have the side effect of clearing (wipe-on-read) the `seed` contents and
+changing the state to `WAIT`, unless there is another entropy `seed`
+immediately available. Other states (`BIST`, `WAIT`, and `DEAD`) may
+be unaffected by polling.
+
+Attempted non-destructive access (such as `CSRRS` or `CSRRC` with rs1=x0)
+to `sentropy` causes an Illegal Instruction Exception, as does any
+operation without appropriate privileges. See <<crypto_scalar_es_access>>.
 
 When `OPST` is not `ES16`, `seed` must be set to 0.
 An implementation may safely set reserved and custom bits to zeros.
@@ -79,7 +86,7 @@ since true entropy sources may not have very high bandwidth.
 
 * `10` - `ES16`
 indicates success; the low bits `sentropy[15:0]` will have 16 bits of
-randomness, which is be guaranteed to meet certain minimum entropy
+randomness, which is guaranteed to meet certain minimum entropy
 requirements regardless of implementation.
 
 * `11` - `DEAD`
@@ -149,13 +156,12 @@ output blocks.
 The implication is that every 256-bit sequence should have min-entropy
 of at least 192 bits, as discussed in SP 800-90C cite:[BaKeRo:21];
 the likelihood of successfully guessing an individual 256-bit output
-sequence should not be higher than 2^-192^ even with almost
+sequence should not be higher than 2^-192^ even with (almost)
 unconstrained amount of entropy source data and computational power.
 
 Even though the requirement is defined in terms of 128-bit full entropy
-blocks, we recommend 256-bit security. This can be accomplished but using
-at least 512 `seed` bits  to seed a DRBG that has 256-bit security against
-attacks.
+blocks, we recommend 256-bit security. This can be accomplished by using
+at least 512 `seed` bits to initialize a DRBG that has 256-bit security.
 
 [[crypto_scalar_es_req_ptg2]]
 ==== BSI AIS-31 PTG.2 / Common Criteria Requirements
@@ -203,7 +209,7 @@ strength shall not reduce it to less than 256 bits. If the security
 level is under 256 bits, then the interface must not be available.
 
 A virtual entropy source does not need to implement WAIT or BIST states.
-It should fail (DEAD) if the host DRBG or entropy source fails. 
+It should fail (DEAD) if the host DRBG or entropy source fails.
 
 
 [[crypto_scalar_es_access]]
@@ -212,8 +218,14 @@ It should fail (DEAD) if the host DRBG or entropy source fails.
 The `sentropy` CSR is not available to general user processes. The table
 below summarizes the access patterns in relation to the basic RISC-V
 privilege levels. S-mode access to the entropy source is controlled via
-the `mseccfg.SKES` bit. This is bit 8 of `mseccfg` CSR
-_(XXX Preliminary assignment 0x747)_.
+the `mseccfg.SKES` bit. This is bit 8 of `mseccfg` CSR.
+
+The interface guarantees that access to this CSR will make `seed` entropy
+values available only once. All successful accesses will have the
+side effect of clearing (polling) the register. A nondestructive read
+attempt (such as `CSRRS` and `CSRRC` with rs1=x0 or `CSRRSI` and `CSRRCI`
+with zero immediate) on `sentropy` will raise an Illegal Instruction
+Exception.
 
 .Entropy Source Access Control.
 

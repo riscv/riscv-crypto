@@ -20,21 +20,20 @@ designs, RISC-V expects that they behave in a compatible manner and do not
 create unnecessary security risks to users. Self-evaluation and testing
 following appropriate security standards is usually needed to achieve this.
 
-*	*Architectural Tests.* Verify RISC-V requirements in this specification,
-	such as that `sentropy` ES16 seed words can only be read once, and that
-	the state transitions (<<crypto_scalar_sentropy>>,
-	<<crypto_scalar_es_getnoise>>) and
+*	*Architectural Tests.* Verify RISC-V requirements in this specification;
+	`sentropy` ES16 seed words can only be read once, and state transitions
+	(<<crypto_scalar_sentropy>> and <<crypto_scalar_es_getnoise>>) and
 	access control (<<crypto_scalar_es_access>>) are correctly implemented.
 	The scope of RISC-V architectural tests are those behaviors that 
-	are independent of the entropy source details (a smoke test ES module
-	may be sufficient for this).
+	are independent of the entropy source details. A smoke test ES module
+	may be sufficient for this.
 *	*Technical justification for entropy.* This may take the form of a
 	stochastic model or a heuristic argument that explains why the noise
-	source output is from a random rather than pseudorandom (deterministic)
-	process and also not observable or guessable. A complete physical model is
-	typically not necessary; research literature can be cited. For example,
-	good ring oscillator noise is not merely random-looking but
-	derives some amount of physical entropy from local, spontaneously
+	source output is from a random, rather than pseudorandom (deterministic)
+	process, and also not directly observable. A complete physical
+	model is not necessary; research literature can be cited.
+	For example, good ring oscillator noise is not merely random-looking
+	because it derives an amount of physical entropy from local, spontaneously
 	occurring Johnson-Nyquist thermal noise cite:[Sa21].
 *	*Design Review.* An entropy source is more than a noise source, and has
 	features such as health tests (<<crypto_scalar_es_security_controls>>),
@@ -42,7 +41,7 @@ following appropriate security standards is usually needed to achieve this.
 	boundary with clearly defined interfaces. One may tabulate the SHALL
 	statements of SP 800-90B cite:[TuBaKe:18], FIPS 140-3 Implementation
 	Guidance cite:[NICC21], AIS-31 cite:[KiSc11] or other standards being
-	used. Simpler, non-official checklist tables are available:
+	used. Official and non-official checklist tables are available:
 	https://github.com/usnistgov/90B-Shall-Statements
 *	*Experimental Tests.* The raw noise source is subjected to entropy
 	estimation (H~original~).The interface described in 
@@ -64,13 +63,10 @@ implementation options.
 NOTE: It is one of the goals of the RISC-V Entropy Source specification
 that a standard 90B Entropy Source Module or AIS-31 RNG IP may be licensed
 from a third party and integrated with a RISC-V processor design. Compared
-to older (FIPS 140-2) RNG and DRBG Modules, an entropy source module may
-have a relatively small area (just a few thousand NAND2 gate equivalent) as an
-Entropy Source circuit itself does not need to contain components such as AES.
-The availability of such IP modules is increasing as in 2021, CMVP is
-introducing a separate Entropy Source Validation Scope. This allows entropy
-source validations to be re-used for different (FIPS 140-3) modules that
-contain ("consume") them.
+to older (FIPS 140-2) RNG and DRBG modules, an entropy source module may
+have a relatively small area (just a few thousand NAND2 gate equivalent).
+CMVP is introducing an "Entropy Source Validation Scope" which allows 90B
+validations to be re-used for different (FIPS 140-3) modules.
 
 
 === Standards and Terminology
