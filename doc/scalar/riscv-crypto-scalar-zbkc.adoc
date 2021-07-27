@@ -7,7 +7,7 @@ have a considerable implementation overhead which cannot be amortised
 across other instructions.
 
 NOTE: These instructions are defined in the first Bitmanip
-ratification package.
+ratification package for the `Zbc` extension.
 All of the instructions in <<zbkc>> have their complete specification included
 in this document, including those _not_ present in the initial
 Bitmanip ratification package.

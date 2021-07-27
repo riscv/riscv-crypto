@@ -1,8 +1,8 @@
 [[zbkb,Zbkb]]
 === `Zbkb` - Bitmanip instructions for Cryptography
 
-These are a subset of the Bitmanipulation Extension which are particularly
-useful for Cryptography.
+These are a subset of the Bitmanipulation Extension `Zbb` which are
+particularly useful for Cryptography.
 
 NOTE: Some of these instructions are defined in the first Bitmanip
 ratification package, and some are not (

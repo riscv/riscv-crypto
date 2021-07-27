@@ -42,7 +42,7 @@ contributed to the RISC-V cryptography extension.
 
 Many of the primitive operations used in symmetric key cryptography
 and cryptographic hash functions are well supported by the
-RISC-V Bitmanip cite:[riscv:bitmanip:repo] extension.
+RISC-V Bitmanip cite:[riscv:bitmanip:repo] extensions.
 
 NOTE: This section repeats much of the information in
 <<zbkb>>,
@@ -52,13 +52,13 @@ and
 but includes more rationale.
 
 We proposed that the scalar cryptographic extension _reuse_ a
-subset of the instructions from the Bitmanip extension directly.
+subset of the instructions from the Bitmanip extensions `Zb[abc]` directly.
 Specifically, this would mean that
 a core implementing
 _either_
 the scalar cryptographic extensions,
 _or_
-the Bitmanip extension,
+the `Zb[abc]`,
 _or_
 both,
 would be required to implement these instructions.
@@ -108,9 +108,6 @@ They are all parameterisations of the Generalised Reverse with Immediate
 The scalar cryptography extension requires _only_ the above instances
 of `grevi` be implemented, which can be invoked via their pseudo-ops.
 
-Cores which also implement the Bit-manipulation extension _must_
-implement the complete `grevi` instruction as specified there, not the
-minimal subset described here.
 The full specification of the `grevi` instruction is available in
 cite:[riscv:bitmanip:draft] (Section 2.2.2).
 
@@ -136,9 +133,6 @@ of `[un]shfli` be implemented, which can be invoked via their
 pseudo-ops.
 Only RV32 implementations require these instructions.
 
-Cores which also implement the Bit-manipulation extension _must_
-implement the `[un]shfli` instruction as specified there, not the
-minimal subset described here.
 The full specification of the `shfli` instruction is available in
 cite:[riscv:bitmanip:draft] (Section 2.2.3).
 
