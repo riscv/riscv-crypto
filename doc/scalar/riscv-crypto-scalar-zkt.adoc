@@ -41,8 +41,8 @@ middleware due to the limitations of other ISA processors.
 The stated goal is that OpenSSL, BoringSSL (Android), the Linux Kernel,
 and similar trusted software will not have directly observable
 timing side channels when compiled and running on a Zkt-enabled RISC-V target.
-The Zkt extension explicitly formalises the latency assumptions made by
-cryptography developers.
+The Zkt extension explicitly states many of the common latency assumptions
+made by cryptography developers.
 
 .Note to software developers
 [WARNING,caption="SH"]
@@ -64,6 +64,8 @@ _micro-architectural_ leakages.
 _security by design_ against basic timing attacks can usually be achieved via
 conscious implementation (of relevant iterative multi-cycle instructions or
 instructions composed of micro-ops) in way that avoids data-dependant latency.
+* Laboratory testing may utilize statisticial timing attack leakage analysis
+techniques such as those described in ISO/IEC 17825 cite:[IS16].
 * Binary executables should not contain secrets in the instruction encodings
 (Kerckhoffs's principle), so instruction timing may leak information about
 immediates, ordering of input registers, etc. There may be an exception to this
