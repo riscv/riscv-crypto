@@ -13,30 +13,34 @@ implementation aspects of entropy sources. Hence we also discuss non-ISA
 (non-normative) system features that may be needed for cryptographic
 standards compliance and security testing.
 
-===	A Design and Self-Certification Checklist
+===	Checklists for Design and Self-Certification 
 
 While entropy source implementations do not have to be certified
 designs, RISC-V expects that they behave in a compatible manner and do not
 create unnecessary security risks to users. Self-evaluation and testing
 following appropriate security standards is usually needed to achieve this.
 
-*	*Architectural Tests.* Verify RISC-V requirements in this specification;
-	`sentropy` ES16 seed words can only be read once, and state transitions
-	(<<crypto_scalar_sentropy>> and <<crypto_scalar_es_getnoise>>) and
-	access control (<<crypto_scalar_es_access>>) are correctly implemented.
-	The scope of RISC-V architectural tests are those behaviors that 
-	are independent of the entropy source details. A smoke test ES module
-	may be sufficient for this.
+*	*ISA Architectural Tests.* Verify, to the extent possible, that RISC-V ISA
+	requirements in this specification are correctly implemented. This includes
+	the state transitions (<<crypto_scalar_sentropy>> and 
+	<<crypto_scalar_es_getnoise>>), access control 
+	(<<crypto_scalar_es_access>>), and that `sentropy` ES16 seed words
+	can only be read destructively.
+	The scope of RISC-V ISA architectural tests are those behaviors that 
+	are independent of the physical entropy source details. A smoke test ES
+	module may be helpful in design phase.
 *	*Technical justification for entropy.* This may take the form of a
 	stochastic model or a heuristic argument that explains why the noise
 	source output is from a random, rather than pseudorandom (deterministic)
-	process, and also not directly observable. A complete physical
-	model is not necessary; research literature can be cited.
-	For example, good ring oscillator noise is not merely random-looking
-	because it derives an amount of physical entropy from local, spontaneously
-	occurring Johnson-Nyquist thermal noise cite:[Sa21].
-*	*Design Review.* An entropy source is more than a noise source, and has
-	features such as health tests (<<crypto_scalar_es_security_controls>>),
+	process, and is not directly observable. A complete physical model is not
+	necessary; research literature can be cited.
+	For example, one can show that a good ring oscillator noise is derives an
+	amount of physical entropy from local, spontaneously occurring
+	Johnson-Nyquist thermal noise cite:[Sa21], and is therefore not merely
+	"random-looking".
+*	*Entropy Source Design Review.* An entropy source is more than a noise
+	source, and has features such as health tests
+	(<<crypto_scalar_es_security_controls>>),
 	a conditioner (<<crypto_scalar_appx_es_intro-cond>>), and a security
 	boundary with clearly defined interfaces. One may tabulate the SHALL
 	statements of SP 800-90B cite:[TuBaKe:18], FIPS 140-3 Implementation
@@ -49,13 +53,12 @@ following appropriate security standards is usually needed to achieve this.
 	purpose. For SP 800-90B, NIST has made its min-entropy estimation
 	package freely available:
 	https://github.com/usnistgov/SP800-90B_EntropyAssessment
-*	*Conditioner and Health Test Design.* One needs to show that the
-	conditioner and health test components work appropriately to either
-	meet the ES16 output requirements of <<crypto_scalar_es_req>>
-	or fail (BIST / DEAD).
+	One also needs to also show experimentally that the conditioner and
+	health test components work appropriately to meet the ES16 output entropy
+	requirements of <<crypto_scalar_es_req>>.
 *	**Resilience.** Above physical engineering steps should consider the
 	operational environment of the device, which may be unexpected or
-	hostile -- actively attempting to exploit vulnerabilities in the design.
+	hostile (actively attempting to exploit vulnerabilities in the design).
 
 See <<crypto_scalar_appx_es_implementation>> for a discussion of various 
 implementation options.
@@ -98,26 +101,20 @@ entropy source.
 [[crypto_scalar_appx_es_intro-es]]
 ==== Entropy Source (ES)
 
+Entropy sources are built by sampling and processing data from a noise
+source (<<crypto_scalar_appx_es_noise_sources>>). 
 We will only consider physical sources of true randomness in this work.
-When they meet certain design criteria, they may be used as Entropy
-Sources (ES) for cryptographic purposes.
+Since these are directly based on natural phenomena and are subject to
+environmental conditions (which may be adversarial), they require features 
+that monitor the "health" and quality of those sources. 
 
-The specification of RISC-V entropy source requirements is complicated
-by the existence of two major, slightly conflicting standards:
+The requirements for physical entropy sources are specified in
 NIST SP 800-90B cite:[TuBaKe:18] (<<crypto_scalar_es_req_90b>>)
 for U.S. Federal FIPS 140-3 cite:[NI19] evaluations and
-BSI AIS-31 cite:[KiSc01,KiSc11] (<<crypto_scalar_es_req_ptg2>>) used
-in high-security Common Criteria evaluations.
-
-Entropy sources are built by sampling and processing data from a noise
-source (<<crypto_scalar_appx_es_noise_sources>>). Since these are
-directly based on natural phenomena and are subject to environmental
-conditions (which may be adversarial), they require features and sensors
-that monitor the "health" and quality of those sources. Monitoring
-is mandated by both the SP 800-90B and AIS-31 standards.
-See <<crypto_scalar_es_security_controls>> for a discussion about
-such security controls.
-
+in BSI AIS-31 cite:[KiSc01,KiSc11] (<<crypto_scalar_es_req_ptg2>>)
+for high-security Common Criteria evaluations.
+There is some divergence in the types of health tests and entropy metrics 
+mandated in these standards, and RISC-V offers both alternatives.
 
 [[crypto_scalar_appx_es_intro-cond]]
 ==== Conditioning: Cryptographic and Non-Cryptographic
@@ -276,8 +273,8 @@ necessarily so. The technical validation process is somewhat different.
 
 ==== (<<crypto_scalar_es_req_virt>>) Virtual Sources
 
-All sources that are not direct physical sources meeting the SP 800-90B
-or the AIS-31 PTG.2 sources need to meet the security requirements
+All sources that are not direct physical sources (meeting the SP 800-90B
+or the AIS-31 PTG.2 requirements) need to meet the security requirements
 of virtual entropy sources. It is assumed that a virtual entropy source
 is not a limiting, shared bandwidth resource (but a software DRBG).
 
@@ -684,13 +681,14 @@ or considered "full entropy."
 
 Examples of cryptographic conditioners include the random pool of the
 Linux operating system, secure hash functions (SHA-2/3, SHAKE
-cite:[nist:fips:202,nist:fips:180:4] ), and the AES-based CBC-MAC
-construction in  Appendix F, SP 800-90B cite:[TuBaKe:18].
+cite:[nist:fips:202,nist:fips:180:4]), and the AES / CBC-MAC
+construction in Appendix F, SP 800-90B cite:[TuBaKe:18].
 
 In some constructions, such as the Linux RNG and SHA-3/SHAKE
 cite:[nist:fips:202] based generators, the cryptographic conditioning
 and output (DRBG) generation are provided by the same component.
 
+*Rationale:*
 For many low-power targets constructions the type of hardware AES CBC-MAC
 conditioner used by Intel cite:[Me18] and AMD cite:[AM17] would be too
 complex and energy-hungry to implement solely to serve `sentropy`.
@@ -732,7 +730,7 @@ meet our needs for government and military applications for the
 foreseeable future.
 
 A Quantum Random Number Generator (QRNG) is a TRNG whose source of
-randomness can be unambiguously identified to be a \emph{specific]
+randomness can be unambiguously identified to be a specific
 quantum phenomenon such as quantum state superposition, quantum state
 entanglement, Heisenberg uncertainty, quantum tunneling, spontaneous
 emission, or radioactive decay cite:[IT19].
@@ -803,10 +801,11 @@ unconditioned, noise samples. This conceptual test interface is named
 GetNoise in Section 2.3.2 of NIST SP 800-90B cite:[TuBaKe:18]; this
 is not a name of an instruction or pseudoinstruction.
 
-In order for shared drivers to be able to accommodate the test interface
-in a secure fashion, we suggest that it is implemented as a custom, M-mode
-CSR, denoted here as `mnoise`. This is to facilitate the use of shared
-RISC-V self-certification scripts for entropy sources.
+In order for operating systems and shared drivers to be able to accommodate
+the test interface in a secure fashion, we suggest that it is implemented
+as a custom, M-mode CSR, denoted here as `mnoise`. This is also to
+facilitate the use of shared RISC-V self-certification scripts for entropy
+sources.
 
 This interface is not intended to be used as a source of randomness or for
 other production use. We define the semantics for single bit for this custom interface, `mnoise[31]`, which is named `NOISE_TEST`. 
@@ -847,7 +846,8 @@ affect ES16 entropy output from the `sentropy` interface is discouraged.
 Such vendor test interfaces have been exploited in attacks. For example,
 an ECDSA cite:[nist:fips:186:4] signature process without sufficient
 entropy will not only create an insecure signature but can also reveal
-the secret signing key. Even a temporary lapse in ES16 security may break
-the security of the entire system.
+the secret signing key, that can be used for authentication forgeries by
+attackers. Hence even a temporary lapse in ES16 security may have serious
+security implications.
 ====
 
