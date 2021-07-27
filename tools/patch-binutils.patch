@@ -49,7 +49,7 @@ index 541815ba7e..9ecaa73656 100644
  	    case 'd':		/* Destination register.  */
  	    case 's':		/* Source register.  */
 diff --git a/include/opcode/riscv-opc.h b/include/opcode/riscv-opc.h
-index 1d2e46aaad..4a4cb8b88d 100644
+index 1d2e46aaad..f1a68a597b 100644
 --- a/include/opcode/riscv-opc.h
 +++ b/include/opcode/riscv-opc.h
 @@ -339,6 +339,70 @@
@@ -78,13 +78,13 @@ index 1d2e46aaad..4a4cb8b88d 100644
 +#define MASK_SHA256SIG1  0xfff0707f
 +#define MATCH_SHA256SIG1 0x10301013
 +#define MASK_AES32ESMI  0x3e00707f
-+#define MATCH_AES32ESMI 0x36000033
++#define MATCH_AES32ESMI 0x26000033
 +#define MASK_AES32ESI  0x3e00707f
-+#define MATCH_AES32ESI 0x32000033
++#define MATCH_AES32ESI 0x22000033
 +#define MASK_AES32DSMI  0x3e00707f
-+#define MATCH_AES32DSMI 0x3e000033
++#define MATCH_AES32DSMI 0x2e000033
 +#define MASK_AES32DSI  0x3e00707f
-+#define MATCH_AES32DSI 0x3a000033
++#define MATCH_AES32DSI 0x2a000033
 +#define MASK_SHA512SUM0R  0xfe00707f
 +#define MATCH_SHA512SUM0R 0x50000033
 +#define MASK_SHA512SUM1R  0xfe00707f
