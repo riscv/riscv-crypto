@@ -1,16 +1,6 @@
 [[crypto_scalar_zkt]]
-= Data Independent Execution Latency Subset: ZKt
 
-.Note to readers
-[NOTE,caption="SH"]
-====
-This section is based on proposals from
-link:https://github.com/rvkrypto/riscv-zkt-list[here].
-Specifically, commit `9054acb`:
-
- v0.02: 2021-04-09   Markku-Juhani O. Saarinen (Ed.) and contributors.
-
-====
+== Data Independent Execution Latency Subset: Zkt
 
 The Zkt extension attests that the machine has data-independent execution
 time for a safe subset of instructions. This property is commonly called
@@ -29,7 +19,7 @@ timing channel is considered a serious security vulnerability and will
 typically result in a CERT CVE security advisory.
 ====
 
-== Scope and Goal
+=== Scope and Goal
 
 An "ISA contract" is made between a programmer and the RISC-V implementation
 that Zkt instructions do not leak information about processed secret data
@@ -51,8 +41,8 @@ middleware due to the limitations of other ISA processors.
 The stated goal is that OpenSSL, BoringSSL (Android), the Linux Kernel,
 and similar trusted software will not have directly observable
 timing side channels when compiled and running on a Zkt-enabled RISC-V target.
-The Zkt extension explicitly formalises the latency assumptions made by
-cryptography developers.
+The Zkt extension explicitly states many of the common latency assumptions
+made by cryptography developers.
 
 .Note to software developers
 [WARNING,caption="SH"]
@@ -68,13 +58,14 @@ It is not within the remit of this proposal to mitigate these
 _micro-architectural_ leakages.
 ====
 
-
-== Rationale
+=== Rationale
 
 * Architectural testing for Zkt can be pragmatic and semi-formal;
 _security by design_ against basic timing attacks can usually be achieved via
 conscious implementation (of relevant iterative multi-cycle instructions or
 instructions composed of micro-ops) in way that avoids data-dependant latency.
+* Laboratory testing may utilize statisticial timing attack leakage analysis
+techniques such as those described in ISO/IEC 17825 cite:[IS16].
 * Binary executables should not contain secrets in the instruction encodings
 (Kerckhoffs's principle), so instruction timing may leak information about
 immediates, ordering of input registers, etc. There may be an exception to this
@@ -105,11 +96,8 @@ specific zeroization/sanitisation or by being declared ciphertext
 *  Cryptographers typically assume division to be variable-time (while
 multiplication is constant time) and implement their Montgomery reduction
 routines with that assumption.
-* Open item: We could make division half-constant time by requiring that
-`div*` and `rem*` latency is independent of the dividend (rs1). Different values of
-rs2 (e.g. 0) may have a different latency.
-* Zicsr, Zifencei excluded, apart from specific formats related to Krypto and
-timing, to be discussed.
+* Zicsr, Zifencei are excluded, apart from specific formats related to Krypto
+and timing, to be discussed.
 * Some instructions are on the list simply because we see no harm in
 including them in testing scope.
 * Vendors do not have to implement all of the list's instructions to be Zkt
@@ -121,7 +109,7 @@ excruciatingly slow when compared to implementation with AES instructions.
 Without Zkt there are no guarantees of even a bit-sliced implementation being
 secure.
 
-== Background Information
+=== Background Information
 
 For background information on secure programming "models", see:
 
@@ -137,7 +125,7 @@ https://summerschool-croatia.cs.ru.nl/2016/slides/PeterSchwabe.pdf
 https://www.kb.cert.org/vuls/id/997481 and related academic papers.
 
 
-== Zkt listings
+=== Zkt listings
 
 The following instructions are included in the `Zkt` subset
 They are listed here grouped by their original parent extension.
@@ -150,7 +138,7 @@ Rather, every one of these instructions that the core does implement must
 adhere to the requirements of `Zkt`.
 ====
 
-===    RVI (Base Instruction Set)
+====	RVI (Base Instruction Set)
 
 Only basic arithmetic and `slt*` (for carry computations) are included.
 
@@ -193,7 +181,7 @@ Only basic arithmetic and `slt*` (for carry computations) are included.
 |          | &#10003; | sraw  _rd_, _rs1_, _rs2_ |  <<insns-sraw>>
 |===
 
-===    RVM (Multiply)
+====	RVM (Multiply)
 
 Multiplication is included; division and remaindering excluded.
 
@@ -211,7 +199,7 @@ Multiplication is included; division and remaindering excluded.
 |          | &#10003; | mulw   _rd_, _rs1_, _rs2_ | <<insns-mulw>>
 |===
 
-===    RVC (Compressed)
+====	RVC (Compressed)
 
 Same criteria as in RVI. Organised by quadrants.
 
@@ -227,9 +215,7 @@ Same criteria as in RVI. Organised by quadrants.
 | &#10003; | &#10003; | c.addiw    | <<insns-c_addiw>>
 | &#10003; | &#10003; | c.lui      | <<insns-c_lui>>
 | &#10003; |          | c.srli     | <<insns-c_srli>>
-|          | &#10003; | c.srli64   | <<insns-c_srli64>>
 | &#10003; |          | c.srai     | <<insns-c_srai>>
-|          | &#10003; | c.srai64   | <<insns-c_srai64>>
 | &#10003; | &#10003; | c.andi     | <<insns-c_andi>>
 | &#10003; | &#10003; | c.sub      | <<insns-c_sub>>
 | &#10003; | &#10003; | c.xor      | <<insns-c_xor>>
@@ -238,14 +224,16 @@ Same criteria as in RVI. Organised by quadrants.
 | &#10003; | &#10003; | c.subw     | <<insns-c_subw>>
 | &#10003; | &#10003; | c.addw     | <<insns-c_addw>>
 | &#10003; |          | c.slli     | <<insns-c_slli>>
-|          | &#10003; | c.slli64   | <<insns-c_slli64>>
 | &#10003; | &#10003; | c.mv       | <<insns-c_mv>>
 | &#10003; | &#10003; | c.add      | <<insns-c_add>>
 |===
 
-===    RVK (Scalar Cryptography)
+====	RVK (Scalar Cryptography)
 
 All K-specific, non-debug instructions included.
+Additionally, the `sentropy` CSR polling latency should be independent of
+ES16 output `seed` bits, as that is a sensitive security parameter.
+See <<crypto_scalar_appx_es_access>>.
 
 [%header,cols="^1,^1,4,8"]
 |===
@@ -283,11 +271,10 @@ All K-specific, non-debug instructions included.
 | &#10003; | &#10003; | sm3p1        | <<insns-sm3p1>>
 | &#10003; | &#10003; | sm4ed        | <<insns-sm4ed>>
 | &#10003; | &#10003; | sm4ks        | <<insns-sm4ks>>
-| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_es_pollentropy>>
-| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_es_getnoise>>
 |===
 
-=== RVB (Bitmanip)
+
+====	RVB (Bitmanip)
 
 The <<zbkb>>, <<zbkx>> and <<zbkx>> extensions are included in their entirety.
 

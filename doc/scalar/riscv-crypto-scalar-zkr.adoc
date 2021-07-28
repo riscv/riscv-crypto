@@ -2,18 +2,10 @@
 === `Zkr` - Entropy Source Extension
 
 Entropy source for seeding random number generators.
-Both of these are pseudo-instructions, and alias particular CSR read
-instructions.
-See <<crypto_scalar_es>> for a complete explanation.
 
-[%header,cols="^1,^1,4,8"]
-|===
-|RV32
-|RV64
-|Mnemonic
-|Instruction
+The entropy source is accessed via `sentropy` CSR, and currently has no
+specific instructions associated with it.
 
-| &#10003; | &#10003; | pollentropy  | <<crypto_scalar_es_pollentropy>>
-| &#10003; | &#10003; | (getnoise)   | <<crypto_scalar_es_getnoise>>
-|===
+See <<crypto_scalar_es>> and <<crypto_scalar_appx_es>> for further
+information.
 
