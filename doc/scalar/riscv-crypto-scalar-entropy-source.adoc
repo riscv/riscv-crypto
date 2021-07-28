@@ -231,16 +231,17 @@ Exception.
 
 [cols="1,1,3",options="header",]
 |=======================================================================
-|Mode | Can poll ? |Description
+|Mode | Can poll? |Description
 
 |*M*
-|Yess
-|The `sentropy` interface is available  in machine mode.
+|Yes
+|The `sentropy` interface is available in machine mode.
 
 |*S*, *HS*
 |`mseccfg.SKES`
 | S and HS mode may access `sentropy` directly if `mseccfg.SKES=1`,
-  otherwise accesses to `sentropy` will trap with an Illegal Instruction Exception.
+  otherwise accesses to `sentropy` will trap with an Illegal Instruction
+  Exception.
 
 |*U*, *VS*, *VU*
 |No
