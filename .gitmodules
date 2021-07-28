@@ -4,9 +4,6 @@
 [submodule "extern/riscv-gnu-toolchain"]
 	path = extern/riscv-gnu-toolchain
 	url = https://github.com/riscv/riscv-gnu-toolchain.git
-[submodule "extern/riscv-isa-sim"]
-	path = extern/riscv-isa-sim
-	url = https://github.com/riscv/riscv-isa-sim.git
 [submodule "extern/riscv-compliance"]
 	path = extern/riscv-arch-test
 	url = https://github.com/riscv/riscv-compliance.git
