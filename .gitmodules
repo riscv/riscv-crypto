@@ -16,3 +16,6 @@
 [submodule "extern/sail-riscv"]
 	path = extern/sail-riscv
 	url = git@github.com:ben-marshall/sail-riscv
+[submodule "extern/riscv-isa-sim"]
+	path = extern/riscv-isa-sim
+	url = git@github.com:riscv/riscv-isa-sim
