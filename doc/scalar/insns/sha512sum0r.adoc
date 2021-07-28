@@ -60,14 +60,14 @@ Included in::
 |Lifecycle state
 
 | <<zknh>>
-| v0.9.3
-| Frozen
+| v0.9.4
+| Stable
 | <<zkn>>
-| v0.9.3
-| Frozen
+| v0.9.4
+| Stable
 | <<zk>>
-| v0.9.3
-| Frozen
+| v0.9.4
+| Stable
 |===
 
 

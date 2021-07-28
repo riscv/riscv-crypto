@@ -3,7 +3,7 @@
 :description: The scalar cryptography and entropy source extensions for the RISC-V ISA.
 :company: RISC-V.org
 :revdate: 24'th June, 2021
-:revnumber: 0.9.3
+:revnumber: 0.9.4
 :revremark: This document is in the Stable state. Assume anything could still change, but limited change should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
