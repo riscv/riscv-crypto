@@ -34,7 +34,7 @@ following appropriate security standards is usually needed to achieve this.
 	source output is from a random, rather than pseudorandom (deterministic)
 	process, and is not directly observable. A complete physical model is not
 	necessary; research literature can be cited.
-	For example, one can show that a good ring oscillator noise is derives an
+	For example, one can show that a good ring oscillator noise derives an
 	amount of physical entropy from local, spontaneously occurring
 	Johnson-Nyquist thermal noise cite:[Sa21], and is therefore not merely
 	"random-looking".
