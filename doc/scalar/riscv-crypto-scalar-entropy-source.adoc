@@ -67,9 +67,9 @@ changing the state to `WAIT` (unless there is another entropy `seed`
 immediately available for `ES16`). Other states (`BIST`, `WAIT`, and `DEAD`)
 may be unaffected by polling.
 
-Attempted non-destructive access (such as `CSRRS` or `CSRRC` with rs1=x0)
-to `sentropy` causes an Illegal Instruction Exception, as does any
-operation without appropriate privileges. See <<crypto_scalar_es_access>>.
+Attempted non-destructive (no write) access to `sentropy` causes an Illegal
+Instruction Exception, as does any operation without appropriate privileges.
+See <<crypto_scalar_es_access>>.
 
 
 The Status Bits at `sentropy[31:30]`=`OPST`:
@@ -223,7 +223,7 @@ the `mseccfg.SKES` bit. This is bit 8 of `mseccfg` CSR.
 The interface guarantees that access to this CSR will make `seed` entropy
 values available only once. All successful accesses will have the
 side effect of clearing (polling) the register. A nondestructive read
-attempt (such as `CSRRS` and `CSRRC` with rs1=x0 or `CSRRSI` and `CSRRCI`
+attempt (such as `CSRRS` / `CSRRC` with rs1=x0 or `CSRRSI` / `CSRRCI`
 with zero immediate) on `sentropy` will raise an Illegal Instruction
 Exception.
 
