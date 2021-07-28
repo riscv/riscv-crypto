@@ -1,27 +1,28 @@
 [[crypto_scalar_es]]
 == Entropy Source
 
-The proposed RISC-V TRNG ISA is primarily an Entropy Source (ES)
-interface. A valid implementation should satisfy properties that allow
-it to be used to _seed_ standard and nonstandard cryptographic
-DRBGs of virtually any state size and security level.
+The `sentropy` CSR provides an interface for a NIST SP 800-90B
+cite:[TuBaKe:18] or BSI AIS-31 cite:[KiSc11] compliant Entropy Source (ES).
+An entropy source, by itself, is not a cryptographically secure Random
+Bit Generator (RBG), but can be used to build standard (and nonstandard)
+RBGs of many types with the help of symmetric cryptography. Expected usage
+is to condition (typically, SHA 2/3) the output from an entropy source and
+use it to seed a cryptographically secure Deterministic Random Bit Generator
+(DRBG) such as AES-based `CTR_DRBG` cite:[BaKe15].
+The combination of ES (`sentropy` CSR) , Conditioning, and DRBG can be used
+to create random bits securely cite:[BaKeRo:21].
 
-The purpose of this baseline specification is to guarantee that a simple,
-device-independent driver component (e.g., in Linux kernel, embedded
-firmware, or a cryptographic library) can use the ISA instruction to
-generate truly random bits.
-
-See <<crypto_scalar_appx_es>> for rationale and further discussion.
-This section is also supported by cite:[SaNeMa20,SaNeMa21].
+See <<crypto_scalar_appx_es>> for a description of a certification and 
+self-certification procedure, design rationale, and more detailed 
+suggestions on how the entropy source output can be used. For further
+references, see cite:[SaNeMa20,SaNeMa21].
 
 [[crypto_scalar_sentropy]]
-=== `sentropy` CSR
+=== The `sentropy` CSR
 
-`sentropy` is a read-only S-Mode CSR at address `0xDBF`
-
-NOTE: This address many change before the extension is ratified.
-
-NOTE: Previous versions of this document had the interface at `mentropy` at read-only M-mode address `0xF15`.
+The entropy source is accessed via S Mode CSR `sentropy` at address `0x546`.
+It must be read (polled) with a destructive instruction such as 
+`csrrw rd, sentropy, x0`.
 
 Encoding::
 [wavedrom, , svg]
@@ -39,65 +40,54 @@ Encoding::
 |Bits |Name |Description
 |`63:32` |_Set to 0_ |Upper bits are set to zero in RV64.
 
-|`31:30` |`OPST` |Status: `BIST` (00), `ES16` (01), `WAIT` (10), `DEAD`
+|`31:30` |`OPST` |Status: `BIST` (00), `WAIT` (01), `ES16` (10), `DEAD`
 (11).
 
 |`29:24` |_reserved_ |For future use by the RISC-V specification.
 
-|`23:16` |_custom_ |Reserved for custom and experimental use.
+|`23:16` |_custom_ |Designated for custom and experimental use.
 
 |`15: 0` |`seed` |16 bits of randomness, only when `OPST=ES16`.
 |=======================================================================
 
-The status bits `sentropy[31:30]` = `OPST` are set to `ES16` (01),
-indicating successful polling, or with *no* entropy and one of three
-polling failure statuses `BIST` (00), `WAIT` (10), or `DEAD` (11),
-discussed below.
-Reads of `sentropy` are *non-blocking* and return immediately.
-The access does not stall until an `ES16` status can be returned.
+The status bits `sentropy[31:30]` = `OPST` may be `ES16` (10),
+indicating successful polling, or one of three entropy polling failure
+statuses `BIST` (00), `WAIT` (01), or `DEAD` (11), discussed below.
 
-[NOTE]
-====
-Reading `sentropy` is defined as non-blocking because it is expected
-to be used as a polling interface.
-Implementers can hence create _"fast"_ paths within cores to read
-`sentropy` without any latency overhead which might normally be
-associated with CSR accesses.
-====
-
-[IMPORTANT]
-====
-The sixteen bits of randomness in `seed` (located in `sentropy[15:0]`)
-polled with `ES16` status *must be cryptographically conditioned*
-before they can be used as SSPs (Sensitive Security Parameters) or
-keying material. We suggest entropy output to be post-processed in
-blocks of at least 256 bits, with a 128-bit resulting output block.
-====
-
-When `OPST` is not `ES16`, `seed` must be set to 0.
+Each returned `ES16` `seed` represents unique randomness, even if its
+numerical value is the same as that of a previously polled `ES16` value.
+The `seed` security requirements of output are defined in 
+<<crypto_scalar_es_req>>. When `OPST` is not `ES16`, `seed` must be set to 0.
 An implementation may safely set reserved and custom bits to zeros.
-A polling software interface must ignore their contents.
+
+For security reasons, the interface guarantees that secret entropy
+words are not made available multiple times. Hence polling (reading) must
+also have the side effect of clearing (wipe-on-read) the `seed` contents and
+changing the state to `WAIT` (unless there is another entropy `seed`
+immediately available for `ES16`). Other states (`BIST`, `WAIT`, and `DEAD`)
+may be unaffected by polling.
+
+Attempted non-destructive (no write) access to `sentropy` causes an Illegal
+Instruction Exception, as does any operation without appropriate privileges.
+See <<crypto_scalar_es_access>>.
+
 
 The Status Bits at `sentropy[31:30]`=`OPST`:
 
 * `00` - `BIST`
-indicates that Built-In Self-Test "on-demand" (BIST) statistical
-testing is being performed. If the system returns temporarily to `BIST`
-from any other state, this signals a non-fatal (usually non-actionable)
-self-test alarm. BIST is also used to signal the GetNoise test mode
-(<<crypto_scalar_es_getnoise>>).
+indicates that Built-In Self-Test "on-demand" (BIST) testing is being
+performed. If `OPST` returns temporarily to `BIST` from any other
+state, this signals a non-fatal (usually non-actionable) self-test alarm.
 
-* `01` - `ES16`
-indicates success; the low bits `sentropy[15:0]` will have 16 bits of
-randomness, which is be guaranteed to meet the entropy requirements
-regardless of implementation. For example, `0x4000ABCD` is a valid
-`ES16` status output on RV32, with `0xABCD` being the `seed` value.
-
-* `10` - `WAIT`
+* `01` - `WAIT`
 means that a sufficient amount of entropy is not yet available. This
 is not an error condition and may (in fact) be more frequent than ES16
-since true entropy sources may not have very high bandwidth. If polling
-in a loop, we suggest calling (wait for interrupt) before the next poll.
+since true entropy sources may not have very high bandwidth.
+
+* `10` - `ES16`
+indicates success; the low bits `sentropy[15:0]` will have 16 bits of
+randomness, which is guaranteed to meet certain minimum entropy
+requirements, regardless of implementation.
 
 * `11` - `DEAD`
 is an unrecoverable self-test error. This may indicate a hardware
@@ -106,67 +96,18 @@ false positive in the continuous testing procedures. In case of a fatal
 failure, an immediate lockdown may also be an appropriate response in
 dedicated security devices.
 
-[[crypto_scalar_es_pollentropy]]
-=== PollEntropy Instruction
-
-Synopsis::
-The main ISA-level interface consists of a single pseudo-instruction,
-`pollentropy`, which returns a 32/64-bit value in a CPU register.
-
-Mnemonic::
-pollentropy rd
-
-It is an alias for `csrrs rd, sentropy, x0`
-
-Description::
-`pollentropy` reads `XLEN` bits from the
-<<crypto_scalar_sentropy,`sentropy`>> CSR into `rd`.
-It is available in Machine Mode (M-mode may be the only mode) or
-optionally in Supervisor (S) Mode. See access control notes in
-<<crypto_scalar_es_access>>.
-
-NOTE: Access to `sentropy` using other CSR access instructions is still
-permitted, and all normal access control rules to a read-only, Supervisor
-mode CSR still apply. Software should _only_ access `sentropy`
-using the pseudo-instruction. This allows implementers to more easily create
-faster access paths to `sentropy`, without any of the more heavyweight
-logic associated with other CSR accesses.
-
-[[crypto_scalar_es_polling]]
-=== Polling Mechanism
+**Example.** `0x000000004000ABCD` is a valid `ES16`
+status output on RV64, with `0xABCD` being the `seed` value.
 
 [[crypto_scalar_es_state,reftext="Entropy Source State Transition Diagram"]]
 ====
-image::es_state.svg[title="Entropy Source state transition diagram.", align="center"]
+image::es_state.svg[title="Entropy Source state transition diagram.", align="center",scaledwidth=50%]
 Normally the operational state alternates between WAIT
 (no data) and ES16, which means that 16 bits of randomness (seed)
 have been polled. BIST (Built-in Self-Test) only occurs after reset
 or to signal a non-fatal self-test alarm (if reached after WAIT or
 ES16). DEAD is an unrecoverable error state.
-In test mode (when GetNoise is active), WAIT and ES16 states are
-unavailable in PollEntropy.
 ====
-
-The diagram above illustrates operational state (`OPST`) transitions.
-The state is usually either `WAIT` or `ES16`. There are no mandatory
-interrupts.
-
-
-We recommend against busy-loop polling on the entropy source. Even though
-no specific interrupt sequence is specified, it is expected that the `wfi`
-(wait for interrupt) instruction is available on microcontroller targets.
-The polling mechanism can be implemented in a way that allows generic
-drivers to benefit from masked signals that release the program flow
-from a `wfi` instruction without causing an interrupt handler to be invoked.
-
-As a minimum requirement for portable drivers in microcontrollers,
-a `WAIT` or `BIST` from `sentropy` should be followed by a `wfi`
-before another `sentropy` instruction is issued.
-
-Higher-end systems generally perform opportunistic polling as a part of their
-entropy gathering processes.
-
-There is no need to poll after a `DEAD` state.
 
 [[crypto_scalar_es_req]]
 === Entropy Source Requirements
@@ -174,60 +115,53 @@ There is no need to poll after a `DEAD` state.
 The output `seed` from `sentropy` is not necessarily fully conditioned
 randomness due to hardware and energy limitations of smaller, low-powered
 implementations. However, minimum requirements are defined.
-A caller must not use the output directly but poll twice the amount
-of required entropy, cryptographically condition (hash) it, and use that
-to seed a cryptographic DRBG.
+The main requirement is that 2-to-1 cryptographic post-processing
+in 256-bit input blocks will yield 128-bit "full entropy" output blocks.
+Users of `sentropy` may make this conservative assumption but are not
+prohibited from using more than twice the number of seed bits relative
+to the desired resulting entropy.
 
-RISC-V requires drivers to implement at least 2-to-1 cryptographic
-post-processing in software with the expectation that the final output
-from this post-processing would have *full entropy* as defined
-in NIST SP 800-90C cite:[BaKeRo:21]. The technical implication is
-that no single 256-bit sequence should have a predicted probability
-larger than 2^-192^ of occurring (min-entropy 192 bits).
-
-Depending on the implementation and process instance, the source can be one of
-three things:
+The entropy source can meet one (or more) of three sets of requirements:
 
 *	<<crypto_scalar_es_req_90b>>: A physical entropy source meeting
 	NIST SP 800-90B cite:[TuBaKe:18] criteria with evaluated min-entropy
 	level 192 per 256 output bits (min-entropy rate 0.75).
-	
+
 *	<<crypto_scalar_es_req_ptg2>>: A physical entropy source meeting AIS-31
 	PTG.2 cite:[KiSc11] criteria, implying average Shannon entropy rate 0.997.
 
-*	<<crypto_scalar_es_req_virt>>: Virtual environments should *not* make
-	physical entropy sources directly available but provide a virtual entropy
-	source (an appropriately seeded software DRBG) with at least a 256-bit
-	security level.
+*	<<crypto_scalar_es_req_virt>>: A virtual entropy source is a DRBG
+	seeded from a physical entropy source. It must have at least a
+	256-bit (Post-Quantum Category 5) internal security level.
 
-All classes must have the appropriate health tests / online alarms
-implemented and functional and must be able to signal initialization,
-test mode, and failure as required by respective standards.
+All classes must be able to signal initialization, test mode, and
+health alarms as required by respective standards.
 
 
 [[crypto_scalar_es_req_90b]]
 ==== NIST SP 800-90B / FIPS 140-3 Requirements
 
-The interface requirement is satisfied if 128 bits of full entropy can be
+The interface requirement is satisfied if 128 bits of _full entropy_ can be
 obtained from each 256-bit (16*16 -bit) successful, but possibly
 non-consecutive `sentropy` ES16 output sequence using a vetted conditioning
 algorithm such as a cryptographic hash
 (See Section 3.1.5.1.2, cite:[TuBaKe:18]).
 
-Rather than attempting to define all the properties that the entropy source
-must satisfy, we define that it should pass the equivalent of SP 800-90B
-evaluation and certification when conditioned cryptographically in ratio
-2:1 with 128-bit output blocks. The implication is that every 256-bit
-sequence should have min-entropy of at least 192 bits. The stochastic model
-or heuristic analysis must not assume that the input blocks to the
-conditioner are consecutive words.
+Rather than attempting to define all the mathematical and architectural
+properties that the entropy source must satisfy, we define that it should
+pass the equivalent of SP 800-90B/C evaluation and certification for
+full entropy when conditioned cryptographically in ratio 2:1 with 128-bit
+output blocks.
 
-Driver developers may make this conservative assumption but are not
-prohibited from using more than twice the number of seed bits relative
-to the desired resulting entropy. Even though entropy is defined in
-terms of 128-bit full entropy blocks, we recommend at least 256-bit
-security (two or more blocks).
+The implication is that every 256-bit sequence should have min-entropy
+of at least 192 bits, as discussed in SP 800-90C cite:[BaKeRo:21];
+the likelihood of successfully "guessing" an individual 256-bit output
+sequence should not be higher than 2^-192^ even with (almost)
+unconstrained amount of entropy source data and computational power.
 
+Even though the requirement is defined in terms of 128-bit full entropy
+blocks, we recommend 256-bit security. This can be accomplished by using
+at least 512 `seed` bits to initialize a DRBG that has 256-bit security.
 
 [[crypto_scalar_es_req_ptg2]]
 ==== BSI AIS-31 PTG.2 / Common Criteria Requirements
@@ -236,179 +170,105 @@ For alternative Common Criteria certification (or self-certification),
 vendors should target AIS 31 PTG.2 requirements cite:[KiSc11] (Sect. 4.3.).
 In this evaluation, `seed` bits are viewed as "internal random numbers."
 
-Additionally, the overall security requirement remains that full entropy
-can be obtained after conditioning, as in <<crypto_scalar_es_req_90b>>.
+In addition to AIS-31 requirements, the overall min-entropy requirement
+remains, as discussed in <<crypto_scalar_es_req_90b>>.
 
 
 [[crypto_scalar_es_req_virt]]
 ==== Virtual Sources: Security Requirement
 
-A virtual source traps access to the `sentropy` CSR or otherwise
-implements it in software using a fully seeded DRBG with at least 256-bit
-security. A virtual source is intended especially for guest operating
-systems, sandboxes, emulators, and similar use cases.
+NOTE: A virtual source is not an ISA compliance requirement. It is defined
+for the benefit of the RISC-V security ecosystem so that virtual systems
+may have a consistent level of security.
 
-A virtual source is not a physical entropy source but provides additional
-protection against covert channels, depletion attacks, and host
+A virtual source is not a physical entropy source but provides
+additional protection against covert channels, depletion attacks, and host
 identification in operating environments that can not be entirely trusted
 with direct access to a hardware resource. Despite limited trust,
 implementors should try to guarantee that even such environments have
 sufficient entropy available for secure cryptographic operations.
 
-A random-distinguishing attack should require computational resources
-comparable or greater than those required for an exhaustive key searching
-on a block cipher with a 256-bit key (e.g., AES 256). Cryptographic
-post-processing is still required, and the min-entropy prediction
-probability 2^-192^ applies within this computational limit.
+A virtual source traps access to the `sentropy` CSR, emulates it, or
+otherwise implements it without direct access to a physical entropy
+source. The output can be cryptographically secure pseudorandomness
+instead of entropy, but must have at least 256-bit security, as defined
+below. A virtual source is intended especially for guest operating
+systems, sandboxes, emulators, and similar use cases.
+
+As a technical definition, a random-distinguishing attack against
+the output should require computational resources comparable or greater
+than those required for exhaustive key search on a secure block cipher
+with a 256-bit key (e.g., AES 256). This applies to both classical
+and quantum computing models, but only classical information flows.
+The virtual source security requirement maps to Post-Quantum Security
+Category 5 cite:[NI16], so that virtual sources can be used for cryptography.
 
 Any implementation of `sentropy` that limits the security
 strength shall not reduce it to less than 256 bits. If the security
 level is under 256 bits, then the interface must not be available.
 
+A virtual entropy source does not need to implement `WAIT` or `BIST` states.
+It should fail (`DEAD`) if the host DRBG or entropy source fails and
+there is insufficient seeding material for the host DRBG.
 
-[[crypto_scalar_es_getnoise]]
-=== GetNoise Test Interface
-
-The optional GetNoise interface allows access to "raw noise" and is
-intended for manufacturer tests and validation of physical entropy source
-modules. It is must not be used as a source of randomness or for other
-production use. The contents and behavior of the register must be interpreted
-in the context of `mvendorid`, `marchid`, and `mimpid` CSR identifiers.
-
-The interface consists of a read-write machine-mode CSR `mnoise`:
-
-Encoding::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 31, name: 'custom'},
-{bits: 1, name: 'NT'},
-]}
-....
-
-We define a pseudo-instruction for reading it:
-
-Mnemonic::
-getnoise rd
-
-It is an alias for `csrrs rd, mnoise, x0`.
-
-The Entropy Source ISE defines the semantics of only a single bit,
-`mnoise[31]`, which is named `NOISE_TEST`. The only universal function is for
-enabling/disabling this interface. This is because the test interface
-effectively disables `sentropy`; this way, a soft reset can also reset
-the test interface.
-
-The `mnoise` CSR uses address `0x7A9`, indicating it is a standard
-read-write machine-mode CSR. This places it adjacently to debug/trace
-CSRs, indicating that it is not expected to be used in production.
-
-When `NOISE_TEST = 1` in and `mnoise`, and `sentropy` *must not* return
-anything via `ES16`; it should be in `BIST` state unless the source
-is `DEAD`. When `NOISE_TEST` is again disabled, the entropy source
-shall return from `BIST` via an appropriate zeroization and self-test
-mechanism.
-
-When not implemented (e.g., in virtual machines), can permanently read
-zero (`0x00000000`) and ignore writes.
-When available, but `NOISE_TEST = 0`, can return a
-nonzero constant (e.g. `0x00000001`) but no noise samples.
-
-The behavior of other input and output bits is left to the vendor.
-Although not used in production, we recommend that the instruction is
-always non-blocking.
 
 [[crypto_scalar_es_access]]
 === Access Control via `mseccfg.SKES`
 
-The `sentropy` CSR is not available to general user
-processes, and the raw source interface has been delegated to a
-vendor-specific test interface. The test interface and the main
-interface must not be operational at the same time.
+The `sentropy` CSR is not available to general user processes. The table
+below summarizes the access patterns in relation to the basic RISC-V
+privilege levels. S-mode access to the entropy source is controlled via
+the `mseccfg.SKES` bit. This is bit 8 of `mseccfg` CSR.
 
-The table below summarizes the access patterns in relation
-to the basic RISC-V privilege levels. S-mode access to the
-entropy source is controlled via `mseccfg.SKES` bit. This is bit 8
-of `mseccfg` at CSR address `0x390` cite:[KoXiHu:21].
+The interface guarantees that access to this CSR will make `seed` entropy
+values available only once. All successful accesses will have the
+side effect of clearing (polling) the register. A nondestructive read
+attempt (such as `CSRRS` / `CSRRC` with rs1=x0 or `CSRRSI` / `CSRRCI`
+with zero immediate) on `sentropy` will raise an Illegal Instruction
+Exception.
 
 .Entropy Source Access Control.
 
-[cols="1,1,1,7",options="header",]
+[cols="1,1,3",options="header",]
 |=======================================================================
-|Mode |PE   |GN  |Description
+|Mode | Can poll? |Description
 
 |*M*
 |Yes
-|Opt.
-|Both the `sentropy` and the optional `mnoise` interface are available
- in machine mode.
+|The `sentropy` interface is available in machine mode.
 
 |*S*, *HS*
-|SKES
-|No
+|`mseccfg.SKES`
 | S and HS mode may access `sentropy` directly if `mseccfg.SKES=1`,
-  otherwise accesses to `sentropy` will trap with an Illegal Instruction Exception.
-  S and HS mode may not access `mnoise`.
+  otherwise accesses to `sentropy` will trap with an Illegal Instruction
+  Exception.
 
 |*U*, *VS*, *VU*
 |No
-|No
-|There must be no direct access to `sentropy` or `mnoise` output from
- U-mode.
+|There must be no direct access to `sentropy` from U-mode.
 
 |=======================================================================
 
-Note that the `HS`, `VS` and `VU` modes are present in systems with the
+Note that the `HS`, `VS`, and `VU` modes are present in systems with the
 Hypervisor (`H`) extension implemented.
 
-If `S` / `HS` are implemented, then `SKES=1` will
-allow direct access to the entropy source from `S` and `HS` mode,
-while `SKES=0`  leads to an illegal instruction exception when `sentropy`
-is accessed.
-If both `S` and `HS` mode and `mseccfg` are not implemented in a system, then
-access to the entropy source is M-mode only.
+The hypervisor (or M-mode elements) can trap attempted access to
+`sentropy` and feed a less privileged guest virtual entropy source words
+(<<crypto_scalar_es_req_virt>>).
+
+If `S` / `HS` modes are implemented, then `SKES=1` will allow direct
+access to the entropy source from `S` and `HS` mode, while `SKES=0`
+leads to an illegal instruction exception when `sentropy` is accessed.
+If both `S` and `HS` mode and `mseccfg` are not implemented in a system,
+then access to the entropy source is M-mode only.
 
 Implementations may implement `mseccfg` such that `SKES` is a read-only
-constant value.
-Software may discover if access to `sentropy` can be enable in `S` and `HS`
-mode by writing a `1` to `SKES` and reading back the result.
+constant value. Software may discover if access to `sentropy` can be
+enabled in `S` and `HS` mode by writing a `1` to `SKES` and reading back
+the result.
 
 `mseccfg` exists if `Zkr` is implemented, or if it is required by other
-processor features (e.g. PMP enhancements).footnote:[
-More information on the `mseccfg` CSR may be found in the
-link:https://docs.google.com/document/d/1Mh_aiHYxemL0umN3GTTw8vsbmzHZ_nxZXgjgOUzbvc8/edit#heading=h.hw4f0hsg3t3[PMP Enhancements for memory access and execution prevention on Machine mode] proposal.
-]
-If `Zkr` is _not_ implemented, the `SKES` bit must be hardwired
-to zero.
-If `Zkr` is the only implemented feature requiring `mseccfg`,
-then all bits other than `SKES` must be hardwired to zero, or
-otherwise set according to the relevant specifications for a not implemented
-feature.
+processor features. If `Zkr` is _not_ implemented, the `SKES` bit must be
+hardwired to zero.
 
-==== Hypervisor Trap and Emulate
-
-The hypervisor (or M-mode elements) can trap and feed less privileged guest
-virtual entropy source words (<<crypto_scalar_es_req_virt>>).
-Virtualization requires both conditioning and DRBG processing of
-physical entropy output. This is recommended if a single entropy
-source is shared between multiple different S-mode instances
-(multiple Kernels, not harts) or if the S-mode instance is untrusted.
-A virtual entropy source is significantly more resistant to depletion
-attacks and also lessens the risk from covert channels.
-
-==== Direct S-Mode access
-
-The trap-and-emulate requirement for a conditioner and DRBG implementation
-at a higher level introduces some latency, grows the stateful memory
-footprint of such a manager, and may also limit the entropy available.
-Hence direct S and HS Mode access is often preferable in standard
-(non-virtual) configurations that consider an S-level kernel to be a trusted
-component.
-
-The direct `mseccfg.SKES` option allows one to draw a security boundary
-around an
-S or HS mode component in relation to SSP flows, which is helpful when
-implementing trusted enclaves. Such modules can enforce the entire key
-lifecycle from birth (in the entropy source) to death (zeroization) to occur
-without the key being passed across the boundary to external code.
 

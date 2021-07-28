@@ -255,7 +255,7 @@ include::../../extern/riscv-bitmanip/bitmanip/insns/xpermn.adoc[]
 include::../../extern/riscv-bitmanip/bitmanip/insns/zip.adoc[]
 
 include::riscv-crypto-scalar-entropy-source.adoc[]
-include::riscv-crypto-scalar-zkt.adoc[leveloffset=+1]
+include::riscv-crypto-scalar-zkt.adoc[]
 
 [[bibliography]]
 == Bibliography

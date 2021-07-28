@@ -1,0 +1,37 @@
+%	tikz_standalone.tex
+%	2020-02-24	Markku-Juhani O. Saarinen <mjos@pqshield.com>
+%	CONTRIBUTED TO PUBLIC DOMAIN
+
+%	Create a stand-alone figure.
+
+\documentclass[tikz,convert={outfile=\jobname.svg}]{standalone}
+%\documentclass{article}
+%\usepackage{tikz}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{circuitikz}
+\usepackage[outline]{contour}
+\usepackage{color, colortbl}
+
+%	XeLaTeX:
+%\usepackage{fontspec}
+%\setmainfont{Lato}
+
+%	PDFLaTeX:
+\usepackage[default]{lato}
+\usepackage[T1]{fontenc}
+
+%	Sans Serif
+%\renewcommand{\familydefault}{\sfdefault}
+
+%\usetikzlibrary{chains, positioning, shapes.symbols, shapes.arrows}
+\usetikzlibrary{math,arrows,shapes,chains,calc,fit,positioning,decorations.pathmorphing,automata}\usepgflibrary{shapes.arrows}
+\usetikzlibrary{patterns}
+\usepgflibrary{arrows.meta}
+
+%	Get target
+\begin{document}
+\input{\jobname.tikz}
+\end{document}
+
