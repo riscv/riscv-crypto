@@ -100,30 +100,13 @@ include::riscv-crypto-scalar-policies.adoc[]
 The group of extensions introduced by the Scalar Cryptography Instruction Set
 Extension is listed here.
 
-If the `K` bit (i.e. bit 10) of the `MISA` CSR is set, this indicates that
-at-least one cryptography extension (as listed below) is implemented.
-This will also covers future cryptography extensions; for example, the
-future vector cryptography extension.
-
-[NOTE]
-====
-We use `K`, because `C` is taken
-and `K` is for _Kappa_, the first letter of the ancient Greek word
-_kruptós_, meaning _hidden_.
-====
-
-If `MISA.K` is clear, then no cryptography related extensions are
-implemented.
-
-If the `MISA.K` bit is writable, then setting / clearing it will
-enable / disable _all_ cryptography related extensions.
-
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.
 
 [NOTE]
 ====
-At the time of writing, these mechanisms are still a work in progress.
+At the time of writing, these discovery mechanisms are still a work in
+progress.
 ====
 
 .A note on extension rationale
@@ -151,6 +134,15 @@ include::riscv-crypto-scalar-zkr.adoc[]
 include::riscv-crypto-scalar-zkn.adoc[]
 include::riscv-crypto-scalar-zks.adoc[]
 include::riscv-crypto-scalar-zk.adoc[]
+
+=== `Zkt` - Data Independent Execution Latency
+
+This extension allows CPU implementers to indicate to
+cryptographic software developers that a subset of RISC-V instructions
+are guaranteeed to be implemented such that their execution latency
+is independent of the data values they operate on.
+A complete description of this extension is found in
+<<crypto_scalar_zkt>>.
 
 // ------------------------------------------------------------
 

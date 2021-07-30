@@ -77,12 +77,15 @@ The Status Bits at `sentropy[31:30]`=`OPST`:
 * `00` - `BIST`
 indicates that Built-In Self-Test "on-demand" (BIST) testing is being
 performed. If `OPST` returns temporarily to `BIST` from any other
-state, this signals a non-fatal (usually non-actionable) self-test alarm.
+state, this signals a non-fatal self-test alarm,
+which is non-actionable, apart from being logged.
+Such a `BIST` alarm must be latched until polled at least once to enable
+software to record it's occurence.
 
 * `01` - `WAIT`
 means that a sufficient amount of entropy is not yet available. This
 is not an error condition and may (in fact) be more frequent than ES16
-since true entropy sources may not have very high bandwidth.
+since physical entropy sources often have low bandwidth.
 
 * `10` - `ES16`
 indicates success; the low bits `sentropy[15:0]` will have 16 bits of
@@ -107,6 +110,8 @@ Normally the operational state alternates between WAIT
 have been polled. BIST (Built-in Self-Test) only occurs after reset
 or to signal a non-fatal self-test alarm (if reached after WAIT or
 ES16). DEAD is an unrecoverable error state.
+Note that though it is not shown in the diagram, there is no requirement for
+a state change after a `WAIT` or `ES16` state.
 ====
 
 [[crypto_scalar_es_req]]
@@ -121,7 +126,9 @@ Users of `sentropy` may make this conservative assumption but are not
 prohibited from using more than twice the number of seed bits relative
 to the desired resulting entropy.
 
-The entropy source can meet one (or more) of three sets of requirements:
+An implementation of the entropy source should meet at least one of the
+following requirements sets in order to be considered a secure and
+safe design:
 
 *	<<crypto_scalar_es_req_90b>>: A physical entropy source meeting
 	NIST SP 800-90B cite:[TuBaKe:18] criteria with evaluated min-entropy
@@ -134,8 +141,11 @@ The entropy source can meet one (or more) of three sets of requirements:
 	seeded from a physical entropy source. It must have at least a
 	256-bit (Post-Quantum Category 5) internal security level.
 
-All classes must be able to signal initialization, test mode, and
+All implementations must be able to signal initialization, test mode, and
 health alarms as required by respective standards.
+This may require the implementer to add non-standard test interfaces
+in a secure and safe manner, an example of which is described in
+<<crypto_scalar_es_getnoise>>
 
 
 [[crypto_scalar_es_req_90b]]
@@ -215,12 +225,12 @@ there is insufficient seeding material for the host DRBG.
 [[crypto_scalar_es_access]]
 === Access Control via `mseccfg.SKES`
 
-The `sentropy` CSR is not available to general user processes. The table
+The `sentropy` CSR is not available to User Mode Software. The table
 below summarizes the access patterns in relation to the basic RISC-V
 privilege levels. S-mode access to the entropy source is controlled via
 the `mseccfg.SKES` bit. This is bit 8 of `mseccfg` CSR.
 
-The interface guarantees that access to this CSR will make `seed` entropy
+It is guaranteed that access to `sentropy` will make `seed` entropy
 values available only once. All successful accesses will have the
 side effect of clearing (polling) the register. A nondestructive read
 attempt (such as `CSRRS` / `CSRRC` with rs1=x0 or `CSRRSI` / `CSRRCI`

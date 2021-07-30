@@ -1,11 +1,9 @@
 [[zkr,Zkr]]
 === `Zkr` - Entropy Source Extension
 
-Entropy source for seeding random number generators.
-
-The entropy source is accessed via `sentropy` CSR, and currently has no
-specific instructions associated with it.
-
-See <<crypto_scalar_es>> and <<crypto_scalar_appx_es>> for further
-information.
+This extension defines an entropy source for seeding random number generators,
+accessed via the `sentropy` CSR.
+See <<crypto_scalar_es>> for the normative specification and
+<<crypto_scalar_appx_es>> for design rationale and recommendations to
+implementers.
 

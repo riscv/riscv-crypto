@@ -45,13 +45,13 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zknh>>
+| <<zknh>> (RV64)
 | v0.9.4
 | Stable
-| <<zkn>>
+| <<zkn>> (RV64)
 | v0.9.4
 | Stable
-| <<zk>>
+| <<zk>> (RV64)
 | v0.9.4
 | Stable
 |===

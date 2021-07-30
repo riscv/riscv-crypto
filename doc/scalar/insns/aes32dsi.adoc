@@ -47,13 +47,13 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zknd>>
+| <<zknd>> (RV32)
 | v0.9.4
 | Stable
-| <<zkn>>
+| <<zkn>> (RV32)
 | v0.9.4
 | Stable
-| <<zk>>
+| <<zk>> (RV32)
 | v0.9.4
 | Stable
 |===
