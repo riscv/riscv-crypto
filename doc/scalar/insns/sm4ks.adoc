@@ -57,11 +57,11 @@ Included in::
 |Lifecycle state
 
 | <<zksed>>
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 | <<zks>>
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 |===
 
 

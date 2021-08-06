@@ -58,17 +58,17 @@ Included in::
 |Lifecycle state
 
 | <<zkne>> (RV64)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 | <<zknd>> (RV64)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 | <<zkn>> (RV64)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 | <<zk>> (RV64)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 |===
 
 

@@ -60,14 +60,14 @@ Included in::
 |Lifecycle state
 
 | <<zknh>> (RV32)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 | <<zkn>> (RV32)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 | <<zk>> (RV32)
-| v0.9.4
-| Stable
+| v1.0.0-rc1
+| Frozen
 |===
 
 
