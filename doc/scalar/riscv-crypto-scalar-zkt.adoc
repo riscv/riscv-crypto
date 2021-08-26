@@ -44,6 +44,17 @@ timing side channels when compiled and running on a Zkt-enabled RISC-V target.
 The Zkt extension explicitly states many of the common latency assumptions
 made by cryptography developers.
 
+Vendors do not have to implement all of the list's instructions to be Zkt
+compliant; however, if they claim to have Zkt and implement any of the listed instructions, it must have data-independent latency. 
+
+For example, many simple RV32I and RV64I cores (without Multiply, Compressed, 
+Bitmanip, or Cryptographic extensions) are technically compliant with Zkt. 
+A constant-time AES can be implemented on them using "bit-slice" techniques,
+but it will be excruciatingly slow when compared to implementation with AES
+instructions. There are no guarantees that even a bit-sliced cipher
+implementation (largely based on boolean logic instructions) is secure on a
+core without Zkt attestation.
+
 .Note to software developers
 [WARNING,caption="SH"]
 ====
@@ -58,8 +69,14 @@ It is not within the remit of this proposal to mitigate these
 _micro-architectural_ leakages.
 ====
 
-=== Rationale
+=== Background
 
+* Timing attacks are much more powerful than was realised before the 2010s,
+which has led to a significant mitigation effort in current cryptographic
+code-bases.
+* Cryptography developers use static and dynamic security testing tools
+to trace the handling of secret information and detect occasions where it
+influences a branch or is used for a table lookup.
 * Architectural testing for Zkt can be pragmatic and semi-formal;
 _security by design_ against basic timing attacks can usually be achieved via
 conscious implementation (of relevant iterative multi-cycle instructions or
@@ -72,17 +89,6 @@ immediates, ordering of input registers, etc. There may be an exception to this
 in systems where a binary loader modifies the executable for purposes of
 relocation -- and it is desirable to keep the execution location (PC) secret.
 This is why instructions such as LUI, AUIPC, and ADDI are on the list.
-* Floating point (F, D, Q, L extensions) are excluded from the constant-time
-requirement at the moment as they have very few applications in standardised
-cryptography. We may consider adding D (double precision) add, sub, multiply
-as a constant time requirement on those targets that have D -- in case an
-algorithm (such as the PQC Signature algorithm Falcon) becomes critical.
-* Timing attacks are much more powerful than was realised before the 2010s,
-which has led to a significant mitigation effort in current cryptographic
-code-bases.
-* Cryptography developers use static and dynamic security testing tools
-to trace the handling of secret information and detect occasions where it
-influences a branch or is used for a table lookup.
 * The rules used by audit tools are relatively simple to understand.
 Very briefly; we call the plaintext, secret keys, expanded keys, nonces,
 and other such variables "secrets". A secret variable (arithmetically)
@@ -93,34 +99,38 @@ violation. A secret variable location or register becomes a non-secret via
 specific zeroization/sanitisation or by being declared ciphertext 
 (or otherwise no-longer-secret information). In essence, secrets can only
 "touch" instructions on the Zkt list while they are secrets.
+
+=== Specific Instruction Rationale
+
+* HINT instruction forms (typically encodings with `rd=x0`) are excluded from
+the data-independent time requirement. 
+* Floating point (F, D, Q, L extensions) are currently excluded from the
+constant-time requirement as they have very few applications in standardised
+cryptography. We may consider adding floating point add, sub, multiply as a
+constant time requirement for some floating point extension in case a specific
+algorithm (such as the PQC Signature algorithm Falcon) becomes critical.
 *  Cryptographers typically assume division to be variable-time (while
 multiplication is constant time) and implement their Montgomery reduction
 routines with that assumption.
-* Zicsr, Zifencei are excluded, apart from specific formats related to Krypto
-and timing, to be discussed.
+* Zicsr, Zifencei are excluded.
 * Some instructions are on the list simply because we see no harm in
 including them in testing scope.
-* Vendors do not have to implement all of the list's instructions to be Zkt
-compliant; however, if they claim to have Zkt and implement any of the listed instructions, it must have data-independent latency. For example, almost all
-basic RV32I and RV64I cores (without Multiply, Compressed, Bitmanip, or
-Cryptographic extensions) are technically compliant with Zkt. A constant-time
-AES can be implemented on them using "bit-slice" techniques, but it will be 
-excruciatingly slow when compared to implementation with AES instructions.
-Without Zkt there are no guarantees of even a bit-sliced implementation being
-secure.
 
-=== Background Information
+
+=== Programming Information
 
 For background information on secure programming "models", see:
 
-* Adam Langley: _"ctgrind."_ (This is from 2010 but is still relevant.)
-https://www.imperialviolet.org/2010/04/01/ctgrind.html
 * Thomas Pornin: _"Why Constant-Time Crypto?"_ (A great introduction to timing assumptions.) https://www.bearssl.org/constanttime.html
 * Jean-Philippe Aumasson: _"Guidelines for low-level cryptography software."_
 (A list of recommendations.) https://github.com/veorq/cryptocoding
 * Peter Schwabe: _"Timing Attacks and Countermeasures."_
 (Lecture slides -- nice references.)
 https://summerschool-croatia.cs.ru.nl/2016/slides/PeterSchwabe.pdf
+* Adam Langley: _"ctgrind."_ (This is from 2010 but is still relevant.)
+https://www.imperialviolet.org/2010/04/01/ctgrind.html
+* Kris Kwiatkowski: _"Constant-time code verification with Memory Sanitizer."_
+https://www.amongbytes.com/post/20210709-testing-constant-time/
 * For early examples of timing attack vulnerabilities, see
 https://www.kb.cert.org/vuls/id/997481 and related academic papers.
 
@@ -141,6 +151,8 @@ adhere to the requirements of `Zkt`.
 ====	RVI (Base Instruction Set)
 
 Only basic arithmetic and `slt*` (for carry computations) are included.
+The data-independent timing requirement does not apply to HINT instruction
+encoding forms of these instructions.
 
 [%header,cols="^1,^1,4,8"]
 |===
@@ -230,8 +242,8 @@ Same criteria as in RVI. Organised by quadrants.
 
 ====	RVK (Scalar Cryptography)
 
-All K-specific, non-debug instructions included.
-Additionally, the `sentropy` CSR polling latency should be independent of
+All K-specific instructions are included.
+Additionally, `getseed` latency should be independent of
 ES16 output `seed` bits, as that is a sensitive security parameter.
 See <<crypto_scalar_appx_es_access>>.
 
@@ -271,6 +283,7 @@ See <<crypto_scalar_appx_es_access>>.
 | &#10003; | &#10003; | sm3p1        | <<insns-sm3p1>>
 | &#10003; | &#10003; | sm4ed        | <<insns-sm4ed>>
 | &#10003; | &#10003; | sm4ks        | <<insns-sm4ks>>
+| &#10003; | &#10003; | getseed      | <<insns-getseed>>
 |===
 
 
@@ -294,8 +307,8 @@ specific instances of `grevi`, `shfli` and `unshfli` respectively.
 
 | &#10003; | &#10003; |  clmul       | <<insns-clmul>>
 | &#10003; | &#10003; |  clmulh      | <<insns-clmulh>>
-| &#10003; | &#10003; |  xperm.n     | <<insns-xpermn>>
-| &#10003; | &#10003; |  xperm.b     | <<insns-xpermb>>
+| &#10003; | &#10003; |  xperm4      | <<insns-xperm4>>
+| &#10003; | &#10003; |  xperm8      | <<insns-xperm8>>
 | &#10003; | &#10003; |  ror         | <<insns-ror>>
 | &#10003; | &#10003; |  rol         | <<insns-rol>>
 | &#10003; | &#10003; |  rori        | <<insns-rori>>
@@ -306,7 +319,7 @@ specific instances of `grevi`, `shfli` and `unshfli` respectively.
 | &#10003; | &#10003; |  pack        | <<insns-pack>>
 | &#10003; | &#10003; |  packh       | <<insns-packh>>
 |          | &#10003; |  packw       | <<insns-packw>>
-| &#10003; | &#10003; |  rev.b       | <<insns-revb>>
+| &#10003; | &#10003; |  brev8       | <<insns-brev8>>
 | &#10003; | &#10003; |  rev8        | <<insns-rev8>>
 | &#10003; |          |  zip         | <<insns-zip>>
 | &#10003; |          |  unzip       | <<insns-unzip>>
