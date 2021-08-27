@@ -179,6 +179,8 @@ include::insns/aes64ks2.adoc[]
 <<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/andn.adoc[]
 <<<
+include::../../extern/riscv-bitmanip/bitmanip/insns/brev8.adoc[]
+<<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/clmul.adoc[]
 <<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/clmulh.adoc[]
@@ -190,8 +192,6 @@ include::../../extern/riscv-bitmanip/bitmanip/insns/pack.adoc[]
 include::../../extern/riscv-bitmanip/bitmanip/insns/packh.adoc[]
 <<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/packw.adoc[]
-<<<
-include::../../extern/riscv-bitmanip/bitmanip/insns/revb.adoc[]
 <<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/rev8.adoc[]
 <<<
@@ -247,9 +247,9 @@ include::../../extern/riscv-bitmanip/bitmanip/insns/unzip.adoc[]
 <<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/xnor.adoc[]
 <<<
-include::../../extern/riscv-bitmanip/bitmanip/insns/xpermb.adoc[]
+include::../../extern/riscv-bitmanip/bitmanip/insns/xperm8.adoc[]
 <<<
-include::../../extern/riscv-bitmanip/bitmanip/insns/xpermn.adoc[]
+include::../../extern/riscv-bitmanip/bitmanip/insns/xperm4.adoc[]
 <<<
 include::../../extern/riscv-bitmanip/bitmanip/insns/zip.adoc[]
 

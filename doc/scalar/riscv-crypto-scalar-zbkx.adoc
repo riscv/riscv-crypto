@@ -27,7 +27,7 @@ and Bitmanip are being rapidly iterated on prior to public review.
 |Mnemonic
 |Instruction
 
-| &#10003; | &#10003; |  xperm.b     | <<insns-xpermb>>
-| &#10003; | &#10003; |  xperm.n     | <<insns-xpermn>>
+| &#10003; | &#10003; |  xperm8      | <<insns-xperm8>>
+| &#10003; | &#10003; |  xperm4      | <<insns-xperm4>>
 |===
 
