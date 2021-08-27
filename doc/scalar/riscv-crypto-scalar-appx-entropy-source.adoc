@@ -299,7 +299,7 @@ source is shared between multiple different virtual machnies or if the
 guest OS is untrusted. A virtual entropy source is significantly more
 resistant to depletion attacks and also lessens the risk from covert channels.
 
-The direct `mseccfg.useed` option allows one to draw a security boundary
+The direct `mseccfg.[s,u]seed` option allows one to draw a security boundary
 around a component in relation to Sensitive Security Parameter (SSP) flows,
 even if that component is not in M mode. This is
 helpful when implementing trusted enclaves. Such modules can enforce the
