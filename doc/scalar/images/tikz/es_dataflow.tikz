@@ -39,7 +39,7 @@
         node[pos=0.5,anchor=south] {\small\bf OK?};
 
 \draw[thick,fill=green!10] (2.0 - 1.5, -3.1) 
-	rectangle ++(3.0,-0.5)  node[pos=.5] {CSR interface: {\bf sentropy}};
+	rectangle ++(3.0,-0.5)  node[pos=.5] {ISA interface: {\bf getseed}};
 
 \node at (0.0, -3.35) {\bf ISA};
 

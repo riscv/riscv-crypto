@@ -3,17 +3,17 @@
 
 == Entropy Source Rationale and Recommendations
 
+This *non-normative* appendix focuses on the rationale, security,
+self-certification, and implementation aspects of entropy sources. Hence we
+also discuss non-ISA system features that may be needed for cryptographic
+standards compliance and security testing.
+
+===	Checklists for Design and Self-Certification 
+
 The security of cryptographic systems is based on secret bits and keys.
 These bits need to be random and originate from cryptographically secure
 Random Bit Generators (RBGs). An Entropy Source (ES) is required to
 construct secure RBGs.
-
-This appendix focuses on the rationale, security, self-certification, and
-implementation aspects of entropy sources. Hence we also discuss non-ISA
-(non-normative) system features that may be needed for cryptographic
-standards compliance and security testing.
-
-===	Checklists for Design and Self-Certification 
 
 While entropy source implementations do not have to be certified
 designs, RISC-V expects that they behave in a compatible manner and do not
@@ -22,9 +22,9 @@ following appropriate security standards is usually needed to achieve this.
 
 *	*ISA Architectural Tests.* Verify, to the extent possible, that RISC-V ISA
 	requirements in this specification are correctly implemented. This includes
-	the state transitions (<<crypto_scalar_sentropy>> and 
+	the state transitions (<<crypto_scalar_getseed>> and 
 	<<crypto_scalar_es_getnoise>>), access control 
-	(<<crypto_scalar_es_access>>), and that `sentropy` ES16 seed words
+	(<<crypto_scalar_es_access>>), and that `getseed` ES16 seed words
 	can only be read destructively.
 	The scope of RISC-V ISA architectural tests are those behaviors that 
 	are independent of the physical entropy source details. A smoke test ES
@@ -32,14 +32,14 @@ following appropriate security standards is usually needed to achieve this.
 *	*Technical justification for entropy.* This may take the form of a
 	stochastic model or a heuristic argument that explains why the noise
 	source output is from a random, rather than pseudorandom (deterministic)
-	process, and is not directly observable. A complete physical model is not
-	necessary; research literature can be cited.
-	For example, one can show that a good ring oscillator noise derives an
-	amount of physical entropy from local, spontaneously occurring
+	process, and is not easily predictable or externally observable.
+	A complete physical model is not necessary; research literature can be
+	cited. For example, one can show that a good ring oscillator noise derives
+	an amount of physical entropy from local, spontaneously occurring
 	Johnson-Nyquist thermal noise cite:[Sa21], and is therefore not merely
 	"random-looking".
 *	*Entropy Source Design Review.* An entropy source is more than a noise
-	source, and has features such as health tests
+	source, and must have features such as health tests
 	(<<crypto_scalar_es_security_controls>>),
 	a conditioner (<<crypto_scalar_appx_es_intro-cond>>), and a security
 	boundary with clearly defined interfaces. One may tabulate the SHALL
@@ -48,16 +48,14 @@ following appropriate security standards is usually needed to achieve this.
 	used. Official and non-official checklist tables are available:
 	https://github.com/usnistgov/90B-Shall-Statements
 *	*Experimental Tests.* The raw noise source is subjected to entropy
-	estimation (H~original~)
-    defined in NIST 800-90B, Section 3.1.3 cite:[TuBaKe:18].
-    The interface described in 
-	<<crypto_scalar_es_getnoise>> can used be to record a dataset for this
-	purpose. For SP 800-90B, NIST has made its min-entropy estimation
+	estimation as defined in NIST 800-90B, Section 3 cite:[TuBaKe:18].
+    The interface described in <<crypto_scalar_es_getnoise>> can used be to
+    record datasets for this purpose. One also needs to show experimentally
+    that the conditioner and health test components work appropriately to
+    meet the ES16 output entropy requirements of <<crypto_scalar_es_req>>.
+	For SP 800-90B, NIST has made a min-entropy estimation
 	package freely available:
 	https://github.com/usnistgov/SP800-90B_EntropyAssessment
-	One also needs to also show experimentally that the conditioner and
-	health test components work appropriately to meet the ES16 output entropy
-	requirements of <<crypto_scalar_es_req>>.
 *	**Resilience.** Above physical engineering steps should consider the
 	operational environment of the device, which may be unexpected or
 	hostile (actively attempting to exploit vulnerabilities in the design).
@@ -70,8 +68,8 @@ that a standard 90B Entropy Source Module or AIS-31 RNG IP may be licensed
 from a third party and integrated with a RISC-V processor design. Compared
 to older (FIPS 140-2) RNG and DRBG modules, an entropy source module may
 have a relatively small area (just a few thousand NAND2 gate equivalent).
-CMVP is introducing an "Entropy Source Validation Scope" which allows 90B
-validations to be re-used for different (FIPS 140-3) modules.
+CMVP is introducing an "Entropy Source Validation Scope" which potentially
+allows 90B validations to be re-used for different (FIPS 140-3) modules.
 
 
 === Standards and Terminology
@@ -92,7 +90,7 @@ entropy source design, and we use their terminology if possible.
 [[crypto_scalar_es_fig_rng,reftext="TRNG Components"]]
 ====
 image::es_dataflow.svg[align="center",scaledwidth=50%]
-The `sentropy` CSR provides an Entropy Source (ES), not a stateful
+The `getseed` instruction provides an Entropy Source (ES), not a stateful
 random number generator. As a result, it can support arbitrary
 security levels. Cryptographic (AES, SHA-2/3) ISA Extensions
 can be used to construct high-speed DRBGs that are seeded from the
@@ -173,11 +171,11 @@ refreshed (reseeded) for forward and backward security.
 === Specific Rationale and Considerations
 
 
-==== (<<crypto_scalar_sentropy>>) The `sentropy` CSR
+==== (<<crypto_scalar_getseed>>) The `getseed` Instruction
 
 The interface was designed to be simple so that a vendor- and
 device-independent driver component (e.g., in Linux kernel,
-embedded firmware, or a cryptographic  library) may use the CSR to
+embedded firmware, or a cryptographic  library) may use `getseed` to
 generate truly random bits.
 
 An entropy source does not require a high-bandwidth interface;
@@ -223,7 +221,7 @@ Shannon entropy is much larger.
 
 In FIPS 140-3 / SP 800-90 classification, an RBG2(P) construction is a
 cryptographically secure RBG with continuous access to a physical entropy
-source (`sentropy`) and output generated by a fully seeded, secure DRBG.
+source (`getseed`) and output generated by a fully seeded, secure DRBG.
 The entropy source can also be used to build RBG3
 full entropy sources cite:[BaKeRo:21]. The concatenation of output words
 corresponds to the `Get_ES_Bitstring` function.
@@ -291,7 +289,6 @@ in Suite B and the newer U.S. Government CNSA Suite cite:[NS15].
 [[crypto_scalar_appx_es_access]]
 ==== (<<crypto_scalar_es_access>>) Security Considerations for Direct Hardware Access
 
-
 The ISA implementation and system design must try to ensure that the
 hardware-software interface minimizes avenues for adversarial
 information flow even if not explicitly forbidden in the specification.
@@ -302,9 +299,9 @@ source is shared between multiple different virtual machnies or if the
 guest OS is untrusted. A virtual entropy source is significantly more
 resistant to depletion attacks and also lessens the risk from covert channels.
 
-The direct `mseccfg.SKES` option allows one to draw a security boundary
-around an `S` or `HS` mode component in relation to Sensitive Security
-Parameter (SSP) flows, which is
+The direct `mseccfg.useed` option allows one to draw a security boundary
+around a component in relation to Sensitive Security Parameter (SSP) flows,
+even if that component is not in M mode. This is
 helpful when implementing trusted enclaves. Such modules can enforce the
 entire key lifecycle from birth (in the entropy source) to death
 (zeroization) to occur without the key being passed across the boundary
@@ -345,7 +342,7 @@ the fewer the better.
 As an example of side-channel analysis, we note that the entropy
 polling interface is typically not "constant time." One needs to
 analyze what kind of information is revealed via the timing oracle;
-one way of doing it is to model `sentropy` as a rejection
+one way of doing it is to model `getseed` as a rejection
 sampler. Such a timing oracle can reveal information about the noise
 source type and entropy source usage, but usually
 not about the random output `seed` words themselves. If it does,
@@ -371,10 +368,10 @@ The choice of appropriate health tests depends on the
 certification target, system architecture, threat model, entropy
 source type, and other factors.
 
-Health checks are not intended for hardware diagnostics but for
-detecting security issues – hence the deprevent weak crypto keys from being generated).
-Additional "debug" mechanisms may be implemented if necessary, but
-then the device must be outside production use.
+Health checks are not intended for hardware diagnostics but for detecting
+security issues. Hence the default action in case of a failure should be
+aimed at damage control: Limiting further output and preventing weak
+crypto keys from being generated.
 
 We discuss three specific testing requirements T1-T3. The testing requirement
 follows from the definition of an Entropy Source; without it, the module is
@@ -467,7 +464,7 @@ To guarantee that no sensitive data is read twice and that different
 callers don’t get correlated output, it is required that hardware
 implements _wipe-on-read_ on the randomness pathway during each read
 (successful poll). For the same reasons, only complete and fully
-processed random words shall be made available via `sentropy`.
+processed random words shall be made available via `getseed`.
 
 This also applies to the raw noise source. The raw source interface has
 been delegated to an optional vendor-specific test interface.
@@ -516,7 +513,7 @@ at the entire information flow.
   generate bits on demand (without revealing the seed/state).
 
 Steps 1-4 (possibly 5) are considered to be part of the Entropy
-Source (ES) and provided by the `sentropy` CSR.
+Source (ES) and provided by the `getseed` instruction.
 Adding the software-side cryptographic steps 5-6 and control logic
 complements it into a True Random Number Generator (TRNG).
 
@@ -677,7 +674,7 @@ They do not require computational hardness assumptions.
 
 For secure use, cryptographic conditioners are always required on the
 software side of the ISA boundary. They may also be implemented on the
-hardware side if necessary. In any case, the `sentropy` ES16 output must
+hardware side if necessary. In any case, the `getseed` ES16 output must
 always be compressed 2:1 (or more) before being used as keying material
 or considered "full entropy."
 
@@ -693,7 +690,7 @@ and output (DRBG) generation are provided by the same component.
 *Rationale:*
 For many low-power targets constructions the type of hardware AES CBC-MAC
 conditioner used by Intel cite:[Me18] and AMD cite:[AM17] would be too
-complex and energy-hungry to implement solely to serve `sentropy`.
+complex and energy-hungry to implement solely to serve `getseed`.
 On the other hand, simpler non-cryptographic conditioners may be too
 wasteful on input entropy if high-quality random output is required --
 (ARM TrustZone TRBG cite:[AR17] outputs only 10Kbit/sec at 200 MHz.)
@@ -798,52 +795,45 @@ information-theoretic assumptions only.
 [[crypto_scalar_es_getnoise]]
 === Suggested GetNoise Test Interface
 
-Compliance and health testing of entropy sources requires access to raw,
-unconditioned, noise samples. This conceptual test interface is named
-GetNoise in Section 2.3.2 of NIST SP 800-90B cite:[TuBaKe:18]; this
-is not a name of an instruction or pseudoinstruction.
+Compliance testing, characterization, and configuration of entropy sources
+require access to raw, unconditioned noise samples. This conceptual test
+interface is named GetNoise GetNoise in Section 2.3.2 of NIST SP 800-90B 
+cite:[TuBaKe:18].
 
 In order for operating systems and shared drivers to be able to accommodate
 the test interface in a secure fashion, we suggest that it is implemented
-as a custom, M-mode CSR, denoted here as `mnoise`. This is also to
-facilitate the use of shared RISC-V self-certification scripts for entropy
-sources.
+as a custom, M-mode only instruction, denoted here as `getnoise`. This is
+also to facilitate the use of shared RISC-V self-certification scripts for
+entropy sources.
 
-This interface is not intended to be used as a source of randomness or for
-other production use. We define the semantics for single bit for this custom interface, `mnoise[31]`, which is named `NOISE_TEST`. 
+This non-normative interface is not intended to be used as a source of
+randomness or for other production use. As such a test interface constitutes
+a potential backdoor to cryptographic key generation process, we define the
+semantics for single bit for this interface, `getnoise[31]`, which is
+named `NOISE_TEST`. 
 
-Encoding::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 31, name: 'custom (raw noise samples and parameters)'},
-{bits: 1, name: 'NT'},
-]}
-....
-
-
-When `NOISE_TEST = 1` in `mnoise`, `sentropy` *must not* return
-anything via `ES16`; it should be in `BIST` state unless the source
+When `NOISE_TEST = 1` in `getnoise`, the `getseed` instruction *must not*
+return anything via `ES16`; it should be in `BIST` state unless the source
 is `DEAD`. When `NOISE_TEST` is again disabled, the entropy source
 shall return from `BIST` via an appropriate zeroization and self-test
 mechanism.
 
 The behavior of other input and output bits is left to the vendor.
-Other contents and behavior of the register can be
+Other contents and behavior of the custom instruction can be
 intepreted in the context of `mvendorid`, `marchid`, and `mimpid`
 CSR identifiers.
 
-When not implemented (e.g., in virtual machines), `mnoise` can permanently
+When not implemented (e.g., in virtual machines), `getnoise` can permanently
 read zero (`0x00000000`) and ignore writes.
-When available, but `NOISE_TEST = 0`, `mnoise` can return a
+When available, but `NOISE_TEST = 0`, `getnoise` can return a
 nonzero constant (e.g. `0x00000001`) but no noise samples.
 
 [[crypto_scalar_es_noistest,reftext="Custom Entropy Test Mode Diagram"]]
 ====
 image::es_noisetest.svg[title="Entropy source can't be read in test mode.", align="center",scaledwidth=66%]
-In `NOISE_TEST` mode, the WAIT and ES16 `sentropy` states are unreachable,
+In `NOISE_TEST` mode, the WAIT and ES16 `getseed` states are unreachable,
 and no entropy is output. Implementation of test interfaces that directly
-affect ES16 entropy output from the `sentropy` interface is discouraged.
+affect ES16 entropy output from the `getseed` interface is discouraged.
 Such vendor test interfaces have been exploited in attacks. For example,
 an ECDSA cite:[nist:fips:186:4] signature process without sufficient
 entropy will not only create an insecure signature but can also reveal
