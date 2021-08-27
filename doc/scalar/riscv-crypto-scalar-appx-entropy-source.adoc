@@ -22,7 +22,7 @@ following appropriate security standards is usually needed to achieve this.
 
 *	*ISA Architectural Tests.* Verify, to the extent possible, that RISC-V ISA
 	requirements in this specification are correctly implemented. This includes
-	the state transitions (<<crypto_scalar_getseed>> and 
+	the state transitions (<<crypto_scalar_es>> and 
 	<<crypto_scalar_es_getnoise>>), access control 
 	(<<crypto_scalar_es_access>>), and that `getseed` ES16 seed words
 	can only be read destructively.
@@ -171,7 +171,7 @@ refreshed (reseeded) for forward and backward security.
 === Specific Rationale and Considerations
 
 
-==== (<<crypto_scalar_getseed>>) The `getseed` Instruction
+==== The `getseed` Instruction
 
 The interface was designed to be simple so that a vendor- and
 device-independent driver component (e.g., in Linux kernel,
