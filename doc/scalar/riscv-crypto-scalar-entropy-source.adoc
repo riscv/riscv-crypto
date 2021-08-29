@@ -1,26 +1,24 @@
 [[crypto_scalar_es]]
 == Entropy Source
 
-The `getseed` instruction provides an interface for a NIST SP 800-90B
-cite:[TuBaKe:18] or BSI AIS-31 cite:[KiSc11] compliant Entropy Source (ES).
+The `getseed` instruction and the underlying `seedstat` CSR provide an
+interface to a NIST SP 800-90B cite:[TuBaKe:18] or BSI AIS-31 cite:[KiSc11]
+compliant Entropy Source (ES).
+
 An entropy source, by itself, is not a cryptographically secure Random
 Bit Generator (RBG), but can be used to build standard (and nonstandard)
 RBGs of many types with the help of symmetric cryptography. Expected usage
-is to condition (typically, SHA 2/3) the output from an entropy source and
+is to condition (typically with SHA-2/3) the output from an entropy source and
 use it to seed a cryptographically secure Deterministic Random Bit Generator
 (DRBG) such as AES-based `CTR_DRBG` cite:[BaKe15].
-The combination of ES (`getseed`) , Conditioning, and DRBG can be used
+The combination of an Entropy Source, Conditioning, and a DRBG can be used
 to create random bits securely cite:[BaKeRo:21].
-
-See <<crypto_scalar_appx_es>> for a _non-normative_ description of a
-certification and 
-self-certification procedure, design rationale, and more detailed 
-suggestions on how the entropy source output can be used. For further
-references, see cite:[SaNeMa20,SaNeMa21].
+See <<crypto_scalar_appx_es>> for a non-normative description of a
+certification and self-certification procedures, design rationale, and more detailed suggestions on how the entropy source output can be used.
 
 [[crypto_scalar_getseed]]
 [#insns-getseed, reftext="Read from Entropy Source"]
-=== getseed
+=== getseed 
 
 Synopsis::
 Read status and seed bits from an Entropy Source.
@@ -34,18 +32,25 @@ Encoding::
 {reg:[
 {bits: 7, name: 0x73, attr: "SYSTEM"},
 {bits: 5, name: 'rd'},
-{bits: 8, name: 0, attr:"ecall/ebreak/getseed"},
-{bits: 12, name: 0x2, attr:"getseed"},
+{bits: 3, name: 0x1, attr: "CSRRW"},
+{bits: 5, name: 0x0, attr: "x0"},
+{bits: 12, name: 0x20, attr: "seedstat"},
 ]}
 ....
 
 
 Description::
-This instruction is supported for both RV32 and RV64 base architectures.
-A 32-bit value is returned, as described in the following table.
-For RV64, the result sign extended to `XLEN` bits.
+The `getseed` instruction is an alias for `csrrw rd, seedstat, x0`. 
+The `getseed` alias provides a canonical way for accessing the
+`seedstat` CSR and the entropy source. This instruction is supported for both
+RV32 and RV64 base architectures. A 32-bit `seedstat` value is returned,
+as described below. For RV64, the result zero-extended to `XLEN` bits.
 
-The low 32 bits of register `rd` after `getseed` are as follows:
+
+=== the seedstat CSR
+
+The `seedstat` CSR is located at address `0x020`.
+The contents of `seedstat` are as follows:
 
 [%autowidth.stretch,cols="^,^,<",options="header",]
 |=======================================================================
@@ -61,7 +66,20 @@ The low 32 bits of register `rd` after `getseed` are as follows:
 |`15: 0` |`seed` |16 bits of randomness, only when `OPST=ES16`.
 |=======================================================================
 
-The status bits `rd[31:30]` = `OPST` may be `ES16` (10),
+While instruction forms other than `getseed` or `csrrw rd, seedstat, x0`
+can be used for access, the `seedstat` CSR must be read destructively, i.e.,
+with a write side effect. Specifically, the use of `CSRRS/CSRRC` with
+`rs1=x0` or `CSRRSI/CSRRCI` with `uimm=0` will raise an illegal instruction
+exception.
+The write value (in `rs1` or `uimm`) should be ignored by implementations.
+Its purpose is to merely signal polling and flushing.
+
+The `seedstat` CSR is also access controlled by execution mode, and attempted
+read or write access will raise an illegal instruction exception outside M mode
+unless access is explicitly granted. See <<crypto_scalar_es_access>> for
+more details.
+
+The status bits `seedstat[31:30]` = `OPST` may be `ES16` (10),
 indicating successful polling, or one of three entropy polling failure
 statuses `BIST` (00), `WAIT` (01), or `DEAD` (11), discussed below.
 
@@ -78,7 +96,6 @@ changing the state to `WAIT` (unless there is another entropy `seed`
 immediately available for `ES16`). Other states (`BIST`, `WAIT`, and `DEAD`)
 may be unaffected by polling.
 
-
 The Status Bits returned in `rd[31:30]`=`OPST`:
 
 * `00` - `BIST`
@@ -87,7 +104,7 @@ performed. If `OPST` returns temporarily to `BIST` from any other
 state, this signals a non-fatal self-test alarm,
 which is non-actionable, apart from being logged.
 Such a `BIST` alarm must be latched until polled at least once to enable
-software to record it's occurence.
+software to record its occurence.
 
 * `01` - `WAIT`
 means that a sufficient amount of entropy is not yet available. This
@@ -112,7 +129,7 @@ status output on RV32, with `0xABCD` being the `seed` value.
 
 [[crypto_scalar_es_state,reftext="Entropy Source State Transition Diagram"]]
 ====
-image::es_state.svg[title="Entropy Source state transition diagram.", align="center",scaledwidth=50%]
+image::es_state.svg[title="Entropy Source state transition diagram.", align="center",scaledwidth=40%]
 Normally the operational state alternates between WAIT
 (no data) and ES16, which means that 16 bits of randomness (seed)
 have been polled. BIST (Built-in Self-Test) only occurs after reset
@@ -123,12 +140,12 @@ ES16). DEAD is an unrecoverable error state.
 [[crypto_scalar_es_req]]
 === Entropy Source Requirements
 
-The output `seed` from `getseed` is not necessarily fully conditioned
-randomness due to hardware and energy limitations of smaller, low-powered
-implementations. However, minimum requirements are defined.
+The output `seed` (`seedstat[15:0]`) is not necessarily fully conditioned
+randomness due to hardware and energy limitations of smaller,
+low-powered implementations. However, minimum requirements are defined.
 The main requirement is that 2-to-1 cryptographic post-processing
 in 256-bit input blocks will yield 128-bit "full entropy" output blocks.
-Users of `getseed` may make this conservative assumption but are not
+Entropy source users may make this conservative assumption but are not
 prohibited from using more than twice the number of seed bits relative
 to the desired resulting entropy.
 
@@ -138,45 +155,49 @@ safe design:
 
 *	<<crypto_scalar_es_req_90b>>: A physical entropy source meeting
 	NIST SP 800-90B cite:[TuBaKe:18] criteria with evaluated min-entropy
-	level 192 per 256 output bits (min-entropy rate 0.75).
+	of 192 bits for each 256 output bits (min-entropy rate 0.75).
 
-*	<<crypto_scalar_es_req_ptg2>>: A physical entropy source meeting AIS-31
-	PTG.2 cite:[KiSc11] criteria, implying average Shannon entropy rate 0.997.
-
+*	<<crypto_scalar_es_req_ptg2>>: A physical entropy source meeting the
+	AIS-31 PTG.2 cite:[KiSc11] criteria, implying average Shannon entropy
+	rate 0.997. The source must also meet the NIST 800-90B 
+	min-entropy rate 192/256 = 0.75.
+	
 *	<<crypto_scalar_es_req_virt>>: A virtual entropy source is a DRBG
 	seeded from a physical entropy source. It must have at least a
 	256-bit (Post-Quantum Category 5) internal security level.
 
-All implementations must be able to signal initialization, test mode, and
-health alarms as required by respective standards.
-This may require the implementer to add non-standard test interfaces
-in a secure and safe manner, an example of which is described in
-<<crypto_scalar_es_getnoise>>
+All implementations must signal initialization, test mode, and health
+alarms as required by respective standards. This may require the implementer
+to add non-standard (custom) test interfaces in a secure and safe manner,
+an example of which is described in <<crypto_scalar_es_getnoise>>
 
 
 [[crypto_scalar_es_req_90b]]
 ==== NIST SP 800-90B / FIPS 140-3 Requirements
 
-The interface requirement is satisfied if 128 bits of _full entropy_ can be
+All NIST SP 800-90B cite:[TuBaKe:18] required components and heath test 
+mechanisms must be implemented. 
+
+The entropy requirement is satisfied if 128 bits of _full entropy_ can be
 obtained from each 256-bit (16*16 -bit) successful, but possibly
 non-consecutive `getseed` ES16 output sequence using a vetted conditioning
 algorithm such as a cryptographic hash
-(See Section 3.1.5.1.2, SP 800-90B cite:[TuBaKe:18]). In practice, a min-entropy
+(See Section 3.1.5.1.2, SP 800-90B). In practice, a min-entropy
 rate of 0.75 or larger is required for this. 
+
+Note that 128 bits of estimated input min-entropy does not yield 128 bits of 
+conditioned, full entropy in SP 800-90B/C evaluation. Instead, the
+implication is that every 256-bit sequence should have min-entropy of at
+least 128+64 = 192 bits, as discussed in SP 800-90C cite:[BaKeRo:21];
+the likelihood of successfully "guessing" an individual 256-bit output
+sequence should not be higher than 2^-192^ even with (almost)
+unconstrained amount of entropy source data and computational power.
 
 Rather than attempting to define all the mathematical and architectural
 properties that the entropy source must satisfy, we define that the physical
 entropy source be strong and robust enough to pass the equivalent of
 NIST SP 800-90 evaluation and certification for full entropy when
 conditioned cryptographically in ratio 2:1 with 128-bit output blocks.
-
-Note that 128 bits of estimated input min-entropy does not yield 128 bits of 
-conditioned full entropy in SP 800-90B/C evaluation. 
-Insted the implication is that every 256-bit sequence should have min-entropy
-of at least 128+64 = 192 bits, as discussed in SP 800-90C cite:[BaKeRo:21];
-the likelihood of successfully "guessing" an individual 256-bit output
-sequence should not be higher than 2^-192^ even with (almost)
-unconstrained amount of entropy source data and computational power.
 
 Even though the requirement is defined in terms of 128-bit full entropy
 blocks, we recommend 256-bit security. This can be accomplished by using
@@ -185,15 +206,14 @@ at least 512 `seed` bits to initialize a DRBG that has 256-bit security.
 [[crypto_scalar_es_req_ptg2]]
 ==== BSI AIS-31 PTG.2 / Common Criteria Requirements
 
-For alternative Common Criteria certification (or self-certification),
-vendors should target AIS 31 PTG.2 requirements cite:[KiSc11] (Sect. 4.3.).
-In this evaluation, `seed` bits are viewed as "internal random numbers."
-
-In addition to AIS-31 PTG.2 requirements (such as Shannon entropy rate of
-0.997), the overall min-entropy requirement of remains, as discussed in
-<<crypto_scalar_es_req_90b>>. Note 800-90B min-entropy is never higher
-than AIS-31 Shannon entropy. There may be a significant gap between the
-two and hence they should not be equated or confused with each other.
+For alternative Common Criteria certification (or self-certification), 
+AIS 31 PTG.2 class cite:[KiSc11] (Sect. 4.3.) required hardware components
+and mechanisms must be implemented.
+In addition to AIS-31 PTG.2 randomness requirements (Shannon entropy rate of
+0.997 as evaluated in that standard), the overall min-entropy requirement of
+remains, as discussed in <<crypto_scalar_es_req_90b>>. Note that 800-90B
+min-entropy can be significantly lower than AIS-31 Shannon entropy. These
+two metrics should not be equated or confused with each other.
 
 
 [[crypto_scalar_es_req_virt]]
@@ -235,53 +255,53 @@ there is insufficient seeding material for the host DRBG.
 
 
 [[crypto_scalar_es_access]]
-=== Access Control
+=== Access Control to `seedstat`
 
-The `getseed` instruction is by default only available in M mode, but
-can be made available to other modes via the
+The `seedstat` CSR (and the `getseed` instruction) is by default only
+available in M mode, but can be made available to other modes via the
 `mseccfg.sseed` and `mseccfg.useed` access control bits.
 `sseed` is bit `9` of `mseccfg` and
 `useed` is bit `8` of `mseccfg`.
 Without the corresponding access control bit set,
-an attempted execution of `getseed` from `U`, `S`, or other non-`M` modes
-will raise an Illegal Instruction Exception.
+an attempted read or write access to `seedstat` from `U`, `S`, or
+other non-`M` modes will raise an Illegal Instruction Exception.
 
 .Entropy Source Access Control.
 
-[cols="1,1,1,4",options="header",]
+[cols="1,1,1,5",options="header",]
 |=======================================================================
 |Mode | `sseed` | `useed` | Description
 
 | `M`
 | `*`
 | `*`
-|The `getseed` interface is always available in machine mode.
+| `seedstat` access (with `getseed` or a valid CSR instruction form) is always available in machine mode.
 
 | `S/HS`
 | `0`
 | `*`
-| `getseed` raises an Illegal Instruction Exception.
+| `seedstat` access raises an Illegal Instruction Exception.
 
 | `S/HS`
 | `1`
 | `*`
-| `getseed` executes as normal, no exception is raised.
+| `seedstat` is accessible as normal, no exception is raised.
 
 | `U/HU`
 | `*`
 | `0`
-| `getseed` raises an Illegal Instruction Exception.
+| `seedstat` access raises an Illegal Instruction Exception.
 
 | `U/HU`
 | `*`
 | `1`
-| `getseed` executes as normal, no exception is raised.
+| `seedstat` is accessible as normal, no exception is raised.
 
 |=======================================================================
 
-M-mode can trap attempted access to `getseed` and feed a
+M-mode can trap attempted access to `seedstat` and feed a
 less privileged guest _virtual entropy source_ data 
-(<<crypto_scalar_es_req_virt>>) instead of invoking a 800-90B 
+(<<crypto_scalar_es_req_virt>>) instead of invoking an SP 800-90B 
 (<<crypto_scalar_es_req_90b>>) or PTG.2 (<<crypto_scalar_es_req_ptg2>>)
 _physical entropy source_. Output generation is made with an appropriately
 seeded software DRBG. Systems should implement carefully considered access

@@ -167,11 +167,9 @@ This also illustrates that the seed/key needs to be long enough and
 come from a trusted Entropy Source. The DRBG should still be frequently
 refreshed (reseeded) for forward and backward security.
 
-
 === Specific Rationale and Considerations
 
-
-==== The `getseed` Instruction
+==== The `seedstat` CSR and `getseed` Instruction
 
 The interface was designed to be simple so that a vendor- and
 device-independent driver component (e.g., in Linux kernel,
@@ -184,7 +182,22 @@ a single DRBG source initialization only requires 512 bits
 callers. Once initiated, a DRBG requires new entropy only to mitigate
 the risk of state compromise.
 
-A blocking instruction may be easier to use, but most users should
+A CSR is used primarily for encoding reasons. The `getseed` alias is
+defined mainly for practical programming ease. It maps to the 
+`getentropy` abstract interface defined in NIST SP 800-90B.
+
+Since the desired outcome is always to get the seed, not to write it,
+we don't necessarily oblige programmers and code reviewers to go to the
+reference manual to figure out this somewhat unintuitive way of polling the
+entropy source without trapping.
+It may not be the only way of getting the seed, but there are many illegal
+ways, and this is the one we'd hope people are using. From a security perspective, it is essential that the side effect of flushing the secret
+entropy bits occurs upon reading.
+
+As for a name of the CSR, `seedstat` is an attempt at being more descriptive
+of the polling/status nature of the seed+status contents than plain "entropy". Crypto developers frequently ignore the fail status of entropy sources, even though it is a critical matter, so perhaps this will help.
+
+A blocking instruction may have been easier to use, but most users should
 be querying a (D)RBG instead of an entropy source.
 Without a polling-style mechanism, the entropy source could hang for
 thousands of cycles under some circumstances. A `wfi` ot `pause`
