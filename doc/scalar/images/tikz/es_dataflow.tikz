@@ -39,7 +39,7 @@
         node[pos=0.5,anchor=south] {\small\bf OK?};
 
 \draw[thick,fill=green!10] (2.0 - 1.5, -3.1) 
-	rectangle ++(3.0,-0.5)  node[pos=.5] {ISA interface: {\bf getseed}};
+	rectangle ++(3.0,-0.5)  node[pos=.5] {The {\bf ``seed''} CSR};
 
 \node at (0.0, -3.35) {\bf ISA};
 
@@ -55,7 +55,7 @@
 
 \draw[-Stealth] (2.0,-3.6) -- ++(0.0, -0.6) 
         node[pos=0.5,anchor=east] {\small\em ( ES16 )}
-        node[pos=0.5,anchor=west] {\small\em seed};
+        node[pos=0.5,anchor=west] {\small\em entropy};
 
 
 \node[align=center] at (3.95,-3.6)

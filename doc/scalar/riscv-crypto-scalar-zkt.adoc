@@ -243,8 +243,8 @@ Same criteria as in RVI. Organised by quadrants.
 ====	RVK (Scalar Cryptography)
 
 All K-specific instructions are included.
-Additionally, `getseed` latency should be independent of
-ES16 output `seed` bits, as that is a sensitive security parameter.
+Additionally, `seed` CSR latency should be independent of `ES16` state output
+`entropy` bits, as that is a sensitive security parameter.
 See <<crypto_scalar_appx_es_access>>.
 
 [%header,cols="^1,^1,4,8"]
@@ -283,7 +283,6 @@ See <<crypto_scalar_appx_es_access>>.
 | &#10003; | &#10003; | sm3p1        | <<insns-sm3p1>>
 | &#10003; | &#10003; | sm4ed        | <<insns-sm4ed>>
 | &#10003; | &#10003; | sm4ks        | <<insns-sm4ks>>
-| &#10003; | &#10003; | getseed      | <<insns-getseed>>
 |===
 
 

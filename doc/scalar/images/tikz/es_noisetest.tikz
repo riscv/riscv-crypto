@@ -17,11 +17,11 @@
 
 \node[state,fill=green!20] (es16) at (1,-3) {ES16};
 
-\node[align=center] (seed) at (2,-3) {{seed}\\{ok!}};
+\node[align=center] (entropy) at (2,-3) {\bf OK!};
 
 \node[state,fill=red!20] (dead) at (0,-4.5) {DEAD};
 
-\node[align=center] (dead2) at (0,-5.5) {\em stays dead!};
+\node[color=red,align=center] (dead2) at (0,-5.5) {\em stays dead!};
 
 \draw[->] (reset) to (bist);
 \draw[->] (bist) to (wait);

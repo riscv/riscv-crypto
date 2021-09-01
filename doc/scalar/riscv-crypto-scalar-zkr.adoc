@@ -1,19 +1,11 @@
 [[zkr,Zkr]]
 === `Zkr` - Entropy Source Extension
 
-The extension provides access to an entropy source that can be used to
-seed cryptographic random bit generators. See <<crypto_scalar_es>> for the
-normative specification and <<crypto_scalar_appx_es>> for design rationale
-and non-normative recommendations to implementers.
+The entropy source extension defines the `seed` CSR at address `0x015`. 
+This CSR provides up to 16 physical `entropy` bits that can be used to
+seed cryptographic random bit generators. 
 
-[%header,cols="^1,^1,4,8"]
-|===
-|RV32
-|RV64
-|Mnemonic
-|Instruction
-
-| &#10003; | &#10003; | getseed   | <<insns-getseed>>
-|===
-
+See <<crypto_scalar_es>> for the normative specification and access control
+notes. <<crypto_scalar_appx_es>> contains design rationale and further
+recommendations to implementers.
 
