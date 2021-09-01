@@ -169,7 +169,7 @@ refreshed (reseeded) for forward and backward security.
 
 === Specific Rationale and Considerations
 
-==== The `seed` CSR <<crypto_scalar_seed_csr>>
+==== (<<crypto_scalar_seed_csr>>) The `seed` CSR 
 
 The interface was designed to be simple so that a vendor- and
 device-independent driver component (e.g., in Linux kernel,
