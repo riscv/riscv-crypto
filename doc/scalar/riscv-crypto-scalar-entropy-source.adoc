@@ -16,7 +16,7 @@ See <<crypto_scalar_appx_es>> for a non-normative description of a
 certification and self-certification procedures, design rationale, and more detailed suggestions on how the entropy source output can be used.
 
 [[crypto_scalar_seed_csr]]
-=== The seed CSR
+=== The `seed` CSR
 
 `seed` is a user mode CSR located at address `0x015`. 
 The 32-bit contents of `seed` are as follows:
@@ -39,9 +39,7 @@ The `seed` CSR must be accessed with a read-write instruction. A read-only
 instruction such as `CSRRS/CSRRC` with `rs1=x0` or `CSRRSI/CSRRCI` with
 `uimm=0` will raise an illegal instruction exception.
 The write value (in `rs1` or `uimm`) must be ignored by implementations.
-Its purpose is to signal polling and flushing, and avoid introducing
-side effects (i.e. wipe-on-read, described below) due to a CSR read into the
-architecture.
+Its purpose of a write is to signal polling and flushing.
 
 The instruction `csrrw rd, seed, x0` can be used for fetching seed status
 and entropy values. It is available on both RV32 and RV64 base architectures
@@ -90,7 +88,7 @@ performed. If `OPST` returns temporarily to `BIST` from any other
 state, this signals a non-fatal self-test alarm,
 which is non-actionable, apart from being logged.
 Such a `BIST` alarm must be latched until polled at least once to enable
-software to record its occurence.
+software to record its occurrence.
 
 * `01` - `WAIT`
 means that a sufficient amount of entropy is not yet available. This
