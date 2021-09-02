@@ -39,7 +39,7 @@ The `seed` CSR must be accessed with a read-write instruction. A read-only
 instruction such as `CSRRS/CSRRC` with `rs1=x0` or `CSRRSI/CSRRCI` with
 `uimm=0` will raise an illegal instruction exception.
 The write value (in `rs1` or `uimm`) must be ignored by implementations.
-Its purpose of a write is to signal polling and flushing.
+The purpose of the write is to signal polling and flushing.
 
 The instruction `csrrw rd, seed, x0` can be used for fetching seed status
 and entropy values. It is available on both RV32 and RV64 base architectures
