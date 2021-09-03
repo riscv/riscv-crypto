@@ -86,7 +86,7 @@ The key algorithms we aimed to accelerate (AES, SHA2, SM3 and SM4) are
 `.text` size and a 95% reduction in `.data` size.
 (Faster: dynamic instruction count, smaller: static code size).
 
-The more general purpose instructions (`Zbk*`) are harder to evaluate, but
+The more general-purpose instructions (`Zbk*`) are harder to evaluate, but
 for important algorithms like SHA3/CSHAKE (Keccak) and ChaCha20, the improvement
 is at least 2x in performance and 0.5x in code size.
 
