@@ -4,7 +4,7 @@
 These instructions are useful for implementing SBoxes in constant time, and
 potentially with DPA protections.
 These are separated from the <<zbkb>> because they
-have a implementation overhead which cannot be amortised
+have an implementation overhead which cannot be amortised
 across other instructions.
 
 NOTE: All of these instructions are missing from the first Bitmanip
