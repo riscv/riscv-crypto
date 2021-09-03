@@ -25,7 +25,7 @@ Description::
 This instruction sources a single byte from `rs2` according to `bs`.
 To this it applies the inverse AES SBox operation, and a partial inverse
 MixColumn, before XOR'ing the result with `rs1`.
-This instruction must _always_ be implemented such that it's execution
+This instruction must _always_ be implemented such that its execution
 latency does not depend on the data being operated on.
 
 Operation::

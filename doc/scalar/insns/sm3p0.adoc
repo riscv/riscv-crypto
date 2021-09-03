@@ -25,7 +25,7 @@ Encoding::
 Description:: 
 This instruction is supported for the RV32 and RV64 base architectures.
 It implements the _P0_ transform of the SM3 hash function cite:[gbt:sm3,iso:sm3].
-This instruction must _always_ be implemented such that it's execution
+This instruction must _always_ be implemented such that its execution
 latency does not depend on the data being operated on.
 
 .Supporting Material

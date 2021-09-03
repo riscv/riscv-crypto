@@ -29,7 +29,7 @@ transformation to two columns of the state array, packed into a single
 It is used to create the inverse cipher KeySchedule, according to
 the equivalent inverse cipher construction in
 cite:[nist:fips:197] (Page 23, Section 5.3.5).
-This instruction must _always_ be implemented such that it's execution
+This instruction must _always_ be implemented such that its execution
 latency does not depend on the data being operated on.
 
 Operation::

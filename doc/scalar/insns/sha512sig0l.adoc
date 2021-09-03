@@ -28,7 +28,7 @@ Used to compute the Sigma0 transform of the SHA2-512 hash function
 in conjunction with the <<insns-sha512sig0h,`sha512sig0h`>> instruction.
 The transform is a 64-bit to 64-bit function, so the input and output
 is represented by two 32-bit registers.
-This instruction must _always_ be implemented such that it's execution
+This instruction must _always_ be implemented such that its execution
 latency does not depend on the data being operated on.
 
 [TIP]
