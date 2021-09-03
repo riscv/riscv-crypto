@@ -186,7 +186,7 @@ the input/output array pointers. This will cost two instructions to
 move them from `a0` / `a1`. If the arguments are marked as `const` in
 C code, then two more instructions are needed to put them back.
 
-A core capable of fusing this sequence when both instructions are upto
+A core capable of fusing this sequence when both instructions are up to
 32 bits long saves  `4` cycles per quarter round.
 
 A core capable of fusing this sequence only when the xor is 16 bits and
