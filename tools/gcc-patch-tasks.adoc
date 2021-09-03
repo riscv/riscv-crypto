@@ -5,7 +5,7 @@ Ben Marshall <ben.marshall@bristol.ac.uk>
 
 == Introduction & Purpose
 
-This document describes the work neccessary to implement support
+This document describes the work necessary to implement support
 the scalar crypto extension in GCC and Binutils.
 
 We currently have experimental patches for Binutils in the same
@@ -129,6 +129,6 @@ We do not expect the compiler to use the complex algorithm specific
 instructions.
 
 NOTE: It _might_ be possible to write a matching pattern for the
-SHA2 and SM3 instructions, but this is not neccessary for inital
+SHA2 and SM3 instructions, but this is not necessary for inital
 support.
 

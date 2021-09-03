@@ -17,7 +17,7 @@ Scalar Cryptography specification documents as they move at different
 paces.
 When this happens, assume that the Bitmanip specification has the
 most up-to-date version of Bitmanip instructions.
-This is an unfortunate but neccessary stop-gap while Scalar Cryptography
+This is an unfortunate but necessary stop-gap while Scalar Cryptography
 and Bitmanip are being rapidly iterated on prior to public review.
 
 [%header,cols="^1,^1,4,8"]
