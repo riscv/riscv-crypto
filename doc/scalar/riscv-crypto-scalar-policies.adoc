@@ -29,9 +29,9 @@ policies:
   
 * Historically, there has been some discussion
   cite:[LSYRR:04]
-  on how newly supported operations in general purpose computing might
+  on how newly supported operations in general-purpose computing might
   enable new bases for cryptographic algorithms.
-  The standard will not try to anticipate new useful low level
+  The standard will not try to anticipate new useful low-level
   operations which _may_ be useful as building blocks for
   future cryptographic constructs.
   

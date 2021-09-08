@@ -26,7 +26,7 @@ Description::
 This instruction is supported for the RV64 base architecture.
 It implements the Sigma0 transform of the SHA2-512 hash function.
 cite:[nist:fips:180:4].
-This instruction must _always_ be implemented such that it's execution
+This instruction must _always_ be implemented such that its execution
 latency does not depend on the data being operated on.
 
 Operation::

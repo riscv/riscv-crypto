@@ -4,7 +4,7 @@
 These instructions are useful for implementing SBoxes in constant time, and
 potentially with DPA protections.
 These are separated from the <<zbkb>> because they
-have a implementation overhead which cannot be amortised
+have an implementation overhead which cannot be amortised
 across other instructions.
 
 NOTE: All of these instructions are missing from the first Bitmanip
@@ -17,7 +17,7 @@ Scalar Cryptography specification documents as they move at different
 paces.
 When this happens, assume that the Bitmanip specification has the
 most up-to-date version of Bitmanip instructions.
-This is an unfortunate but neccessary stop-gap while Scalar Cryptography
+This is an unfortunate but necessary stop-gap while Scalar Cryptography
 and Bitmanip are being rapidly iterated on prior to public review.
 
 [%header,cols="^1,^1,4,8"]

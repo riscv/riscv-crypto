@@ -3,7 +3,7 @@
 
 This document describes the _scalar_ cryptography
 extension for RISC-V.
-All instructions described herein use the general purpose `X`
+All instructions described herein use the general-purpose `X`
 registers, and obey the 2-read-1-write register access constraint.
 These instructions are designed to be lightweight and suitable
 for `32` and `64` bit base architectures; from embedded IoT class
@@ -21,5 +21,5 @@ A companion document _Volume II: Vector Instructions_, describes
 instruction proposals which build on the RISC-V Vector Extension.
 The Vector Cryptography extension is currently a work in progress
 waiting for the base Vector extension to stabilise.
-We expect to pick up this work in ernest in Q4-2021 or Q1-2022.
+We expect to pick up this work in earnest in Q4-2021 or Q1-2022.
 

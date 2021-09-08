@@ -29,8 +29,8 @@ A byte is extracted from `rs2` based on `bs`, to which the SBox and
 linear layer transforms are applied, before the result is XOR'd with
 `rs1` and written back to `rd`.
 This instruction exists on RV32 and RV64 base architectures.
-On RV64, the 32-bit result is sign extended upto XLEN bits.
-This instruction must _always_ be implemented such that it's execution
+On RV64, the 32-bit result is sign extended up to XLEN bits.
+This instruction must _always_ be implemented such that its execution
 latency does not depend on the data being operated on.
 
 Operation::
