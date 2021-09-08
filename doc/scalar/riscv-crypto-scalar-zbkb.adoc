@@ -15,7 +15,7 @@ ratification package, and some are not (
 All of the instructions in <<zbkb>> have their complete specification included
 in this document, including those _not_ present in the initial
 Bitmanip ratification package.
-This is to make the specification complete as a standalone document.
+This is to make the present specification complete as a standalone document.
 Inevitably there might be small divergences between the Bitmanip and
 Scalar Cryptography specification documents as they move at different
 paces.

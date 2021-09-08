@@ -1,7 +1,7 @@
 [[crypto_scalar_audience]]
 === Intended Audience
 
-Cryptography is a specialist subject, requiring people with many different
+Cryptography is a specialised subject, requiring people with many different
 backgrounds to cooperate in its secure and efficient implementation.
 Where possible, we have written this specification to be understandable by
 all, though we recognise that the motivations and references to
@@ -14,7 +14,7 @@ We have tried to capture these backgrounds
 here, with a brief explanation of what we expect them to know, and how
 it relates to the specification.
 We hope this aids people's understanding of which aspects of the specification
-are particularly relevant to them, which they may (safely!) ignore, and
+are particularly relevant to them, and which they may (safely!) ignore or
 pass to a colleague.
 
 Cryptographers and cryptographic software developers::
@@ -22,7 +22,7 @@ These are the people we expect to write code using the instructions
 in this specification.
 They should understand fairly obviously the motivations for the
 instructions we include, and be familiar with most of the algorithms
-and outside standards which we refer to.
+and outside standards to which we refer.
 We expect the sections on constant time execution
 (<<crypto_scalar_zkt>>)
 and the entropy source
@@ -40,7 +40,7 @@ Digital design engineers & micro-architects::
 These are the people who will implement the specification inside a
 core. Again, no cryptography expertise is assumed, but we expect them to
 interpret the specification and anticipate any hardware implementation
-issues. E.g., where high-frequency design considerations apply, or where
+issues, e.g., where high-frequency design considerations apply, or where
 latency/area tradeoffs exist etc.
 In particular, they should be aware of the literature around efficiently
 implementing AES and SM4 SBoxes in hardware.
@@ -49,8 +49,8 @@ Verification engineers::
 Responsible for ensuring the correct implementation of the extension
 in hardware.
 No cryptography background is assumed.
-We hope they are able to identify interesting test cases from the
-specification, and knowing how the instructions are used in the real world.
+We expect them to identify interesting test cases from the
+specification. An understanding of their real-world usage will help with this.
 We do not expect verification engineers in this sense to be experts
 in entropy source design or certification, since this is a very
 specialised area.

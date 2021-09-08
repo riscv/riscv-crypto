@@ -2,7 +2,7 @@
 === Sail Specifications
 
 RISC-V maintains a 
-link:https://github.com/rems-project/sail-riscv[formal model]
+link:https://github.com/riscv/sail-riscv[formal model]
 of the ISA specification,
 implemented in the Sail ISA specification language
 cite:[sail].
@@ -24,4 +24,9 @@ This supporting code is listed in
 The 
 link:https://github.com/rems-project/sail/blob/sail2/manual.pdf[Sail Manual]
 is recommended reading in order to best understand the code snippets.
+
+Note that this document contains only a subset of the formal model: refer to
+the formal model Github
+link:https://github.com/riscv/sail-riscv[repository]
+for the complete model.
 

@@ -20,11 +20,11 @@ policies:
   cryptographic constructs well.
   It will not try to support proposed standards, or cryptographic
   constructs which exist only in academia.
-  Cryptographic standards which are settled upon concurrently with, or after
+  Cryptographic standards which are settled upon concurrently with or after
   the RISC-V cryptographic extension standardisation will be dealt with
   by future additions to, or versions of, the RISC-V cryptographic
   standard extension. It is anticipated that the NIST Lightweight
-  Cryptography contest, and the NIST Post-Quantum Cryptography contest
+  Cryptography contest and the NIST Post-Quantum Cryptography contest
   may be dealt with this way, depending on timescales.
   
 * Historically, there has been some discussion
