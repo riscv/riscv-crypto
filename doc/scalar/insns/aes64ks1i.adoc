@@ -39,7 +39,7 @@ function clause execute (AES64KS1I(rnum, rs1, rd)) = {
     handle_illegal();  RETIRE_SUCCESS
   } else {
     let tmp1 : bits(32) = X(rs1)[63..32];
-    let rc   : bits(32) = aes_rnum_to_rcon(rnum); /* round number -> round constant */
+    let rc   : bits(32) = aes_decode_rcon(rnum); /* round number -> round constant */
     let tmp2 : bits(32) = if (rnum ==0xA) then tmp1 else ror32(tmp1, 8);
     let tmp3 : bits(32) = aes_sbox_fwd(tmp2[31..24]) @ aes_sbox_fwd(tmp2[23..16]) @
                           aes_sbox_fwd(tmp2[15.. 8]) @ aes_sbox_fwd(tmp2[ 7.. 0]) ;
