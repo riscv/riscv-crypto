@@ -38,7 +38,7 @@ The entire Sigma1 transform for SHA2-512 may be computed on RV32
 using the following instruction sequence:
 
  sha512sig1l    t0, a0, a1 
- sha512sig1h    t1, a0, a1 
+ sha512sig1h    t1, a1, a0
 
 ====
 
