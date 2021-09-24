@@ -2,8 +2,8 @@
 = RISC-V Cryptography Extensions Volume I: Scalar & Entropy Source Instructions
 :description: The scalar cryptography and entropy source extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  1'st September, 2021
-:revnumber: v1.0.0-rc2
+:revdate:  24'th September, 2021
+:revnumber: v1.0.0-rc3
 :revremark: This document is in the Frozen state. Change is unlikely but possible, with a high threshold for consideration.
 :url-riscv: http://riscv.org
 :doctype: book

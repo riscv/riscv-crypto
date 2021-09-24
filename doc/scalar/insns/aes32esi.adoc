@@ -48,13 +48,13 @@ Included in::
 |Lifecycle state
 
 | <<zkne>> (RV32)
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 | <<zkn>> (RV32)
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 | <<zk>> (RV32)
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 |===
 

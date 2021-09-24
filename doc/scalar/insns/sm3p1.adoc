@@ -53,10 +53,10 @@ Included in::
 |Lifecycle state
 
 | <<zksh>>
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 | <<zks>>
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 |===
 

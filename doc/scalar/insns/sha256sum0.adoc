@@ -52,13 +52,13 @@ Included in::
 |Lifecycle state
 
 | <<zknh>>
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 | <<zkn>>
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 | <<zk>>
-| v1.0.0-rc2
+| v1.0.0-rc3
 | Frozen
 |===
 
