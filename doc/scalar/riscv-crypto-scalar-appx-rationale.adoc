@@ -93,11 +93,11 @@ class of block ciphers and stream ciphers.
 
 ----
 RV32:
-    rev.b   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
+    brev8   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
     rev8    rd, rs1 // grevi rd, rs1, 24 - Reverse bytes in 32-bit word
 
 RV64:
-    rev.b   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
+    brev8   rd, rs1 // grevi rd, rs1,  7 - Reverse bits in bytes
     rev8    rd, rs1 // grevi rd, rs1, 56 - Reverse bytes in 64-bit word
 ----
 
@@ -226,20 +226,20 @@ be word aligned) into registers to perform the round functions.
 
 ----
 RV32, RV64:
-    xperm.n rd, rs1, rs2
-    xperm.b rd, rs1, rs2
+    xperm4 rd, rs1, rs2
+    xperm8 rd, rs1, rs2
 ----
 
 See cite:[riscv:bitmanip:draft] (Section 2.2.4) for a complete
 description of this instruction.
 
-The `xperm.n` instruction operates on nibbles.
+The `xperm4` instruction operates on nibbles.
 `GPR[rs1]` contains a vector of `XLEN/4` 4-bit elements.
 `GPR[rs2]` contains a vector of `XLEN/4` 4-bit indexes.
 The result is each element in `GPR[rs2]` replaced by the indexed element
 in `GPR[rs1]`, or zero if the index into `GPR[rs2]` is out of bounds.
 
-The `xperm.b` instruction operates on bytes.
+The `xperm8` instruction operates on bytes.
 `GPR[rs1]` contains a vector of `XLEN/8` 8-bit elements.
 `GPR[rs2]` contains a vector of `XLEN/8` 8-bit indexes.
 The result is each element in `GPR[rs2]` replaced by the indexed element
@@ -270,7 +270,7 @@ SM4 cite:[gbt:sm4] (China)
 Kuznyechik (Russia).
 
 All of these SBoxes can be implemented efficiently, in constant
-time, using the `xperm.b` instruction
+time, using the `xperm8` instruction
 footnote:l[link:http://svn.clairexen.net/handicraft/2020/lut4perm/demo02.cc[]].
 Note that this technique is also suitable for masking based
 side-channel countermeasures.
