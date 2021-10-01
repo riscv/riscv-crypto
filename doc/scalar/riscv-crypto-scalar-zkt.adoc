@@ -81,7 +81,7 @@ influences a branch or is used for a table lookup.
 _security by design_ against basic timing attacks can usually be achieved via
 conscious implementation (of relevant iterative multi-cycle instructions or
 instructions composed of micro-ops) in way that avoids data-dependant latency.
-* Laboratory testing may utilize statisticial timing attack leakage analysis
+* Laboratory testing may utilize statistical timing attack leakage analysis
 techniques such as those described in ISO/IEC 17825 cite:[IS16].
 * Binary executables should not contain secrets in the instruction encodings
 (Kerckhoffs's principle), so instruction timing may leak information about
