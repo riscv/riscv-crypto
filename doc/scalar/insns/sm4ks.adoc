@@ -57,10 +57,10 @@ Included in::
 |Lifecycle state
 
 | <<zksed>>
-| v1.0.0-rc3
+| v1.0.0-rc4
 | Frozen
 | <<zks>>
-| v1.0.0-rc3
+| v1.0.0-rc4
 | Frozen
 |===
 
