@@ -1,0 +1,200 @@
+
+= RISC-V Scalar Cryptography Public Review Summary
+:toc:
+
+== Introduction
+
+This document summarises the feedback received during the public review
+period for the Scalar Cryptography extensions, and any outcomes from them.
+
+The public review period for Scalar Cryptography ran from
+September 2'nd 2021
+to
+October 17'th, 2021.
+
+NOTE: This document is being compiled ahead of that date,
+and should not be considered complete until after that date.
+
+Feedback was received via two main sources:
+
+* The RISC-V link:https://groups.google.com/a/groups.riscv.org/g/isa-dev[isa-dev mailing list].
+
+* Github
+  link:https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+label%3Apublic-review[issues]
+  in our repository.
+  Any which related to public review were labelled as such.
+
+
+== isa-dev Feedback
+
+The initial announcement to the list of the public review period can be
+found
+link:https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/wHsZ986slaU[here].
+
+The following gives a short overview of all threads related to Scalar Crypto
+at the time of writing.
+
+=== AES Key expansion
+
+* Thread available link:https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/aRaskHvXCwI[here].
+
+* A question about how to use the AES Key expansion instructions.
+  An answer was provided and no follow up questions were received.
+  We assume the answer was sufficient.
+
+=== aes_rnum_to_rcon function
+
+* Thread available link:https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/t01E7-DjZpY[here].
+
+* A typo in the specification Sail code was pointed out, where a function
+  call was using the wrong name, but the intended function was still obvious.
+  This was fixed in
+  link:https://github.com/riscv/riscv-crypto/commit/529c0f12e154847ba0157ea99b2c9b4c97978ecb[this commit].
+
+=== Comments on Scalar Crypto v1.0.0-rc2
+
+* Thread available link:https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/u3xzVkXhBx8[here].
+
+* Pointed out lots of editorial issues and was otherwise very positive about
+  the specification as a whole.
+
+* Raised some much broader questions about how the Sail model code can be
+  best included in specifications, which triggered some further discussion.
+
+== Github issues feedback
+
+All Github issues raised in response to public review can be found
+link:https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+label%3Apublic-review[here].
+The following is a short summary of their content and any conclusions.
+
+=== Encoding section minor beautification
+
+* link:https://github.com/riscv/riscv-crypto/issues/133[Issue thread]
+
+* Notes some opportunities to improve the typography of instruction encoding
+  diagrams. This will likely be done when the spec is merged into the main
+  architecture manual.
+
+=== name consistency of brev8/rev8 and xperm8/xperm4
+
+* link:https://github.com/riscv/riscv-crypto/issues/132[Issue thread]
+
+* Asked about the inconsistency of mnemonic use between the normative
+  specification and the appendix.
+
+* The inconsistency was fixed in 
+  link:https://github.com/riscv/riscv-crypto/commit/16e7b5273346ff11f05725ec80106ad7c58409f6[this]
+  commit.
+
+* Another person also noted further down in the thread that some mnemonic names
+  were inconsistent with the wider architecture.
+  The TGs reply was to say these names were chosen for us during architecture
+  review, and that any changes now would need to be very strongly motivated
+  due to the frozen status of the specification.
+
+=== Scalar Cryptography v1.0.0-rc2. Incorrect ZIP/UNZIP insns encoding
+
+* link:https://github.com/riscv/riscv-crypto/issues/130[Issue thread]
+
+* To date this is the only actual _bug_ which has been discovered during
+  public review. The encodings for the `zip` and `unzip` instructions were
+  found to be incorrect, and were fixed in
+  link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.0-rc4-scalar[RC4]
+  of the specification.
+
+* This issue caused more trouble than it needed to, due to confusion about
+  Zip and Unzip being "swapped", which turned out not to be the case.
+
+=== Does SMx algorithmes require clmuls?
+
+* link:https://github.com/riscv/riscv-crypto/issues/129[Issue thread]
+
+* A question about why `SM*` instructions appeared with carry-less multiply
+  instructions in some extensions.
+  Answer points out that SM4 is commonly used in the "GCM" mode of operation,
+  which uses carry-less multiply for efficient implementations.
+
+=== rv32 sha512sigDX wrong order
+
+* link:https://github.com/riscv/riscv-crypto/issues/128[Issue thread]
+
+* It was pointed out that the code examples for some SHA512 instructions
+  were incorrect.
+
+* This was fixed in
+  link:https://github.com/riscv/riscv-crypto/commit/1b66e0a31657c9d4d0a7ae950c1575ef538ea482[this commit].
+
+=== Minor suggestion to the code modification for aes64ksi
+
+* link:https://github.com/riscv/riscv-crypto/issues/127[Issue thread]
+
+* A small recommendation for improving the clarity of Sail code for
+  the `aes64ks1` instruction.
+
+* Suggestion implemented in
+  link:https://github.com/riscv/riscv-crypto/commit/c5419168f36760240ce0be8d300242ff5125cfe6[this commit].
+
+=== Minor typographical error while referring to Zkt instructions
+
+* link:https://github.com/riscv/riscv-crypto/issues/126[Issue thread]
+
+* Tiny editorial correction.
+
+=== Zero and sign extension of pack.h vs pack.w
+
+* link:https://github.com/riscv/riscv-crypto/issues/125[Issue thread]
+
+* A suggestion for clarifying the zero and sign-extension of the
+  `pack*` instructions.
+  Also an
+  link:https://github.com/riscv/riscv-bitmanip/issues/160[issue]
+  for the Bitmanip TG.
+  No action taken yet.
+
+=== Scalar Cryptography v1.0.0-rc1. Opcodes changing of aes32* instructions.
+
+* link:https://github.com/riscv/riscv-crypto/issues/123[Issue thread]
+
+* A question about optimising the encodings (particularly of the `aes32`)
+  instructions to better fit with an as yet un-standardised choice by
+  the Bitmanip task group for easily detecting ternary instructions.
+
+* See also:
+
+** link:https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/r8eyJYQJFEk[Ternary instructions encoding policy]
+   on the isa-dev list.
+
+** link:https://github.com/riscv/riscv-p-spec/issues/105[Ternary instructions must die?]
+   issue raised against the P extension but referencing choices in the
+   Cryptography TG.
+
+* TG response has been to say that we aren't against more optimal encodings,
+  but that the decision is down to the architecture review committee, who
+  set a high bar for changes at this stage.
+
+=== Scalar Cryptography v1.0.0-rc1 style issues
+
+* link:https://github.com/riscv/riscv-crypto/issues/108[Issue thread]
+
+* Miscellaneous editorial issues. Fixed with other editorial issues.
+
+== Conclusions
+
+The specification and extensions seem to have been well received.
+Many improvements have been made to the clarity of the specification, and
+several fixes applied to example code.
+One major bug was identified in the encodings, which was promptly fixed.
+
+During the course of the public review, it became apparent that there was
+confusion about the scale of possible changes which can be made once the
+specification is frozen.
+As an early extension to go through this process, we have sometimes had to "be
+the first" to encounter such issues.
+While these are important discussions, they are much more general than the
+Scalar Cryptography extension in particular, so this document doesn't
+address them.
+
+We, the Cryptography Task Group, would like to sincerely thank everyone who
+participated in the public review process for their time and hard work in
+improving our specification.
+
