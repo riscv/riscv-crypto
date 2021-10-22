@@ -13,12 +13,13 @@ use it to seed a cryptographically secure Deterministic Random Bit Generator
 The combination of an Entropy Source, Conditioning, and a DRBG can be used
 to create random bits securely cite:[BaKeRo:21].
 See <<crypto_scalar_appx_es>> for a non-normative description of a
-certification and self-certification procedures, design rationale, and more detailed suggestions on how the entropy source output can be used.
+certification and self-certification procedures, design rationale, and more
+detailed suggestions on how the entropy source output can be used.
 
 [[crypto_scalar_seed_csr]]
 === The `seed` CSR
 
-`seed` is a user mode CSR located at address `0x015`. 
+`seed` is an unprivileged CSR located at address `0x015`. 
 The 32-bit contents of `seed` are as follows:
 
 [%autowidth.stretch,cols="^,^,<",options="header",]
@@ -165,9 +166,9 @@ mechanisms must be implemented.
 The entropy requirement is satisfied if 128 bits of _full entropy_ can be
 obtained from each 256-bit (16*16 -bit) successful, but possibly
 non-consecutive `entropy` (ES16) output sequence using a vetted conditioning
-algorithm such as a cryptographic hash
-(See Section 3.1.5.1.2, SP 800-90B). In practice, a min-entropy
-rate of 0.75 or larger is required for this. 
+algorithm such as a cryptographic hash (See Section 3.1.5.1.1, SP 800-90B
+cite:[TuBaKe:18]). In practice, a min-entropy rate of 0.75 or larger is
+required for this. 
 
 Note that 128 bits of estimated input min-entropy does not yield 128 bits of 
 conditioned, full entropy in SP 800-90B/C evaluation. Instead, the
@@ -215,7 +216,7 @@ implementors should try to guarantee that even such environments have
 sufficient entropy available for secure cryptographic operations.
 
 A virtual source traps access to the `seed` CSR, emulates it, or
-otherwise implements it without direct access to a physical entropy
+otherwise implements it, possibly without direct access to a physical entropy
 source. The output can be cryptographically secure pseudorandomness
 instead of real entropy, but must have at least 256-bit security, as defined
 below. A virtual source is intended especially for guest operating
@@ -227,7 +228,7 @@ than those required for exhaustive key search on a secure block cipher
 with a 256-bit key (e.g., AES 256). This applies to both classical
 and quantum computing models, but only classical information flows.
 The virtual source security requirement maps to Post-Quantum Security
-Category 5 cite:[NI16], so that virtual sources can be used for cryptography.
+Category 5 cite:[NI16].
 
 Any implementation of the `seed` CSR that limits the security
 strength shall not reduce it to less than 256 bits. If the security
@@ -245,9 +246,16 @@ The `seed` CSR is by default only available in M mode, but can be made
 available to other modes via the `mseccfg.sseed` and `mseccfg.useed`
 access control bits. `sseed` is bit `9` of and `useed` is
 bit `8` of the `mseccfg` CSR.
-Without the corresponding access control bit set to 1,
-an attempted read or write access to `seed` from `U`, `S`, or
-other non-`M` modes will raise an Illegal Instruction Exception.
+Without the corresponding access control bit set to 1, an attempted
+read/write access to `seed` from U, S, or HS modes will raise an
+illegal instruction Exception. 
+
+Attempted access to `seed` from virtual modes VS and VU always raises an
+exception; a read-only instruction causes an illegal instruction Exception,
+while a read-write instruction (that can potentially be emulated) causes
+a virtual instruction Exception. Note that HS, VS, and VU modes are
+present in systems with Hypervisor (H) extension implemented. If desired, 
+a hypervisor can emulate accesses to the seed CSR from a virtual machine.
 
 .Entropy Source Access Control.
 
@@ -255,56 +263,59 @@ other non-`M` modes will raise an Illegal Instruction Exception.
 |=======================================================================
 |Mode | `sseed` | `useed` | Description
 
-| `M`
+| M
 | `*`
 | `*`
 | The `seed` CSR is always available in machine mode as normal (with a
-CSR read-write instruction. Attempted read without a write raises an
-Illegal Instruction Exception regardless of mode access control bits).
+CSR read-write instruction.) Attempted read without a write raises an
+illegal instruction Exception regardless of mode and access control bits.
 
-| `S/HS/VS`
+| VS/VU
+| `*`
+| `*`
+| The `seed` CSR is never directly available from virtual (VS or VU)
+modes. A read-write instruction causes a virtual instruction Exception
+(while a read-only instruction always causes an illegal instruction Exception.)
+
+| S/HS
 | `0`
 | `*`
-| Any `seed` CSR access raises an Illegal Instruction Exception.
+| Any `seed` CSR access raises an illegal instruction Exception.
 
-| `S/HS/VS`
+| S/HS
 | `1`
 | `*`
 | The `seed` CSR is accessible as normal. No exception is raised for read-write.
 
-| `U/VU`
+| U
 | `*`
 | `0`
-| Any `seed` CSR access raises an Illegal Instruction Exception.
+| Any `seed` CSR access raises an illegal instruction Exception.
 
-| `U/VU`
+| U
 | `*`
 | `1`
 | The `seed` CSR is accessible as normal. No exception is raised for read-write.
+
 
 |=======================================================================
 
-M-mode can trap attempted access to `seed` and feed a
-less privileged guest _virtual entropy source_ data 
-(<<crypto_scalar_es_req_virt>>) instead of invoking an SP 800-90B 
-(<<crypto_scalar_es_req_90b>>) or PTG.2 (<<crypto_scalar_es_req_ptg2>>)
-_physical entropy source_. Output generation is made with an appropriately
-seeded software DRBG. Systems should implement carefully considered access
-control policies from  lower privilege modes to physical entropy sources.
-See  <<crypto_scalar_appx_es_access>> for security considerations related
+Systems should implement carefully considered access control policies from
+lower privilege modes to physical entropy sources. The system can trap
+attempted access to `seed` and feed a less privileged client
+_virtual entropy source_ data (<<crypto_scalar_es_req_virt>>) instead of
+invoking an SP 800-90B  (<<crypto_scalar_es_req_90b>>) or PTG.2 
+(<<crypto_scalar_es_req_ptg2>>) _physical entropy source_. Emulated `seed`
+data generation is made with an appropriately seeded, secure software DRBG.
+See  <<crypto_scalar_appx_es_access>> for security considerations related 
 to direct access to entropy sources.
-
-Note that additional modes such as `HS`, `VS`, and `VU` are present
-in systems with Hypervisor (H) extension implemented. Without additional
-hardware access control mechanisms, direct access from all of these to the
-physical source is controlled via `mseccfg.sseed` and `mseccfg.useed.`
 
 Implementations may implement `mseccfg` such that `[s,u]seed` is a read-only
 constant value `0`. Software may discover if access to the `seed` CSR can be
-enabled in `U` and `S` mode by writing a `1` to `[s,u]seed` and reading back
+enabled in U and S mode by writing a `1` to `[s,u]seed` and reading back
 the result.
 
-If `S` or `U` mode is not implemented, then the corresponding `[s,u]seed`
+If S or U mode is not implemented, then the corresponding `[s,u]seed`
 bits of `mseccfg` must be hardwired to zero.
 The `[s,u]seed` bits must have a defined reset value. The system
 must not allow them to be in an undefined state after a reset.
