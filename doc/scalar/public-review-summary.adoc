@@ -12,9 +12,6 @@ September 2'nd 2021
 to
 October 17'th, 2021.
 
-NOTE: This document is being compiled ahead of that date,
-and should not be considered complete until after that date.
-
 Feedback was received via two main sources:
 
 * The RISC-V link:https://groups.google.com/a/groups.riscv.org/g/isa-dev[isa-dev mailing list].
@@ -66,6 +63,55 @@ at the time of writing.
 All Github issues raised in response to public review can be found
 link:https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+label%3Apublic-review[here].
 The following is a short summary of their content and any conclusions.
+
+=== Zkt: explicitely consider timing dependences across several instructions
+
+* link:https://github.com/riscv/riscv-crypto/issues/136[Issue thread]
+
+* Asks for clarification on how the `Zkt` extension handles execution
+  latency differences arrising from _sequences_ of instructions, rather than
+  individual instructions.
+
+* Recommendation: Add clarifying words to note that inter-instruction
+  optimisations are _out of scope_ for `Zkt`, and that it applies only
+  to intra-instruction latency.
+
+* This recommendation has not been applied at the time of writing, but is
+  open for consideration in
+  link:https://github.com/riscv/riscv-crypto/pull/137[PR#137].
+  We expect that this can be merged in without problems once folks agree
+  the proposal addresses the issue well, as it is not a functional change,
+  but a clarification.
+
+=== Reconsider destructive encoding form for AES instructions
+
+* link:https://github.com/riscv/riscv-crypto/issues/135[Issue thread]
+
+* This is a proposal to re-consider the encodings for the 32-bit AES
+  and 32/64-bit SM4 instructions. Specifically, to change them back to
+  having a destructive form where `rd=rs1`, thus saving encoding space.
+
+* There has been substantial past discussion about this within the task
+  group and on Github (links in the issue thread).
+  At various times in the last two years, we (the task group) have changed
+  the encodings from non-destructive to destructive and back again, based
+  on updated information from various people about the percieved scarcity
+  of opcode space.
+
+* Our last feedback on this issue was from the architectural review
+  committee, who told us that the opcode space saving was not worth
+  introducing the destructive encoding form to the architecture at this
+  time. Hence our decision to enter public review with the non-destructive
+  encodings.
+
+* Given this would be a major, change to the frozen specification,
+  we (the task group) believe it is for the architecture review committee to
+  consider 1) whether revisiting the discussion is wise given the amount of
+  past discussion and 2) whether making the change is worth it.
+
+NOTE: This issue is distinct from one described later about optimising the
+AES32 encodings to better fit with some choices made by the Bitmanip task
+group.
 
 === Encoding section minor beautification
 
@@ -171,6 +217,9 @@ The following is a short summary of their content and any conclusions.
 * TG response has been to say that we aren't against more optimal encodings,
   but that the decision is down to the architecture review committee, who
   set a high bar for changes at this stage.
+
+NOTE: This issue is distinct from one described earlier about changing the
+AES32 encodings to use a destructive form.
 
 === Scalar Cryptography v1.0.0-rc1 style issues
 
