@@ -62,6 +62,17 @@ at the time of writing.
 * Raised some much broader questions about how the Sail model code can be
   best included in specifications, which triggered some further discussion.
 
+=== Zkr comments
+
+* link:https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/wHsZ986slaU/m/LZ6QE0HoBAAJ[Email link on isa-dev]
+
+* These comments raised some concerns about how the Zkr extension
+  interacts with the Hypervisor. Some concerns were about terminology, and some
+  were functional concerns about the kinds of traps raised and when.
+
+* These were addressed in Pull Request
+  link:https://github.com/riscv/riscv-crypto/pull/134[#134].
+
 == Github issues feedback
 
 All Github issues raised in response to public review can be found
