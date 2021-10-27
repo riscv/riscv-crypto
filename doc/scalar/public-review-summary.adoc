@@ -1,6 +1,10 @@
 
 = RISC-V Scalar Cryptography Public Review Summary
 :toc:
+:description: A summary of issues raised and discussed during public review of the scalar cryptography extensions.
+:company: RISC-V.org
+:revdate: 27'th October 2021
+:sectnums:
 
 == Introduction
 
