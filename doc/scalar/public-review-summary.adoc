@@ -91,12 +91,8 @@ The following is a short summary of their content and any conclusions.
   optimisations are _out of scope_ for `Zkt`, and that it applies only
   to intra-instruction latency.
 
-* This recommendation has not been applied at the time of writing, but is
-  open for consideration in
+* This recommendation was merged in
   link:https://github.com/riscv/riscv-crypto/pull/137[PR#137].
-  We expect that this can be merged in without problems once folks agree
-  the proposal addresses the issue well, as it is not a functional change,
-  but a clarification.
 
 === Reconsider destructive encoding form for AES instructions
 
