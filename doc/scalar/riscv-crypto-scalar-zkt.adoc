@@ -55,6 +55,19 @@ instructions. There are no guarantees that even a bit-sliced cipher
 implementation (largely based on boolean logic instructions) is secure on a
 core without Zkt attestation.
 
+Out-of-order implementations adhering to Zkt are still free to fuse, crack,
+change or even ignore sequences of instructions, so long as the optimisations
+are applied deterministically, and not based on operand data.
+The guiding principle should be that no information about the data being
+operated on should be leaked based on the execution latency.
+
+[NOTE]
+====
+It is left to future extensions or other techniques to tackle the problem
+of data-independent execution in implementations which advanced out-of-order
+capabilities which use value prediction, or which are otherwise data-dependent.
+====
+
 .Note to software developers
 [WARNING,caption="SH"]
 ====
@@ -80,7 +93,7 @@ influences a branch or is used for a table lookup.
 * Architectural testing for Zkt can be pragmatic and semi-formal;
 _security by design_ against basic timing attacks can usually be achieved via
 conscious implementation (of relevant iterative multi-cycle instructions or
-instructions composed of micro-ops) in way that avoids data-dependant latency.
+instructions composed of micro-ops) in way that avoids data-dependent latency.
 * Laboratory testing may utilize statistical timing attack leakage analysis
 techniques such as those described in ISO/IEC 17825 cite:[IS16].
 * Binary executables should not contain secrets in the instruction encodings
