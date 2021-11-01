@@ -30,10 +30,10 @@ uint_xlen_t xperm(uint_xlen_t rs1, uint_xlen_t rs2, int sz_log2)
 }
 
 // Taken from Section 2.24 of bitmanip-draft.pdf
-uint_xlen_t xperm_n(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,2);}
-uint_xlen_t xperm_b(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,3);}
-uint_xlen_t xperm_h(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,4);}
-uint_xlen_t xperm_w(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,5);}
+uint_xlen_t xperm4(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,2);}
+uint_xlen_t xperm8(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,3);}
+uint_xlen_t xperm16(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,4);}
+uint_xlen_t xperm32(uint_xlen_t rs1,uint_xlen_t rs2){return xperm(rs1,rs2,5);}
 
 
 uint64_t rv32_xpermb(uint64_t rs1, uint64_t rs2) {
@@ -41,10 +41,10 @@ uint64_t rv32_xpermb(uint64_t rs1, uint64_t rs2) {
     uint32_t r1_l = rs1      ;
     uint32_t r2_h = rs2 >> 32;
     uint32_t r2_l = rs2      ;
-    uint32_t rd_h = xperm_b(r1_l, r2_h              ) |
-                    xperm_b(r1_h, r2_h ^ 0x80808080 ) ;
-    uint32_t rd_l = xperm_b(r1_l, r2_h              ) |
-                    xperm_b(r1_h, r2_h ^ 0x80808080 ) ;
+    uint32_t rd_h = xperm8(r1_l, r2_h              ) |
+                    xperm8(r1_h, r2_h ^ 0x80808080 ) ;
+    uint32_t rd_l = xperm8(r1_l, r2_h              ) |
+                    xperm8(r1_h, r2_h ^ 0x80808080 ) ;
     return ((uint64_t)rd_h) << 32 | rd_l;
 }
 
@@ -56,7 +56,7 @@ uint64_t rv32_xpermb(uint64_t rs1, uint64_t rs2) {
 return the new value.
 */
 uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
-    return xperm_n(sbox, in); // 1 instruction.
+    return xperm4(sbox, in); // 1 instruction.
 }
 
 #elif __riscv_xlen == 32
@@ -72,10 +72,10 @@ uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
     uint32_t in_h   = in   >> 32;                    //
     uint32_t in_l   = in        ;                    //
     uint32_t msk    = 0x88888888;                    // +2 instructions.
-    uint32_t rd_h   = xperm_n(sbox_l, in_h      ) |  // +2 instructions
-                      xperm_n(sbox_h, in_h ^ msk);   // +2 instructions
-    uint32_t rd_l   = xperm_n(sbox_l, in_l      ) |  // +2 instructions
-                      xperm_n(sbox_h, in_l ^ msk);
+    uint32_t rd_h   = xperm4(sbox_l, in_h      ) |  // +2 instructions
+                      xperm4(sbox_h, in_h ^ msk);   // +2 instructions
+    uint32_t rd_l   = xperm4(sbox_l, in_l      ) |  // +2 instructions
+                      xperm4(sbox_h, in_l ^ msk);
     uint64_t rd     = (((uint64_t)rd_h) << 32)    |  // Return values in
                       rd_l;                          // a0, a1
     return   rd     ;                                // +1 instruciton
@@ -116,7 +116,7 @@ uint64_t sbox_8bit     (sbox_8bit_t * sbox, uint64_t in) {
 
     for(int i = 0; i < 32; i ++) {
         uint64_t sb_i = sbox -> packed[i];
-        rd   |= xperm_b(sb_i, in ^ mask);
+        rd   |= xperm8(sb_i, in ^ mask);
         mask += 0x0808080808080808LL;
     }
 
@@ -144,8 +144,8 @@ void     sbox_8bit_x4  (
 
     for(int i = 0; i < 32; i ++) {
         uint64_t sb_i = sbox -> packed[i];          // 1 instr
-        rd0  |= xperm_b(sb_i, in[0] ^ mask);        // 3 instr
-        rd1  |= xperm_b(sb_i, in[1] ^ mask);        // 3 instr
+        rd0  |= xperm8(sb_i, in[0] ^ mask);        // 3 instr
+        rd1  |= xperm8(sb_i, in[1] ^ mask);        // 3 instr
         mask += 0x0808080808080808LL;               // 1 instr
     }
 
