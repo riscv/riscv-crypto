@@ -16,7 +16,7 @@
 
 #include "riscvcrypto/permutation/permutation.h"
 
-// Show how we can implement the Prince Block Cipher sbox using xperm.n
+// Show how we can implement the Prince Block Cipher sbox using xperm4
 void demo_prince_sbox() {
     uint64_t sbox   = 0x4d5e087619ca23fb;
     uint64_t input  = 0xFEDCBA9876543210;
@@ -56,7 +56,7 @@ static uint8_t aes_fwd_sbox[256] = {
   0xb0, 0x54, 0xbb, 0x16
 };
 
-// Show how to use the xperm.b instructions to implement the AES sbox.
+// Show how to use the xperm8 instructions to implement the AES sbox.
 void demo_aes_sbox() {
 
     printf("\n# AES SBox Demo\n");
