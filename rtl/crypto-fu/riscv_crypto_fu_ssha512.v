@@ -105,10 +105,10 @@ if(RV64) begin  : rv64_ssha512
 end else begin  : rv32_ssha512
 
     wire [XL:0] ssha512_sum0r = `SLL32(rs1,25)^`SLL32(rs1,30)^`SRL32(rs1,28)^
-                                `SLL32(rs2, 7)^`SLL32(rs2, 2)^`SLL32(rs2,24);
+                                `SRL32(rs2, 7)^`SRL32(rs2, 2)^`SLL32(rs2, 4);
     
-    wire [XL:0] ssha512_sum1r = `SLL32(rs1,23)^`SLL32(rs1,14)^`SRL32(rs1,18)^
-                                `SLL32(rs2, 9)^`SLL32(rs2,18)^`SLL32(rs2,14);
+    wire [XL:0] ssha512_sum1r = `SLL32(rs1,23)^`SRL32(rs1,14)^`SRL32(rs1,18)^
+                                `SRL32(rs2, 9)^`SLL32(rs2,18)^`SLL32(rs2,14);
     
     wire [XL:0] ssha512_sig0l = `SRL32(rs1, 1)^`SRL32(rs1, 7)^`SRL32(rs1, 8)^
                                 `SLL32(rs2,31)^`SLL32(rs2,25)^`SLL32(rs2,24);
@@ -116,11 +116,11 @@ end else begin  : rv32_ssha512
     wire [XL:0] ssha512_sig0h = `SRL32(rs1, 1)^`SRL32(rs1, 7)^`SRL32(rs1, 8)^
                                 `SLL32(rs2,31)               ^`SLL32(rs2,24);
     
-    wire [XL:0] ssha512_sig1l = `SRL32(rs1, 3)^`SRL32(rs1, 6)^`SRL32(rs1,19)^
-                                `SLL32(rs2,29)^`SLL32(rs2,26)^`SLL32(rs2,13);
+    wire [XL:0] ssha512_sig1l = `SLL32(rs1, 3)^`SRL32(rs1, 6)^`SRL32(rs1,19)^
+                                `SRL32(rs2,29)^`SLL32(rs2,26)^`SLL32(rs2,13);
     
-    wire [XL:0] ssha512_sig1h = `SRL32(rs1, 3)^`SRL32(rs1, 6)^`SRL32(rs1,19)^
-                                `SLL32(rs2,29)               ^`SLL32(rs2,13);
+    wire [XL:0] ssha512_sig1h = `SLL32(rs1, 3)^`SRL32(rs1, 6)^`SRL32(rs1,19)^
+                                `SRL32(rs2,29)               ^`SLL32(rs2,13);
 
     assign rd =
         {XLEN{op_ssha512_sig0l}} & ssha512_sig0l   |
