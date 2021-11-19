@@ -1,0 +1,84 @@
+[[insns-vclmul, Vector Carry-less Multiply]]
+= vclmul.[vv,vx]
+
+Synopsis::
+Vector Carry-less Multiply by vector or immediate.
+
+Mnemonic::
+vclmul.vv vd, vs2, vs1 +
+vclmul.vx vd, vs2, rs1
+
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+This instruction performs a carry-less multiply operation to all
+active elements in the vector register group specified by `vs2`.
+The other operand can come from a vector register group `vs1`, or a scalar
+integer register `rs1`.
+For the scalar integer register, the operand is zero extended or truncated
+to `SEW` bits as appropriate.
+
+Operation::
+[source,sail]
+--
+function clmul(x, y, SEW) = { // TODO: not real Sail Code yet
+  result : bits(SEW) = zeros();
+  foreach (i from 0 to (SEW - 1)) {
+    if y[i] == bitone then result = result ^ (x << i);
+  };
+  result
+}
+
+function clause execute (VCLMUL_VV(vs2, vs1, vd)) = {
+  foreach (i from vlstart to vl) {
+      set_velem(vd, i, clmul(get_velem(vs1,i), get_velem(vs2,i)));
+  }
+  RETIRE_SUCCESS
+}
+
+function clause execute (VCLMUL_VX(vs2, rs1, vd)) = {
+  foreach (i from vlstart to vl) {
+      set_velem(vd, i, clmul(X(rs1), get_velem(vs2,i)));
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkb>>
+| v0.1.0
+| In Development
+|===
+
+
+

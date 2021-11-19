@@ -1,0 +1,15 @@
+[appendix]
+[[crypto_scalar_appx_sail]]
+== Supporting Sail Code
+
+This section contains the supporting Sail code referenced by the
+instruction descriptions throughout the specification.
+The
+link:https://github.com/rems-project/sail/blob/sail2/manual.pdf[Sail Manual]
+is recommended reading in order to best understand the supporting code.
+
+[source,sail]
+----
+include::../../extern/sail-riscv/model/riscv_types_kext.sail[lines=12..-1]
+----
+

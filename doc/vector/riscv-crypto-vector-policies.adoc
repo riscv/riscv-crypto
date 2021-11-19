@@ -1,0 +1,42 @@
+[[crypto_vector_policies]]
+=== Policies
+
+In creating this proposal, we tried to adhere to the following
+policies:
+
+* Where there is a choice between:
+  1) supporting diverse implementation strategies for an algorithm
+  or
+  2) supporting a single implementation style which is more performant /
+     less expensive;
+  the crypto extension will pick the more constrained but performant
+  option.
+  This fits a common pattern in other parts of the RISC-V specification,
+  where recommended (but not required) instruction sequences for performing
+  particular tasks are given as an example, such that both hardware and
+  software implementers can optimise for only a single use-case.
+  
+* The extension will be designed to support _existing_ standardised
+  cryptographic constructs well.
+  It will not try to support proposed standards, or cryptographic
+  constructs which exist only in academia.
+  Cryptographic standards which are settled upon concurrently with or after
+  the RISC-V cryptographic extension standardisation will be dealt with
+  by future additions to, or versions of, the RISC-V cryptographic
+  standard extension.
+  
+* Historically, there has been some discussion
+  cite:[LSYRR:04]
+  on how newly supported operations in general-purpose computing might
+  enable new bases for cryptographic algorithms.
+  The standard will not try to anticipate new useful low-level
+  operations which _may_ be useful as building blocks for
+  future cryptographic constructs.
+  
+* Regarding side-channel countermeasures:
+  Where relevant, proposed instructions must aim to remove the
+  possibility of any timing side-channels.
+  Some instructions are designed to _enable_
+  power and electro-magnetic side-channel secure implementation,
+  but this is not mandated as part of the RISC-V ISA specification.
+

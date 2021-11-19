@@ -1,0 +1,20 @@
+[[zvkb,Zvkb]]
+=== `Zvkb` - Vector Bitmanip instructions for Cryptography
+
+General purpose bitmanipulation instructions which are essential
+for implementing common cryptographic workloads securely & efficiently.
+
+[%header,cols="^2,4,8"]
+|===
+|Mnemonic
+|Instruction
+
+| vandn.[vv,vs,vx]   | <<insns-vandn>>
+| vclmul.[vv,vx]     | <<insns-vclmul>>
+| vclmulh.[vv,vx]    | <<insns-vclmulh>>
+| vbrev8             | <<insns-vbrev8>>
+| vrev8              | <<insns-vrev8>>
+| vrol.[vv,vs,vx]    | <<insns-vrol>>
+| vror.[vv,vs,vx,vi] | <<insns-vror>>
+|===
+

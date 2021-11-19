@@ -1,0 +1,101 @@
+[[insns-vror, Vector Rotate Right]]
+= vror.[vv,vx,vi]
+
+Synopsis::
+Vector rotate right by vector/scalar/immediate.
+
+Mnemonic::
+vror.vv vd, vs2, vs1 +
+vror.vx vd, vs2, rs1 +
+vror.vi vd, imm, vs1
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Encoding (Vector-Immediate)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'imm'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+This instruction performs a bitwise right rotation on vector elements.
+The data to be rotated is in the vector register group specifed by `vs2` and
+the rotate amount value can come from a vector register group `vs1`, a scalar
+integer register `rs1`, or a zero-extended 5-bit immediate.
+Only the low `log2(SEW)` bits of the rotate-amount value are used to contror
+the rotate amount.
+
+Operation::
+[source,sail]
+--
+function clause execute (VROR_VV(vs2, vs1, vd)) = {
+  foreach (i from vlstart to vl) {
+    set_velem(vd, EEW=SEW, i,
+      get_velem(vs2, i) >>> (get_velem(vs1, i) & (SEW-1))
+  }
+  RETIRE_SUCCESS
+}
+
+function clause execute (VROR_VX(vs2, rs1, vd)) = {
+  foreach (i from vlstart to vl) {
+    set_velem(vd, EEW=SEW, i, 
+      get_velem(vs2, i) >>> (X(rs1) & (SEW-1))
+  }
+  RETIRE_SUCCESS
+}
+
+function clause execute (VROR_VI(vs2, imm, vd)) = {
+  foreach (i from vlstart to vl) {
+    set_velem(vd, EEW=SEW, i, 
+      get_velem(vs2, i) >>> (imm & (SEW-1))
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkb>>
+| v0.1.0
+| In Development
+|===
+
+
+
+

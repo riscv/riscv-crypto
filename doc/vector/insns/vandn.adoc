@@ -1,0 +1,97 @@
+[[insns-vandn, Vector And-Not]]
+= vandn.[vv,vx,vi]
+
+Synopsis::
+Bitwise And-Not
+
+Mnemonic::
+vandn.vv vd, vs2, vs1 +
+vandn.vx vd, vs2, rs1 +
+vandn.vi vd, vs2, imm
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Encoding (Vector-Immediate)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'imm'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+This instruction applies the bitwise _and-not_ operation to all
+active elements in the vector register group specified by `vs2`.
+The other operand can come from a vector register group `vs1`, a scalar
+integer register `rs1`, or a zero-extended 5-bit immediate.
+
+Operation::
+[source,sail]
+--
+function clause execute (VANDN_VV(vs2, vs1, vd)) = {
+  foreach (i from vlstart to vl) {
+    set_velem(vd, EEW=SEW, i,
+      get_velem(vs1, EEW=SEW, i) & ~get_velem(vs2, EEW=SEW, i));
+  }
+  RETIRE_SUCCESS
+}
+
+function clause execute (VANDN_VX(vs2, rs1, vd)) = {
+  foreach (i from vlstart to vl) {
+    set_velem(vd, EEW=SEW, i, 
+      sext_or_truncate_to_sew(X(rs1)) & ~get_velem(vs2, EEW=SEW, i) );
+  }
+  RETIRE_SUCCESS
+}
+
+function clause execute (VANDN_VI(vs2, imm, vd)) = {
+  foreach (i from vlstart to vl) {
+    set_velem(vd, EEW=SEW, i, 
+        zext(imm) & ~get_velem(vs2, EEW=SEW, i);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkb>>
+| v0.1.0
+| In Development
+|===
+
+

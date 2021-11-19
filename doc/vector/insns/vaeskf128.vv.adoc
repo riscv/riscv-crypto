@@ -1,0 +1,65 @@
+[[insns-vaeskf128-vv, Vector AES-128 Forward KeySchedule]]
+= vaeskf128.vv
+
+Synopsis::
+Vector AES-128 Forward KeySchedule
+
+Mnemonic::
+vaeskf128.vv vd, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'rnum'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+This instruction implements a single round of the forward AES-128 KeySchedule.
+It treats each element of `vs1` as the current AES round key.
+It applies a single AES-128 KeySchedule round to each element, and
+writes the 128-bit result to the corresponding element in `vd`.
+
+Only a Vector-Vector version of this instruction is provided. To use this
+instruction with the Vector-Scalar varients of the AES encrypt/decrypt
+round function instructions, software can set `vl=1`.
+
+This instruction treats `EEW=128`, regardless of `vtype.vsew`
+and requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+It _does not_ require that `EEW=128` be
+supported for any other instruction.
+
+Operation::
+[source,sail]
+--
+function clause execute (VAESESM(vs1, vd)) = {
+  assert(VLEN>=128);
+  foreach (i from vlstart to vl) {
+    let current : bits(128) = get_velem(vs2, EEW=128, i);
+    let next    : bits(128) = aes_128_forward_key_schedule(current);
+    set_velem(vd, EEW=128, i, next);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===
+
+
+

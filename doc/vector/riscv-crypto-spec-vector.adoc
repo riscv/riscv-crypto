@@ -1,0 +1,153 @@
+[[riscv-doc-template]]
+= RISC-V Cryptography Extensions Volume II: Vector Instructions
+:description: The vector cryptography extensions for the RISC-V ISA.
+:company: RISC-V.org
+:revdate:  8'th October, 2021
+:revnumber: v0.0.1
+:revremark: This document is in development. Breaking changes should be expected.
+:url-riscv: http://riscv.org
+:doctype: book
+//:doctype: report
+:preface-title: Preamble
+:colophon:
+:appendix-caption: Appendix
+:imagesdir: images
+:title-logo-image: image:risc-v_logo.png[pdfwidth=3.25in,align=center]
+//:page-background-image: image:draft.svg[opacity=20%]
+//:title-page-background-image: none
+//:back-cover-image: image:circuit.png[opacity=25%]
+// Settings:
+:experimental:
+:reproducible:
+// needs to be changed? bug discussion started
+:WaveDromEditorApp: wavedrom-cli
+:imagesoutdir: images
+:icons: font
+:lang: en
+:listing-caption: Listing
+:sectnums:
+:toc: left
+:toclevels: 4
+:source-highlighter: pygments
+ifdef::backend-pdf[]
+:source-highlighter: coderay
+endif::[]
+:data-uri:
+:hide-uri-scheme:
+:stem: latexmath
+:footnote:
+:xrefstyle: short
+:bibtex-file: ../riscv-crypto-spec.bib
+:bibtex-order: alphabetical
+:bibtex-style: ieee
+
+//:This is the preamble.
+
+[colophon]
+= Colophon
+
+This document describes the Vector Cryptography extensions to the 
+RISC-V Instruction Set Architecture.
+
+This document is _in development_ and breaking changes should be
+expected.
+For more information, see link:http://riscv.org/spec-state[here].
+
+[NOTE]
+.Copyright and licensure:
+This work is licensed under a
+link:http://creativecommons.org/licenses/by/4.0/[Creative Commons Attribution 4.0 International License]
+
+[NOTE]
+.Document Version Information:
+====
+include::git-commit.adoc[]
+
+See link:https://github.com/riscv/riscv-crypto[github.com/riscv/riscv-crypto]
+for more information.
+====
+
+[acknowledgments]
+== Acknowledgments
+
+Contributors to all versions of the specification (in alphabetical order)
+include: +
+Barry Spinney,
+link:mailto:ben.marshall@pqshield.com[Ben Marshall] (Ed),
+Derek Atkins,
+Ken Dockser,
+Markku-Juhani O. Saarinen,
+Nathan Menhorn,
+Richard Newell
+
+We are all very grateful to the huge number of other people who have
+helped to improve this specification through their comments, reviews,
+feedback and questions.
+
+// ------------------------------------------------------------
+
+include::riscv-crypto-vector-introduction.adoc[]
+include::riscv-crypto-vector-audience.adoc[]
+include::riscv-crypto-vector-sail-specifications.adoc[]
+include::riscv-crypto-vector-policies.adoc[]
+
+// ------------------------------------------------------------
+
+[[crypto_vector_extensions]]
+== Extensions Overview
+
+The group of extensions introduced by the Vector Cryptography Instruction Set
+Extension is listed here.
+
+Detection of individual cryptography extensions uses the
+unified software-based RISC-V discovery method.
+
+[NOTE]
+====
+At the time of writing, these discovery mechanisms are still a work in
+progress.
+====
+
+include::./riscv-crypto-vector-zvkns.adoc[]
+<<<
+include::./riscv-crypto-vector-zvknf.adoc[]
+<<<
+include::./riscv-crypto-vector-zvkb.adoc[]
+
+// ------------------------------------------------------------
+
+[[crypto_vector_insns, reftext="Vector Cryptography Instructions"]]
+== Instructions
+
+include::insns/vaeses.adoc[leveloffset=+2]
+<<<
+include::insns/vaesesm.adoc[leveloffset=+2]
+<<<
+include::insns/vaesds.adoc[leveloffset=+2]
+<<<
+include::insns/vaesdsm.adoc[leveloffset=+2]
+<<<
+include::insns/vaeskf128.vv.adoc[leveloffset=+2]
+<<<
+include::insns/vaeskf192.vv.adoc[leveloffset=+2]
+<<<
+include::insns/vaeskf256.vv.adoc[leveloffset=+2]
+<<<
+include::insns/vaes128e.adoc[leveloffset=+2]
+<<<
+include::insns/vandn.adoc[leveloffset=+2]
+<<<
+include::insns/vclmul.adoc[leveloffset=+2]
+<<<
+include::insns/vclmulh.adoc[leveloffset=+2]
+<<<
+include::insns/vror.adoc[leveloffset=+2]
+<<<
+include::insns/vrol.adoc[leveloffset=+2]
+
+[[bibliography]]
+== Bibliography
+
+bibliography::../riscv-crypto-spec.bib[ieee]
+
+include::riscv-crypto-vector-appx-sail.adoc[]
