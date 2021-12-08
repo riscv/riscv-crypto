@@ -110,7 +110,9 @@ that monitor the "health" and quality of those sources.
 
 The requirements for physical entropy sources are specified in
 NIST SP 800-90B cite:[TuBaKe:18] (<<crypto_scalar_es_req_90b>>)
-for U.S. Federal FIPS 140-3 cite:[NI19] evaluations and
+for U.S. Federal FIPS 140-3 cite:[NI19] evaluations, in GM/T 0005-2012
+cite:[ScaRTS:12] (<<crypto_scalar_es_gmt_0005>>) for commercial cryptography
+applications in China, and
 in BSI AIS-31 cite:[KiSc01,KiSc11] (<<crypto_scalar_es_req_ptg2>>)
 for high-security Common Criteria evaluations.
 There is some divergence in the types of health tests and entropy metrics 
@@ -237,6 +239,16 @@ Section 4.4 of cite:[TuBaKe:18]: the repetition count test and adaptive
 proportion test, or show that the same flaws will be detected
 by vendor-defined tests.
 
+==== (<<crypto_scalar_es_gmt_0005>>) GM/T 0005-2012
+
+Randomness test in GM/T 0005-2012 cite:[ScaRTS:12] defines test methods
+for randomness of bit sequences. It requires multiple methods and
+commercial cryptography applications in China should pass
+the test of this standard in some situations.
+
+Due to algorithm of the test methods, the sample bit sequence in relatively
+longer length. This may require to read multiple times from entropy
+source before procceeding randomness tests.
 
 ==== (<<crypto_scalar_es_req_ptg2>>) BSI AIS-31
 

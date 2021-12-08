@@ -1,8 +1,9 @@
 [[crypto_scalar_es]]
 == Entropy Source
 
-The `seed` CSR provides an interface to a NIST SP 800-90B cite:[TuBaKe:18] 
-or BSI AIS-31 cite:[KiSc11] compliant physical Entropy Source (ES).
+The `seed` CSR provides an interface to a NIST SP 800-90B cite:[TuBaKe:18],
+GM/T 0005-2012 cite:[ScaRTS:12], or BSI AIS-31 cite:[KiSc11] compliant
+physical Entropy Source (ES).
 
 An entropy source, by itself, is not a cryptographically secure Random
 Bit Generator (RBG), but can be used to build standard (and nonstandard)
@@ -142,6 +143,11 @@ safe design:
 	NIST SP 800-90B cite:[TuBaKe:18] criteria with evaluated min-entropy
 	of 192 bits for each 256 output bits (min-entropy rate 0.75).
 
+*	<<crypto_scalar_es_gmt_0005>>: A physical entropy source meeting the
+	GM/T 0005-2012 cite:[ScaRTS:12] criteria, implying for all test methods
+	at least 981 of 1000 binary stream sequence ε should have returned
+	statistical P-value of non less than defined significance level α.
+
 *	<<crypto_scalar_es_req_ptg2>>: A physical entropy source meeting the
 	AIS-31 PTG.2 cite:[KiSc11] criteria, implying average Shannon entropy
 	rate 0.997. The source must also meet the NIST 800-90B 
@@ -160,7 +166,7 @@ an example of which is described in <<crypto_scalar_es_getnoise>>
 [[crypto_scalar_es_req_90b]]
 ==== NIST SP 800-90B / FIPS 140-3 Requirements
 
-All NIST SP 800-90B cite:[TuBaKe:18] required components and heath test 
+All NIST SP 800-90B cite:[TuBaKe:18] required components and health test 
 mechanisms must be implemented. 
 
 The entropy requirement is satisfied if 128 bits of _full entropy_ can be
@@ -187,6 +193,30 @@ conditioned cryptographically in ratio 2:1 with 128-bit output blocks.
 Even though the requirement is defined in terms of 128-bit full entropy
 blocks, we recommend 256-bit security. This can be accomplished by using
 at least 512 `entropy` bits to initialize a DRBG that has 256-bit security.
+
+[[crypto_scalar_es_gmt_0005]]
+=== GM/T 0005-2012 Randomness Test Requirements
+
+Commercial cryptography applications may be required to pass GM/T 0005-2012
+cite:[ScaRTS:12] randomness test with parameters and test methods defined in
+standard.
+
+To begin GM/T 0005-2012 test, the sample size of binary stream sequence ε
+should be 10^6 bits. Users may read from `entropy` (ES16) until the stream
+sequence buffer is filled.
+
+Run the test with sample sequence, all the test algorithms returns a P-value.
+For every test method, if 981 of 1000 samples returns P-value is not less than
+the significance level α, which is 0.01 (Sect. 4.2, 5.4, GM/T 2005-2012
+cite:[ScaRTS:12]), it marks this sample passed this test. If the samples would
+pass all the test methods, it passes randomness requirement of this standard.
+
+The test methods includes bit sequence test and complex tests. Bit sequence test
+includes monobit and block frequency, poker, serial and run distribution tests.
+Complex test includes binary dericative, autocorrelcation, binary matrix rank,
+cumulative, approx. entropy, Maurer's Universal test and discrete fourier
+transform test. Parameters of these methods are defined in appendixes of the
+standard (Appendix B, cite:[ScaRTS:12]).
 
 [[crypto_scalar_es_req_ptg2]]
 ==== BSI AIS-31 PTG.2 / Common Criteria Requirements
@@ -311,9 +341,10 @@ Systems should implement carefully considered access control policies from
 lower privilege modes to physical entropy sources. The system can trap
 attempted access to `seed` and feed a less privileged client
 _virtual entropy source_ data (<<crypto_scalar_es_req_virt>>) instead of
-invoking an SP 800-90B  (<<crypto_scalar_es_req_90b>>) or PTG.2 
-(<<crypto_scalar_es_req_ptg2>>) _physical entropy source_. Emulated `seed`
-data generation is made with an appropriately seeded, secure software DRBG.
+invoking an SP 800-90B (<<crypto_scalar_es_req_90b>>), GM/T 0005-2012
+(<<crypto_scalar_es_gmt_0005>>), or PTG.2  (<<crypto_scalar_es_req_ptg2>>)
+_physical entropy source_. Emulated `seed` data generation is made with an
+appropriately seeded, secure software DRBG.
 See  <<crypto_scalar_appx_es_access>> for security considerations related 
 to direct access to entropy sources.
 
