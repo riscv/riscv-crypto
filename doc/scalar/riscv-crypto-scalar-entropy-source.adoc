@@ -160,7 +160,7 @@ an example of which is described in <<crypto_scalar_es_getnoise>>
 [[crypto_scalar_es_req_90b]]
 ==== NIST SP 800-90B / FIPS 140-3 Requirements
 
-All NIST SP 800-90B cite:[TuBaKe:18] required components and heath test 
+All NIST SP 800-90B cite:[TuBaKe:18] required components and health test 
 mechanisms must be implemented. 
 
 The entropy requirement is satisfied if 128 bits of _full entropy_ can be
