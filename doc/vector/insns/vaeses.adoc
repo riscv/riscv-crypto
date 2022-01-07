@@ -15,7 +15,7 @@ Encoding (Vector-Scalar)::
 {bits: 5, name: 'vd'},
 {bits: 3, name: '???'},
 {bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2'},
+{bits: 5, name: '?????'},
 {bits: 7, name: '???????'},
 ]}
 ....
@@ -28,7 +28,7 @@ Encoding (Vector-Vector)::
 {bits: 5, name: 'vd'},
 {bits: 3, name: '???'},
 {bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2'},
+{bits: 5, name: '?????'},
 {bits: 7, name: '???????'},
 ]}
 ....
@@ -36,12 +36,12 @@ Encoding (Vector-Vector)::
 Description:: 
 This instruction implements the final-round function of the AES block cipher
 for all parameterisations.
-It treats each element of `vs1` as the current AES round state,
-and elements of `vs2` as the round key.
-The Vector-Vector (VV) variant encrypts elements of `vs1` under corresponding
-elements of `vs2`.
-The Vector-Scalar (VV) variant encrypts elements of `vs1` under the
-zeroth element of `vs2`.
+It treats each element of `vd` as the current AES round state,
+and elements of `vs1` as the round key.
+The Vector-Vector (VV) variant encrypts elements of `vd` under corresponding
+elements of `vs1`.
+The Vector-Scalar (VV) variant encrypts elements of `vd` under the
+zeroth element of `vs1`.
 The result (i.e. the next round state) is written to elements of `vd`.
 
 This instruction treats `EEW=128`, regardless of `vtype.vsew`
@@ -52,12 +52,12 @@ supported for any other instruction.
 Operation::
 [source,sail]
 --
-function clause execute (VAESES(vs2, vs1, vd, vv)) = {
+function clause execute (VAESES(vs1, vd, vv)) = {
   assert(VLEN>=128);
   foreach (i from vlstart to vl) {
     let keyelem = if vv then i else 0;
-    let state : bits(128) = get_velem(vs1, EEW=128, i);
-    let rkey  : bits(128) = get_velem(vs2, EEW=128, keyelem);
+    let state : bits(128) = get_velem(vd, EEW=128, i);
+    let rkey  : bits(128) = get_velem(vs1, EEW=128, keyelem);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);
     let sr    : bits(128) = aes_fwd_shift_rows(sb);
     let ark   : bits(128) = sr ^ rkey;

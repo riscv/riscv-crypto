@@ -14,15 +14,17 @@ Encoding::
 {bits: 7, name: '???????'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: '???'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'rnum'},
-{bits: 7, name: '???????'},
+{bits: 5, name: '?????'},
+{bits: 4, name: 'rnum'},
+{bits: 8, name: '????????'},
 ]}
 ....
 
 Description:: 
 This instruction implements a single round of the forward AES-128 KeySchedule.
-It treats each element of `vs1` as the current AES round key.
+It treats each element of `vd` as the current AES round key.
+The round number of the KeySchedule operation is stored in the 4-bit `rnum`
+immediate.
 It applies a single AES-128 KeySchedule round to each element, and
 writes the 128-bit result to the corresponding element in `vd`.
 
@@ -38,11 +40,11 @@ supported for any other instruction.
 Operation::
 [source,sail]
 --
-function clause execute (VAESESM(vs1, vd)) = {
+function clause execute (VAESESM(rnum, vd)) = {
   assert(VLEN>=128);
   foreach (i from vlstart to vl) {
-    let current : bits(128) = get_velem(vs2, EEW=128, i);
-    let next    : bits(128) = aes_128_forward_key_schedule(current);
+    let current : bits(128) = get_velem(vd, EEW=128, i);
+    let next    : bits(128) = aes_128_forward_key_schedule(rnum, current);
     set_velem(vd, EEW=128, i, next);
   }
   RETIRE_SUCCESS

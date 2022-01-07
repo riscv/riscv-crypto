@@ -135,6 +135,10 @@ include::insns/vaeskf256.vv.adoc[leveloffset=+2]
 <<<
 include::insns/vaes128e.adoc[leveloffset=+2]
 <<<
+include::insns/vaes192e.adoc[leveloffset=+2]
+<<<
+include::insns/vaes256e.adoc[leveloffset=+2]
+<<<
 include::insns/vandn.adoc[leveloffset=+2]
 <<<
 include::insns/vclmul.adoc[leveloffset=+2]

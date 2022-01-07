@@ -15,15 +15,17 @@ Encoding::
 {bits: 5, name: 'vd'},
 {bits: 3, name: '???'},
 {bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 4, name: 'rnum'},
+{bits: 8, name: '????????'},
 ]}
 ....
 
 Description:: 
 This instruction implements a single round of the forward AES-192 KeySchedule.
-It concatenates the top half of the element in `vs2` with the whole
-element in `vs1` to create a 192-bit value.
+It concatenates the top half of the element in `vs1` with the whole
+element in `vd` to create a 192-bit value.
+The round number of the KeySchedule operation is stored in the 4-bit `rnum`
+immediate.
 From this, the next 128-bit round key is computed and written to `vd`.
 
 Only a Vector-Vector version of this instruction is provided. To use this
@@ -45,12 +47,12 @@ in chunks of 128-bits.
 Operation::
 [source,sail]
 --
-function clause execute (VAESESM(vs1, vd)) = {
+function clause execute (VAESESM(rnum, vs1, vd)) = {
   assert(VLEN>=128);
   foreach (i from vlstart to vl) {
-    let current : bits(192) = get_velem(vs1, EEW=128, i) @
-                              get_velem(vs2, EEW=128, i) [128..64]
-    let next    : bits(128) = aes_192_forward_key_schedule(current);
+    let current : bits(192) = get_velem(vd, EEW=128, i) @
+                              get_velem(vs1, EEW=128, i) [128..64]
+    let next    : bits(128) = aes_192_forward_key_schedule(rnum, current);
     set_velem(vd, EEW=128, i, next);
   }
   RETIRE_SUCCESS
