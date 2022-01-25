@@ -1,0 +1,140 @@
+[[insns-vsha256ms, Vector SHA-256 Message Schedule]]
+= vsha256r.[vv]
+
+Synopsis::
+Vector SHA-256 message schedule. EEW=128
+
+Mnemonic::
+vsha256ms.[vv] vd, vs2, vs1
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+NB: This is very preliminary draft that is being distributed for discussion purposes only. The code is not
+executable - it is largely a copy of the pseudo code in FIPS PUB 180-4 Secure Hash Standard (SHS).
+
+This instruction takes in a subset of the last 16 message-schedule words and produces the next 4
+message-schedule words.
+
+
+
+This instructions takes in 11 of the last 16 words of the message schedule (numbered from t-16 to t-1),
+shown here grouped as quadwords
+
+{W~t-13~, W~t-14~,W~t-15~, W~t-16~} + 
+{ --- , ---  , --- , W~t-12~} +
+{W~t-5~, W~t-6~, W~t-7~, --- } +
+{W~t-1~, W~t-2~, x, W~t-4~}
+
+and calculates the next 4 words of the message schedule:
+
+{W~t+3~, W~t+2~, W~t+1~, W~t~}
+
+Two of these quadwords can readily be combined into 1 quadword by performing
+a vmerge instruction with the appropriate mask
+
+`vmerge {W~t-5~, W~t-6~, W~t-7~, W~t-12~}, {W~t-5~, W~t-6~, W~t-7~, x,}, {x, x, x, W~t-12~}, V0` 
+
+While W~t-3~ is not used, it still can be provided as an input for the sake of simplicty.
+
+Question:: Should we require W~t-3~ to reduce the verification space?
+
+This instruction has an EEW=128, that is, it operates on 128-bit elements.
+It is not directly impacted by VSEW, but the vector length (vl) needs to be set to
+a multiple of 128/VSEW.
+
+Note:: Many vector units that are wider than 128 bits may choose to only implement one
+128-bit datapath for this instruction. This needs to be transparent to code in terms
+of functionality. A vector length setting of wider than 128 bits would require some
+sort of instruction expansion.
+
+This instruction is not masked. If any 128-bit elements are not processed, the _vl_
+must be set accordingly.
+`VLMUL` must be at least 1. In typical usage it is expected to be 1.
+There are three source operands: vd, vs1 and vs2. The result
+is written to vd.
+
+In this code the input words are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
+The outputs are numbered from 16 to 19.
+
+
+Input::
+Vd  = {W[3],  W[2],  W[1],  W[0]} +
+Vs1 = {W[11], W[10], W[9],  W[4]} +
+Vs2 = {W[15], W[14], W[13], W[12]} 
+
+Output::
+
+Vd = {W[19],W[18],W[17],W[16]}
+
+This instruction treats `EEW=128`, regardless of `vtype.vsew` and requires that
+ `Zvl128b`be implemented (i.e `VLEN>=128`).
+It _does not_ require that `EEW=128` be supported for any other instruction.
+
+Operation::
+[source,sail-ish]
+--
+function clause execute (VSHA256Ra(vs2, vs1, vd, vv)) = {
+  assert(VLEN>=128);
+	foreach (i from vlstart to vl) {
+	  {W[3],  W[2],  W[1],  W[0]}  : bits(128) = get_velem(vd, EEW=128, i};
+	  {W[11], W[10], W[9],  W[4]}  : bits(128) = get_velem(vs1, EEW=128, i};
+	  {W[15], W[14], W[13], W[12]} : bits(128) = get_velem(vs2, EEW=128, i};
+
+
+    W[16] = sig1(W[14]) + W[9]  + sig0(W[1]) + W[0];
+	W[17] = sig1(W[15]) + W[10] + sig0(W[2]) + W[1];
+	W[18] = sig1(W[16])   W[11] + sig0(W[3]) + W[2];
+	W[19] = sig1(W[17]) + W[12] + sig0(W[4]) + W[3];
+
+	set_velem(vd, EEW=128, i, {W[19],W[18],W[17],W[16]});
+ }
+  RETIRE_SUCCESS
+
+function sig0(x) = ROTR(x,7)  XOR ROTR(x,18) XOR SHR(x,3)
+function sig1(x) = ROTR(x,17) XOR ROTR(x,19) XOR SHR(x,10)
+
+function ROTR(x,n) = (x >> n) | (x << w - n)
+function SHR (x,n) = x >> n
+ 
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvknf>>
+| v0.1.0
+| In Development
+|===
+
+
+
