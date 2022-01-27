@@ -239,8 +239,8 @@ Same criteria as in RVI. Organised by quadrants.
 | &#10003; | &#10003; | c.addi     | <<insns-c_addi>>
 | &#10003; | &#10003; | c.addiw    | <<insns-c_addiw>>
 | &#10003; | &#10003; | c.lui      | <<insns-c_lui>>
-| &#10003; |          | c.srli     | <<insns-c_srli>>
-| &#10003; |          | c.srai     | <<insns-c_srai>>
+| &#10003; | &#10003; | c.srli     | <<insns-c_srli>>
+| &#10003; | &#10003; | c.srai     | <<insns-c_srai>>
 | &#10003; | &#10003; | c.andi     | <<insns-c_andi>>
 | &#10003; | &#10003; | c.sub      | <<insns-c_sub>>
 | &#10003; | &#10003; | c.xor      | <<insns-c_xor>>
@@ -248,7 +248,7 @@ Same criteria as in RVI. Organised by quadrants.
 | &#10003; | &#10003; | c.and      | <<insns-c_and>>
 | &#10003; | &#10003; | c.subw     | <<insns-c_subw>>
 | &#10003; | &#10003; | c.addw     | <<insns-c_addw>>
-| &#10003; |          | c.slli     | <<insns-c_slli>>
+| &#10003; | &#10003; | c.slli     | <<insns-c_slli>>
 | &#10003; | &#10003; | c.mv       | <<insns-c_mv>>
 | &#10003; | &#10003; | c.add      | <<insns-c_add>>
 |===
