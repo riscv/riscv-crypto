@@ -61,13 +61,13 @@ Included in::
 |Lifecycle state
 
 | <<zknd>> (RV64)
-| v1.0.0-rc4
+| v1.0.0
 | Frozen
 | <<zkn>> (RV64)
-| v1.0.0-rc4
+| v1.0.0
 | Frozen
 | <<zk>> (RV64)
-| v1.0.0-rc4
+| v1.0.0
 | Frozen
 |===
 

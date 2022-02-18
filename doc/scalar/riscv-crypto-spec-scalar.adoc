@@ -2,8 +2,8 @@
 = RISC-V Cryptography Extensions Volume I: Scalar & Entropy Source Instructions
 :description: The scalar cryptography and entropy source extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  2'nd December, 2021
-:revnumber: v1.0.0
+:revdate:  18'th Feb, 2022
+:revnumber: v1.0.1
 :revremark: Ratified
 :url-riscv: http://riscv.org
 :doctype: book
@@ -76,7 +76,7 @@ include: +
 Alexander Zeh,
 Andy Glew,
 Barry Spinney,
-link:mailto:ben.marshall@bristol.ac.uk[Ben Marshall] (Editor),
+link:mailto:benmarshall@pqshield.com[Ben Marshall] (Editor),
 Daniel Page,
 Derek Atkins,
 Ken Dockser,
@@ -89,6 +89,22 @@ Claire Wolf
 We are all very grateful to the huge number of other people who have
 helped to improve this specification through their comments, reviews,
 feedback and questions.
+
+[changelog]
+== Changelog
+
+[cols="1,5"]
+|===
+| Version | Changes
+
+| `v1.0.1` 
+| Fix typos to show that 
+  `c.srli`, `c.srai`, and `c.slli` are Zkt instructions in RV64.
+
+| `v1.0.0` 
+| Initial Release
+|===
+
 
 // ------------------------------------------------------------
 
