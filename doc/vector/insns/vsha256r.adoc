@@ -1,12 +1,12 @@
-[[insns-vsha256r, Vector SHA-256 2 Rounds]]
-= vsha256r.[vv]
+[[insns-vsha256r, Vector SHA-256 Compression]]
+= vsha256r.vv
 
 Synopsis::
-Vector SHA-256 2 rounds. EEW=128
+Vector SHA-256 2 rounds of compression. EEW=128
 
 Mnemonic::
-vsha256ra.[vv] vd, vs2, vs1
-vsha256rb.[vv] vd, vs2, vs1
+vsha256ra.vv vd, vs2, vs1
+vsha256rb.vv vd, vs2, vs1
 
  NB: We are currently proposing that the two varients of this instruction be 
 differentiated by the suffixes a and b. These suffixes --- and indeed the mnemonics
@@ -84,10 +84,6 @@ vector register and require one more instruction, without any benefit.
 These sha two-rounds instructions only require two message schedule words in *Vs1*.
 The instruction sha256ra accesses the lower two words, while sha256rb accesses
 the upper two words.
-
- Another instrstruction that is soon to be proposed will produce four message schedule
-words (MessageSched[3:0]) to be consumed by a sequence of two of these instructions.
-More details will be provided soon.
 
  Input:
   Vd  = {c, d, g, h}
