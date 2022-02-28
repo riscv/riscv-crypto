@@ -5,7 +5,7 @@ Synopsis::
 Vector AES middle round encryption instruction.
 
 Mnemonic::
-vaesesm.[vv,vs] vd, vs1, vs2
+vaesesm.[vv,vs] vd, vs1
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
@@ -38,9 +38,9 @@ This instruction implements the middle-round function of the AES block cipher
 for all parameterisations.
 It treats each element of `vd` as the current AES round state,
 and elements of `vs1` as the round key.
-The Vector-Vector (VV) variant encrypts elements of `vd` under corresponding
+The Vector-Vector (VV) variant encrypts elements of `vd` under the corresponding
 elements of `vs1`.
-The Vector-Scalar (VV) variant encrypts elements of `vd` under the
+The Vector-Scalar (VS) variant encrypts elements of `vd` under the
 zeroth element of `vs1`.
 The result (i.e. the next round state) is written to elements of `vd`.
 

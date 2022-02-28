@@ -1,11 +1,11 @@
 [[insns-vsha256ms, Vector SHA-256 Message Schedule]]
-= vsha256r.[vv]
+= vsha256ms.vv
 
 Synopsis::
 Vector SHA-256 message schedule. EEW=128
 
 Mnemonic::
-vsha256ms.[vv] vd, vs2, vs1
+vsha256ms.vv vd, vs2, vs1
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -45,7 +45,7 @@ message-schedule words.
 This instructions takes in 11 of the last 16 words of the message schedule (numbered from t-16 to t-1),
 shown here grouped as quadwords
 
-{W~t-13~, W~t-14~,W~t-15~, W~t-16~} + 
+{W~t-13~, W~t-14~, W~t-15~, W~t-16~} + 
 { --- , ---  , --- , W~t-12~} +
 {W~t-5~, W~t-6~, W~t-7~, --- } +
 {W~t-1~, W~t-2~, x, W~t-4~}
@@ -54,12 +54,17 @@ and calculates the next 4 words of the message schedule:
 
 {W~t+3~, W~t+2~, W~t+1~, W~t~}
 
+[TIP]
+.Note to software developers
+====
 Two of these quadwords can readily be combined into 1 quadword by performing
 a vmerge instruction with the appropriate mask
 
 `vmerge {W~t-5~, W~t-6~, W~t-7~, W~t-12~}, {W~t-5~, W~t-6~, W~t-7~, x,}, {x, x, x, W~t-12~}, V0` 
 
 While W~t-3~ is not used, it still can be provided as an input for the sake of simplicty.
+====
+
 
 Question:: Should we require W~t-3~ to reduce the verification space?
 
