@@ -32,6 +32,143 @@ Encoding (Vector-Vector)::
 {bits: 7, name: '???????'},
 ]}
 ....
+Code and explanation::
+Let's start off with a single pass through the inner loop. This is ordered for purposes of clarity - it is not the intended order of execution.
+
+This is the state of the registers before the code: +
+[cols="1,1"]
+|===
+|Register |Contents
+|Vt0 | {Wt-1, Wt-2, Wt-3, Wt-4}
+|Vt1 | {Wt-5, Wt-6, Wt-7, Wt-8}
+|Vt2 | {Wt-9, Wt-10, Wt-11, Wt-12}
+|Vt3 | {Wt-13, Wt-14, Wt-15, Wt-16}
+|Vt4 | free
+|Vt5 | free
+|Vt6 | {az,bz,ez,fz}
+|Vt7 | {cz,dz,gz,hz}
+|Vt8 | free
+|===
+
+
+This code will complete 4 (out of 64) rounds of SHA256. +
+`vmerge         Vt4, Vt1, Vt2, V0 +
+vsha256ms.vv    Vt3, Vt0, Vt4 +
+vl1re32.v       Vt5, (a0) +
+addi            a0, a0, 16 +
+vadd.vv         Vt4, Vt5, Vt3 +
+vsha256ra.vv    Vt7, Vt6, Vt4 +
+vsha256rb.vv    Vt6, Vt7, Vt4`
+
+At the end of execution, the registers look like this: +
+|===
+|Register |Contents
+|Vt0 | {Wt-5, Wt-6, Wt-7, Wt-8} // Wt-5 <= Wt-1 +
+|Vt1 | {Wt-9, Wt-10, Wt-11, Wt-12} // Wt-9 <= Wt-5 +
+|Vt2 | {Wt-13, Wt-14, Wt-15, Wt-16} // Wt-13 <= Wt-9 +
+|Vt3 | {Wt-1, Wt-2, Wt-3, Wt-4} // Wt-1 <= Wt+3 +
+|Vt4 | free
+|Vt5 | free
+|Vt6 | {az+2,bz+2,ez+2,fz+2}
+|Vt7 | {cz+2,dz+2,gz+2,hz+2} // ct+2 <= at+1
+|===
+
+Careful examination of the output state vs the input state reveals that the message-word schedule is now in a different order. Before the first pass through the code, the youngest four words of the message schedule were in Vt0, but after this pass, the new youngest four words are in Vt3. While we could swap data between registers, a more performant solution is to unroll the loop 4 times, each time with its own mapping for the current contents of Vt0 through Vt3. For example, if we unrolled twice -- processing 8 rounds of SHA-256 -- the code would look like this:
+
+`` +
+1. vmerge		Vt4, Vt1, Vt2, V0 +
+2. vsha256ms.vv	Vt3, Vt0, Vt4 +
+3. vl1re32.v	Vt5, (a0) +
+4. addi		a0, a0, 16 +
+5. vadd.vv		Vt4, Vt5, Vt3 +
+6. vsha256ra.vv	Vt7, Vt6, Vt4 +
+7. vsha256rb.vv	Vt6, Vt7, Vt4`` +
+
+Without any further ado, here is the same sequence of 7 instructions needed for 4 rounds with all sorts of gory detail:
+
+Message Schedule: +
+Combine 2QW into 1QW +
+
+`vmerge Vt4, Vt1, Vt2, V0` +
+
+Input +
+
+`V0 = mask // first 3 words from Vt1, 4th word from Vt2 +
+Vt1 = {Wt-5, Wt-6, Wt-7, Wt-8} +
+Vt2 = {Wt-9, Wt-10, Wt-11, Wt-12}` +
+
+Output +
+
+``
+Vt4 = {Wt-5, Wt-6, Wt-7, Wt-12}`` +
+
+Generate next Four Message Schedule Words +
+
+`vsha256ms.vv Vt3, vtVt4, Vt4` +
+
+Input: +
+``
+Vt3 = {Wt-13, Wt-14, Wt-15, Wt-16} +
+Vt0 = {Wt-1, Wt-2, Wt-3, Wt-4} +
+Vt4 = {Wt-5, Wt-6, Wt-7, Wt-12}`` +
+
+Output: +
+
+`Vt3 = {Wt+3, Wt+2, Wt+1, Wt}` +
+
+Load four word constants (or could extract from a reg)
+
+`vl1re32.v Vt5, (a0)` +
+
+Output: +
+
+`Vt5 = Kt+3, Kt+2, Kt+1, Kt` +
+
+Increment address a0 += stride
+
+`addi a0, a0, 16` +
+
+Add constants to message schedule words: +
+
+`vadd.vv Vt4, vt5, Vt3` +
+
+Input:
+
+`Vt5 = {Kt+3, Kt+2, Kt+1, Kt} +
+Vt3 = {Wt+3, Wt+2, Wt+1, Wt}` +
+
+Output:
+
+`Vt4 = {Wt+3+Kt+3, Wt+2+Kt+2, Wt+1+Kt+1, Wt+1+Kt}` +
+
+Update the working variables +
+2 rounds of working variables updates +
+
+`vsha256ra.vv vt7, vt6, Vt4` +
+
+Input: +
+
+`Vt7 = {ct,dt,gt,ht} +
+Vt6 = {at,bt,et,ft} +
+Vt4 = {Wt+3+Kt+3, Wt+2+Kt+2, Wt+1+Kt+1, Wt+1+Kt}` +
+
+Output: +
+
+`Vt7 = {at+1,bt+1,et+1,ft+1}` +
+
+2 more rounds of working variables updates +
+
+`vsha256ra.vv vt6, vt7, Vt4` +
+
+Input: +
+
+`Vt6 = {ct+1,dt+1,gt+1,ht+1} // ct+1 <= at +
+Vt7 = {at+1,bt+1,et+1,ft+1} +
+Vt4 = {Wt+3+Kt+3, Wt+2+Kt+2, Wt+1+Kt+1, Wt+1+Kt}` +
+
+Output: +
+
+`Vt6 = {at+2,bt+2,et+2,ft+2}` +
 
 Description:: 
 NB: This is very preliminary draft that is being distributed for discussion purposes only. The code is not
@@ -45,14 +182,14 @@ message-schedule words.
 This instructions takes in 11 of the last 16 words of the message schedule (numbered from t-16 to t-1),
 shown here grouped as quadwords
 
-{W~t-13~, W~t-14~, W~t-15~, W~t-16~} + 
+`{W~t-13~, W~t-14~, W~t-15~, W~t-16~} + 
 { --- , ---  , --- , W~t-12~} +
 {W~t-5~, W~t-6~, W~t-7~, --- } +
-{W~t-1~, W~t-2~, x, W~t-4~}
+{W~t-1~, W~t-2~, x, W~t-4~}`
 
 and calculates the next 4 words of the message schedule:
 
-{W~t+3~, W~t+2~, W~t+1~, W~t~}
+`{W~t+3~, W~t+2~, W~t+1~, W~t~}`
 
 [TIP]
 .Note to software developers
