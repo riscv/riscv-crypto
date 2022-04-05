@@ -1,4 +1,5 @@
 *.swp
 *.vim
+.DS_Store
 
 build/
