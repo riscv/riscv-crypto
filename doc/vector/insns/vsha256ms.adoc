@@ -182,6 +182,7 @@ message-schedule words.
 This instructions takes in 11 of the last 16 words of the message schedule (numbered from t-16 to t-1),
 shown here grouped as quadwords
 
+
 `{W~t-13~, W~t-14~, W~t-15~, W~t-16~} + 
 { --- , ---  , --- , W~t-12~} +
 {W~t-5~, W~t-6~, W~t-7~, --- } +
