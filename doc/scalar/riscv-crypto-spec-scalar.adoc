@@ -160,7 +160,7 @@ include::riscv-crypto-scalar-zk.adoc[]
 
 This extension allows CPU implementers to indicate to
 cryptographic software developers that a subset of RISC-V instructions
-are guaranteeed to be implemented such that their execution latency
+are guaranteed to be implemented such that their execution latency
 is independent of the data values they operate on.
 A complete description of this extension is found in
 <<crypto_scalar_zkt>>.
