@@ -1,0 +1,92 @@
+[[insns-vaesef, Vector AES encrypt final round]]
+= vaesef.v
+
+Synopsis::
+Vector AES final round encryption instruction.
+
+Mnemonic::
+vaesef.v vd, vs1
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: '?????'},
+{bits: 7, name: '???????'},
+]}
+....
+
+
+Description:: 
+This instruction implements the final-round function of the AES block cipher:
+
+- SubBytes(state)
+- ShiftRows(state)
+- AddRoundKey(state,roundkey)
+
+
+This instruction operates on element groups in the source and destination registers:
+
+- Element Group Width (EGW) = 128 bits
+- Effective Element Width (EEW) = 32 bits
+- Element Group Size (EGS) = 4 elements
+
+While the number of elements processed by a vector instructions is ordinarily specified by the vector length `vtype.vl`,
+in the case of element groups things are a bit more complicated. The vector length needs to be scaled by a variety of factors
+including the EGS, the EEW and the `vtype.SEW`.
+
+Since the EGS is based on the EEW, but `vtype.vl` is based on the `vtype.SEW`, we need to scale the vl by EGS*`vtype.SEW`/EEW.
+NB: If the legal SEW were limited to the instructions EEW, the number of elements processed would be expressed
+as vl/EGS.  
+
+Each EGS=128 bit element group of source `vd` holds the current AES round state,
+and each EGS=128 bit element group of source `vs1` holds the round key.
+
+The result (i.e. the next round state) is written to each 128-bit element group of destination `vd`.
+
+It is recommended but not required that `VLEN>=128`. This would allow for portable software.
+
+In implementations that have `VLEN<128`, VLMUL will need to be used to combine registers to produce an element group of 128 bits.
+In such a case, a higher VLMUL than what is needed to produce an element group of 128 bits is reserved.
+
+In implementations VLEN>=128`, VLEN can be 
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VAESEF(vs1, vd) = {
+  assert(VLEN>=128 | vlmul*vlen=128); // either the datapath is at least 128 bits, or regs are concatenated to 128 bits 
+  // calculate the number of element groups (eg)
+  If vlen<128
+    eg= 1 // can have at most one element group if need to concatenate registers to get 128 bits
+  else
+    eg = (vl/EGS)(SEW/EEW)  
+  foreach (i from vlstart to eg) {
+    let state : bits(128) = get_velem(vd, EGW=128, i);
+    let rkey  : bits(128) = get_velem(vs1, EGW=128, i);
+    let sb    : bits(128) = aes_fwd_sub_bytes(state);
+    let sr    : bits(128) = aes_fwd_shift_rows(sb);
+    let ark   : bits(128) = sr ^ rkey;
+    set_velem(vd, EGW=128, i, ark);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===
+
+
