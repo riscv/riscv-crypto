@@ -22,7 +22,7 @@ Encoding (Vector)::
 
 
 Description:: 
-This instruction implements the final-round function of the AES block cipher:
+This instruction implements the final-round encryption function of the AES block cipher. The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each element group of source `vd` holds the current round state and each 128-bit element group of `vs1` holds the round key. Each element group next round state output is produced by applying the SubBytes, ShiftRows, and AddRoundkey steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not depend on the data being operated upon.    
 
 - SubBytes(state)
 - ShiftRows(state)
@@ -34,26 +34,6 @@ This instruction operates on element groups in the source and destination regist
 - Element Group Width (EGW) = 128 bits
 - Effective Element Width (EEW) = 32 bits
 - Element Group Size (EGS) = 4 elements
-
-While the number of elements processed by a vector instructions is ordinarily specified by the vector length `vtype.vl`,
-in the case of element groups things are a bit more complicated. The vector length needs to be scaled by a variety of factors
-including the EGS, the EEW and the `vtype.SEW`.
-
-Since the EGS is based on the EEW, but `vtype.vl` is based on the `vtype.SEW`, we need to scale the vl by EGS*`vtype.SEW`/EEW.
-NB: If the legal SEW were limited to the instructions EEW, the number of elements processed would be expressed
-as vl/EGS.  
-
-Each EGS=128 bit element group of source `vd` holds the current AES round state,
-and each EGS=128 bit element group of source `vs1` holds the round key.
-
-The result (i.e. the next round state) is written to each 128-bit element group of destination `vd`.
-
-It is recommended but not required that `VLEN>=128`. This would allow for portable software.
-
-In implementations that have `VLEN<128`, VLMUL will need to be used to combine registers to produce an element group of 128 bits.
-In such a case, a higher VLMUL than what is needed to produce an element group of 128 bits is reserved.
-
-In implementations VLEN>=128`, VLEN can be 
 
 Operation::
 [source,pseudocode]
@@ -88,5 +68,3 @@ Included in::
 | v0.1.0
 | In Development
 |===
-
-
