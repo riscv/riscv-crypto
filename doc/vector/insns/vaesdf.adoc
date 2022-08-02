@@ -1,0 +1,77 @@
+[[insns-vaesdf, Vector AES decrypt final round]]
+= vaesdf.v
+
+Synopsis::
+Vector AES final round decryption instruction.
+
+Mnemonic::
+vaesdf.v vd, vs1
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: '?????'},
+{bits: 7, name: '???????'},
+]}
+....
+
+
+Description:: 
+This instruction implements the final-round decryption function of the AES
+block cipher.
+
+The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs1` holds the round key. Each `EGW=128` element group next round state output is produced by applying the ShiftRows, SubBytes,  and AddRoundkey steps to the corresponding inputs.
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.    
+
+- ShiftRows(state)
+- SubBytes(state)
+- AddRoundKey(state,roundkey)
+
+
+This instruction operates on element groups in the source and destination registers:
+
+- Element Group Width (EGW) = 128 bits
+- Effective Element Width (EEW) = 32 bits
+- Element Group Size (EGS) = 4 elements
+
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+In order to properly specify the number of elements, vl needs to be set to
+vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,sail]
+--
+function clause execute (VAESDS(vs1, vd, vv)) = {
+  assert(VLEN>=128);
+  foreach (i from vlstart to vl) {
+    let keyelem = if vv then i else 0;
+    let state : bits(128) = get_velem(vd, EGW=128, i);
+    let rkey  : bits(128) = get_velem(vs1, EGW=128, keyelem);
+    let sr    : bits(128) = aes_inv_shift_rows(state);
+    let sb    : bits(128) = aes_inv_sub_bytes(sr);
+    let ark   : bits(128) = sb ^ rkey;
+    set_velem(vd, EGW=128, i, ark);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

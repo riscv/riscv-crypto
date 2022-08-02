@@ -1,0 +1,64 @@
+[[insns-vaesem, Vector AES encrypt middle round]]
+= vaesem.v
+
+Synopsis::
+Vector AES middle round encryption instruction.
+
+Mnemonic::
+vaesem.v vd, vs1
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: '?????'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements the middle-round function of the AES block cipher.
+It treats each `EGW=128` element group of `vd` as the current AES round state,
+and each `EGW=128` element group of `vs1` as the round key.
+
+The result (i.e. the next round state) is written to each `EGW=128` element group of `vd`.
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+In order to properly specify the number of elements, vl needs to be set to
+vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VAESESM(vs1, vd, vv)) = {
+  assert(VLEN>=128);
+  foreach (i from vlstart to vl) {
+    let state : bits(128) = get_velem(vd, EGW=128, i);
+    let rkey  : bits(128) = get_velem(vs1, EGW=128, i);
+    let sb    : bits(128) = aes_fwd_sub_bytes(state);
+    let sr    : bits(128) = aes_fwd_shift_rows(sb);
+    let mix   : bits(128) = aes_fwd_mix_columns(sr);
+    let ark   : bits(128) = mix ^ rkey;
+    set_velem(vd, EGW=128, i, ark);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

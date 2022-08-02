@@ -1,0 +1,46 @@
+[[crypto-vector-element-groups]]
+=== Crypto Vector Element Groups
+
+Vector crypto instructions operate on larger operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller elements that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks comprised of four 32-bit words using 128-bit round keys that are generated from 128-, 192, and 256-bit cipher keys.
+
+In order to be compatible with the 32 and 64 bit element widths of the base vector instructions, we treat these operands as a
+vector of one of more element groups (see link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]).
+
+An element group is defined by three parameters:
+
+- Element Group Width (EGW) total number of bits in an element group
+- Element Group Size (EGS) = Number of elements in an element group
+- Effective Element Width (EEW) = number of bits in element
+
+All of these parameters are typically implicit in the vector crypto instruction.
+
+While the number of elements processed by a vector instructions is ordinarily specified by the vector length `vtype.vl` ,
+in the case of element groups, things are a bit more complicated. An effective vector length (`evl`) needs to be 
+calculated evl = vl/EGS * `vtype.SEW`/EEW
+
+
+
+The Vector Crypto extensions require that `VLEN` is at least as large as `EGW` and supports the instruction group's `EEW`
+
+Systems which implement `VLEN<EGW` should consider the existing
+Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
+for accelerated cryptographic operations.
+
+
+
+[%header,cols="^4,^4,^4,^4"]
+|===
+| Instruction Group
+| `EGW`
+| `EEW`
+| `EGS`
+
+| AES         | 128 | 32 | 4
+| SHA256      | 128 | 32 | 4
+| SM4         | 128 | 32 | 4
+| GHASH       | 128 | 32 | 4
+| SHA512      | 256 | 64 | 4
+| SM3         | 256 | 32 | 8
+|===
+
+NB: Some of the new vector crypto instructions use SEW as usual. For example: rotate, CLMUL  

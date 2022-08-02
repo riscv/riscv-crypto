@@ -1,0 +1,73 @@
+[[insns-vaeskf2, Vector AES-256 Forward KeySchedule]]
+= vaeskf2.vi
+
+Synopsis::
+Vector AES-256 Forward KeySchedule
+
+Mnemonic::
+vaeskf2.vi vd, vs2, rcon
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'rcon'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements a single round of the forward AES-256 KeySchedule.
+It treats each `EGW=128` element group of `vs2` as the current AES round key,
+and each `EGW=128` element group of `vd` as the previous AES round key.
+The round constant index of the KeySchedule operation is stored in the 5-bit `rcon`
+immediate.
+
+It applies a single AES-256 KeySchedule round to each element group, and
+writes the 128-bit result to the corresponding element group in `vd`.
+
+This instruction only returns the generated key to the same element group as the source.
+If it is desired to have the same key in all vector groups, either the input vector groups
+need to contain the same values, or the output from a particular group needs to be "broadcast"
+to the other groups using an instruction such as vrgather.
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+In order to properly specify the number of elements, vl needs to be set to
+vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+
+
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VAESESFK1(rcon, vs2)) = {
+  assert(VLEN>=128);
+  vlen = vl/EGS * vtype.SEW/EEW
+  foreach (i from vlstart to vlen) {
+    let current : bits(128) = get_velem(vs2, EGW=128, i);
+    let previous : bits(128) = get_velem(vd, EGW=128, i);
+    let next    : bits(128) = aes_256_forward_key_schedule(rcon, current, previous);
+    set_velem(vd, EGW=128, i, next);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===
