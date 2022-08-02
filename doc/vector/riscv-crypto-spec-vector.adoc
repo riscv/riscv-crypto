@@ -137,9 +137,8 @@ include::insns/vaesdf.adoc[leveloffset=+2]
 include::insns/vaesdm.adoc[leveloffset=+2]
 <<<
     
----------------
 
-// include::insns/vaesef.adoc[leveloffset=+2]
+//include::insns/vaesef.adoc[leveloffset=+2]
 // <<<
 // include::insns/vaesesm.adoc[leveloffset=+2]
 // <<<
