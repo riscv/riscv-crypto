@@ -1,16 +1,16 @@
-[[insns-vsha256r, Vector SHA-256 Compression]]
-= vsha256r.vv
+[[insns-vsha512c, Vector SHA-512 Compression]]
+= vsha512c[ab].v
 
 Synopsis::
-Vector SHA-256 2 rounds of compression. EEW=128
+Vector SHA-512 2 rounds of compression. EGW=256
 
 Mnemonic::
-vsha256ra.vv vd, vs2, vs1
-vsha256rb.vv vd, vs2, vs1
+vsha512ca.v vd, vs2, vs1 +
+vsha512cb.v vd, vs2, vs1
 
- NB: We are currently proposing that the two varients of this instruction be 
+ NB: We are currently proposing that the two variants of this instruction be 
 differentiated by the suffixes a and b. These suffixes --- and indeed the mnemonics
-themsleves --- will likely change. Alternatively, we may choose to differentaite
+themsleves --- will likely change. Alternatively, we may choose to differentiate
 between these two by other means.
 
 Encoding (Vector)::
@@ -43,30 +43,29 @@ Description::
 NB: This is very preliminary draft that is being distributed for discussion purposes only. The code is not
 executable - it is largely a copy of the pseudo code in FIPS PUB 180-4 Secure Hash Standard (SHS).
 
-This instruction has an EEW=128, that is, it operates on 128-bit elements.
-It is not directly impacted by VSEW, but the vector length (vl) needs to be set to
-a multiple of 128/VSEW.
+This instruction has an EEW=256, that is, it operates on 256-bit element groups.
+It is not directly impacted by VSEW
 
- Many vector units that are wider than 128 bits may choose to only implement one
-128-bit datapath for this instruction. This needs to be transparent to code in terms
-of functionality. A vector length setting of wider than 128 bits would require some
+ Many vector units that are wider than 256 bits may choose to only implement one
+256-bit datapath for this instruction. This needs to be transparent to code in terms
+of functionality. A vector length setting of wider than 256 bits would require some
 sort of instruction expansion.
 
-This instruction is not masked. If any 128-bit elements are not processed, the _vl_
+This instruction is not masked. If any 256-bit elements are not processed, the _vl_
 must be set accordingly.
 VLMUL must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
 is written to vd.
 
-The two forms of this instruction are identical except one  form (vsha256ra) uses the
-two least significant words of vs1 input, while vsha256rb uses the 
-two most significant words. This is described in pseduo-code below in a manner
+The two forms of this instruction are identical except one form (vsha512ra) uses the
+two least significant doublewords of vs1 input, while vsha512rb uses the 
+two most significant doublewords. This is described in pseduo-code below in a manner
 that should be _temporarily_ suitable for expository purposes.
 The two forms of the instruction save code from having to swap these two words
 if there were just a single instruction.
 
-These instructions take in two 32-bit words of the message schedule _W1_ and _W0_
-and eight 32-bit word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
+These instructions take in two 64-bit words of the message schedule _W1_ and _W0_
+and eight 64-bit word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
 output is the new values of _a, b, e_ and _f_ after performing 2 rounds of the hash
 computation. The other 4 variables, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
 
@@ -82,31 +81,30 @@ instruction for the input of _c_, _d_, _g_, and _h_. This would use up one more
 vector register and require one more instruction, without any benefit.
 
 These sha two-rounds instructions only require two message schedule words in *Vs1*.
-The instruction sha256ra accesses the lower two words, while sha256rb accesses
+The instruction sha512ra accesses the lower two words, while sha512rb accesses
 the upper two words.
 
  Input:
-  Vd  = {c, d, g, h}
-  Vs2 = {a, b, e, f}
-  Vs1 = {-, -, MessageSched[1:0]} // for vsha256ra
-  Vs1 = {MessageSched[3:2], -, -} // for vsha256rb
+  Vd  = {h, g, d, c}
+  Vs2 = {f, e, b, a}
+  Vs1 = {-, -, MessageSched[1:0]} // for vsha512ra
+  Vs1 = {MessageSched[3:2], -, -} // for vsha512rb
  
  Output:
   vd = {a, b, e, f}
 
-This instruction treats `EEW=128`, regardless of `vtype.vsew` and requires that
- `Zvl128b`be implemented (i.e `VLEN>=128`).
-It _does not_ require that `EEW=128` be supported for any other instruction.
+This instruction treats `EGW=256`, regardless of `vtype.vsew` and requires that
+ `Zvl256b`be implemented (i.e `VLEN>=256`).
 
 Operation::
 [source,sail-ish]
 --
-function clause execute (VSHA256Ra(vs2, vs1, vd, vv)) = {
-  assert(VLEN>=128);
+function clause execute (VSHA512c(vs2, vs1, vd, vv)) = {
+  assert(VLEN>=256);
 	foreach (i from vlstart to vl) {
-	  {a, b, e, f} : bits(128) = get_velem(vs2, EEW=128, i};
-	  {c, d, g, h} : bits(128) = get_velem(vd, EEW=128, i};
-	  MessageShed[3:0] : bits(128) = get_velem(vs1, EEW=128, i};
+	  {f, e, b, a} : bits(256) = get_velem(vs2, EGW=256, i};
+	  {h, g, d, c} : bits(256) = get_velem(vd, EGW=256, i};
+	  MessageShed[3:0] : bits(256) = get_velem(vs1, EGW=256, i};
 	  {W1, W0} == VSHA256Ra ? MessageSched[1:0] : MessageSched[3:2];
 
 	  T1 = h + sum1(e) + Ch(e,f,g) + W0;
@@ -131,7 +129,7 @@ function clause execute (VSHA256Ra(vs2, vs1, vd, vv)) = {
 	  c = b;
 	  b = a;
 	  a = T1 + T2;
-	  set_velem(vd, EEW=128, i, {a,b,e,f);
+	  set_velem(vd, EGW=256, i, {f,e,b,a);
   }
   RETIRE_SUCCESS
 }

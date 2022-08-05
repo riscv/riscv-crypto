@@ -1,0 +1,85 @@
+[[insns-vaesd128, Vector AES-128 decrypt all-rounds]]
+= vaesd128.v
+
+Synopsis::
+Vector AES-128 all rounds decryption instruction.
+
+Mnemonic::
+vaesd128.v vd, vs1
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2=0'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements the entire AES-128 block cipher decryption
+function. Starting with the final 2 round keys, it generates each of the earlier round keys and performs each of the rounds.
+
+It treats each `EGW=128` element group of `vd` as the plaintext
+and `EGW=128` element group of `vs1` as the 128-bit encryption key.
+
+The result (i.e. the plaintext) is written to `EGW=128` element groups of `vd`.
+
+This instruction operates on element groups in the source and destination registers:
+
+- Element Group Width (EGW) = 128 bits
+- Effective Element Width (EEW) = 32 bits
+- Element Group Size (EGS) = 4 elements
+
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+In order to properly specify the number of elements, vl needs to be set to
+vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,sail]
+--
+function clause execute (VAES128D(vs1, vd, vv)) = {
+  assert(VLEN>=128);
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  foreach (i from egstart to elementgroups) {
+    state : bits(128) = get_velem(vd, EGW=128, i);
+    rkey  : bits(128) = get_velem(vs1, EGW=128, i);
+    state = state ^ rkey;
+    foreach(r from 1 to 10) {
+      state = aes_inv_shift_rows(state);
+      state = aes_inv_sub_bytes(state);
+      state = state ^ rkey;
+      state = aes_inv_mix_columns(state);
+      rkey  = aes_128_reverse_key_schedule(r,rkey);
+    }
+    state = aes_inv_shift_rows(state);
+    state = aes_inv_sub_bytes(state);
+    state = state ^ rkey;
+    set_velem(vd, EGW=128, i, state);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvknf>>
+| v0.1.0
+| In Development
+|===
+

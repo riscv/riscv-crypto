@@ -1,0 +1,64 @@
+[[insns-vclmulgf, Vector Carryless Multiply over Galois-Field 2^128]]
+= vclmulgf.vi
+
+Synopsis::
+Vector Carryless Multiply over Galois-Field 2^128
+
+Mnemonic::
+vclmulgf.vv vd, vs2, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction performs a carryless multiply between two 128-bit polynomials and reduces them modulo
+x^128^ + x^7^ + x^2^ + x + 1
+
+It treats each EGW=128 element group of `vs1` and `vs2` as the input polynomials.
+In order to match the GHASH specification, the bits need to be reversed -
+this includes the bits in each byte.
+
+
+It applies a single 128x128 carryless multiply producing a 255-bit product. It then reduces this product
+by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1
+producing a 128-bit result which is written to the corresponding element group in `vd`.
+
+This instruction treats `EEW=32`, regardless of `vtype.vsew` and requires that
+ `Zvl128b`be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VCLMULGF(vs2, vs1, vd)) = {
+  assert(VLEN>=128);
+  // TODO: Add in bit reordering
+  foreach (i from vlstart to vl) {
+      set_velem(vd, i, clmul(get_velem(vs1,i), get_velem(vs2,i)));
+  }
+  // TODO: Add in reduction code
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

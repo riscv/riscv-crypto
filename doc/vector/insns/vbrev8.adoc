@@ -1,0 +1,60 @@
+[[insns-vbrev8, Vector Reverse Bits in Bytes]]
+= vbrev8.v
+
+Synopsis::
+Vector Reverse Bits in Bytes
+
+Mnemonic::
+vbrev8.v vd, vs1, vm
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2=0'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction reverses the order of the bits in each byte in `vs1`.
+
+While this instruction supports the `SEW`, the behavior on each byte operated upon does not vary.
+
+Note::
+In some ways this is similar to how the bit logical instructions operate.  
+
+Operation::
+[source,sail]
+--
+function clause execute (VBREV8(vs1)) = {
+  foreach (i from vlstart to vl) {
+    input = get_velem(vs1, SEW, i);
+    let output : SEW = 0;
+    foreach (i from 0 to SEW by 8) 
+      output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);
+    set_velem(vd, SEW, i, output)
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkb>>
+| v0.1.0
+| In Development
+|===
+
+
+

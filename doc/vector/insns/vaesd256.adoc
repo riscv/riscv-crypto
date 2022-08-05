@@ -1,0 +1,94 @@
+[[insns-vaesd256, Vector AES-256 decrypt all-rounds]]
+= vaesd256.v
+
+Synopsis::
+Vector AES-256 all rounds decryption instruction.
+
+Mnemonic::
+vaesd256.v vd, vs1, vs2
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+This instruction implements the entire AES-256 block cipher decryption
+function. Starting with the final two round keys, It generates each of the previous round keys and performs each of the rounds.
+
+It treats each `EGW=128` element group of `vd` as the plaintext
+and concatenates `EGW=128` element groups of `vs1` and `vs2` as the 256-bit encryption key.
+
+The result (i.e. the ciphertext) is written to `EGW=128` element groups of `vd`.
+
+This instruction operates on element groups in the source and destination registers:
+
+- Element Group Width (EGW) = 128 bits
+- Effective Element Width (EEW) = 32 bits
+- Element Group Size (EGS) = 4 elements
+
+This instruction requires that: +
+
+- `Zvl128b` be implemented (i.e `VLEN>=128`).
+- `vl` is an integral multiple of `EGS`
+- `vstart` is an integral multiple of `EGS`
+
+This instruction ignores`SEW`
+
+
+
+Operation::
+[source,sail]
+--
+function clause execute (VAES256E(vs1, vs2, vd,)) = {
+  assert(VLEN>=128);
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  
+  foreach (i from egstart to elementgroups) {
+    state : bits(128) = get_velem(vd, EGW=128, i);
+    ekey  : bits(256) = get_velem(vs1, EGW=128, i) @
+                        get_velem(vs2, EGW=128, i) ;
+    rkey  : bits(128) = ekey[127..0];
+    state = state ^ rkey;
+    foreach(r from 1 to 14) {
+      state = aes_inv_shift_rows(state);
+      state = aes_inv_sub_bytes(state);
+      state = state ^ rkey;
+      state = aes_inv_mix_columns(state);
+      rkey  = aes_256_reverse_key_schedule(r,ekey);
+      ekey  = rkey @ ekey[256..128];
+    }
+    state = aes_inv_shift_rows(state);
+    state = aes_inv_sub_bytes(state);
+    state = state ^ rkey;
+    set_velem(vd, EGW=128, i, state);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvknf>>
+| v0.1.0
+| In Development
+|===
+
+
+

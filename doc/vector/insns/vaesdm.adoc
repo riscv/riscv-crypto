@@ -52,10 +52,11 @@ Operation::
 --
 function clause execute (VAESDSM(vs1, vd, vv)) = {
   assert(VLEN>=128);
-  foreach (i from vlstart to vl) {
-    let keyelem = if vv then i else 0;
+  // calculate the number of element groups (eg)
+  eg = (vl/EGS)  
+  foreach (i from vlstart to eg) {
     let state : bits(128) = get_velem(vs1, EGW=128, i);
-    let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
+    let rkey  : bits(128) = get_velem(vs2, EGW=128, i);
     let sr    : bits(128) = aes_inv_shift_rows(state);
     let sb    : bits(128) = aes_inv_sub_bytes(sr);
     let ark   : bits(128) = sb ^ rkey;

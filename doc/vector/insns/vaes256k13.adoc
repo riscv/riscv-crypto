@@ -1,11 +1,11 @@
-[[insns-vaeskf2, Vector AES-256 Forward KeySchedule]]
-= vaeskf2.vi
+[[insns-vaes256k13, Vector AES-256 Generate round key 13]]
+= vaes256k13.vv
 
 Synopsis::
-Vector AES-256 Forward KeySchedule
+Vector AES-256 Generate round key 13
 
 Mnemonic::
-vaeskf2.vi vd, vs2, rnd
+vaes256k13.vv vd, vs1, vs2
 
 Encoding::
 [wavedrom, , svg]
@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'rnd'},
+{bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -22,7 +22,8 @@ Encoding::
 ....
 
 Description:: 
-This instruction implements a single round of the forward AES-256 KeySchedule.
+This instruction generates the penultimate (13th) roundkey for AES-256 for consumption by
+a subsequent AES-256 all rounds decryption instruction.
 It treats each `EGW=128` element group of `vs2` as the current AES round key,
 and each `EGW=128` element group of `vd` as the previous AES round key.
 The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 14.
@@ -52,14 +53,17 @@ in chunks of 128-bits.
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rnd, vd, vs2)) = {
+function clause execute (VAESES256k13(rnd, vs1, vs2)) = {
   assert(VLEN>=128);
   // assert round key in range
   vlen = vl/EGS
   foreach (i from vlstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
-    let previous : bits(128) = get_velem(vd, EGW=128, i);
-    let next    : bits(128) = aes_256_forward_key_schedule(rnd, current, previous);
+    let previous : bits(128) = get_velem(vs1, EGW=128, i);
+    foreach (rnd from 2 to 13)
+      let next    : bits(128) = aes_256_forward_key_schedule(rnd, current, previous);
+      let previous : bits(128) = current
+      let current : bits(128) = next
     set_velem(vd, EGW=128, i, next);
   }
   RETIRE_SUCCESS

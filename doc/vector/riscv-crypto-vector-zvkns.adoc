@@ -11,11 +11,12 @@ the host system. That is, `VLEN>=128`.
 Systems which do not meet these requirements cannot support the <<zvkns>>
 extension.
 
-It is _possible_ to formulate these instructions such that they work
-on systems with a narrower `VLEN` (i.e 32 or 64) and use `LMUL=2,4` to
-create inputs which are large enough to contain enough information.
-However, this incurs a large amount of complexity in the instructions
-design and implementation.
+// It is _possible_ to formulate these instructions such that they work
+// on systems with a narrower `VLEN` (i.e 32 or 64) and use `LMUL=2,4` to
+// create inputs which are large enough to contain enough information.
+// However, this incurs a large amount of complexity in the instructions
+// design and implementation.
+
 Systems which implement `VLEN<128` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
 for accelerated cryptographic operations.
@@ -26,15 +27,13 @@ for accelerated cryptographic operations.
 |Mnemonic
 |Instruction
 
-| >= 128 | vaeses.[vv,vs]    | <<insns-vaeses>>
-| >= 128 | vaesesm.[vv,vs]   | <<insns-vaesesm>>
-| >= 128 | vaesds.[vv,vs]    | <<insns-vaesds>>
-| >= 128 | vaesdsm.[vv,vs]   | <<insns-vaesdsm>>
-| >= 128 | vaeskf128.vv | <<insns-vaeskf128-vv>>
-| >= 128 | vaeskf192.vv | <<insns-vaeskf192-vv>>
-| >= 128 | vaeskf256.vv | <<insns-vaeskf256-vv>>
-| >= 128 | vaeskr128.vv | <<insns-vaeskr128-vv>>
-| >= 128 | vaeskr192.vv | <<insns-vaeskr192-vv>>
-| >= 128 | vaeskr256.vv | <<insns-vaeskr256-vv>>
+| >= 128 | vaesef.v   | <<insns-vaesef>>
+| >= 128 | vaesem.v   | <<insns-vaesem>>
+| >= 128 | vaesdf.v   | <<insns-vaesdf>>
+| >= 128 | vaesdm.v   | <<insns-vaesdm>>
+| >= 128 | vaeskf1.vi | <<insns-vaeskf1>>
+| >= 128 | vaeskf2.vi | <<insns-vaeskf2>>
+| >= 128 | vaeskr1.vi | <<insns-vaeskr1>>
+| >= 128 | vaeskr2.vi | <<insns-vaeskr2>>
 |===
 

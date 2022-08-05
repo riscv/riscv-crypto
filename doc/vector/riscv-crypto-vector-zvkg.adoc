@@ -1,0 +1,14 @@
+[[zvkg,Zvkg]]
+=== `Zvkg` - Vector GCM instructions for Cryptography
+
+Instructions for efficiently implementing GCM.
+
+[%header,cols="^2,4"]
+|===
+|Mnemonic
+|Instruction
+
+| vclmulgf.v         | <<insns-vclmulgf>>
+
+|===
+
