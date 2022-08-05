@@ -4,17 +4,18 @@
 General purpose bitmanipulation instructions which are essential
 for implementing common cryptographic workloads securely & efficiently.
 
-[%header,cols="^2,4,8"]
+[%header,cols="^2,4"]
 |===
 |Mnemonic
 |Instruction
 
-| vandn.[vv,vs,vx]   | <<insns-vandn>>
+
 | vclmul.[vv,vx]     | <<insns-vclmul>>
 | vclmulh.[vv,vx]    | <<insns-vclmulh>>
+| vrol.[vv,vx,vi]    | <<insns-vrol>>
+| vror.[vv,vx,vi]    | <<insns-vror>>
 | vbrev8             | <<insns-vbrev8>>
 | vrev8              | <<insns-vrev8>>
-| vrol.[vv,vs,vx]    | <<insns-vrol>>
-| vror.[vv,vs,vx,vi] | <<insns-vror>>
+| vandn.[vv,vs,vx]   | <<insns-vandn>>
 |===
 

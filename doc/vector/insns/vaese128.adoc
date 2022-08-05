@@ -1,0 +1,82 @@
+[[insns-vaese128, Vector AES-128 encrypt all-rounds]]
+= vaese128.v
+
+Synopsis::
+Vector AES-128 all rounds encryption instruction.
+
+Mnemonic::
+vaese128.v vd, vs1
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: '?????'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Description:: 
+This instruction implements the entire AES-128 block cipher encryption
+function. It generates each of the round keys and performs each of the rounds.
+
+It treats each `EGW=128` element group of `vd` as the plaintext
+and `EGW=128` element group of `vs1` as the 128-bit encryption key.
+
+The result (i.e. the ciphertext) is written to `EGW=128` element groups of `vd`.
+
+This instruction operates on element groups in the source and destination registers:
+
+- Element Group Width (EGW) = 128 bits
+- Effective Element Width (EEW) = 32 bits
+- Element Group Size (EGS) = 4 elements
+
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+In order to properly specify the number of elements, vl needs to be set to
+vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,sail]
+--
+function clause execute (VAES128E(vs1, vd, vv)) = {
+  assert(VLEN>=128);
+  // calculate the number of element groups (eg)
+  eg = (vl/EGS)(SEW/EEW)  
+  foreach (i from vlstart to eg) {
+    state : bits(128) = get_velem(vd, EGW=128, i);
+    rkey  : bits(128) = get_velem(vs1, EGW=128, i);
+    state = state ^ rkey;
+    foreach(r from 0 to 10) {
+      state = aes_fwd_sub_bytes(state);
+      state = aes_fwd_shift_rows(state);
+      state = aes_fwd_mix_columns(state);
+      state = state ^ rkey;
+      rkey  = aes_128_forward_key_schedule(rkey);
+    }
+    state = aes_fwd_sub_bytes(state);
+    state = aes_fwd_shift_rows(state);
+    state = state ^ rkey;
+    set_velem(vd, EGW=128, i, state);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvknf>>
+| v0.1.0
+| In Development
+|===
+

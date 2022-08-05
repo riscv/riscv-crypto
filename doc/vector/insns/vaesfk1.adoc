@@ -5,7 +5,7 @@ Synopsis::
 Vector AES-128 Forward KeySchedule
 
 Mnemonic::
-vaeskf1.vi vd, vs2, rcon
+vaeskf1.vi vd, vs2, rnd
 
 Encoding::
 [wavedrom, , svg]
@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'rcon'},
+{bits: 5, name: 'rnd'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -24,8 +24,8 @@ Encoding::
 Description:: 
 This instruction implements a single round of the forward AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round constant index of the KeySchedule operation is stored in the 5-bit `rcon`
-immediate.
+The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
+Out of range values signal an illegal instruction exception.
 
 It applies a single AES-128 KeySchedule round to each element group, and
 writes the 128-bit result to the corresponding element group in `vd`.
@@ -40,18 +40,22 @@ In order to properly specify the number of elements, vl needs to be set to
 vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
-
-
-
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rcon, vs2)) = {
+function clause execute (VAESESFK1(rnd, vs2)) = {
   assert(VLEN>=128);
-  vlen = vl/EGS * vtype.SEW/EEW
-  foreach (i from vlstart to vlen) {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  // assert round key in range
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  vlen = vl/EGS
+  
+  foreach (i from egstart to elementgroups) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
-    let next    : bits(128) = aes_128_forward_key_schedule(rcon, current);
+    let next    : bits(128) = aes_128_forward_key_schedule(rnd, current);
     set_velem(vd, EGW=128, i, next);
   }
   RETIRE_SUCCESS

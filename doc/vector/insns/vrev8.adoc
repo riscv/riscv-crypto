@@ -1,0 +1,57 @@
+[[insns-vrev8, Vector Reverse Bytes]]
+= vrev8.v
+
+Synopsis::
+Vector Reverse Bytes
+
+Mnemonic::
+vrev8.v vd, vs1, vm
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2=0'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction reverses the order of the bytes in `vs1`.
+
+Operation::
+[source,sail]
+--
+function clause execute (VREV8(vs1)) = {
+  foreach (i from vlstart to vl) {
+    input = get_velem(vs1, SEW, i);
+    let output : SEW = 0;
+    let j = SEW - 1;
+    foreach (k from 0 to (SEW - 8) by 8) {
+      output[k..(k + 7)] = input[(j - 7)..j];
+      j = j - 8;
+    set_velem(vd, SEW, i, output)
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkb>>
+| v0.1.0
+| In Development
+|===
+
+
+

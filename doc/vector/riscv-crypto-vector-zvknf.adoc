@@ -11,14 +11,12 @@ functions of the AES block cipher.
 |Mnemonic
 |Instruction
 
-| >= 128 | vaes128e.[vs,vv] | <<insns-vaes128e>>
-| >= 128 | vaes192e.[vs,vv] | <<insns-vaes192e>>
-| >= 128 | vaes256e.[vs,vv] | <<insns-vaes256e>>
-| >= 128 | vaes128d.[vs,vv] | <<insns-vaes128d>>
-| >= 128 | vaes192d.[vs,vv] | <<insns-vaes192d>>
-| >= 128 | vaes256d.[vs,vv] | <<insns-vaes256d>>
-| >= 128 | vaeskd128.vv     | <<insns-vaeskd128.vv>>
-| >= 128 | vaeskd192.vv     | <<insns-vaeskd192.vv>>
-| >= 128 | vaeskd256.vv     | <<insns-vaeskd256.vv>>
+| >= 128 | vaese128.vv | <<insns-vaese128>>
+| >= 128 | vaesd128.vv | <<insns-vaesd128>>
+| >= 128 | vaese256.vv | <<insns-vaese256>>
+| >= 128 | vaesd256.vv | <<insns-vaesd256>>
+| >= 128 | vaes128k10.vv | <<insns-vaes128k10>>
+| >= 128 | vaes256k13.vv | <<insns-vaes256k13>>
+| >= 128 | vaes256k14.vv | <<insns-vaes256k14>>
 |===
 

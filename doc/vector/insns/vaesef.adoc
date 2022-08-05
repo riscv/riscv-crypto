@@ -11,12 +11,13 @@ Encoding (Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
+{bits: 3, name: 'func3'},
 {bits: 5, name: 'vs1'},
-{bits: 5, name: '?????'},
-{bits: 7, name: '???????'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 
@@ -39,12 +40,9 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAESEF(vs1, vd) = {
-  assert(VLEN>=128 | vlmul*vlen=128); // either the datapath is at least 128 bits, or regs are concatenated to 128 bits 
+  assert(VLEN>=128); 
   // calculate the number of element groups (eg)
-  If vlen<128
-    eg= 1 // can have at most one element group if need to concatenate registers to get 128 bits
-  else
-    eg = (vl/EGS)(SEW/EEW)  
+  eg = (vl/EGS)  
   foreach (i from vlstart to eg) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs1, EGW=128, i);

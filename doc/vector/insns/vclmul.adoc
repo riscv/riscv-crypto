@@ -12,12 +12,13 @@ Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
+{bits: 3, name: 'func3'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 
@@ -25,29 +26,33 @@ Encoding (Vector-Scalar)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
+{bits: 3, name: 'func3'},
 {bits: 5, name: 'rs1'},
 {bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 
 Description:: 
 This instruction performs a carry-less multiply operation to all
 active elements in the vector register group specified by `vs2`.
+
+This instruction has a fixed `EEW=64` and ignores `SEW`
+
 The other operand can come from a vector register group `vs1`, or a scalar
 integer register `rs1`.
 For the scalar integer register, the operand is zero extended or truncated
-to `SEW` bits as appropriate.
+to 64 bits as appropriate.
 
 Operation::
 [source,sail]
 --
-function clmul(x, y, SEW) = { // TODO: not real Sail Code yet
-  result : bits(SEW) = zeros();
-  foreach (i from 0 to (SEW - 1)) {
+function clmul(x, y, EEW) = { // TODO: not real Sail Code yet
+  result : bits(EEW) = zeros();
+  foreach (i from 0 to (EEW - 1)) {
     if y[i] == bitone then result = result ^ (x << i);
   };
   result

@@ -1,11 +1,11 @@
-[[insns-vaeskf2, Vector AES-256 Forward KeySchedule]]
-= vaeskf2.vi
+[[insns-vaes128k10, Vector AES-128 Generate round key 10]]
+= vaes128k10.vv
 
 Synopsis::
-Vector AES-256 Forward KeySchedule
+Vector AES-128 Generate round key 10
 
 Mnemonic::
-vaeskf2.vi vd, vs2, rnd
+vae128k10.vv vd, vs1
 
 Encoding::
 [wavedrom, , svg]
@@ -14,21 +14,21 @@ Encoding::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'rnd'},
-{bits: 5, name: 'vs2'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2=0'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
 Description:: 
-This instruction implements a single round of the forward AES-256 KeySchedule.
-It treats each `EGW=128` element group of `vs2` as the current AES round key,
-and each `EGW=128` element group of `vd` as the previous AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 14.
+This instruction generates the final (10th) roundkey for AES-128 for consumption by
+a subsequent AES-128 all rounds decryption instruction.
+It treats each 128-bit element group of `vs2` as the current AES round key.
+The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
 Out of range values signal an illegal instruction exception.
 
-It applies a single AES-256 KeySchedule round to each element group, and
+It applies 10 AES-128 KeySchedule rounds to each element group, and
 writes the 128-bit result to the corresponding element group in `vd`.
 
 This instruction only returns the generated key to the same element group as the source.
@@ -41,26 +41,18 @@ In order to properly specify the number of elements, vl needs to be set to
 vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
-[NOTE]
-====
-The AES-256 KeySchedule uses 8 32-bit words to compute the next 4 32-bit
-words of the KeySchedule, while the round function consumes these words
-in chunks of 128-bits.
-====
-
-
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rnd, vd, vs2)) = {
+function clause execute (VAES128k10(rnd, vs2)) = {
   assert(VLEN>=128);
   // assert round key in range
-  vlen = vl/EGS
+  vlen = vl/EGS * vtype.SEW/EEW
   foreach (i from vlstart to vlen) {
-    let current : bits(128) = get_velem(vs2, EGW=128, i);
-    let previous : bits(128) = get_velem(vd, EGW=128, i);
-    let next    : bits(128) = aes_256_forward_key_schedule(rnd, current, previous);
-    set_velem(vd, EGW=128, i, next);
+    let rky : bits(128) = get_velem(vs2, EGW=128, i);
+    foreach (rnd from 1 to 10)
+      let rky    : bits(128) = aes_128_forward_key_schedule(rnd, rky);
+    set_velem(vd, EGW=128, i, rky);
   }
   RETIRE_SUCCESS
 }

@@ -6,7 +6,8 @@ Vector rotate left by vector/scalar/immediate.
 
 Mnemonic::
 vrol.vv vd, vs2, vs1 +
-vrol.vx vd, vs2, rs1
+vrol.vx vd, vs2, rs1 + 
+vrol.vi vd, vs2, imm
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
@@ -34,11 +35,29 @@ Encoding (Vector-Vector)::
 ]}
 ....
 
+Encoding (Vector-Immediate)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: '???????'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: '???'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 7, name: '???????'},
+]}
+....
+
+Note::
+The immediate form needs a different instruction encoding than other vector instructions as they are limited to 5 bit immediates
+which are held in the vs1 register field (bits 19:15). We need 6 bits to encode all rotate amounts from 0 to 63. 
+
+
 Description:: 
 This instruction performs a bitwise left rotation on vector elements.
-The data to be rotated is in the vector register group specifed by `vs2` and
-the rotate amount value can come from a vector register group `vs1`, or a
-scalar integer register `rs1`.
+The data to be rotated is in the vector register group specified by `vs2` and
+the rotate amount value can come from a vector register group `vs1`, a
+scalar integer register `rs1`, or an immediate.
 Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.
 

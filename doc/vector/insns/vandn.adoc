@@ -54,6 +54,14 @@ active elements in the vector register group specified by `vs2`.
 The other operand can come from a vector register group `vs1`, a scalar
 integer register `rs1`, or a zero-extended 5-bit immediate.
 
+[TIP]
+.Note on necessity of instruction
+====
+This instruction is performance-critical to SHA3. Emulating it via 2 instructions is expected to have significant performance impact. 
+
+
+====
+
 Operation::
 [source,sail]
 --
