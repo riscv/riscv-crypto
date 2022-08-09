@@ -3,12 +3,13 @@
 
 Instructions for efficiently implementing GCM.
 
-[%header,cols="^2,4"]
+[%header,cols="^2,4,8"]
 |===
+
+|VLENmin
 |Mnemonic
 |Instruction
-
-| vclmulgf.v         | <<insns-vclmulgf>>
+| 128 | vclmulgf.v | <<insns-vclmulgf>>
 
 |===
 

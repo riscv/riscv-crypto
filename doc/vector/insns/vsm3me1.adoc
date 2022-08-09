@@ -1,0 +1,89 @@
+[[insns-vsm3me1, SM3 Message Expansion]]
+= vsm3me1.vv
+
+Synopsis::
+Vector SM3 Message Expansion - 8 rounds per instruction
+
+Mnemonic::
+vsm3me1.vv vd, vs2, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements 8 rounds of SM3 message expansion,  producing eight 32-bit outputs in
+a 256-bit 8-element group.
+It treats each 128-bit 8-element group of `vs1` as the four round keys and
+each 256-bit 8-element group of `vs1` as the data input.
+
+
+This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`
+`vl` needs to be set to eight times the number of element groups.
+If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VSM3ME1(rnd, vs2)) = {
+  assert(VLEN>=256);
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  // assert round key in range
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  vlen = vl/EGS
+  
+  foreach (i from egstart to elementgroups) {
+    let current : bits(128) = get_velem(vs2, EGW=128, i);
+    let rk[3:0] = current // This pseudo code is temporary - it will be rewritten!!!!!!!!!!!!
+  
+W[i]   = P_1(W[i-16]⊕W[i-9]⊕ROTL15W[i-3]) ⊕ROTL7W[i-13]⊕W[i-6]
+W[i+1] = P_1(W[i-15]⊕W[i-8]⊕ROTL15W[i-2]) ⊕ROTL7W[i-12]⊕W[i-5]
+W[i+2] = P_1(W[i-14]⊕W[i-7]⊕ROTL15W[i-1]) ⊕ROTL7W[i-11]⊕W[i-4]
+W[i+3] = P_1(W[i-13]⊕W[i-6]⊕ROTL15W[i])   ⊕ROTL7W[i-10]⊕W[i-3]
+W[i+4] = P_1(W[i-12]⊕W[i-5]⊕ROTL15W[i+1]) ⊕ROTL7W[i-9] ⊕W[i-2]
+W[i+5] = P_1(W[i-11]⊕W[i-4]⊕ROTL15W[i+2]) ⊕ROTL7W[i-8] ⊕W[i-1]
+W[i+6] = P_1(W[i-10]⊕W[i-3]⊕ROTL15W[i+3]) ⊕ROTL7W[i-7] ⊕W[i]
+W[i+7] = P_1(W[i-9] ⊕W[i-2]⊕ROTL15W[i+4]) ⊕ROTL7W[i-6] ⊕W[i+1]
+
+or
+
+for i = 16 to 67
+  W[i] = P_1(W[i-16] xor W[i-9]) xor (ROTL15W[i-3]))
+xor (ROTL7W[i-13]) xor W[i-6]
+end for
+
+where:
+P_1(X) = X xor ROTL15(X) xor ROTL23(X)
+
+
+
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

@@ -23,17 +23,17 @@ for accelerated cryptographic operations.
 
 [%header,cols="^2,4,8"]
 |===
-|`VLEN`
+|VLENmin
 |Mnemonic
 |Instruction
 
-| >= 128 | vaesef.v   | <<insns-vaesef>>
-| >= 128 | vaesem.v   | <<insns-vaesem>>
-| >= 128 | vaesdf.v   | <<insns-vaesdf>>
-| >= 128 | vaesdm.v   | <<insns-vaesdm>>
-| >= 128 | vaeskf1.vi | <<insns-vaeskf1>>
-| >= 128 | vaeskf2.vi | <<insns-vaeskf2>>
-| >= 128 | vaeskr1.vi | <<insns-vaeskr1>>
-| >= 128 | vaeskr2.vi | <<insns-vaeskr2>>
+| 128 | vaesef.v   | <<insns-vaesef>>
+| 128 | vaesem.v   | <<insns-vaesem>>
+| 128 | vaesdf.v   | <<insns-vaesdf>>
+| 128 | vaesdm.v   | <<insns-vaesdm>>
+| 128 | vaeskf1.vi | <<insns-vaeskf1>>
+| 128 | vaeskf2.vi | <<insns-vaeskf2>>
+| 128 | vaeskr1.vi | <<insns-vaeskr1>>
+| 128 | vaeskr2.vi | <<insns-vaeskr2>>
 |===
 

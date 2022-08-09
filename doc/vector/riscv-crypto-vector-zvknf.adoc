@@ -7,16 +7,16 @@ functions of the AES block cipher.
 
 [%header,cols="^2,4,8"]
 |===
-|`VLEN`
+|VLENmin
 |Mnemonic
 |Instruction
 
-| >= 128 | vaese128.vv | <<insns-vaese128>>
-| >= 128 | vaesd128.vv | <<insns-vaesd128>>
-| >= 128 | vaese256.vv | <<insns-vaese256>>
-| >= 128 | vaesd256.vv | <<insns-vaesd256>>
-| >= 128 | vaes128k10.vv | <<insns-vaes128k10>>
-| >= 128 | vaes256k13.vv | <<insns-vaes256k13>>
-| >= 128 | vaes256k14.vv | <<insns-vaes256k14>>
+| 128 | vaese128.vv | <<insns-vaese128>>
+| 128 | vaesd128.vv | <<insns-vaesd128>>
+| 128 | vaese256.vv | <<insns-vaese256>>
+| 128 | vaesd256.vv | <<insns-vaesd256>>
+| 128 | vaes128k10.vv | <<insns-vaes128k10>>
+| 128 | vaes256k13.vv | <<insns-vaes256k13>>
+| 128 | vaes256k14.vv | <<insns-vaes256k14>>
 |===
 
