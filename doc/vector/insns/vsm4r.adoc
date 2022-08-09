@@ -1,0 +1,108 @@
+[[insns-vsm4r, SM4 Rounds]]
+= vsm4r.vv
+
+Synopsis::
+Vector SM4 Rounds
+
+Mnemonic::
+vsm4r.vv vd, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2=0'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements 4 rounds of SM4 Encryption/Decryption, producing four 32-bit outputs in
+a 128-bit 4-element group.
+It treats each 128-bit 4-element group of `vs1` as the four round keys and
+each 128-bit 4-element group of `vs1` as the data input.
+
+vd (in) = {x[i-4], X[i-3]. X[i-2], X[i-1]} +
+vs1 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
+vd (out) = {x[i], X[i+1], X[i+2], X[i+3]} +
+
+For example, if i=4 +
+vd (in) = {x[0], X[1]. X[2], X[3]} +
+vs1 = {rk[0],rk[1], rk[2], rk[3]} +
+vd (out) = {x[4], X[5], X[6], X[7]} +
+
+Note: The SM4 standard is available at: https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
+
+Note:
+In SM4, encryption and decryption are identical except that decryption consumes the round keys in the reverse order.
+
+Each round is produced by the following +
+  B = (X[i-3] ⊕ X[i-2] ⊕ X[i-1] ⊕ rk[i-4]) +
+  S = subBytes(B); 1 s-box per byte +
+  X[i]= X[i-4] ⊕ S ⊕ ROTL2(S)⊕ ROTL10(S)⊕ ROTL18(S) ⊕ ROTL24(S) +
+
+Each of the 32 rounds consumes the last 4 32-bit outputs with a round key and produces the next 32-bit output.
+
+NB: The rounds start with i=4 as {X[3],x[2],X[1],X[0]} is the initial data input to the round function
+and rk[0] is the initial round key.
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+`vl` needs to be set to four times the number of element groups.
+If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VAESESFK1(rnd, vs2)) = {
+  assert(VLEN>=128);
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  // assert round key in range
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  vlen = vl/EGS
+  
+  foreach (i from egstart to elementgroups) {
+    let rk[0:3] : bits(128) = get_velem(vs2, EGW=128, i);
+    let X[0:3] : bits(128) = get_velem(vd, EGW=128, i);
+
+    // 1st round
+    B = (X[1] ⊕ X[2] ⊕ X[3] ⊕ rk[0])
+    S = subBytes(B); 1 s-box per byte
+    Y[0]= X[0] ⊕ S ⊕ ROTL2(S)⊕ ROTL10(S)⊕ ROTL18(S) ⊕ ROTL24(S)
+    // 2nd round
+    B = (X[2] ⊕ X[3] ⊕ X[4] ⊕ rk[1])
+    S = subBytes(B); 1 s-box per byte
+    Y[1]= X[1] ⊕ S ⊕ ROTL2(S)⊕ ROTL10(S)⊕ ROTL18(S) ⊕ ROTL24(S)
+    //3rd round
+    B = (X[3] ⊕ Y[0] ⊕ X[1] ⊕ rk[2])
+    S = subBytes(B); 1 s-box per byte
+    Y[2]= X[2] ⊕ S ⊕ ROTL2(S)⊕ ROTL102(S)⊕ ROTL18(S) ⊕ ROTL24(S)
+    //4th round
+    B = (Y[0] ⊕ Y[1] ⊕ Y[2] ⊕ rk[3])
+    S = subBytes(B); 1 s-box per byte
+    Y[3]= X[3] ⊕ S ⊕ ROTL2(S)⊕ ROTL10(S)⊕ ROTL18(S) ⊕ ROTL24(S)
+    set_velem(vd, EGW=128, i, Y[0:3]);
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

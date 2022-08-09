@@ -1,15 +1,14 @@
-[[zvknh,Zvknh]]
-=== `Zvknh` - NIST Suite: Vector SHA
+[[zvknh1,Zvknh1]]
+=== `Zvknh1` - NIST Suite: Vector SHA-256
 
 Instructions for accelerating SHA
 // TODO - split this into two extensions; one with EGW=128 and another for EGW=256
 
-All of these instructions work on 128-bit element groups or 256-bit element groups, and hence
-require that `Zvl128b` or `Zvl128b` (respectively) must be supported on
-the host system.
+All of these instructions work on 128-bit element groups and hence
+require that `Zvl128b` must be supported.
 
 
-Systems which do not meet these requirements cannot support the <<zvknh>>
+Systems which do not meet these requirements cannot support the <<zvknh1>>
 extension.
 
 // It is _possible_ to formulate these instructions such that they work
@@ -24,15 +23,12 @@ for accelerated cryptographic operations.
 
 [%header,cols="^2,4,8"]
 |===
-|`VLEN`
+|`VLENmin`
 |Mnemonic
 |Instruction
 
 // SHA256
-| >= 128 | vsha256ms.vv   | <<insns-vsha256ms>>
-| >= 128 | vsha256c.vv    | <<insns-vsha256c>>
-// SHA512
-| >= 256 | vsha512ms.vv   | <<insns-vsha512ms>>
-| >= 256 | vsha512c.vv    | <<insns-vsha512c>>
+| 128 | vsha256ms.vv   | <<insns-vsha256ms>>
+| 128 | vsha256c.vv    | <<insns-vsha256c>>
 |===
 

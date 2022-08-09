@@ -1,0 +1,27 @@
+[[zvksed,Zvksed]]
+=== `Zvksed` - ShangMi Suite: SM4 Block Cipher Instructions
+
+Instructions for accelerating single round 
+encryption, decryption and key-schedule
+functions of the SM4 block cipher.
+
+All of these instructions work on 128-bit elements, and hence
+require that `Zvl128b` or greater must be supported on
+the host system. That is, `VLEN>=128`.
+Systems which do not meet these requirements cannot support the <<zvksed>>
+extension.
+
+Systems which implement `VLEN<128` should consider the existing
+Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
+for accelerated cryptographic operations.
+
+[%header,cols="^2,4,8"]
+|===
+|VLENmin
+|Mnemonic
+|Instruction
+
+| 128 | vsm4k.v   | <<insns-vsm4k>>
+| 128 | vsm4r.v   | <<insns-vsm4r>>
+|===
+

@@ -1,0 +1,198 @@
+[[insns-vsm4k, Vector SM4 Key Expansion]]
+= vsm4k.vi
+
+Synopsis::
+Vector SM4 KeyExpansion
+
+Mnemonic::
+vsm4k.vi vd, vs2, rnds
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'rnds'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys.
+It treats each 128-bit element group of `vs2` as the last four round keys.
+The rounds number is stored in the 5-bit `rnd`immediate. Legal values are 0 - 7.
+Out of range values signal an illegal instruction exception.
+
+  
+  vs2 = {rK[i-4], rK[i-3],rK[i-2], rK[i-1]} // last 4 round keys +
+  imm = 0 to 7; // group of 4 rounds +
+  vd (out) = {rK[i], rK[i+1],rK[i+2], rK[i+3]} // next 4 rounds keys +
+
+Each of the 32 rounds consumes the last 4 32-bit keys along with a round constant and produces the next 32-bit key.
+
+
+Note:
+The initial input to the round key generation is produced by XORing the 128-bit encryption key with a so-called system parameter: FK[3:0]
+
+.System Parameters
+[%autowidth]
+[%header,cols="^2,^2"]
+|===
+|FK
+|constant
+
+| 0 | A3B1BAC6
+| 1 | 56AA3350 
+| 2 | 677D9197
+| 3 | B27022DC
+|===
+
+  MK = {MK[0], MK[1], MK[2], MK[3]} // Encryption Key
+  rK[-4,-1] = K[0:3] = MK[0:3] XOR FK[0:3]
+
+
+The round keys are rK[0] to rK[31]
+  B = (rK[i-3] ⊕ rK[i-2] ⊕ rK[i-1] ⊕ CK[round]); +
+  S = subBytes(B); + 
+  rK[i]= rK[i-4] ⊕ S ⊕ ROTL13(S)⊕ ROTR23(S); +
+
+The round constants and the S-box are described below and can be found at https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
+
+Note::
+The round constants can be generated on the fly fairly cheaply.
+If the bytes of the constants are assigned an incrementing index from 0 to 127, the value of each byte is equal to its index multiplied by 7 modulo 256.
+Since the results are all limited to 8 bits, the modulo operation occurs for free:
+
+	B[n] = n + 2n + 4n;
+       = 8n + ~n + 1;
+
+
+.Round Constants
+[%autowidth]
+[%header,cols="^2,^2"]
+|===
+|CK
+|constant
+
+| 0  | 00070E15
+| 1  | 1C232A31
+| 2  | 383F464D
+| 3  | 545B6269
+| 4  | 70777E85
+| 5  | 8C939AA1
+| 6  | A8AFB6BD
+| 7  | C4CBD2D9
+| 8  | E0E7EEF5
+| 9  | FC030A11
+| 10 | 181F262D
+| 11 | 343B4249
+| 12 | 50575E65
+| 13 | 6C737A81
+| 14 | 888F969D
+| 15 | A4ABB2B9
+| 16 | C0C7CED5
+| 17 | DCE3EAF1
+| 18 | F8FF060D
+| 19 | 141B2229
+| 20 | 30373E45
+| 21 | 4C535A61
+| 22 | 686F767D
+| 23 | 848B9299
+| 24 | A0A7AEB5
+| 25 | BCC3CAD1
+| 26 | D8DFE6ED
+| 27 | F4FB0209
+| 28 | 10171E25
+| 29 | 2C333A41
+| 30 | 484F565D
+| 31 | 646B7279
+|===
+
+.SBOX
+[%autowidth]
+[%header,cols="^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2"]
+|===
+|  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 |  A |  B |  C |  D |  E |  F
+
+| 0 | D6 | 90 | E9 | FE | CC | E1 | 3D | B7 | 16 | B6 | 14 | C2 | 28 | FB | 2C | 05
+| 1 | 2B | 67 | 9A | 76 | 2A | BE | 04 | C3 | AA | 44 | 13 | 26 | 49 | 86 | 06 | 99
+| 2 | 9C | 42 | 50 | F4 | 91 | EF | 98 | 7A | 33 | 54 | 0B | 43 | ED | CF | AC | 62
+| 3 | E4 | B3 | 1C | A9 | C9 | 08 | E8 | 95 | 80 | DF | 94 | FA | 75 | 8F | 3F | A6
+| 4 | 47 | 07 | A7 | FC | F3 | 73 | 17 | BA | 83 | 59 | 3C | 19 | E6 | 85 | 4F | A8
+| 5 | 68 | 6B | 81 | B2 | 71 | 64 | DA | 8B | F8 | EB | 0F | 4B | 70 | 56 | 9D | 35
+| 6 | 1E | 24 | 0E | 5E | 63 | 58 | D1 | A2 | 25 | 22 | 7C | 3B | 01 | 21 | 78 | 87
+| 7 | D4 | 00 | 46 | 57 | 9F | D3 | 27 | 52 | 4C | 36 | 02 | E7 | A0 | C4 | C8 | 9E
+| 8 | EA | BF | 8A | D2 | 40 | C7 | 38 | B5 | A3 | F7 | F2 | CE | F9 | 61 | 15 | A1
+| 9 | E0 | AE | 5D | A4 | 9B | 34 | 1A | 55 | AD | 93 | 32 | 30 | F5 | 8C | B1 | E3
+| A | 1D | F6 | E2 | 2E | 82 | 66 | CA | 60 | C0 | 29 | 23 | AB | 0D | 53 | 4E | 6F
+| B | D5 | DB | 37 | 45 | DE | FD | 8E | 2F | 03 | FF | 6A | 72 | 6D | 6C | 5B | 51
+| C | 8D | 1B | AF | 92 | BB | DD | BC | 7F | 11 | D9 | 5C | 41 | 1F | 10 | 5A | D8
+| D | 0A | C1 | 31 | 88 | A5 | CD | 7B | BD | 2D | 74 | D0 | 12 | B8 | E5 | B4 | B0
+| E | 89 | 69 | 97 | 4A | 0C | 96 | 77 | 7E | 65 | B9 | F1 | 09 | C5 | 6E | C6 | 84
+| F | 18 | F0 | 7D | EC | 3A | DC | 4D | 20 | 79 | EE | 5F | 3E | D7 | CB | 39 | 48
+|===
+
+This instruction only returns the generated keys to the same element group as the source.
+If it is desired to have the same key in all vector groups, either the input vector groups
+need to contain the same values, or the output from a particular group needs to be "broadcast"
+to the other groups using an instruction such as vrgather.
+
+This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
+`vl` needs to be set to four times the number of element groups.
+If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VAESESFK1(rnd, vs2)) = {
+  assert(VLEN>=128);
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  // assert round key in range
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  vlen = vl/EGS
+  
+  foreach (i from egstart to elementgroups) {
+    let rk[0:3] : bits(128) = get_velem(vs2, EGW=128, i);
+    
+  // 1st round
+  B = (rK[1] ⊕ rK[2] ⊕ rK[3] ⊕ CK[rnds])
+  S = subBytes(B); 1 s-box per byte
+  rK[4]= rK[0] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  // 2nd round
+  B = (rK[2] ⊕ rK[3] ⊕ rK[4] ⊕ CK[rnds+1])
+  S = subBytes(B); 1 s-box per byte
+  rK[5]= rK[1] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  // 3rd round
+  B = (rK[3] ⊕ rK[4] ⊕ rK[5] ⊕ CK[rnds+2])
+  S = subBytes(B); 1 s-box per byte
+  rK[6]= rK[2] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  // 4th round
+  B = (rK[4] ⊕ rK[5] ⊕ rK[6] ⊕ CK[rnds+3])
+  S = subBytes(B); 1 s-box per byte
+  rK[7]= rK[i-1] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  set_velem(vd, EGW=128, i, rK[7:4]);
+
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

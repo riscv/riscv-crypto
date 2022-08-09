@@ -1,0 +1,34 @@
+[[zvknh2,Zvknh2]]
+=== `Zvknh2` - NIST Suite: Vector SHA-512
+
+Instructions for accelerating SHA-512
+// TODO - split this into two extensions; one with EGW=128 and another for EGW=256
+
+All of these instructions work on 256-bit element groups, and hence
+require that `Zvl256b` must be supported.
+
+
+Systems which do not meet these requirements cannot support the <<zvknh2>>
+extension.
+
+// It is _possible_ to formulate these instructions such that they work
+// on systems with a narrower `VLEN` (i.e 32 or 64) and use `LMUL=2,4` to
+// create inputs which are large enough to contain enough information.
+// However, this incurs a large amount of complexity in the instructions
+// design and implementation.
+
+Systems which implement `VLEN<256` should consider the existing
+Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
+for accelerated cryptographic operations.
+
+[%header,cols="^2,4,8"]
+|===
+|VLENmin
+|Mnemonic
+|Instruction
+
+// SHA512
+| 256 | vsha512ms.vv   | <<insns-vsha512ms>>
+| 256 | vsha512c.vv    | <<insns-vsha512c>>
+|===
+

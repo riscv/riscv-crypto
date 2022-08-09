@@ -1,0 +1,107 @@
+[[insns-vsm3c, SM3 Compression]]
+= vsm3c.vv
+
+Synopsis::
+Vector SM4 Compression
+
+Mnemonic::
+vsm4r.vv vd, vs2, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OPMVV'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Description:: 
+This instruction implements 2 rounds of SM3 Compression, producing eight 32-bit outputs in
+a 256-bit 8-element group.
+It treats each 256-bit 8-element group of `vd` as eight 32-bit words, 
+each 64-bit 2-element group of `vs1` as two expanded message schedule words, and 
+each 64-bit 2-element group of `vs2` as two alternately-expanded message schedule words.
+
+NB::
+It probably makes sense to have vs1 and vs2 hold eight 32-bit words each and have 4 versions of this instruction;
+one for each pair of inputs.
+This fits more naturally with the generating instructions and doesn't leave us with the oddity of 64-bit and 256-bit element groups
+Vd (in) = {A,B,C,D,E,F,G,H} 
+vs1 = W[0:7]  // 8 expanded words
+vs2 = W’[0:7] // 8 expanded words with XORing
+Vd (out) = {A,B,C,D,E,F,G,H} 
+
+
+
+
+This instruction treats `EEW=32` regardless of `vtype.vsew`
+`vl` needs to be set to eight times the number of element groups.
+If vlstart is not zero, it needs to be scaled similarly.
+This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VAESESFK1(rnd, vs2)) = {
+  assert(VLEN>=256);
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  // assert round key in range
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  vlen = vl/EGS
+  
+  
+// your code goes here
+ SS1 <- ROTL7((ROTL12(A) + E + (ROTLjmod32(T_j))
+  SS2 <- SS1 xor ROTL12(A)
+  TT1 <- FF_j(A, B, C) + D + SS2 + W'[i]
+  TT2 <- GG_j(E, F, G) + H + SS1 + W[i]
+  D <- C0
+  C1 <- ROTL9(B)
+  B <- A0
+  A1 <- TT1
+  H <- G0
+  G1 <- ROTL19(F)
+  F <- E0
+  E1 <- P_0(TT2)
+
+  SS1 <- ROTL7((ROTL12(A1) + E1 + (ROTLjmod32(T_j))
+  SS2 <- SS1 xor ROTL12(A1)
+  TT1 <- FF_j(A1, A0, C1) + C0 + SS2 + W'[i+1]
+  TT2 <- GG_j(E1, E0, G1) + G0 + SS1 + W[i+1]
+  D <- C1
+  C2 <- ROTL9(A0)
+  B <- A1
+  A2 <- TT1
+  H <- G1
+  G2 <- ROTL19(E0)
+  F <- E1
+  E2 <- P_0(TT2)
+
+Output: {A2, A1, C2, C1, E2, E1, G2, G1}
+
+
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===
