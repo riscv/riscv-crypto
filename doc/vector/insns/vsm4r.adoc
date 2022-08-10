@@ -5,7 +5,7 @@ Synopsis::
 Vector SM4 Rounds
 
 Mnemonic::
-vsm4r.vv vd, vs1
+vsm4r.vv vd, vs2
 
 Encoding::
 [wavedrom, , svg]
@@ -14,8 +14,8 @@ Encoding::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2=0'},
+{bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=0'},
 {bits: 6, name: 'funct6'},
 ]}
@@ -28,12 +28,12 @@ It treats each 128-bit 4-element group of `vs1` as the four round keys and
 each 128-bit 4-element group of `vs1` as the data input.
 
 vd (in) = {x[i-4], X[i-3]. X[i-2], X[i-1]} +
-vs1 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
+vs2 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
 vd (out) = {x[i], X[i+1], X[i+2], X[i+3]} +
 
 For example, if i=4 +
 vd (in) = {x[0], X[1]. X[2], X[3]} +
-vs1 = {rk[0],rk[1], rk[2], rk[3]} +
+vs2 = {rk[0],rk[1], rk[2], rk[3]} +
 vd (out) = {x[4], X[5], X[6], X[7]} +
 
 Note: The SM4 standard is available at: https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
@@ -102,7 +102,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkns>>
+| <<zvksed>>
 | v0.1.0
 | In Development
 |===

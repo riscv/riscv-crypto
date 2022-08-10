@@ -58,7 +58,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkns>>
+| <<zvkg>>
 | v0.1.0
 | In Development
 |===

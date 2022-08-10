@@ -75,7 +75,7 @@ include: +
 Barry Spinney,
 Ben Marshall,
 Derek Atkins,
-link:mailto:kad@rivosinc.com[Ken Dockser] (Ed),
+link:mailto:kad@rivosinc.com[Ken Dockser] (Editor),
 Markku-Juhani O. Saarinen,
 Richard Newell
 
@@ -124,26 +124,27 @@ include::./riscv-crypto-vector-zvknf.adoc[]
 <<<
 include::./riscv-crypto-vector-zvkb.adoc[]
 <<<
-include::./riscv-crypto-vector-zvsed.adoc[]
+include::./riscv-crypto-vector-zvkg.adoc[]
 <<<
-include::./riscv-crypto-vector-zvsh.adoc[]
+include::./riscv-crypto-vector-zvksed.adoc[]
+<<<
+include::./riscv-crypto-vector-zvkssh.adoc[]
+<<<
 
 // ------------------------------------------------------------
 
 [[crypto_vector_insns, reftext="Vector Cryptography Instructions"]]
 == Instructions
 
-include::insns/vaesfk1.adoc[leveloffset=+2]
+include::insns/vaes128k10.adoc[leveloffset=+2]
+<<< 
+include::insns/vaes256k13.adoc[leveloffset=+2]
+<<<  
+include::insns/vaes256k14.adoc[leveloffset=+2]
 <<<
-include::insns/vaesrk1.adoc[leveloffset=+2]
-<<<
-include::insns/vaesfk2.adoc[leveloffset=+2]
-<<<
-include::insns/vaesrk2.adoc[leveloffset=+2]
-<<<
-include::insns/vaesef.adoc[leveloffset=+2]
-<<<
-include::insns/vaesem.adoc[leveloffset=+2]
+include::insns/vaesd128.adoc[leveloffset=+2]
+<<< 
+include::insns/vaesd256.adoc[leveloffset=+2]
 <<<
 include::insns/vaesdf.adoc[leveloffset=+2]
 <<<
@@ -153,48 +154,50 @@ include::insns/vaese128.adoc[leveloffset=+2]
 <<<
 include::insns/vaese256.adoc[leveloffset=+2]
 <<<
-include::insns/vaesd128.adoc[leveloffset=+2]
-<<< 
-include::insns/vaesd256.adoc[leveloffset=+2]
+include::insns/vaesef.adoc[leveloffset=+2]
 <<<
-include::insns/vaes128k10.adoc[leveloffset=+2]
-<<< 
-include::insns/vaes256k13.adoc[leveloffset=+2]
-<<<  
-include::insns/vaes256k14.adoc[leveloffset=+2]
-<<<  
-include::insns/vsha256ms.adoc[leveloffset=+2]
+include::insns/vaesem.adoc[leveloffset=+2]
+<<<
+include::insns/vaesfk1.adoc[leveloffset=+2]
+<<<
+include::insns/vaesfk2.adoc[leveloffset=+2]
+<<<
+include::insns/vaesrk1.adoc[leveloffset=+2]
+<<<
+include::insns/vaesrk2.adoc[leveloffset=+2]
+<<<
+include::insns/vandn.adoc[leveloffset=+2]
+<<<
+include::insns/vbrev8.adoc[leveloffset=+2]
+<<<
+include::insns/vclmul.adoc[leveloffset=+2]
+<<<
+include::insns/vclmulgf.adoc[leveloffset=+2]
+<<<
+include::insns/vclmulh.adoc[leveloffset=+2]
+<<<
+include::insns/vrev8.adoc[leveloffset=+2]
+<<<
+include::insns/vrol.adoc[leveloffset=+2]
+<<<
+include::insns/vror.adoc[leveloffset=+2]
 <<<
 include::insns/vsha256c.adoc[leveloffset=+2]
 <<<
-include::insns/vsha512ms.adoc[leveloffset=+2]
+include::insns/vsha256ms.adoc[leveloffset=+2]
 <<<
 include::insns/vsha512c.adoc[leveloffset=+2]
 <<<
-include::insns/vsm3me1.adoc[leveloffset=+2]
+include::insns/vsha512ms.adoc[leveloffset=+2]
 <<<
 include::insns/vsm3c.adoc[leveloffset=+2]
+<<<
+include::insns/vsm3me1.adoc[leveloffset=+2]
 <<<
 include::insns/vsm4k.adoc[leveloffset=+2]
 <<<
 include::insns/vsm4r.adoc[leveloffset=+2]
 <<<
-include::insns/vclmul.adoc[leveloffset=+2]
-<<<
-include::insns/vclmulh.adoc[leveloffset=+2]
-<<<
-include::insns/vclmulgf.adoc[leveloffset=+2]
-<<<
-include::insns/vror.adoc[leveloffset=+2]
-<<<
-include::insns/vrol.adoc[leveloffset=+2]
-<<<
-include::insns/vandn.adoc[leveloffset=+2]
-<<<
-include::insns/vrev8.adoc[leveloffset=+2]
-<<<
-include::insns/vbrev8.adoc[leveloffset=+2]
-<<<   
 
 [[bibliography]]
 == Bibliography

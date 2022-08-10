@@ -5,25 +5,41 @@ Synopsis::
 Vector AES final round decryption instruction.
 
 Mnemonic::
-vaesdf.v vd, vs1
+vaesdf.v vd, vs2
 
 Encoding (Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: '?????'},
-{bits: 7, name: '???????'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | Cipher text
+| Vs2 | input  | 128  | 4 | 32 | Final Round key
+| Vd  | output | 128  | 4 | 32 | Plain text 
+|===
 
 Description:: 
-This instruction implements the final-round decryption function of the AES
-block cipher.
+Perform the final-round decryption function of the AES block cipher.
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs1` holds the round key. Each `EGW=128` element group next round state output is produced by applying the ShiftRows, SubBytes,  and AddRoundkey steps to the corresponding inputs.
 This instruction must always be implemented such that its execution latency does not depend

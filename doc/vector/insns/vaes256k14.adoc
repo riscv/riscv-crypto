@@ -1,11 +1,11 @@
-[[insns-vaes256k14, Vector AES-256 Generate round key 14]]
+[[insns-vaes256k14, Vector AES-256 Generate final round key (14)]]
 = vaes256k14.vv
 
 Synopsis::
-Vector AES-256 Generate round key 14
+Vector AES-256 Generate final round key (14)
 
 Mnemonic::
-vaes256k14.vv vd, vs1, vs2
+vaes256k14.vv vd, vs2, vs1
 
 Encoding::
 [wavedrom, , svg]
@@ -21,32 +21,44 @@ Encoding::
 ]}
 ....
 
-Description:: 
-This instruction generates the final (14th) roundkey for AES-256 for consumption by
-a subsequent AES-256 all rounds decryption instruction.
-It treats each `EGW=128` element group of `vs2` as the current AES round key,
-and each `EGW=128` element group of `vd` as the previous AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 14.
-Out of range values signal an illegal instruction exception.
+Arguments::
 
-It applies a single AES-256 KeySchedule round to each element group, and
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs2 | input  | 128  | 4 | 32 | AES-256 upper Cipher key
+| Vs1 | input  | 128  | 4 | 32 | AES-256 lower Cipher key
+| Vd  | output | 128  | 4 | 32 | final round key 
+|===
+
+Description:: 
+Generate the final (14th) round key for AES-256 for consumption by
+a subsequent AES-256 all-rounds decryption instruction.
+Applies 12 AES-256 KeySchedule rounds to each element group, and
 writes the 128-bit result to the corresponding element group in `vd`.
 
-This instruction only returns the generated key to the same element group as the source.
-If it is desired to have the same key in all vector groups, either the input vector groups
-need to contain the same values, or the output from a particular group needs to be "broadcast"
-to the other groups using an instruction such as vrgather.
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vlstart` must be a multiple of `EGS=4`
 
-This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
-In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 [NOTE]
 ====
-The AES-256 KeySchedule uses 8 32-bit words to compute the next 4 32-bit
-words of the KeySchedule, while the round function consumes these words
-in chunks of 128-bits.
+*This note is true for all key-generating instructions. Move to a higher level.* +
+This instruction only returns the generated key to the same element group as the source.
+If it is desired to have the same key in all vector groups, either the input vector groups
+need to contain the same values, or the output from a particular group needs to be "broadcast"
+to the other groups using an instruction such as vrgather
 ====
 
 
@@ -55,9 +67,13 @@ Operation::
 --
 function clause execute (VAESES256k14(rnd, vs1, vs2)) = {
   assert(VLEN>=128);
-  // assert round key in range
-  vlen = vl/EGS
-  foreach (i from vlstart to vlen) {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  
+  foreach (i from egstart to elementgroups) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let previous : bits(128) = get_velem(vs1, EGW=128, i);
     foreach (rnd from 2 to 14)
@@ -77,7 +93,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkns>>
+| <<zvknf>>
 | v0.1.0
 | In Development
 |===

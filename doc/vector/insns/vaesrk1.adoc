@@ -5,7 +5,7 @@ Synopsis::
 Vector AES-128 Reverse KeySchedule
 
 Mnemonic::
-vaeskr1.vi vd, vs2, rcon
+vaeskr1.vi vd, vs2, rnd
 
 Encoding::
 [wavedrom, , svg]
@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'rcon'},
+{bits: 5, name: 'rnd'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -24,8 +24,8 @@ Encoding::
 Description:: 
 This instruction implements a single round of the reverse AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round constant index of the KeySchedule operation is stored in the 5-bit `rcon`
-immediate.
+The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
+Out of range values signal an illegal instruction exception.
 
 It applies a single AES-128 reverse KeySchedule round to each element, and
 writes the 128-bit result to the corresponding element group in `vd`.

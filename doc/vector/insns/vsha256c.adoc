@@ -13,29 +13,16 @@ differentiated by the suffixes a and b. These suffixes --- and indeed the mnemon
 themsleves --- will likely change. Alternatively, we may choose to differentiate
 between these two by other means.
 
-Encoding (Vector)::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 7, name: '???????'},
-{bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
-]}
-....
-
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
-{reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
+{bits: 3, name: 'func3'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 1, name: 'vm=0'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 
@@ -143,7 +130,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvknf>>
+| <<zvknh1>>
 | v0.1.0
 | In Development
 |===

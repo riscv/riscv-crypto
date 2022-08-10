@@ -1,11 +1,11 @@
-[[insns-vaes128k10, Vector AES-128 Generate round key 10]]
-= vaes128k10.vv
+[[insns-vaes128k10, Vector AES-128 Generate final round key (10)]]
+= vaes128k10.v
 
 Synopsis::
-Vector AES-128 Generate round key 10
+Vector AES-128 Generate final round key (10)
 
 Mnemonic::
-vae128k10.vv vd, vs1
+vaes128k10.v vd, vs2
 
 Encoding::
 [wavedrom, , svg]
@@ -14,31 +14,42 @@ Encoding::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2=0'},
-{bits: 1, name: 'vm'},
+{bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=0'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| vs2 | input  | 128  | 4 | 32 | AES-128 Cipher key
+| vd  | output | 128  | 4 | 32 | final round key 
+|===
+
 
 Description:: 
-This instruction generates the final (10th) roundkey for AES-128 for consumption by
-a subsequent AES-128 all rounds decryption instruction.
-It treats each 128-bit element group of `vs2` as the current AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
-Out of range values signal an illegal instruction exception.
 
-It applies 10 AES-128 KeySchedule rounds to each element group, and
+Generate the final (10th) round key for AES-128 for consumption by
+a subsequent AES-128 all-rounds decryption instruction.
+Applies 9 AES-128 KeySchedule rounds to each element group of `vs2`, and
 writes the 128-bit result to the corresponding element group in `vd`.
 
-This instruction only returns the generated key to the same element group as the source.
-If it is desired to have the same key in all vector groups, either the input vector groups
-need to contain the same values, or the output from a particular group needs to be "broadcast"
-to the other groups using an instruction such as vrgather.
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vlstart` must be a multiple of `EGS=4`
 
-This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
-In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
@@ -46,11 +57,15 @@ Operation::
 --
 function clause execute (VAES128k10(rnd, vs2)) = {
   assert(VLEN>=128);
-  // assert round key in range
-  vlen = vl/EGS * vtype.SEW/EEW
-  foreach (i from vlstart to vlen) {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+
+  elementgroups = (vl/EGS)
+  egstart = (vlstart/EGS)
+  
+  foreach (i from egstart to elementgroups) {
     let rky : bits(128) = get_velem(vs2, EGW=128, i);
-    foreach (rnd from 1 to 10)
+    foreach (rnd from 1 to 9)
       let rky    : bits(128) = aes_128_forward_key_schedule(rnd, rky);
     set_velem(vd, EGW=128, i, rky);
   }
@@ -65,7 +80,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkns>>
+| <<zvknf>>
 | v0.1.0
 | In Development
 |===
