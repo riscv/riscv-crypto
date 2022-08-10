@@ -5,7 +5,7 @@ Synopsis::
 Vector Reverse Bits in Bytes
 
 Mnemonic::
-vbrev8.v vd, vs1, vm
+vbrev8.v vd, vs2, vm
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -14,15 +14,15 @@ Encoding (Vector)::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2=0'},
+{bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
 Description:: 
-This instruction reverses the order of the bits in each byte in `vs1`.
+This instruction reverses the order of the bits in each byte in `vs2`.
 
 While this instruction supports the `SEW`, the behavior on each byte operated upon does not vary.
 

@@ -7,7 +7,7 @@ Vector SHA-256 message schedule.
 Mnemonic::
 vsha256ms.vv vd, vs2, vs1
 
-Encoding (Vector)::
+Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -144,7 +144,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvknf>>
+| <<zvknh1>>
 | v0.1.0
 | In Development
 |===

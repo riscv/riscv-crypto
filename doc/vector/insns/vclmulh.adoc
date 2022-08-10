@@ -12,12 +12,13 @@ Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
+{bits: 3, name: 'func3'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 
@@ -25,12 +26,13 @@ Encoding (Vector-Scalar)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
+{bits: 3, name: 'func3'},
 {bits: 5, name: 'rs1'},
 {bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 

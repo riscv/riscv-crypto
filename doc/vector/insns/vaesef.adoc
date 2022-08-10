@@ -5,7 +5,7 @@ Synopsis::
 Vector AES final round encryption instruction.
 
 Mnemonic::
-vaesef.v vd, vs1
+vaesef.v vd, vs2
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -14,7 +14,7 @@ Encoding (Vector)::
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs1=0'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},

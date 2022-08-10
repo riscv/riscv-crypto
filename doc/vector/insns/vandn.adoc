@@ -5,20 +5,21 @@ Synopsis::
 Bitwise And-Not
 
 Mnemonic::
-vandn.vv vd, vs2, vs1 +
-vandn.vx vd, vs2, rs1 +
-vandn.vi vd, vs2, imm
+vandn.vv vd, vs2, vs1, vm +
+vandn.vx vd, vs2, rs1, vm  +
+vandn.vi vd, vs2, imm, vm
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: '???????'},
+{bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: '???'},
-{bits: 5, name: 'rs1'},
+{bits: 3, name: 'func3'},
+{bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 7, name: '???????'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
 ]}
 ....
 

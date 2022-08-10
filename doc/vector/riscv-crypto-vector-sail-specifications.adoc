@@ -13,10 +13,12 @@ This is ambiguous, given there are many models of different ISAs implemented
 using Sail. We refer to the Sail implementation of RISC-V as
 "the RISC-V Sail model".
 
-The Cryptography extension uses inline Sail code snippets from the
-actual model to give canonical descriptions of instruction
-functionality.
-Each instruction is accompanied by its expression in Sail, and includes
+The Vector Cryptography extensions eventually intend to use inline Sail code snippets from the
+actual model to give canonical descriptions of instruction functionality.
+However, the Vector Crypto Extensions Sail model will be built on top
+of the RISC-V Vector Sail Model which is not yet released. 
+For now, each instruction is accompanied by its expression in pseudocode which is intended
+to be Sail-like. In many cases the pseudocode includes
 calls to supporting functions which are too verbose to include directly
 in the specification.
 This supporting code is listed in
@@ -24,8 +26,11 @@ This supporting code is listed in
 The 
 link:https://github.com/rems-project/sail/blob/sail2/manual.pdf[Sail Manual]
 is recommended reading in order to best understand the code snippets.
+Also, the
+link:https://github.com/billmcspadden-riscv/sail/blob/cookbook_br/cookbook/doc/TheSailCookbook_Complete.pdf[The Sail Programming Language: A Sail Cookbook]
+is a good reference that is in the process of being written.
 
-Note that this document contains only a subset of the formal model: refer to
+Note that this document will contain only a subset of the formal model: refer to
 the formal model Github
 link:https://github.com/riscv/sail-riscv[repository]
 for the complete model.

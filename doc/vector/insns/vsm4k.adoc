@@ -192,7 +192,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkns>>
+| <<zvksed>>
 | v0.1.0
 | In Development
 |===

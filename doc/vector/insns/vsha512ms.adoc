@@ -7,7 +7,7 @@ Vector SHA-512 message schedule.
 Mnemonic::
 vsha512ms.v vd, vs2, vs1
 
-Encoding (Vector)::
+Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -143,7 +143,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvknf>>
+| <<zvknh2>>
 | v0.1.0
 | In Development
 |===
