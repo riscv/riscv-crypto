@@ -10,6 +10,7 @@ vaesd256.v vd, vs2, vs1
 Encoding (Vector)::
 [wavedrom, , svg]
 ....
+{reg:[
 {bits: 7, name: 'OPMVV'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'func3'},
@@ -17,6 +18,7 @@ Encoding (Vector)::
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=0'},
 {bits: 6, name: 'funct6'},
+]}
 ....
 
 Arguments::
