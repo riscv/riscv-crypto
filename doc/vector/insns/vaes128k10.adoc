@@ -48,7 +48,7 @@ This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `EEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
-Likewise, `vlstart` must be a multiple of `EGS=4`
+Likewise, `vstart` must be a multiple of `EGS=4`
 
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
@@ -58,10 +58,10 @@ Operation::
 function clause execute (VAES128k10(rnd, vs2)) = {
   assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
   elementgroups = (vl/EGS)
-  egstart = (vlstart/EGS)
+  egstart = (vstart/EGS)
   
   foreach (i from egstart to elementgroups) {
     let rky : bits(128) = get_velem(vs2, EGW=128, i);
