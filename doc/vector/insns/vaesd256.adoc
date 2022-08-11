@@ -70,9 +70,9 @@ Operation::
 function clause execute (VAES256E(vs1, vs2, vd,)) = {
   assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   elementgroups = (vl/EGS)
-  egstart = (vlstart/EGS)
+  egstart = (vstart/EGS)
   
   foreach (i from egstart to elementgroups) {
     state : bits(128) = get_velem(vd, EGW=128, i);
