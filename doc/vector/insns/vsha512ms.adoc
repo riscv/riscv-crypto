@@ -62,7 +62,7 @@ The instruction calculates the next 4 64-bit doublewords of the message schedule
 
 This instruction treats `EEW=64` and `EGS=4`, regardless of `vtype.vsew`
 In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
 
 
@@ -104,7 +104,7 @@ Operation::
 --
 function clause execute (VSHA512ms(vs2, vs1, vd)) = {
   assert(VLEN>=256);
-	foreach (i from vlstart to vl) {
+	foreach (i from vstart to vl) {
 	  {W[3],  W[2],  W[1],  W[0]}  : bits(256) = get_velem(vd, EGW=256, i};
 	  {W[11], W[10], W[9],  W[4]}  : bits(256) = get_velem(vs1, EGW=256, i};
 	  {W[15], W[14], W[13], W[12]} : bits(256) = get_velem(vs2, EGW=256, i};

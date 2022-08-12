@@ -39,7 +39,7 @@ This instruction operates on element groups in the source and destination regist
 
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
@@ -49,7 +49,7 @@ function clause execute (VAES128E(vs1, vd, vv)) = {
   assert(VLEN>=128);
   // calculate the number of element groups (eg)
   eg = (vl/EGS)(SEW/EEW)  
-  foreach (i from vlstart to eg) {
+  foreach (i from vstart to eg) {
     state : bits(128) = get_velem(vd, EGW=128, i);
     rkey  : bits(128) = get_velem(vs1, EGW=128, i);
     state = state ^ rkey;

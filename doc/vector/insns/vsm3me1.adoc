@@ -30,7 +30,7 @@ each 256-bit 8-element group of `vs1` as the data input.
 
 This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`
 `vl` needs to be set to eight times the number of element groups.
-If vlstart is not zero, it needs to be scaled similarly.
+If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
 
 Operation::
@@ -39,11 +39,11 @@ Operation::
 function clause execute (VSM3ME1(rnd, vs2)) = {
   assert(VLEN>=256);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   // assert round key in range
 
   elementgroups = (vl/EGS)
-  egstart = (vlstart/EGS)
+  egstart = (vstart/EGS)
   vlen = vl/EGS
   
   foreach (i from egstart to elementgroups) {

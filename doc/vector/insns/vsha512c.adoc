@@ -89,7 +89,7 @@ Operation::
 --
 function clause execute (VSHA512c(vs2, vs1, vd, vv)) = {
   assert(VLEN>=256);
-	foreach (i from vlstart to vl) {
+	foreach (i from vstart to vl) {
 	  {f, e, b, a} : bits(256) = get_velem(vs2, EGW=256, i};
 	  {h, g, d, c} : bits(256) = get_velem(vd, EGW=256, i};
 	  MessageShed[3:0] : bits(256) = get_velem(vs1, EGW=256, i};

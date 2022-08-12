@@ -43,7 +43,7 @@ function clause execute (VAESEF(vs1, vd) = {
   assert(VLEN>=128); 
   // calculate the number of element groups (eg)
   eg = (vl/EGS)  
-  foreach (i from vlstart to eg) {
+  foreach (i from vstart to eg) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs1, EGW=128, i);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);
