@@ -30,7 +30,7 @@ The result (i.e. the next round state) is written to each `EGW=128` element grou
 
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
@@ -38,7 +38,7 @@ Operation::
 --
 function clause execute (VAESESM(vs1, vd, vv)) = {
   assert(VLEN>=128);
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs1, EGW=128, i);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);

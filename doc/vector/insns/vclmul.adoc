@@ -59,14 +59,14 @@ function clmul(x, y, EEW) = { // TODO: not real Sail Code yet
 }
 
 function clause execute (VCLMUL_VV(vs2, vs1, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
       set_velem(vd, i, clmul(get_velem(vs1,i), get_velem(vs2,i)));
   }
   RETIRE_SUCCESS
 }
 
 function clause execute (VCLMUL_VX(vs2, rs1, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
       set_velem(vd, i, clmul(X(rs1), get_velem(vs2,i)));
   }
   RETIRE_SUCCESS

@@ -56,14 +56,14 @@ function clmulh(x, y, SEW) = { // TODO: not real Sail Code yet
 }
 
 function clause execute (VCLMULH_VV(vs2, vs1, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
       set_velem(vd, i, clmulh(get_velem(vs1,i), get_velem(vs2,i)));
   }
   RETIRE_SUCCESS
 }
 
 function clause execute (VCLMULH_VX(vs2, rs1, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
       set_velem(vd, i, clmulh(X(rs1), get_velem(vs2,i)));
   }
   RETIRE_SUCCESS

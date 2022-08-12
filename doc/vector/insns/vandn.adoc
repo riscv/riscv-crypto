@@ -67,7 +67,7 @@ Operation::
 [source,sail]
 --
 function clause execute (VANDN_VV(vs2, vs1, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
     set_velem(vd, EEW=SEW, i,
       get_velem(vs1, EEW=SEW, i) & ~get_velem(vs2, EEW=SEW, i));
   }
@@ -75,7 +75,7 @@ function clause execute (VANDN_VV(vs2, vs1, vd)) = {
 }
 
 function clause execute (VANDN_VX(vs2, rs1, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
     set_velem(vd, EEW=SEW, i, 
       sext_or_truncate_to_sew(X(rs1)) & ~get_velem(vs2, EEW=SEW, i) );
   }
@@ -83,7 +83,7 @@ function clause execute (VANDN_VX(vs2, rs1, vd)) = {
 }
 
 function clause execute (VANDN_VI(vs2, imm, vd)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
     set_velem(vd, EEW=SEW, i, 
         zext(imm) & ~get_velem(vs2, EEW=SEW, i);
   }

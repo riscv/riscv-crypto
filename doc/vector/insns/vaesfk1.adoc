@@ -37,7 +37,7 @@ to the other groups using an instruction such as vrgather.
 
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
@@ -46,11 +46,11 @@ Operation::
 function clause execute (VAESESFK1(rnd, vs2)) = {
   assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   // assert round key in range
 
   elementgroups = (vl/EGS)
-  egstart = (vlstart/EGS)
+  egstart = (vstart/EGS)
   vlen = vl/EGS
   
   foreach (i from egstart to elementgroups) {

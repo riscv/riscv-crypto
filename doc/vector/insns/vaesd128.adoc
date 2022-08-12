@@ -45,7 +45,7 @@ function. Starting with the final round key, it generates each of the earlier ro
 and performs each of the rounds.
 
 It treats each `EGW=128` element group of `vd` as the plaintext
-and `EGW=128` element group of `vs1` as the 128-bit encryption key.
+and `EGW=128` element group of `vs2` as the 128-bit encryption key.
 
 The result (i.e. the plaintext) is written to `EGW=128` element groups of `vd`.
 
@@ -58,21 +58,21 @@ This instruction operates on element groups in the source and destination regist
 
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+vl = `vtype.vsew`/128. If `vstart` is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
 [source,sail]
 --
-function clause execute (VAES128D(vs1, vd, vv)) = {
+function clause execute (VAES128D(vs2, vd, vv)) = {
   assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vlstart%EGS)<>0) //  vlstart must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   elementgroups = (vl/EGS)
-  egstart = (vlstart/EGS)
+  egstart = (vstart/EGS)
   foreach (i from egstart to elementgroups) {
     state : bits(128) = get_velem(vd, EGW=128, i);
-    rkey  : bits(128) = get_velem(vs1, EGW=128, i);
+    rkey  : bits(128) = get_velem(vs2, EGW=128, i);
     state = state ^ rkey;
     foreach(r from 1 to 10) {
       state = aes_inv_shift_rows(state);

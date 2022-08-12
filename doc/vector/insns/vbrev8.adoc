@@ -33,7 +33,7 @@ Operation::
 [source,sail]
 --
 function clause execute (VBREV8(vs1)) = {
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
     input = get_velem(vs1, SEW, i);
     let output : SEW = 0;
     foreach (i from 0 to SEW by 8) 

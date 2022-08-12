@@ -38,7 +38,7 @@ to the other groups using an instruction such as vrgather.
 
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vlstart is not zero, it needs to be scaled similarly.
+vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 
@@ -50,7 +50,7 @@ Operation::
 function clause execute (VAESESFK1(rcon, vs2)) = {
   assert(VLEN>=128);
   vlen = vl/EGS * vtype.SEW/EEW
-  foreach (i from vlstart to vlen) {
+  foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let next : bits(128) = get_velem(vd, EGW=128, i);
     let previous    : bits(128) = aes_128_forward_key_schedule(rcon, current, previous);

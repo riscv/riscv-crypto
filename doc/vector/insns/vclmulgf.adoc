@@ -43,7 +43,7 @@ Operation::
 function clause execute (VCLMULGF(vs2, vs1, vd)) = {
   assert(VLEN>=128);
   // TODO: Add in bit reordering
-  foreach (i from vlstart to vl) {
+  foreach (i from vstart to vl) {
       set_velem(vd, i, clmul(get_velem(vs1,i), get_velem(vs2,i)));
   }
   // TODO: Add in reduction code
