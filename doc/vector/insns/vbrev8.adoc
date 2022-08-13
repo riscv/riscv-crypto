@@ -32,9 +32,9 @@ In some ways this is similar to how the bit logical instructions operate.
 Operation::
 [source,sail]
 --
-function clause execute (VBREV8(vs1)) = {
+function clause execute (VBREV8(vs2)) = {
   foreach (i from vstart to vl) {
-    input = get_velem(vs1, SEW, i);
+    input = get_velem(vs2, SEW, i);
     let output : SEW = 0;
     foreach (i from 0 to SEW by 8) 
       output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);

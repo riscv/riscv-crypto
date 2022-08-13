@@ -24,8 +24,8 @@ Encoding::
 Description:: 
 This instruction implements 4 rounds of SM4 Encryption/Decryption, producing four 32-bit outputs in
 a 128-bit 4-element group.
-It treats each 128-bit 4-element group of `vs1` as the four round keys and
-each 128-bit 4-element group of `vs1` as the data input.
+It treats each 128-bit 4-element group of `vs2` as the four round keys and
+each 128-bit 4-element group of `vs2` as the data input.
 
 vd (in) = {x[i-4], X[i-3]. X[i-2], X[i-1]} +
 vs2 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
