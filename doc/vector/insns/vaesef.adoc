@@ -23,7 +23,7 @@ Encoding (Vector)::
 
 
 Description:: 
-This instruction implements the final-round encryption function of the AES block cipher. The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each element group of source `vd` holds the current round state and each 128-bit element group of `vs1` holds the round key. Each element group next round state output is produced by applying the SubBytes, ShiftRows, and AddRoundkey steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not depend on the data being operated upon.    
+This instruction implements the final-round encryption function of the AES block cipher. The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each element group of source `vd` holds the current round state and each 128-bit element group of `vs2` holds the round key. Each element group next round state output is produced by applying the SubBytes, ShiftRows, and AddRoundkey steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not depend on the data being operated upon.    
 
 - SubBytes(state)
 - ShiftRows(state)
@@ -45,7 +45,7 @@ function clause execute (VAESEF(vs1, vd) = {
   eg = (vl/EGS)  
   foreach (i from vstart to eg) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
-    let rkey  : bits(128) = get_velem(vs1, EGW=128, i);
+    let rkey  : bits(128) = get_velem(vs2, EGW=128, i);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);
     let sr    : bits(128) = aes_fwd_shift_rows(sb);
     let ark   : bits(128) = sr ^ rkey;

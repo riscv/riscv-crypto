@@ -2,10 +2,10 @@
 = vsm3c.vv
 
 Synopsis::
-Vector SM4 Compression
+Vector SM3 Compression
 
 Mnemonic::
-vsm4r.vv vd, vs2, vs1
+vsm3r.vv vd, vs2, vs1
 
 Encoding::
 [wavedrom, , svg]
