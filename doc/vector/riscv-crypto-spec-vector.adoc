@@ -116,9 +116,9 @@ progress.
 
 include::./riscv-crypto-vector-zvkns.adoc[]
 <<<
-include::./riscv-crypto-vector-zvknh1.adoc[]
+include::./riscv-crypto-vector-zvkn1h.adoc[]
 <<< 
-include::./riscv-crypto-vector-zvknh2.adoc[]
+include::./riscv-crypto-vector-zvkn2h.adoc[]
 <<<  
 include::./riscv-crypto-vector-zvknf.adoc[]
 <<<
