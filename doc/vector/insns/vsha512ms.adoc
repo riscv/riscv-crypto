@@ -1,22 +1,22 @@
 [[insns-vsha512ms, Vector SHA-512 Message Schedule]]
-= vsha512ms.v
+= vsha512ms.vv
 
 Synopsis::
 Vector SHA-512 message schedule.
 
 Mnemonic::
-vsha512ms.v vd, vs2, vs1
+vsha512ms.vv vd, vs2, vs1
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OPMVV'},
+{bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'func3'},
+{bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=0'},
+{bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
