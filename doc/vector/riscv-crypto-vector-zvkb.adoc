@@ -14,8 +14,8 @@ for implementing common cryptographic workloads securely & efficiently.
 | vclmulh.[vv,vx]    | <<insns-vclmulh>>
 | vrol.[vv,vx,vi]    | <<insns-vrol>>
 | vror.[vv,vx,vi]    | <<insns-vror>>
-| vbrev8             | <<insns-vbrev8>>
-| vrev8              | <<insns-vrev8>>
+| vbrev8.v           | <<insns-vbrev8>>
+| vrev8.v            | <<insns-vrev8>>
 | vandn.[vv,vs,vx]   | <<insns-vandn>>
 |===
 

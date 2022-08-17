@@ -1,26 +1,40 @@
 [[insns-vaesd128, Vector AES-128 decrypt all-rounds]]
-= vaesd128.v
+= vaesd128
 
 Synopsis::
 Vector AES-128 all rounds decryption instruction.
 
 Mnemonic::
-vaesd128.v vd, vs2
+vaesd128.vv vd, vs2, vs1 +
+vaesd128.vs vd, vs2, vs1
 
-Encoding (Vector)::
+Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OPMVV'},
+{bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'func3'},
-{bits: 5, name: 'vs1=0'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=0'},
+{bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=1'},
+{bits: 6, name: 'funct6'},
+]}
+....
 
 Arguments::
 
@@ -34,14 +48,14 @@ Arguments::
 |EEW
 |Definition
 
-| Vd  | input  | 128  | 4 | 32 | Cipher text
-| Vs2 | input  | 128  | 4 | 32 | Final Round key
+| Vs2 | input  | 128  | 4 | 32 | Cipher text
+| Vs1 | input  | 128  | 4 | 32 | Final Round key
 | Vd  | output | 128  | 4 | 32 | Plain text 
 |===
 
 Description:: 
 This instruction implements the entire AES-128 block cipher decryption
-function. Starting with the final round key, it generates each of the earlier round keys
+function. Starting with the final round key, it internally generates each of the earlier round keys
 and performs each of the rounds.
 
 It treats each `EGW=128` element group of `vd` as the plaintext

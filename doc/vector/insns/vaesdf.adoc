@@ -5,18 +5,18 @@ Synopsis::
 Vector AES final round decryption instruction.
 
 Mnemonic::
-vaesdf.v vd, vs2
+vaesdf.v vd, vs2, vs1
 
 Encoding (Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OPMVV'},
+{bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'func3'},
+{bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1=0'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=0'},
+{bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -33,8 +33,8 @@ Arguments::
 |EEW
 |Definition
 
-| Vd  | input  | 128  | 4 | 32 | Cipher text
-| Vs2 | input  | 128  | 4 | 32 | Final Round key
+| Vs2 | input  | 128  | 4 | 32 | Cipher text
+| Vs1 | input  | 128  | 4 | 32 | Final Round key
 | Vd  | output | 128  | 4 | 32 | Plain text 
 |===
 

@@ -21,7 +21,7 @@ for accelerated cryptographic operations.
 |Mnemonic
 |Instruction
 
-| 128 | vsm4k.v   | <<insns-vsm4k>>
-| 128 | vsm4r.v   | <<insns-vsm4r>>
+| 128 | vsm4k.vi        | <<insns-vsm4k>>
+| 128 | vsm4r.[vv,vs]   | <<insns-vsm4r>>
 |===
 

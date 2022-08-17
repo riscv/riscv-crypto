@@ -1,34 +1,70 @@
 [[insns-vaesef, Vector AES encrypt final round]]
-= vaesef.v
+= vaesef
 
 Synopsis::
 Vector AES final round encryption instruction.
 
 Mnemonic::
-vaesef.v vd, vs2
+vaesef.vv vd, vs2, vs1 +
+vaesef.vs vd, vs2, vs1
 
-Encoding (Vector)::
+Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OPMVV'},
+{bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'func3'},
-{bits: 5, name: 'vs1=0'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm'},
+{bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=1'},
+{bits: 6, name: 'funct6'},
+]}
+....
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| vs2 | input  | 128  | 4 | 32 | round state
+| vs1 | input  | 128  | 4 | 32 | round key 
+| vd  | output | 128  | 4 | 32 | new round state
+|===
 
 Description:: 
-This instruction implements the final-round encryption function of the AES block cipher. The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each element group of source `vd` holds the current round state and each 128-bit element group of `vs2` holds the round key. Each element group next round state output is produced by applying the SubBytes, ShiftRows, and AddRoundkey steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not depend on the data being operated upon.    
+This instruction implements the final-round encryption function of the AES block cipher. The inputs and outputs to this
+instruction are comprised of 128-bit element groups.  Each element group of source `vs2` holds the current round state
+and each 128-bit element group of `vs1` holds the round key.
+In the case of the `.vs` form of the instruction, element group 0 of `vs1` holds a single element group that is used
+as the round key for all of the element groups in `vs2`. 
+The next round state output of each element group is produced by applying the SubBytes, ShiftRows, and AddRoundkey
+steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not
+depend on the data being operated upon.    
 
 - SubBytes(state)
 - ShiftRows(state)
 - AddRoundKey(state,roundkey)
-
 
 This instruction operates on element groups in the source and destination registers:
 
@@ -36,8 +72,10 @@ This instruction operates on element groups in the source and destination regist
 - Effective Element Width (EEW) = 32 bits
 - Element Group Size (EGS) = 4 elements
 
+(Can't end on a bullet)
+
 Operation::
-[source,pseudocode]
+[source,sail]
 --
 function clause execute (VAESEF(vs1, vd) = {
   assert(VLEN>=128); 

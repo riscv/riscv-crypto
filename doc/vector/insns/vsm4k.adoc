@@ -1,5 +1,5 @@
 [[insns-vsm4k, Vector SM4 Key Expansion]]
-= vsm4k.vi
+= vsm4k
 
 Synopsis::
 Vector SM4 KeyExpansion
@@ -11,12 +11,12 @@ Encoding::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OPMVV'},
+{bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'func3'},
+{bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'rnds'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=0'},
+{bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....

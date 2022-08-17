@@ -27,13 +27,13 @@ for accelerated cryptographic operations.
 |Mnemonic
 |Instruction
 
-| 128 | vaesef.v   | <<insns-vaesef>>
-| 128 | vaesem.v   | <<insns-vaesem>>
-| 128 | vaesdf.v   | <<insns-vaesdf>>
-| 128 | vaesdm.v   | <<insns-vaesdm>>
-| 128 | vaeskf1.vi | <<insns-vaeskf1>>
-| 128 | vaeskf2.vi | <<insns-vaeskf2>>
-| 128 | vaeskr1.vi | <<insns-vaeskr1>>
-| 128 | vaeskr2.vi | <<insns-vaeskr2>>
+| 128 | vaesef.[vv,vs]  | <<insns-vaesef>>
+| 128 | vaesem.[vv,vs]  | <<insns-vaesem>>
+| 128 | vaesdf.[vv,vs]  | <<insns-vaesdf>>
+| 128 | vaesdm.[vv,vs]  | <<insns-vaesdm>>
+| 128 | vaeskf1.vv      | <<insns-vaeskf1>>
+| 128 | vaeskf2.vv      | <<insns-vaeskf2>>
+| 128 | vaeskr1.vv      | <<insns-vaeskr1>>
+| 128 | vaeskr2.vv      | <<insns-vaeskr2>>
 |===
 

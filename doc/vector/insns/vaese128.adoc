@@ -1,29 +1,30 @@
 [[insns-vaese128, Vector AES-128 encrypt all-rounds]]
-= vaese128.v
+= vaese128
 
 Synopsis::
 Vector AES-128 all rounds encryption instruction.
 
 Mnemonic::
-vaese128.v vd, vs2
+vaese128.vv vd, vs2, vs1 +
+vaese128.vs vd, vs2, vs1
 
 Encoding (Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OPMVV'},
+{bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'func3'},
+{bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=0'},
+{bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
 Description:: 
 This instruction implements the entire AES-128 block cipher encryption
-function. It generates each of the round keys and performs each of the rounds.
+function. It internally generates each of the round keys and performs each of the rounds.
 
 It treats each `EGW=128` element group of `vd` as the plaintext
 and `EGW=128` element group of `vs1` as the 128-bit encryption key.

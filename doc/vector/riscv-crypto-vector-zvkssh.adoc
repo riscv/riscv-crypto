@@ -20,7 +20,7 @@ for accelerated cryptographic operations.
 |Mnemonic
 |Instruction
 
-| 256 | vsm3me1.v | <<insns-vsm3me1>>
-| 256 | vsm3c.v   | <<insns-vsm3c>>
+| 256 | vsm3me1.vv | <<insns-vsm3me1>>
+| 256 | vsm3c.vv   | <<insns-vsm3c>>
 |===
 

@@ -93,6 +93,7 @@ include::riscv-crypto-vector-policies.adoc[]
 // ------------------------------------------------------------
 
 include::./riscv-crypto-vector-element-groups.adoc[]
+include::./riscv-crypto-vector-scalar-instructions.adoc[]
 <<<
 
 // ------------------------------------------------------------

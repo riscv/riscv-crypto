@@ -1,5 +1,5 @@
 [[zvknf,Zvknf]]
-=== `Zvknf` - NIST Suite: Vector AES Encryption & Decryption (Full Round)
+=== `Zvknf` - NIST Suite: Vector AES Encryption & Decryption (Full Rounds)
 
 Instructions for accelerating full-round 
 encryption, decryption and key-schedule
@@ -11,10 +11,10 @@ functions of the AES block cipher.
 |Mnemonic
 |Instruction
 
-| 128 | vaese128.vv | <<insns-vaese128>>
-| 128 | vaesd128.vv | <<insns-vaesd128>>
-| 128 | vaese256.vv | <<insns-vaese256>>
-| 128 | vaesd256.vv | <<insns-vaesd256>>
+| 128 | vaese128.[vv,vs] | <<insns-vaese128>>
+| 128 | vaesd128.[vv,vs] | <<insns-vaesd128>>
+| 128 | vaese256.[vv,vs] | <<insns-vaese256>>
+| 128 | vaesd256.[vv,vs] | <<insns-vaesd256>>
 | 128 | vaes128k10.vv | <<insns-vaes128k10>>
 | 128 | vaes256k13.vv | <<insns-vaes256k13>>
 | 128 | vaes256k14.vv | <<insns-vaes256k14>>
