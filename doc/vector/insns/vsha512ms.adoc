@@ -1,5 +1,5 @@
 [[insns-vsha512ms, Vector SHA-512 Message Schedule]]
-= vsha256ms.v
+= vsha512ms.v
 
 Synopsis::
 Vector SHA-512 message schedule.
