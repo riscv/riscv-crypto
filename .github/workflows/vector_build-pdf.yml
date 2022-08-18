@@ -61,8 +61,8 @@ jobs:
     - name: Archive PDF result
       uses: actions/upload-artifact@v2
       with:
-        name: example-spec.pdf
-        path: example-spec.pdf
+        name: riscv-crypto-spec-vector.pdf
+        path: doc/vector/riscv-crypto-spec-vector.pdf
         retention-days: 7
     - name: Create Release
       id: create_release
@@ -83,6 +83,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./example-spec.pdf
-        asset_name: example-spec.pdf
+        asset_path: doc/vector/riscv-crypto-spec-vector.pdf
+        asset_name: riscv-crypto-spec-vector.pdf
         asset_content_type: application/pdf
