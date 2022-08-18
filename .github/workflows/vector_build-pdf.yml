@@ -57,7 +57,7 @@ jobs:
     - name: Generate PDF
       run: |
         PATH=${PATH}:${BUNDLE_BIN}:$(npm bin):$(pwd) \
-        make -C docs/vector
+        make -C doc/vector
     - name: Archive PDF result
       uses: actions/upload-artifact@v2
       with:
