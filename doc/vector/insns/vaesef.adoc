@@ -1,5 +1,5 @@
 [[insns-vaesef, Vector AES encrypt final round]]
-= vaesef
+= vaesef.[vv,vs]
 
 Synopsis::
 Vector AES final round encryption instruction.

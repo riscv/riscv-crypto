@@ -1,13 +1,14 @@
 [[insns-vaesdf, Vector AES decrypt final round]]
-= vaesdf.vv
+= vaesdf.[vv, vs]
 
 Synopsis::
 Vector AES final round decryption instruction.
 
 Mnemonic::
-vaesdf.v vd, vs2, vs1
+vaesdf.vv vd, vs2, vs1 + 
+vaesdf.vs vd, vs2, vs1
 
-Encoding (Vector)::
+Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -15,6 +16,20 @@ Encoding (Vector)::
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=1'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
