@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'rnd'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
@@ -24,18 +24,34 @@ Encoding::
 Description:: 
 This instruction implements 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
-It treats each 256-bit 8-element group of `vd` as eight 32-bit words, 
-each 64-bit 2-element group of `vs1` as two expanded message schedule words, and 
-each 64-bit 2-element group of `vs2` as two alternately-expanded message schedule words.
 
-NB::
-It probably makes sense to have vs1 and vs2 hold eight 32-bit words each and have 4 versions of this instruction;
-one for each pair of inputs.
-This fits more naturally with the generating instructions and doesn't leave us with the oddity of 64-bit and 256-bit element groups
-Vd (in) = {A,B,C,D,E,F,G,H} 
-vs1 = W[0:7]  // 8 expanded words
-vs2 = W’[0:7] // 8 expanded words with XORing
-Vd (out) = {A,B,C,D,E,F,G,H} 
+The immediate field `rnd` has only two valid values 0 and 1; all other values are reserved.
+A 'rnd' value of 0 is used for rounds 0-15, and 1 is used for rounds 16-63.
+
+It treats each 256-bit 8-element group of `vd` as eight 32-bit words,  
+and each 256-bit 8-element group of `vs2` as eight 32-bit words. Only 4 of these words are consumed by
+this instruction, the rest are don't-cares.
+
+vs1 = {w[j], w[j+1], w[j+2], w[j+3], w[j+4], w[j+5], w[j+6], w[j+7]}
+
+The values consumed by the instruction are
+
+vs1 = {w[j], w[j+1], -, -, w[j+4], w[j+5], -, -}
+
+Where the "-" characters are not consumed and are therefore don't cares.
+
+This instruction consumes the "W[67:0]" message schedule inputs and internally generates the "W'[63:0]" values
+
+
+
+// NB::
+// It probably makes sense to have vs1 and vs2 hold eight 32-bit words each and have 4 versions of this instruction;
+// one for each pair of inputs.
+// This fits more naturally with the generating instructions and doesn't leave us with the oddity of 64-bit and 256-bit element groups
+// Vd (in) = {A,B,C,D,E,F,G,H} 
+// vs1 = W[0:7]  // 8 expanded words
+// vs2 = W’[0:7] // 8 expanded words with XORing
+// Vd (out) = {A,B,C,D,E,F,G,H} 
 
 
 

@@ -22,17 +22,25 @@ Encoding::
 ....
 
 Description:: 
-This instruction performs a carryless multiply between two 128-bit polynomials and reduces them modulo
+This instruction performs a multiply between two 128-bit polynomials modulo
 x^128^ + x^7^ + x^2^ + x + 1
 
 It treats each EGW=128 element group of `vs1` and `vs2` as the input polynomials.
-In order to match the GHASH specification, the bits need to be reversed -
-this includes the bits in each byte.
+This instruction is intended to be used to implement a GHASH~H~ as defined in NIST Special Publication 800-38D
+"Recommendation for Block Cipher Modes of Operation:
+Galois/Counter Mode (GCM) and GMAC". 
+This specification orders the coefficients in increasing order from left to right x~0~x~1~...x~127~
+for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^.
 
+In order to match the GHASH specification, the bits within bytes are reversed internally to the instruction
+so that the least significant bit is on the left.
 
-It applies a single 128x128 carryless multiply producing a 255-bit product. It then reduces this product
-by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1
+This instruction effectively applies a single 128x128 carryless multiply producing a 255-bit product which it reduces
+by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1,
+and adding it to the least significant 128 bits,
 producing a 128-bit result which is written to the corresponding element group in `vd`.
+
+
 
 This instruction treats `EEW=32`, regardless of `vtype.vsew` and requires that
  `Zvl128b`be implemented (i.e `VLEN>=128`).
