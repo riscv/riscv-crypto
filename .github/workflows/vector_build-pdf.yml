@@ -1,0 +1,61 @@
+# This workflow installs dependencies for PDF generation, generates the PDF,
+# and uploads the PDF as an artifact.
+
+name: Build Vector Document PDF
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      APT_PACKAGES_FILE: ${{ github.workspace }}/dependencies/apt_packages.txt
+      BUNDLE_GEMFILE: ${{ github.workspace }}/dependencies/Gemfile
+      BUNDLE_BIN: ${{ github.workspace }}/bin
+      NPM_PACKAGE_FOLDER: ${{ github.workspace }}/dependencies
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+    - name: Install Ubuntu packages
+      run: |
+        sudo apt-get update
+        grep -vE '^#' ${APT_PACKAGES_FILE} | xargs sudo apt-get install --yes --no-install-recommends
+    # Ruby for asciidoctor
+    - name: Setup Ruby and Gemfile content
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "2.6"
+        bundler-cache: true
+    # Node.js for wavedrom
+    - uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Install Node.js dependencies
+      run: npm install ${NPM_PACKAGE_FOLDER}
+    - name: Generate PDF
+      run: |
+        PATH=${PATH}:${BUNDLE_BIN}:$(npm bin):$(pwd) \
+        make -C doc/vector
+    - name: Archive PDF result
+      uses: actions/upload-artifact@v2
+      with:
+        name: riscv-crypto-spec-vector.pdf
+        path: doc/vector/riscv-crypto-spec-vector.pdf
+        retention-days: 7
