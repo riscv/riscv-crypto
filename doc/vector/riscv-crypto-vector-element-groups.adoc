@@ -20,7 +20,7 @@ As with all vector instructions, the number of elements processed by a vector in
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`. If this ratio is not an
 integral value, an illegal instruction exception is raised.
 
-Since `vlstart` is expressed in elements, the starting element group is `vstart`/`EGS`. If this ratio is not an
+Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. If this ratio is not an
 integral value, an illegal instruction exception is raised.
 
 The Vector Crypto instructions that operate on element groups each have a minimum `VLEN` that is equal
