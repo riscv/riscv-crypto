@@ -30,6 +30,9 @@ jobs:
       BUNDLE_GEMFILE: ${{ github.workspace }}/dependencies/Gemfile
       BUNDLE_BIN: ${{ github.workspace }}/bin
       NPM_PACKAGE_FOLDER: ${{ github.workspace }}/dependencies
+    outputs:
+      name: ${{ steps.step1.outputs.name }}
+      pdf-name: ${{ steps.step2.outputs.pdf-name }}
     steps:
     - name: Set output.name
       id: step1
