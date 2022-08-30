@@ -1,14 +1,13 @@
-[[zvkn1h,Zvkn1h]]
-=== `Zvkn1h` - NIST Suite: Vector SHA-256
+[[zvknha,Zvknha]]
+=== `Zvknha` - NIST Suite: Vector SHA-256
 
 Instructions for accelerating SHA
-// TODO - split this into two extensions; one with EGW=128 and another for EGW=256
 
 All of these instructions work on 128-bit element groups and hence
 require that `Zvl128b` must be supported.
 
 
-Systems which do not meet these requirements cannot support the <<zvkn1h>>
+Systems which do not meet these requirements cannot support the <<zvknha>>
 extension.
 
 // It is _possible_ to formulate these instructions such that they work

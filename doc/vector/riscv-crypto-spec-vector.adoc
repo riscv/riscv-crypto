@@ -2,7 +2,7 @@
 = RISC-V Cryptography Extensions Volume II: Vector Instructions
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  27 July, 2022
+:revdate:  28 August, 2022
 :revnumber: v0.0.1
 :revremark: This document is in development. Breaking changes should be expected.
 :url-riscv: http://riscv.org
@@ -117,9 +117,9 @@ progress.
 
 include::./riscv-crypto-vector-zvkns.adoc[]
 <<<
-include::./riscv-crypto-vector-zvkn1h.adoc[]
+include::./riscv-crypto-vector-zvknha.adoc[]
 <<< 
-include::./riscv-crypto-vector-zvkn2h.adoc[]
+include::./riscv-crypto-vector-zvknhb.adoc[]
 <<<  
 include::./riscv-crypto-vector-zvknf.adoc[]
 <<<

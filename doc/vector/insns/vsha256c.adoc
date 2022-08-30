@@ -12,6 +12,10 @@ vsha256cb.vv vd, vs2, vs1
 differentiated by the suffixes a and b. These suffixes --- and indeed the mnemonics
 themsleves --- will likely change. Alternatively, we may choose to differentiate
 between these two by other means.
+We might want to replace the suffixes with "h" and "l" for high and low
+
+Question: Do we need two versions? Can we have one version and use a slideDown or 
+the like without hurting performance?
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
