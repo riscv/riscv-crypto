@@ -11,17 +11,32 @@ on:
     branches:
       - main
   workflow_dispatch:
+  workflow_call:
+    outputs:
+      name:
+        description: "The base name of the pdf file (without .pdf extensions)"
+        value: ${{ jobs.build.outputs.name }}
+      pdf-name:
+        description: "The name of the pdf file (with .pdf extensions)"
+        value: ${{ jobs.build.outputs.pdf-name }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
+      NAME: riscv-crypto-spec-vector
       APT_PACKAGES_FILE: ${{ github.workspace }}/dependencies/apt_packages.txt
       BUNDLE_GEMFILE: ${{ github.workspace }}/dependencies/Gemfile
       BUNDLE_BIN: ${{ github.workspace }}/bin
       NPM_PACKAGE_FOLDER: ${{ github.workspace }}/dependencies
     steps:
+    - name: Set output.name
+      id: step1
+      run: echo "::set-output name=name::$NAME"
+    - name: Set output.pdf-name
+      id: step2
+      run: echo "::set-output name=pdf-name::$NAME.pdf"
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
@@ -56,6 +71,6 @@ jobs:
     - name: Archive PDF result
       uses: actions/upload-artifact@v2
       with:
-        name: riscv-crypto-spec-vector.pdf
-        path: doc/vector/riscv-crypto-spec-vector.pdf
+        name: ${{ env.NAME }}.pdf
+        path: doc/vector/${{ env.NAME }}.pdf
         retention-days: 7
