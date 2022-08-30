@@ -1,11 +1,11 @@
-[[insns-vaesfk1, Vector AES-128 Forward KeySchedule]]
-= vaesfk1
+[[insns-vaeskf1, Vector AES-128 Forward KeySchedule]]
+= vaeskf1
 
 Synopsis::
 Vector AES-128 Forward KeySchedule
 
 Mnemonic::
-vaesfk1.vi vd, vs2, rnd
+vaeskf1.vi vd, vs2, rnd
 
 Encoding::
 [wavedrom, , svg]
