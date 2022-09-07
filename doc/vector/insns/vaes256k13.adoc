@@ -1,4 +1,4 @@
-[[insns-vaes256k13, Vector AES-256 Generate penultimate round key (13)]]
+[[insns-vaes256k13, Vector AES-256 Generate round key 13 (penultimate)]]
 = vaes256k13.vv
 
 Synopsis::

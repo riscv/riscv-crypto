@@ -117,10 +117,10 @@ progress.
 
 include::./riscv-crypto-vector-zvkns.adoc[]
 <<<
-include::./riscv-crypto-vector-zvknha.adoc[]
+include::./riscv-crypto-vector-zvknh.adoc[]
 <<< 
-include::./riscv-crypto-vector-zvknhb.adoc[]
-<<<  
+// include::./riscv-crypto-vector-zvknhb.adoc[]
+// <<<  
 include::./riscv-crypto-vector-zvknf.adoc[]
 <<<
 include::./riscv-crypto-vector-zvkb.adoc[]
@@ -151,6 +151,8 @@ include::insns/vaesdf.adoc[leveloffset=+2]
 <<<
 include::insns/vaesdm.adoc[leveloffset=+2]
 <<<
+include::insns/vaesdz.adoc[leveloffset=+2]
+<<<   
 include::insns/vaese128.adoc[leveloffset=+2]
 <<<
 include::insns/vaese256.adoc[leveloffset=+2]
@@ -158,6 +160,8 @@ include::insns/vaese256.adoc[leveloffset=+2]
 include::insns/vaesef.adoc[leveloffset=+2]
 <<<
 include::insns/vaesem.adoc[leveloffset=+2]
+<<<
+include::insns/vaesez.adoc[leveloffset=+2]
 <<<
 include::insns/vaeskf1.adoc[leveloffset=+2]
 <<<
@@ -183,13 +187,9 @@ include::insns/vrol.adoc[leveloffset=+2]
 <<<
 include::insns/vror.adoc[leveloffset=+2]
 <<<
-include::insns/vsha256c.adoc[leveloffset=+2]
+include::insns/vsha2c.adoc[leveloffset=+2]
 <<<
-include::insns/vsha256ms.adoc[leveloffset=+2]
-<<<
-include::insns/vsha512c.adoc[leveloffset=+2]
-<<<
-include::insns/vsha512ms.adoc[leveloffset=+2]
+include::insns/vsha2ms.adoc[leveloffset=+2]
 <<<
 include::insns/vsm3c.adoc[leveloffset=+2]
 <<<

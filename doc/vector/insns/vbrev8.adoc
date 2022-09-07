@@ -24,8 +24,6 @@ Encoding (Vector)::
 Description:: 
 This instruction reverses the order of the bits in each byte in `vs2`.
 
-While this instruction supports the `SEW`, the behavior on each byte operated upon does not vary.
-
 Note::
 In some ways this is similar to how the bit logical instructions operate.  
 

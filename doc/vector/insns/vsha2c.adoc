@@ -1,18 +1,17 @@
-[[insns-vsha256c, Vector SHA-256 Compression]]
-= vsha256c[ab]
+[[insns-vsha2c, Vector SHA-2 Compression]]
+= vsha2c[hl]
 
 Synopsis::
-Vector SHA-256 2 rounds of compression.
+Vector SHA-2 2 rounds of compression.
 
 Mnemonic::
-vsha256ca.vv vd, vs2, vs1 +
-vsha256cb.vv vd, vs2, vs1
+vsha2ch.vv vd, vs2, vs1 +
+vsha2cl.vv vd, vs2, vs1
 
  NB: We are currently proposing that the two variants of this instruction be 
-differentiated by the suffixes a and b. These suffixes --- and indeed the mnemonics
+differentiated by the suffixes h and l. These suffixes --- and indeed the mnemonics
 themsleves --- will likely change. Alternatively, we may choose to differentiate
 between these two by other means.
-We might want to replace the suffixes with "h" and "l" for high and low
 
 Question: Do we need two versions? Can we have one version and use a slideDown or 
 the like without hurting performance?
@@ -46,11 +45,12 @@ Encoding (Vector-Vector)::
 ....
 
 Description:: 
+
+When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128
+When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256
+
 NB: This is very preliminary draft that is being distributed for discussion purposes only. The code is not
 executable - it is largely a copy of the pseudo code in FIPS PUB 180-4 Secure Hash Standard (SHS).
-
-This instruction has an EGW=128, that is, it operates on 128-bit elements.
-It is not directly impacted by VSEW
 
  Many vector units that are wider than 128 bits may choose to only implement one
 128-bit datapath for this instruction. This needs to be transparent to code in terms
@@ -93,14 +93,20 @@ the upper two words.
  Input:
   Vd  = {h, g, d, c}
   Vs2 = {f, e, b, a}
-  Vs1 = {-, -, MessageSched[1:0]} // for vsha256ra
-  Vs1 = {MessageSched[3:2], -, -} // for vsha256rb
+  Vs1 = {-, -, MessageSched[1:0]} // for vsha2cl
+  Vs1 = {MessageSched[3:2], -, -} // for vsha2ch
  
  Output:
   vd = {a, b, e, f}
 
-This instruction treats `EGW=128`, regardless of `vtype.vsew` and requires that
- `Zvl128b`be implemented (i.e `VLEN>=128`).
+Note::
+It is recommended that implementations have VLEN>=128 for these instructions.
+Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN>=256.
+When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
+specified register groups can be combined to form the full element group.
+
+It is important to note that ELEN>=SEW is a requirement as elements are not
+permitted to cross register boundaries.
 
 Operation::
 [source,sail-ish]

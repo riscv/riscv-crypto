@@ -1,0 +1,55 @@
+[[zvknh,Zvknh]]
+=== `Zvknh` - NIST Suite: Vector SHA-2
+
+Instructions for accelerating SHA-2
+
+SEW differentiates between SHA-256 and SHA-512 
+
+[%header,cols="^2,^2,^2,^2,2"]
+|===
+|`SEW`
+|`VLENmin`
+|`VEGW`
+|SHA-2
+|Extension
+
+|32 | 128 | 128 | SHA-256 | Zvknha, Zvknhb
+|64 | 128 | 256 | SHA-512 | Zvknhb
+|===
+
+NOTE::
+- We are currently defining two variations of Zvknh: Zvknha for SHA-256 only, and Zvknhb for SHA-256 and SHA-512
+- Question: Is this the best way to do this?
+
+
+For SHA-256, implementations with VLEN < 128 require software to use LMUL>1 to combine
+elements from register groups to provide all four elements of the element group.
+
+For SHA-512, implementations with VLEN < 256 require software to use LMUL>1 to combine
+elements from register groups to provide all four elements of the element group.
+
+// Systems which do not meet these requirements cannot support the <<zvknha>>
+// extension.
+
+// It is _possible_ to formulate these instructions such that they work
+// on systems with a narrower `VLEN` (i.e 32 or 64) and use `LMUL=2,4` to
+// create inputs which are large enough to contain enough information.
+// However, this incurs a large amount of complexity in the instructions
+// design and implementation.
+
+Systems which implement `VLEN<128` should consider the existing
+Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
+for accelerated cryptographic operations.
+
+[%header,cols="^2,4"]
+|===
+// |`VLENmin`
+|Mnemonic
+|Instruction
+
+// | 128
+| vsha2ms.vv   | <<insns-vsha2ms>>
+// | 128
+| vsha2c.vv    | <<insns-vsha2c>>
+|===
+

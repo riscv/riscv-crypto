@@ -1,4 +1,4 @@
-[[insns-vaes256k14, Vector AES-256 Generate final round key (14)]]
+[[insns-vaes256k14, Vector AES-256 Generate round key 14 (final)]]
 = vaes256k14.vv
 
 Synopsis::

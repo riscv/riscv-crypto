@@ -60,8 +60,8 @@ integer register `rs1`, or a zero-extended 5-bit immediate.
 [TIP]
 .Note on necessity of instruction
 ====
-This instruction is performance-critical to SHA3. Emulating it via 2 instructions is expected to have significant performance impact. 
-
+This instruction is performance-critical to SHA3. Emulating it via 2 instructions is expected to have significant performance impact.
+The `.vv` form of the instruction is what is needed for SHA3; the `.vv` and `.vx` forms were added for completeness.
 
 ====
 

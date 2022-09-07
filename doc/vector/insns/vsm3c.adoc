@@ -1,11 +1,11 @@
 [[insns-vsm3c, SM3 Compression]]
-= vsm3c
+= vsm3c.vi
 
 Synopsis::
 Vector SM3 Compression
 
 Mnemonic::
-vsm3r.vv vd, vs2, vs1
+vsm3r.vi vd, vs2, rnd
 
 Encoding::
 [wavedrom, , svg]
@@ -13,7 +13,7 @@ Encoding::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPMVI'},
 {bits: 5, name: 'rnd'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
@@ -22,10 +22,10 @@ Encoding::
 ....
 
 Description:: 
-This instruction implements 2 rounds of SM3 Compression, producing eight 32-bit outputs in
+Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
 
-The immediate field `rnd` has only two valid values 0 and 1; all other values are reserved.
+The immediate field `rnd` has only two valid values: 0 and 1; all other values are reserved.
 A 'rnd' value of 0 is used for rounds 0-15, and 1 is used for rounds 16-63.
 
 It treats each 256-bit 8-element group of `vd` as eight 32-bit words,  
@@ -40,7 +40,7 @@ vs1 = {w[j], w[j+1], -, -, w[j+4], w[j+5], -, -}
 
 Where the "-" characters are not consumed and are therefore don't cares.
 
-This instruction consumes the "W[67:0]" message schedule inputs and internally generates the "W'[63:0]" values
+This instruction consumes the "W" message schedule inputs and internally generates the "W'" values as needed
 
 
 
