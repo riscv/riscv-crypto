@@ -1,8 +1,8 @@
-[[insns-vsha256ms, Vector SHA-256 Message Schedule]]
-= vsha256ms
+[[insns-vsha2ms, Vector SHA-2 Message Schedule]]
+= vsha2ms
 
 Synopsis::
-Vector SHA-256 message schedule.
+Vector SHA-2 message schedule.
 
 Mnemonic::
 vsha256ms.vv vd, vs2, vs1
@@ -22,14 +22,18 @@ Encoding (Vector-Vector)::
 ....
 
 Description:: 
-This instruction takes in a subset of the last 16 message-schedule words and produces the next 4
+
+When `SEW`=32, this instruction implements 4 rounds of SHA-256 message schedule expansion with EGW=128
+When `SEW`=64, this instruction implements 4 rounds of SHA-512 message schedule expansion with EGW=256
+
+This instruction takes in a subset of the last 16 message-schedule `SEW`-sized "words" and produces the next 4
 message-schedule words.
 
-Four 32-bit message schedule words are packed into each `EGW=128` element group of the
+Four `SEW` message schedule words are packed into each `EGW` element group of the
 source and destination registers 
 
-This instructions takes in 11 of the last 16 32-bit words of the message schedule. The last 16
-words of the message schedule are shown here in 128-bit element groups.
+This instructions takes in 11 of the last 16 words of the message schedule. The last 16
+words of the message schedule are shown here in an element group.
 The subscripts show the relative age, where W~0~ is the oldest and W~15~ is the most recent
 of the 16 words.
 
@@ -39,7 +43,7 @@ of the 16 words.
 {W~15~, W~14~, W~13~, W~12~}`
 
 Since W~5~ through W~8~ are not needed in these calculations, we are able to compact these into
-three 128-bit element groups
+three element groups
 
 `{W~3~, W~2~, W~1~, W~0~} + 
 {W~11~, W~10~, W~9~, W~4~} +
@@ -48,7 +52,7 @@ three 128-bit element groups
 [TIP]
 .Note to software developers
 ====
-The combining of these 128-bit element groups as shown here can readily be performing using a vector
+The combining of these element groups as shown here can readily be performing using a vector
 vmerge instruction with the appropriate mask
 
 `vmerge {W~11~, W~10~, W~9~, W~4~}, {W~11~, W~10~, W~9~, W~8~}, {W~7~, W~6~, W~5~, W~4~}, V0` 
@@ -60,10 +64,12 @@ The instruction calculates the next 4 words of the message schedule:
 
 `{W~19~, W~18~, W~17~, W~16~}`
 
-This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
-In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
-This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+The number of words to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`
+
+// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 
 NB:: W~13~ is not used by the instruction for producing the next 4 message schedule words. 
@@ -77,13 +83,13 @@ Note:: Many vector units that are wider than 128 bits may choose to only impleme
 of functionality. A vector length setting of wider than 128 bits would require some
 sort of instruction expansion.
 
-This instruction is not masked. If any 128-bit element groups are not to be processed, the _vl_
+This instruction is not masked. If any element groups are not to be processed, the _vl_
 must be set accordingly.
 `VLMUL` must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
 is written to vd.
 
-In this code the input words are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
+In this code the input elements are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
 The outputs are numbered from 16 to 19.
 
 
@@ -96,19 +102,18 @@ Output::
 
 Vd = {W[19],W[18],W[17],W[16]}
 
-This instruction treats `EEW=32`, regardless of `vtype.vsew` and requires that
- `Zvl128b`be implemented (i.e `VLEN>=128`).
-It _does not_ require that `EEW=128` be supported for any other instruction.
+// This instruction requires that `Zvl128b`be implemented (i.e `VLEN>=128`).
 
 Operation::
 [source,pseudocode]
 --
-function clause execute (VSHA256ms(vs2, vs1, vd)) = {
-  assert(VLEN>=128);
+function clause execute (VSHA2ms(vs2, vs1, vd)) = {
+ // assert(VLEN>=128);
+ // This pseudo code needs to be updated toi support SHA-256 _and_ SHA-512
 	foreach (i from vstart to vl) {
-	  {W[3],  W[2],  W[1],  W[0]}  : bits(128) = get_velem(vd, EEW=128, i};
-	  {W[11], W[10], W[9],  W[4]}  : bits(128) = get_velem(vs1, EEW=128, i};
-	  {W[15], W[14], W[13], W[12]} : bits(128) = get_velem(vs2, EEW=128, i};
+	  {W[3],  W[2],  W[1],  W[0]}  : bits(EGW) = get_velem(vd, SEW, i};
+	  {W[11], W[10], W[9],  W[4]}  : bits(EGW) = get_velem(vs1, SEW, i};
+	  {W[15], W[14], W[13], W[12]} : bits(EGW) = get_velem(vs2, SEW, i};
 
 
  W[16] = sig1(W[14]) + W[9]  + sig0(W[1]) + W[0];
@@ -123,13 +128,18 @@ function clause execute (VSHA256ms(vs2, vs1, vd)) = {
  res[3] = sig1(res[1]) + VS2[0] + sig0(Vs1[0]) + Vd[3];
  vd = {res[3].res[2],res[1],res[0]};
 
-	set_velem(vd, EGW=128, i, {W[19],W[18],W[17],W[16]});
+	set_velem(vd, EGW, i, {W[19],W[18],W[17],W[16]});
 
  }
   RETIRE_SUCCESS
 
+// SHA256
 function sig0(x) = ROTR(x,7)  XOR ROTR(x,18) XOR SHR(x,3)
 function sig1(x) = ROTR(x,17) XOR ROTR(x,19) XOR SHR(x,10)
+
+// SHA512
+function sig0(x) = ROTR(x,1)  XOR ROTR(x,8)  XOR SHR(x,7);
+function sig1(x) = ROTR(x,19) XOR ROTR(x,61) XOR SHR(x,6);
 
 function ROTR(x,n) = (x >> n) | (x << w - n)
 function SHR (x,n) = x >> n
@@ -144,7 +154,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkn1h>>
+| <<zvknh>>
 | v0.1.0
 | In Development
 |===

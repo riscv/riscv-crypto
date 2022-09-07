@@ -36,10 +36,13 @@ If it is desired to have the same key in all vector groups, either the input vec
 need to contain the same values, or the output from a particular group needs to be "broadcast"
 to the other groups using an instruction such as vrgather.
 
-This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
-In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
-This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`
+
+// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 [NOTE]
 ====

@@ -29,10 +29,13 @@ and each `EGW=128` element group of `vs1` as the round key.
 
 The result (i.e. the next round state) is written to each `EGW=128` element group of `vd`.
 
-This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
-In order to properly specify the number of elements, vl needs to be set to
-vl = `vtype.vsew`/128. If vstart is not zero, it needs to be scaled similarly.
-This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`
+
+// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
 [source,pseudocode]

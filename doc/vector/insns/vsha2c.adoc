@@ -63,8 +63,8 @@ VLMUL must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
 is written to vd.
 
-The two forms of this instruction are identical except one  form (vsha256ra) uses the
-two least significant words of vs1 input, while vsha256rb uses the 
+The two forms of this instruction are identical except one  form (vsha2ra) uses the
+two least significant words of vs1 input, while vsha2rb uses the 
 two most significant words. This is described in pseduo-code below in a manner
 that should be _temporarily_ suitable for expository purposes.
 The two forms of the instruction save code from having to swap these two words

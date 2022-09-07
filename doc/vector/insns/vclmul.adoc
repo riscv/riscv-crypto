@@ -39,6 +39,7 @@ Encoding (Vector-Scalar)::
 Description:: 
 This instruction performs a carry-less multiply operation to all
 active elements in the vector register group specified by `vs2`.
+It returns the least significant EEW bits of the product.
 
 This instruction has a fixed `EEW=64` and ignores `SEW`
 
