@@ -13,7 +13,8 @@ differentiated by the suffixes h and l. These suffixes --- and indeed the mnemon
 themsleves --- will likely change. Alternatively, we may choose to differentiate
 between these two by other means.
 
-Question: Do we need two versions? Can we have one version and use a slideDown or 
+Question::
+Do we need two versions? Can we have one version and use a slideDown or 
 the like without hurting performance?
 
 Encoding (Vector-Vector)::

@@ -2,7 +2,7 @@
 = RISC-V Cryptography Extensions Volume II: Vector Instructions
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  28 August, 2022
+:revdate:  07 September, 2022
 :revnumber: v0.0.1
 :revremark: This document is in development. Breaking changes should be expected.
 :url-riscv: http://riscv.org
@@ -150,8 +150,6 @@ include::insns/vaesd256.adoc[leveloffset=+2]
 include::insns/vaesdf.adoc[leveloffset=+2]
 <<<
 include::insns/vaesdm.adoc[leveloffset=+2]
-<<<
-include::insns/vaesdz.adoc[leveloffset=+2]
 <<<   
 include::insns/vaese128.adoc[leveloffset=+2]
 <<<
@@ -161,8 +159,6 @@ include::insns/vaesef.adoc[leveloffset=+2]
 <<<
 include::insns/vaesem.adoc[leveloffset=+2]
 <<<
-include::insns/vaesez.adoc[leveloffset=+2]
-<<<
 include::insns/vaeskf1.adoc[leveloffset=+2]
 <<<
 include::insns/vaeskf2.adoc[leveloffset=+2]
@@ -170,6 +166,8 @@ include::insns/vaeskf2.adoc[leveloffset=+2]
 include::insns/vaeskr1.adoc[leveloffset=+2]
 <<<
 include::insns/vaeskr2.adoc[leveloffset=+2]
+<<<
+include::insns/vaesz.adoc[leveloffset=+2]
 <<<
 include::insns/vandn.adoc[leveloffset=+2]
 <<<
@@ -193,7 +191,7 @@ include::insns/vsha2ms.adoc[leveloffset=+2]
 <<<
 include::insns/vsm3c.adoc[leveloffset=+2]
 <<<
-include::insns/vsm3me1.adoc[leveloffset=+2]
+include::insns/vsm3me.adoc[leveloffset=+2]
 <<<
 include::insns/vsm4k.adoc[leveloffset=+2]
 <<<

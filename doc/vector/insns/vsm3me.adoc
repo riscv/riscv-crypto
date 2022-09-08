@@ -1,11 +1,11 @@
-[[insns-vsm3me1, SM3 Message Expansion]]
-= vsm3me1
+[[insns-vsm3me, SM3 Message Expansion]]
+= vsm3me
 
 Synopsis::
 Vector SM3 Message Expansion - 8 rounds per instruction
 
 Mnemonic::
-vsm3me1.vv vd, vs2, vs1
+vsm3me.vv vd, vs2, vs1
 
 Encoding::
 [wavedrom, , svg]
@@ -31,12 +31,21 @@ each 256-bit 8-element group of `vs1` as the data input.
 This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`
 `vl` needs to be set to eight times the number of element groups.
 If vstart is not zero, it needs to be scaled similarly.
-This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
+// This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
+
+Note::
+For the best performance, it is recommended that implementations have VLEN>=256.
+When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
+specified register groups can be combined to form the full element group.
+
+It is important to note that ELEN>=SEW is a requirement as elements are not
+permitted to cross register boundaries.
+
 
 Operation::
 [source,pseudocode]
 --
-function clause execute (VSM3ME1(rnd, vs2)) = {
+function clause execute (VSM3ME(vs2, vs1)) = {
   assert(VLEN>=256);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS

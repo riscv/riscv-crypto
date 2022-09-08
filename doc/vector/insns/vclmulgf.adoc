@@ -1,5 +1,5 @@
 [[insns-vclmulgf, Vector Carryless Multiply over Galois-Field 2^128]]
-= vclmulgf.vi
+= vclmulgf.vv
 
 Synopsis::
 Vector Carryless Multiply over Galois-Field 2^128
@@ -22,7 +22,7 @@ Encoding::
 ....
 
 Description:: 
-This instruction performs a multiply between two 128-bit polynomials modulo
+This instruction performs a multiply between two 128-bit polynomials modulo the irreducible polynomial
 x^128^ + x^7^ + x^2^ + x + 1
 
 It treats each EGW=128 element group of `vs1` and `vs2` as the input polynomials.
@@ -36,15 +36,22 @@ for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^.
 In order to match the GHASH specification, the bits within bytes are reversed internally to the instruction
 so that the least significant bit is on the left.
 
-This instruction effectively applies a single 128x128 carryless multiply producing a 255-bit product which it reduces
-by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1,
-and adding it to the least significant 128 bits,
-producing a 128-bit result which is written to the corresponding element group in `vd`.
+// This instruction effectively applies a single 128x128 carryless multiply producing a 255-bit product which it reduces
+// by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1,
+// and adding it to the least significant 128 bits,
+// producing a 128-bit result which is written to the corresponding element group in `vd`.
 
+- Element Group Width (EGW) = 128 bits
+- Effective Element Width (EEW) = 32 bits
+- Element Group Size (EGS) = 4 elements
 
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`
 
-This instruction treats `EEW=32`, regardless of `vtype.vsew` and requires that
- `Zvl128b`be implemented (i.e `VLEN>=128`).
+// It requires that `Zvl128b`be implemented (i.e `VLEN>=128`).
 
 Operation::
 [source,pseudocode]

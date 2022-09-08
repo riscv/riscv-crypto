@@ -1,5 +1,5 @@
 [[insns-vsm4k, Vector SM4 Key Expansion]]
-= vsm4k
+= vsm4k.vi
 
 Synopsis::
 Vector SM4 KeyExpansion
@@ -22,9 +22,13 @@ Encoding::
 ....
 
 Description:: 
-This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys.
+This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys
+as defined in SM4 (see
+link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
 It treats each 128-bit element group of `vs2` as the last four round keys.
-The rounds number is stored in the 5-bit `rnd`immediate. Legal values are 0 - 7.
+The rounds number is stored in the 5-bit `rnds` immediate. Legal values are 0 - 7 and indicate which
+group of four rounds are being generated. For example, if `rnds`=1, then round keys 4, 5, 6, and 7 are
+being generated.
 Out of range values signal an illegal instruction exception.
 
   
@@ -36,8 +40,9 @@ Each of the 32 rounds consumes the last 4 32-bit keys along with a round constan
 
 
 Note:
-The initial input to the round key generation is produced by XORing the 128-bit encryption key with a so-called system parameter: FK[3:0]
+The initial input to the round key generation is produced by ^ing the 128-bit encryption key with a so-called system parameter: FK[3:0]
 
+////
 .System Parameters
 [%autowidth]
 [%header,cols="^2,^2"]
@@ -50,15 +55,16 @@ The initial input to the round key generation is produced by XORing the 128-bit 
 | 2 | 677D9197
 | 3 | B27022DC
 |===
+////
 
   MK = {MK[0], MK[1], MK[2], MK[3]} // Encryption Key
-  rK[-4,-1] = K[0:3] = MK[0:3] XOR FK[0:3]
+  rK[-4,-1] = K[0:3] = MK[0:3] ^ FK[0:3]
 
 
 The round keys are rK[0] to rK[31]
-  B = (rK[i-3] ⊕ rK[i-2] ⊕ rK[i-1] ⊕ CK[round]); +
+  B = (rK[i-3] &#8853; rK[i-2] &#8853; rK[i-1] &#8853; CK[round]); +
   S = subBytes(B); + 
-  rK[i]= rK[i-4] ⊕ S ⊕ ROTL13(S)⊕ ROTR23(S); +
+  rK[i]= rK[i-4] &#8853; S &#8853; ROTL13(S) &#8853; ROTR23(S); +
 
 The round constants and the S-box are described below and can be found at https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
 
@@ -70,7 +76,7 @@ Since the results are all limited to 8 bits, the modulo operation occurs for fre
 	B[n] = n + 2n + 4n;
        = 8n + ~n + 1;
 
-
+////
 .Round Constants
 [%autowidth]
 [%header,cols="^2,^2"]
@@ -135,6 +141,7 @@ Since the results are all limited to 8 bits, the modulo operation occurs for fre
 | E | 89 | 69 | 97 | 4A | 0C | 96 | 77 | 7E | 65 | B9 | F1 | 09 | C5 | 6E | C6 | 84
 | F | 18 | F0 | 7D | EC | 3A | DC | 4D | 20 | 79 | EE | 5F | 3E | D7 | CB | 39 | 48
 |===
+////
 
 This instruction only returns the generated keys to the same element group as the source.
 If it is desired to have the same key in all vector groups, either the input vector groups
@@ -144,11 +151,12 @@ to the other groups using an instruction such as vrgather.
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 `vl` needs to be set to four times the number of element groups.
 If vstart is not zero, it needs to be scaled similarly.
-This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+// This instruction requires that `Zvl128b` be implemented (i.e `VLEN&ge;128`).
 
 Operation::
-[source,pseudocode]
+[source,sail]
 --
+
 function clause execute (VAESESFK1(rnd, vs2)) = {
   assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
@@ -163,21 +171,21 @@ function clause execute (VAESESFK1(rnd, vs2)) = {
     let rk[0:3] : bits(128) = get_velem(vs2, EGW=128, i);
     
   // 1st round
-  B = (rK[1] ⊕ rK[2] ⊕ rK[3] ⊕ CK[rnds])
+  B = (rK[1] ^ rK[2] ^ rK[3] ^ CK[rnds])
   S = subBytes(B); 1 s-box per byte
-  rK[4]= rK[0] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  rK[4]= rK[0] ^ S ^ ROTL13(S)^ ROTL23(S);
   // 2nd round
-  B = (rK[2] ⊕ rK[3] ⊕ rK[4] ⊕ CK[rnds+1])
+  B = (rK[2] ^ rK[3] ^ rK[4] ^ CK[rnds+1])
   S = subBytes(B); 1 s-box per byte
-  rK[5]= rK[1] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  rK[5]= rK[1] ^ S ^ ROTL13(S)^ ROTL23(S);
   // 3rd round
-  B = (rK[3] ⊕ rK[4] ⊕ rK[5] ⊕ CK[rnds+2])
+  B = (rK[3] ^ rK[4] ^ rK[5] ^ CK[rnds+2])
   S = subBytes(B); 1 s-box per byte
-  rK[6]= rK[2] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  rK[6]= rK[2] ^ S ^ ROTL13(S)^ ROTL23(S);
   // 4th round
-  B = (rK[4] ⊕ rK[5] ⊕ rK[6] ⊕ CK[rnds+3])
+  B = (rK[4] ^ rK[5] ^ rK[6] ^ CK[rnds+3])
   S = subBytes(B); 1 s-box per byte
-  rK[7]= rK[i-1] ⊕ S ⊕ ROTL13(S)⊕ ROTL23(S);
+  rK[7]= rK[i-1] ^ S ^ ROTL13(S)^ ROTL23(S);
   set_velem(vd, EGW=128, i, rK[7:4]);
 
   }

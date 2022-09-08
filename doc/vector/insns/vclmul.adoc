@@ -2,7 +2,7 @@
 = vclmul.[vv,vx]
 
 Synopsis::
-Vector Carry-less Multiply by vector or immediate.
+Vector Carry-less Multiply by vector or immediate - returning low half of product.
 
 Mnemonic::
 vclmul.vv vd, vs2, vs1 +
@@ -41,7 +41,13 @@ This instruction performs a carry-less multiply operation to all
 active elements in the vector register group specified by `vs2`.
 It returns the least significant EEW bits of the product.
 
-This instruction has a fixed `EEW=64` and ignores `SEW`
+This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.
+
+Note::
+The 64-bit carryless multiply is used for implementing GCM in the absence of the <<vclmulgf,insns-vclmulgf>> instruction.
+We do not make these two instructions exclusive as the 64-bit carryless multiply is readily derived from the `vclmulgf`
+logic and can have utility in other areas. Likewise, we treat other SEW values as reserved so as not to preclude
+future extensions from using this opcode with different element widths as may be used in generating CRCs, for example.   
 
 The other operand can come from a vector register group `vs1`, or a scalar
 integer register `rs1`.

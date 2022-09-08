@@ -2,7 +2,7 @@
 = vaesez.vs
 
 Synopsis::
-Vector AES round zero encryption instruction.
+Vector AES round zero encryption/decryption instruction.
 
 Mnemonic::
 vaesez.vs vd, vs2, vs1
@@ -38,7 +38,7 @@ Arguments::
 |===
 
 Description:: 
-Perform the round-0 encryption function of the AES block cipher.
+Perform the round-0 function of the AES block cipher. The function is identical for encryption and decryption.
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.
 Each element group of source `vs2` holds the current round state
@@ -51,6 +51,9 @@ step to the corresponding inputs. This instruction must always be implemented su
 depend on the data being operated upon.    
 
 Note::
+This instruction is needed to avoid the need to "splat" a 128-bit vector register group when the round key is the same for
+all 128-bit "lanes". Such a splat would typically be implemented with a `vrgather` instruction which would hurt performance
+in many implementations. 
 This instruction only exists in the .vs form because the .vv form would be identical to the VXOR instruction.
 
 - AddRoundKey(state,roundkey)
