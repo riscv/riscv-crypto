@@ -1,5 +1,5 @@
 [[insns-vaeskf1, Vector AES-128 Forward KeySchedule]]
-= vaeskf1
+= vaeskf1.vi
 
 Synopsis::
 Vector AES-128 Forward KeySchedule

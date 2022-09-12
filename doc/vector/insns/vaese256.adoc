@@ -1,5 +1,5 @@
 [[insns-vaese256, Vector AES-256 encrypt all-rounds]]
-= vaese256
+= vaese256.[vv,vs]
 
 Synopsis::
 Vector AES-256 all rounds encryption instruction.

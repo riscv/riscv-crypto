@@ -1,5 +1,5 @@
 [[insns-vaesd128, Vector AES-128 decrypt all-rounds]]
-= vaesd128
+= vaesd128.[vv,vs]
 
 Synopsis::
 Vector AES-128 all rounds decryption instruction.

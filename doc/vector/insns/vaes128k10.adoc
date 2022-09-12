@@ -1,5 +1,5 @@
 [[insns-vaes128k10, Vector AES-128 Generate round key 10 (final)]]
-= vaes128k10
+= vaes128k10.v
 
 Synopsis::
 Vector AES-128 Generate final round key (10)
@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},

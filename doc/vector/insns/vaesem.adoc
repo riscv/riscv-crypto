@@ -1,12 +1,12 @@
 [[insns-vaesem, Vector AES encrypt middle round]]
-= vaesem
+= vaesem.[vv,vs]
 
 Synopsis::
 Vector AES middle round encryption instruction.
 
 Mnemonic::
-vaesem.vv vd, vs2, vs1 +
-vaesem.vs vd, vs2, vs1
+vaesem.vv vd, vs2 +
+vaesem.vs vd, vs2
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -15,12 +15,29 @@ Encoding (Vector)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | round state
+| Vs2 | input  | 128  | 4 | 32 | Round key
+| Vd  | output | 128  | 4 | 32 | new round state
+|===
 
 Description:: 
 This instruction implements the middle-round function of the AES block cipher.

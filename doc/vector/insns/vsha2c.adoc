@@ -45,34 +45,54 @@ Encoding (Vector-Vector)::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 4*SEW  | 4 | SEW | {c, d, g, h}
+| Vs1 | input  | 4*SEW  | 4 | SEW | MessageSched[3:0]
+| Vs2 | input  | 4*SEW  | 4 | SEW | {a, b, e, f}
+| Vd  | output | 4*SEW  | 4 | SEW | {a, b, e, f} 
+|===
+ 
 Description:: 
 
-When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128
-When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256
+- When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128
+- When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256
+
+If SEW is other than 32 or 64, this instruction takes the undefined instruction exception.
+
+Note::
+The `vsha2ch` version of this instruction reads the two high words from vs1 while the
+`vsha2cl` version only reads the two low words.
+Otherwise, these versions of the instruction are identical.
+The two forms of the instruction save code from having to swap these two words
+if there were just a single instruction.
 
 NB: This is very preliminary draft that is being distributed for discussion purposes only. The code is not
 executable - it is largely a copy of the pseudo code in FIPS PUB 180-4 Secure Hash Standard (SHS).
 
- Many vector units that are wider than 128 bits may choose to only implement one
-128-bit datapath for this instruction. This needs to be transparent to code in terms
-of functionality. A vector length setting of wider than 128 bits would require some
-sort of instruction expansion.
+// Many vector units that are wider than 128 bits may choose to only implement one
+// 128-bit datapath for this instruction. This needs to be transparent to code in terms
+// of functionality. A vector length setting of wider than 128 bits would require some
+// sort of instruction expansion.
 
-This instruction is not masked. If any 128-bit elements are not processed, the _vl_
-must be set accordingly.
+This instruction is not masked. If any 128-bit element groupss are not to be processed,
+the _vl_ must be set accordingly.
 VLMUL must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
 is written to vd.
 
-The two forms of this instruction are identical except one  form (vsha2ra) uses the
-two least significant words of vs1 input, while vsha2rb uses the 
-two most significant words. This is described in pseduo-code below in a manner
-that should be _temporarily_ suitable for expository purposes.
-The two forms of the instruction save code from having to swap these two words
-if there were just a single instruction.
-
-These instructions take in two 32-bit words of the message schedule _W1_ and _W0_
-and eight 32-bit word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
+These instructions take in two SEW words of the message schedule _W1_ and _W0_
+and eight SEW word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
 output is the new values of _a, b, e_ and _f_ after performing 2 rounds of the hash
 computation. The other 4 variables, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
 
@@ -91,14 +111,7 @@ These sha two-rounds instructions only require two message schedule words in *Vs
 The instruction sha256ra accesses the lower two words, while sha256rb accesses
 the upper two words.
 
- Input:
-  Vd  = {h, g, d, c}
-  Vs2 = {f, e, b, a}
-  Vs1 = {-, -, MessageSched[1:0]} // for vsha2cl
-  Vs1 = {MessageSched[3:2], -, -} // for vsha2ch
- 
- Output:
-  vd = {a, b, e, f}
+
 
 Note::
 It is recommended that implementations have VLEN>=128 for these instructions.

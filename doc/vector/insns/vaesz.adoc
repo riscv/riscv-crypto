@@ -5,7 +5,7 @@ Synopsis::
 Vector AES round zero encryption/decryption instruction.
 
 Mnemonic::
-vaesez.vs vd, vs2, vs1
+vaesez.vs vd, vs2
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
@@ -14,7 +14,7 @@ Encoding (Vector-Scalar)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
@@ -32,8 +32,8 @@ Arguments::
 |EEW
 |Definition
 
-| vs2 | input  | 128  | 4 | 32 | round state
-| vs1 | input  | 128  | 4 | 32 | round key 
+| vd  | input  | 128  | 4 | 32 | round state
+| vs2 | input  | 128  | 4 | 32 | round key 
 | vd  | output | 128  | 4 | 32 | new round state
 |===
 

@@ -5,8 +5,8 @@ Synopsis::
 Vector AES final round encryption instruction.
 
 Mnemonic::
-vaesef.vv vd, vs2, vs1 +
-vaesef.vs vd, vs2, vs1
+vaesef.vv vd, vs2 +
+vaesef.vs vd, vs2
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -15,7 +15,7 @@ Encoding (Vector-Vector)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
@@ -47,7 +47,7 @@ Arguments::
 |EEW
 |Definition
 
-| vs2 | input  | 128  | 4 | 32 | round state
+| vd  | input  | 128  | 4 | 32 | round state
 | vs1 | input  | 128  | 4 | 32 | round key 
 | vd  | output | 128  | 4 | 32 | new round state
 |===

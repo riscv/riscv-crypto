@@ -46,6 +46,8 @@ to `SEW` bits as appropriate.
 For each elements the `SEW-1` upper bits of the `(2 * SEW - 1)`-bit result are 
 returned. The most significant bit of each `SEW`-wide element is always 0.
 
+This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.
+
 Operation::
 [source,sail]
 --

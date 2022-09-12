@@ -57,11 +57,6 @@ Encoding (Vector-Immediate)::
 ]}
 ....
 
-Note::
-The immediate form needs a different instruction encoding than other vector instructions as they are limited to 5 bit immediates
-which are held in the vs1 register field (bits 19:15). We need 6 bits to encode all rotate amounts from 0 to 63. 
-
-
 Description:: 
 This instruction performs a bitwise left rotation on vector elements.
 The data to be rotated is in the vector register group specified by `vs2` and
