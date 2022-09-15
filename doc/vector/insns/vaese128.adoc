@@ -17,10 +17,26 @@ Encoding (Vector)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | 128  | 4 | 32 | Cipher key
+| Vs2 | input  | 128  | 4 | 32 | Plain text
+| Vd  | output | 128  | 4 | 32 | Cipher text
+|===
 
 Description:: 
 This instruction implements the entire AES-128 block cipher encryption

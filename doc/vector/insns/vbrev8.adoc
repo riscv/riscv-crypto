@@ -21,6 +21,22 @@ Encoding (Vector)::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs2 | input  | SEW  | 1 | SEW | Input bytes
+| Vd  | output | SEW  | 1 | SEW | Bit-revesed bytes
+|===
+
 Description:: 
 This instruction reverses the order of the bits in each byte in `vs2`.
 

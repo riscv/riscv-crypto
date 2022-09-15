@@ -1,5 +1,5 @@
 [[insns-vsm4r, SM4 Rounds]]
-= vsm4r
+= vsm4r.vv
 
 Synopsis::
 Vector SM4 Rounds
@@ -14,12 +14,29 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1=0'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd   | input  | 128  | 4 | 32 | Current state X[0:3]
+| Vs2  | input  | 128  | 4 | 32 | Current 4 round keys rk[0:3]
+| Vd   | output | 128  | 4 | 32 | Next state X'[0:3]
+|===
 
 Description:: 
 This instruction implements 4 rounds of SM4 Encryption/Decryption, producing four 32-bit outputs in
@@ -32,7 +49,7 @@ vs2 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
 vd (out) = {x[i], X[i+1], X[i+2], X[i+3]} +
 
 For example, if i=4 +
-vd (in) = {x[0], X[1]. X[2], X[3]} +
+vd (in) = {x[0], X[1], X[2], X[3]} +
 vs2 = {rk[0],rk[1], rk[2], rk[3]} +
 vd (out) = {x[4], X[5], X[6], X[7]} +
 

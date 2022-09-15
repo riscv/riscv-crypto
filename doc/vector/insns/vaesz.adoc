@@ -1,11 +1,11 @@
-[[insns-vaesez, Vector AES encrypt round zero]]
-= vaesez.vs
+[[insns-vaesz, Vector AES encrypt round zero]]
+= vaesz.vs
 
 Synopsis::
 Vector AES round zero encryption/decryption instruction.
 
 Mnemonic::
-vaesez.vs vd, vs2
+vaesz.vs vd, vs2
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]

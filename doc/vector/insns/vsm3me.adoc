@@ -1,5 +1,5 @@
 [[insns-vsm3me, SM3 Message Expansion]]
-= vsm3me
+= vsm3me.vv
 
 Synopsis::
 Vector SM3 Message Expansion - 8 rounds per instruction
@@ -33,15 +33,15 @@ Arguments::
 |EEW
 |Definition
 
-| Vs1 | input  | 256  | 8 | 32 | W[0:7]
-| Vs2 | input  | 256  | 8 | 32 | W[8:15]
-| Vd  | output | 256  | 8 | 32 | W[16:23]
+| Vs1 | input  | 256  | 8 | 32 | Message words W[0:7]
+| Vs2 | input  | 256  | 8 | 32 | Message words W[8:15]
+| Vd  | output | 256  | 8 | 32 | Message words W[16:23]
 |===
 
 Description:: 
 This instruction implements 8 rounds of SM3 message expansion,  producing eight 32-bit
 outputs in a 256-bit 8-element group.
-It treats each 256-bit 8-element group of `vs1` and  as the data input.
+It treats each 256-bit 8-element group of `vs1` and `vs2` as the data input.
 
 
 This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`

@@ -21,6 +21,23 @@ Encoding::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| rnds | input  | -    | - | -  | Round group (imm)
+| Vs2  | input  | 128  | 4 | 32 | Current 4 round keys rK[0:3]
+| Vd   | output | 128  | 4 | 32 | Next 4 round keys rK'[0:3]
+|===
+
 Description:: 
 This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys
 as defined in SM4 (see
@@ -185,7 +202,7 @@ function clause execute (VAESESFK1(rnd, vs2)) = {
   // 4th round
   B = (rK[4] ^ rK[5] ^ rK[6] ^ CK[rnds+3])
   S = subBytes(B); 1 s-box per byte
-  rK[7]= rK[i-1] ^ S ^ ROTL13(S)^ ROTL23(S);
+  rK[7]= rK[3] ^ S ^ ROTL13(S)^ ROTL23(S);
   set_velem(vd, EGW=128, i, rK[7:4]);
 
   }

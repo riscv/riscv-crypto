@@ -57,6 +57,40 @@ Encoding (Vector-Immediate)::
 ]}
 ....
 
+Vector-Vector Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | SEW  | 1 | SEW | Rotate amount
+| Vs2 | input  | SEW  | 1 | SEW | Data
+| Vd  | output | SEW  | 1 | SEW | Rotated data 
+|===
+
+Vector-Scalar/Immediate Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Rs1/imm | input  | -    | - | -   | Rotate amount
+| Vs2     | input  | SEW  | 1 | SEW | Data
+| Vd      | output | SEW  | 1 | SEW | Rotated data
+|===
+
 Description:: 
 This instruction performs a bitwise left rotation on vector elements.
 The data to be rotated is in the vector register group specified by `vs2` and

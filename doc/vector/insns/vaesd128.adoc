@@ -17,7 +17,7 @@ Encoding (Vector-Vector)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -48,8 +48,8 @@ Arguments::
 |EEW
 |Definition
 
-| Vs2 | input  | 128  | 4 | 32 | Cipher text
 | Vs1 | input  | 128  | 4 | 32 | Final Round key
+| Vs2 | input  | 128  | 4 | 32 | Cipher text
 | Vd  | output | 128  | 4 | 32 | Plain text 
 |===
 

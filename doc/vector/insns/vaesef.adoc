@@ -29,7 +29,7 @@ Encoding (Vector-Scalar)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
@@ -48,17 +48,17 @@ Arguments::
 |Definition
 
 | vd  | input  | 128  | 4 | 32 | round state
-| vs1 | input  | 128  | 4 | 32 | round key 
+| vs2 | input  | 128  | 4 | 32 | round key 
 | vd  | output | 128  | 4 | 32 | new round state
 |===
 
 Description:: 
 This instruction implements the final-round encryption function of the AES block cipher. The inputs and outputs to this
 instruction are comprised of 128-bit element groups.  Each element group of source `vs2` holds the current round state
-and each 128-bit element group of `vs1` holds the round key.
-In the case of the `.vs` form of the instruction, element group 0 of the single register `vs1` holds a single element group that is used
-as the round key for all of the element groups in `vs2`. While in this case `vs1` is a single register, both `vs2` and `vd` can be register
-groups. 
+and each 128-bit element group of `vs2` holds the round key.
+In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a single element group that is used
+as the round key for all of the element groups in `vd`. While in this case `vs2` is a single register,
+`vd` can be a register group. 
 The next round state output of each element group is produced by applying the SubBytes, ShiftRows, and AddRoundkey
 steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not
 depend on the data being operated upon.    
@@ -67,17 +67,11 @@ depend on the data being operated upon.
 - ShiftRows(state)
 - AddRoundKey(state,roundkey)
 
-This instruction operates on element groups in the source and destination registers:
-
-- Element Group Width (EGW) = 128 bits
-- Effective Element Width (EEW) = 32 bits
-- Element Group Size (EGS) = 4 elements
-
-(Can't end on a bullet)
+(ASIICDOC limitation: Can't end on a bullet)
 
 Note::
 This is true for all .vs instructions in the Vector Crypto Extensions - COPY THIS TO THE OTHER INSTRUCTIONS
-Since the least significant element group of register `vs1` is used for all element groups in register groups `vd`
+Since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
 otherwise the instruction encoding is reserved.
 
@@ -85,7 +79,7 @@ otherwise the instruction encoding is reserved.
 Operation::
 [source,sail]
 --
-function clause execute (VAESEF(vs1, vd) = {
+function clause execute (VAESEF(vs2, vd) = {
   assert(VLEN>=128); 
   // calculate the number of element groups (eg)
   eg = (vl/EGS)  

@@ -14,29 +14,52 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVI'},
-{bits: 5, name: 'rnd'},
+{bits: 5, name: 'rnds'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd   | input  | 256  | 8 | 32 | Current state {A,B,C,D,E,F,G,H}
+| rnds | input  | -    | - | -  | round number (imm)
+| Vs2  | input  | 256  | 8 | 32 | Message words {w[0], w[1], -, -, w[4], w[5], -, -}
+| Vd   | output | 256  | 8 | 32 | Next state {A,B,C,D,E,F,G,H}
+|===
+
 Description:: 
 Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
 
-The immediate field `rnd` has only two valid values: 0 and 1; all other values are reserved.
-A 'rnd' value of 0 is used for rounds 0-15, and 1 is used for rounds 16-63.
+The round number is provided by the unsigned 5-bit `rnds` immediate. Legal values are 0 - 31
+and indicate which group of four rounds are being performed. For example, if rnds=1,
+then rounds 2 and 3 are being performed.
+
+Note::
+The rounds number is used in the rotation of the constant as well to inform the
+behavior which differs between rounds 0-15, and rounds 16-63.
 
 It treats each 256-bit 8-element group of `vd` as eight 32-bit words,  
 and each 256-bit 8-element group of `vs2` as eight 32-bit words. Only 4 of these words are consumed by
 this instruction, the rest are don't-cares.
 
-vs1 = {w[j], w[j+1], w[j+2], w[j+3], w[j+4], w[j+5], w[j+6], w[j+7]}
+vs2 = {w[j], w[j+1], w[j+2], w[j+3], w[j+4], w[j+5], w[j+6], w[j+7]}
 
 The values consumed by the instruction are
 
-vs1 = {w[j], w[j+1], -, -, w[j+4], w[j+5], -, -}
+vs2 = {w[j], w[j+1], -, -, w[j+4], w[j+5], -, -}
 
 Where the "-" characters are not consumed and are therefore don't cares.
 

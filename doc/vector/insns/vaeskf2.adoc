@@ -21,6 +21,24 @@ Encoding::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | Previous Round key
+| rnd | input  | -    | - | -  | Round Number (immediate)
+| Vs2 | input  | 128  | 4 | 32 | Current Round key
+| Vd  | output | 128  | 4 | 32 | Next round key
+|===
+
 Description:: 
 This instruction implements a single round of the forward AES-256 KeySchedule.
 It treats each `EGW=128` element group of `vs2` as the current AES round key,

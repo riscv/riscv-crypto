@@ -1,5 +1,5 @@
 [[insns-vaesd256, Vector AES-256 decrypt all-rounds]]
-= vaesd256
+= vaesd256.[vv,vs]
 
 Synopsis::
 Vector AES-256 all rounds decryption instruction.
@@ -17,7 +17,7 @@ Encoding (Vector-Vector)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....

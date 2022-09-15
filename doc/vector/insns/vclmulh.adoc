@@ -36,6 +36,23 @@ Encoding (Vector-Scalar)::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | SEW  | 1 | SEW | multiplier
+| Vs2 | input  | SEW  | 1 | SEW | multiplicand
+| Vd  | output | SEW  | 1 | SEW | carry-less product high
+|===
+
 Description:: 
 This instruction performs a carry-less multiply operation to all
 active elements in the vector register group specified by `vs2`.

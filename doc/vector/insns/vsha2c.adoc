@@ -1,5 +1,5 @@
 [[insns-vsha2c, Vector SHA-2 Compression]]
-= vsha2c[hl]
+= vsha2c[hl].vv
 
 Synopsis::
 Vector SHA-2 2 rounds of compression.
@@ -26,7 +26,7 @@ Encoding (Vector-Vector)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -40,7 +40,7 @@ Encoding (Vector-Vector)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -57,10 +57,10 @@ Arguments::
 |EEW
 |Definition
 
-| Vd  | input  | 4*SEW  | 4 | SEW | {c, d, g, h}
+| Vd  | input  | 4*SEW  | 4 | SEW | current state {c, d, g, h}
 | Vs1 | input  | 4*SEW  | 4 | SEW | MessageSched[3:0]
-| Vs2 | input  | 4*SEW  | 4 | SEW | {a, b, e, f}
-| Vd  | output | 4*SEW  | 4 | SEW | {a, b, e, f} 
+| Vs2 | input  | 4*SEW  | 4 | SEW | current state {a, b, e, f}
+| Vd  | output | 4*SEW  | 4 | SEW | next state {a, b, e, f} 
 |===
  
 Description:: 

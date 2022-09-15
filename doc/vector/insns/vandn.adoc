@@ -51,6 +51,40 @@ Encoding (Vector-Immediate)::
 ]}
 ....
 
+Vector-Vector Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | 128  | 4 | 32 | Operand A
+| Vs2 | input  | 128  | 4 | 32 | Operand B (to be inverted)
+| Vd  | output | 128  | 4 | 32 | Result 
+|===
+
+Vector-Scalar/Immediate Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Rs1/imm | input  | -    | - | -  | Operand A
+| Vs2     | input  | 128  | 4 | 32 | Operand B (to be inverted)
+| Vd      | output | 128  | 4 | 32 | Result 
+|===
+
 Description:: 
 This instruction applies the bitwise _and-not_ operation to all
 active elements in the vector register group specified by `vs2`.
