@@ -129,7 +129,7 @@ include::./riscv-crypto-vector-zvkg.adoc[]
 <<<
 include::./riscv-crypto-vector-zvksed.adoc[]
 <<<
-include::./riscv-crypto-vector-zvkssh.adoc[]
+include::./riscv-crypto-vector-zvksh.adoc[]
 <<<
 
 // ------------------------------------------------------------

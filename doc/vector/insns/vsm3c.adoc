@@ -140,7 +140,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkssh>>
+| <<zvksh>>
 | v0.1.0
 | In Development
 |===
