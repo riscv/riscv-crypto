@@ -70,7 +70,7 @@ Operation::
 --
 function clause execute (VAESESFK1(rcon, vs2)) = {
   assert(VLEN>=128);
-  vlen = vl/EGS * vtype.SEW/EEW
+  vlen = TBD
   foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let next : bits(128) = get_velem(vd, EGW=128, i);

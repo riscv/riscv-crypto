@@ -65,7 +65,7 @@ Operation::
 --
 function clause execute (VAESESFK1(rcon, vs2)) = {
   assert(VLEN>=128);
-  vlen = vl/EGS * vtype.SEW/EEW
+  vlen = tbd
   foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let previous    : bits(128) = aes_128_reverse_key_schedule(rcon, current);
