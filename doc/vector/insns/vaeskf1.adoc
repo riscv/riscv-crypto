@@ -5,7 +5,7 @@ Synopsis::
 Vector AES-128 Forward KeySchedule
 
 Mnemonic::
-vaeskf1.vi vd, vs2, rnd
+vaeskf1.vi vd, vs2, uimm
 
 Encoding::
 [wavedrom, , svg]
@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'rnd'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -33,15 +33,15 @@ Arguments::
 |EEW
 |Definition
 
-| rnd | input  | -    | - | -  | Round Number (immediate)
-| Vs2 | input  | 128  | 4 | 32 | Current round key
-| Vd  | output | 128  | 4 | 32 | Next round key
+| uimm | input  | -    | - | -  | Round Number (rnd)
+| Vs2  | input  | 128  | 4 | 32 | Current round key
+| Vd   | output | 128  | 4 | 32 | Next round key
 |===
 
 Description:: 
 This instruction implements a single round of the forward AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
+The round number is stored in the unsigned 5-bit `rnd`immediate. Legal values are 1 - 10.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-128 KeySchedule round to each element group, and

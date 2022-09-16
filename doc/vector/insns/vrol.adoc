@@ -13,7 +13,7 @@ to encode these. This is the same limitation as exists in the vector shift instr
 Mnemonic::
 vrol.vv vd, vs2, vs1, vm +
 vrol.vx vd, vs2, rs1, vm + 
-vrol.vi vd, vs2, imm, vm
+vrol.vi vd, vs2, uimm, vm
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
@@ -50,7 +50,7 @@ Encoding (Vector-Immediate)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'imm'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -95,7 +95,7 @@ Description::
 This instruction performs a bitwise left rotation on vector elements.
 The data to be rotated is in the vector register group specified by `vs2` and
 the rotate amount value can come from a vector register group `vs1`, a
-scalar integer register `rs1`, or an immediate.
+scalar integer register `rs1`, or a zero-extended immediate.
 Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.
 

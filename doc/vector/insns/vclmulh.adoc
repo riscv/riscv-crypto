@@ -2,7 +2,7 @@
 = vclmulh.[vv,vx]
 
 Synopsis::
-Vector Carry-less Multiply Upper Part by vector or immediate.
+Vector Carry-less Multiply Upper Part by vector or scalar.
 
 Mnemonic::
 vclmulh.vv vd, vs2, vs1 +

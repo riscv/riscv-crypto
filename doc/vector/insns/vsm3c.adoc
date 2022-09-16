@@ -14,9 +14,9 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVI'},
-{bits: 5, name: 'rnds'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -34,7 +34,7 @@ Arguments::
 |Definition
 
 | Vd   | input  | 256  | 8 | 32 | Current state {A,B,C,D,E,F,G,H}
-| rnds | input  | -    | - | -  | round number (imm)
+| uimm | input  | -    | - | -  | round number (rnds)
 | Vs2  | input  | 256  | 8 | 32 | Message words {w[0], w[1], -, -, w[4], w[5], -, -}
 | Vd   | output | 256  | 8 | 32 | Next state {A,B,C,D,E,F,G,H}
 |===
@@ -43,7 +43,7 @@ Description::
 Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
 
-The round number is provided by the unsigned 5-bit `rnds` immediate. Legal values are 0 - 31
+The round number is provided by the unsigned 5-bit `rnds` unsigned immediate. Legal values are 0 - 31
 and indicate which group of two rounds are being performed. For example, if rnds=1,
 then rounds 2 and 3 are being performed.
 

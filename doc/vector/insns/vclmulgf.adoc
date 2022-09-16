@@ -33,9 +33,9 @@ Arguments::
 |EEW
 |Definition
 
-| Vs1 | input  | SEW  | 1 | SEW | multiplier
-| Vs2 | input  | SEW  | 1 | SEW | multiplicand
-| Vd  | output | SEW  | 1 | SEW | carry-less product GF[2^128^]
+| Vs1 | input  | 128  | 1 | 32 | multiplier
+| Vs2 | input  | 128  | 1 | 32 | multiplicand
+| Vd  | output | 128  | 1 | 32 | carry-less product GF[2^128^]
 |===
 
 Description:: 
