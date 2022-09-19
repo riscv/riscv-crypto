@@ -1,0 +1,27 @@
+[[zvksh,Zvksh]]
+=== `Zvksh` - ShangMi Suite: SM3 Hash Function Instructions
+
+Instructions for accelerating
+functions of the SM3 Hash Function.
+
+All of these instructions work on 256-bit element groups comprised of
+32-bit elements.
+The instructions will most efficient on implementations where `VLEN`>128.
+They will also provide substantial benefit on implementations where
+`VLEN`=128, but will require an `LMUL`>1 in order to combine elements 
+within a register group to form the full element group.
+Impelementations with `VLEN`<128 might not be as efficient and should
+consider the existing
+Scalar Cryptography Extensions, specifically Zkne and Zknd,
+for accelerated cryptographic operations.
+
+[%header,cols="^2,4,8"]
+|===
+|VLENmin
+|Mnemonic
+|Instruction
+
+| 256 | vsm3me.vv | <<insns-vsm3me>>
+| 256 | vsm3c.vv   | <<insns-vsm3c>>
+|===
+

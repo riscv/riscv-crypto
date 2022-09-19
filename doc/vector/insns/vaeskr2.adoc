@@ -14,18 +14,36 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'rnd'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm=1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd   | input  | 128  | 4 | 32 | Next round key
+| uimm | input  | -    | - | -  | Round Number (rnd)
+| Vs2  | input  | 128  | 4 | 32 | Current round key
+| Vd   | output | 128  | 4 | 32 | Previous round key
+|===
+
 Description:: 
 This instruction implements a single round of the reverse AES-256 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key,
 and each 128-bit element group of `vd` as the next (in forward sequence) AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
+The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 10.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-256 KeySchedule round to each element group, and
@@ -52,7 +70,7 @@ Operation::
 --
 function clause execute (VAESESFK1(rcon, vs2)) = {
   assert(VLEN>=128);
-  vlen = vl/EGS * vtype.SEW/EEW
+  vlen = TBD
   foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let next : bits(128) = get_velem(vd, EGW=128, i);

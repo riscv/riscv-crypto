@@ -2,7 +2,7 @@
 = vclmulh.[vv,vx]
 
 Synopsis::
-Vector Carry-less Multiply Upper Part by vector or immediate.
+Vector Carry-less Multiply Upper Part by vector or scalar.
 
 Mnemonic::
 vclmulh.vv vd, vs2, vs1 +
@@ -36,6 +36,23 @@ Encoding (Vector-Scalar)::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | SEW  | 1 | SEW | multiplier
+| Vs2 | input  | SEW  | 1 | SEW | multiplicand
+| Vd  | output | SEW  | 1 | SEW | carry-less product high
+|===
+
 Description:: 
 This instruction performs a carry-less multiply operation to all
 active elements in the vector register group specified by `vs2`.
@@ -45,6 +62,8 @@ For the scalar integer register, the operand is zero extended or truncated
 to `SEW` bits as appropriate.
 For each elements the `SEW-1` upper bits of the `(2 * SEW - 1)`-bit result are 
 returned. The most significant bit of each `SEW`-wide element is always 0.
+
+This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.
 
 Operation::
 [source,sail]

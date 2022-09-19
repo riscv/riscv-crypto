@@ -1,12 +1,12 @@
 [[insns-vaesdm, Vector AES decrypt middle round]]
-= vaesdm
+= vaesdm.[vv,vs]
 
 Synopsis::
 Vector AES middle round decryption instruction.
 
 Mnemonic::
-vaesdsm.vv vd, vs2, vs1 +
-vaesdsm.vs vd, vs2, vs1
+vaesdsm.vv vd, vs2 +
+vaesdsm.vs vd, vs2
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -15,12 +15,29 @@ Encoding (Vector)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | round state
+| Vs2 | input  | 128  | 4 | 32 | Round key
+| Vd  | output | 128  | 4 | 32 | new round state
+|===
 
 Description:: 
 This instruction implements the middle-round decryption function of the AES
@@ -53,7 +70,6 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESDSM(vs1, vd, vv)) = {
-  assert(VLEN>=128);
   // calculate the number of element groups (eg)
   eg = (vl/EGS)  
   foreach (i from vstart to eg) {

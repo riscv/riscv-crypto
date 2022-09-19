@@ -21,6 +21,23 @@ Encoding::
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | 128  | 1 | 32 | multiplier
+| Vs2 | input  | 128  | 1 | 32 | multiplicand
+| Vd  | output | 128  | 1 | 32 | carry-less product GF[2^128^]
+|===
+
 Description:: 
 This instruction performs a multiply between two 128-bit polynomials modulo the irreducible polynomial
 x^128^ + x^7^ + x^2^ + x + 1

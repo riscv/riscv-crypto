@@ -5,7 +5,7 @@ Synopsis::
 Vector AES-128 Reverse KeySchedule
 
 Mnemonic::
-vaeskr1.vi vd, vs2, rnd
+vaeskr1.vi vd, vs2, uimm
 
 Encoding::
 [wavedrom, , svg]
@@ -14,17 +14,34 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'rnd'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| uimm | input  | -    | - | -  | Round Number (rnd)
+| Vs2  | input  | 128  | 4 | 32 | Current Round key
+| Vd   | output | 128  | 4 | 32 | Previous round key
+|===
+
 Description:: 
 This instruction implements a single round of the reverse AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 10.
+The round number is stored in the unsigned 5-bit `rnd`immediate. Legal values are 1 - 10.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-128 reverse KeySchedule round to each element, and
@@ -48,7 +65,7 @@ Operation::
 --
 function clause execute (VAESESFK1(rcon, vs2)) = {
   assert(VLEN>=128);
-  vlen = vl/EGS * vtype.SEW/EEW
+  vlen = tbd
   foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let previous    : bits(128) = aes_128_reverse_key_schedule(rcon, current);

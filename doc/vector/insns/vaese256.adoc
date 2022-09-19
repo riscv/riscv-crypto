@@ -1,5 +1,5 @@
 [[insns-vaese256, Vector AES-256 encrypt all-rounds]]
-= vaese256
+= vaese256.[vv,vs]
 
 Synopsis::
 Vector AES-256 all rounds encryption instruction.
@@ -17,10 +17,28 @@ Encoding (Vector)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | Plain text
+| Vs1 | input  | 128  | 4 | 32 | AES-256 lower Cipher key
+| Vs2 | input  | 128  | 4 | 32 | AES-256 upper Cipher key
+| Vd  | output | 128  | 4 | 32 | Cipher text 
+|===
 
 Description:: 
 This instruction implements the entire AES-128 block cipher decryption

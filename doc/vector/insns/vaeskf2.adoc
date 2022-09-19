@@ -1,11 +1,11 @@
 [[insns-vaeskf2, Vector AES-256 Forward KeySchedule]]
-= vaeskf2
+= vaeskf2.vi
 
 Synopsis::
 Vector AES-256 Forward KeySchedule
 
 Mnemonic::
-vaeskf2.vi vd, vs2, rnd
+vaeskf2.vi vd, vs2, uimm
 
 Encoding::
 [wavedrom, , svg]
@@ -14,18 +14,36 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'rnd'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd   | input  | 128  | 4 | 32 | Previous Round key
+| uimm | input  | -    | - | -  | Round Number (rnd)
+| Vs2  | input  | 128  | 4 | 32 | Current Round key
+| Vd   | output | 128  | 4 | 32 | Next round key
+|===
+
 Description:: 
 This instruction implements a single round of the forward AES-256 KeySchedule.
 It treats each `EGW=128` element group of `vs2` as the current AES round key,
 and each `EGW=128` element group of `vd` as the previous AES round key.
-The round number is stored in the 5-bit `rnd`immediate. Legal values are 1 - 14.
+The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 14.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-256 KeySchedule round to each element group, and

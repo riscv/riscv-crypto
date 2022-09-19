@@ -13,7 +13,7 @@ to encode these. This is the same limitation as exists in the vector shift instr
 Mnemonic::
 vror.vv vd, vs2, vs1, vm +
 vror.vx vd, vs2, rs1, vm +
-vror.vi vd, imm, vs1, vm
+vror.vi vd, uimm, vs1, vm
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
@@ -50,12 +50,47 @@ Encoding (Vector-Immediate)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'imm'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
+
+Vector-Vector Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vs1 | input  | SEW  | 1 | SEW | Rotate amount
+| Vs2 | input  | SEW  | 1 | SEW | Data
+| Vd  | output | SEW  | 1 | SEW | Rotated data 
+|===
+
+Vector-Scalar/Immediate Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Rs1/imm | input  | -    | - | -   | Rotate amount
+| Vs2     | input  | SEW  | 1 | SEW | Data
+| Vd      | output | SEW  | 1 | SEW | Rotated data
+|===
+
 
 Description:: 
 This instruction performs a bitwise right rotation on vector elements.

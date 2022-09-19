@@ -5,7 +5,7 @@ Synopsis::
 Vector SM4 KeyExpansion
 
 Mnemonic::
-vsm4k.vi vd, vs2, rnds
+vsm4k.vi vd, vs2, uimm
 
 Encoding::
 [wavedrom, , svg]
@@ -14,19 +14,36 @@ Encoding::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'rnds'},
+{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
 
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| uimm | input  | -    | - | -  | Round group (rnds)
+| Vs2  | input  | 128  | 4 | 32 | Current 4 round keys rK[0:3]
+| Vd   | output | 128  | 4 | 32 | Next 4 round keys rK'[0:3]
+|===
+
 Description:: 
 This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys
 as defined in SM4 (see
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
 It treats each 128-bit element group of `vs2` as the last four round keys.
-The rounds number is stored in the 5-bit `rnds` immediate. Legal values are 0 - 7 and indicate which
+The rounds number is stored in the unsigned 5-bit `rnds` immediate. Legal values are 0 - 7 and indicate which
 group of four rounds are being generated. For example, if `rnds`=1, then round keys 4, 5, 6, and 7 are
 being generated.
 Out of range values signal an illegal instruction exception.
@@ -185,7 +202,7 @@ function clause execute (VAESESFK1(rnd, vs2)) = {
   // 4th round
   B = (rK[4] ^ rK[5] ^ rK[6] ^ CK[rnds+3])
   S = subBytes(B); 1 s-box per byte
-  rK[7]= rK[i-1] ^ S ^ ROTL13(S)^ ROTL23(S);
+  rK[7]= rK[3] ^ S ^ ROTL13(S)^ ROTL23(S);
   set_velem(vd, EGW=128, i, rK[7:4]);
 
   }
