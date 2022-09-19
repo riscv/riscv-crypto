@@ -1,11 +1,11 @@
-[[insns-vaesez, Vector AES encrypt round zero]]
-= vaesez.vs
+[[insns-vaesz, Vector AES round zero]]
+= vaesz.vs
 
 Synopsis::
 Vector AES round zero encryption/decryption instruction.
 
 Mnemonic::
-vaesez.vs vd, vs2, vs1
+vaesz.vs vd, vs2, vs1
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
@@ -16,7 +16,7 @@ Encoding (Vector-Scalar)::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -76,7 +76,7 @@ otherwise the instruction encoding is reserved.
 Operation::
 [source,sail]
 --
-function clause execute (VAESEF(vs1, vd) = {
+function clause execute (VAESZ(vs1, vd) = {
   assert(VLEN>=128); 
   // calculate the number of element groups (eg)
   eg = (vl/EGS)  

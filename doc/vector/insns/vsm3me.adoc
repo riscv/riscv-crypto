@@ -16,7 +16,7 @@ Encoding::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -59,24 +59,24 @@ function clause execute (VSM3ME(vs2, vs1)) = {
     let current : bits(128) = get_velem(vs2, EGW=128, i);
     let rk[3:0] = current // This pseudo code is temporary - it will be rewritten!!!!!!!!!!!!
   
-W[i]   = P_1(W[i-16]⊕W[i-9]⊕ROTL15W[i-3]) ⊕ROTL7W[i-13]⊕W[i-6]
-W[i+1] = P_1(W[i-15]⊕W[i-8]⊕ROTL15W[i-2]) ⊕ROTL7W[i-12]⊕W[i-5]
-W[i+2] = P_1(W[i-14]⊕W[i-7]⊕ROTL15W[i-1]) ⊕ROTL7W[i-11]⊕W[i-4]
-W[i+3] = P_1(W[i-13]⊕W[i-6]⊕ROTL15W[i])   ⊕ROTL7W[i-10]⊕W[i-3]
-W[i+4] = P_1(W[i-12]⊕W[i-5]⊕ROTL15W[i+1]) ⊕ROTL7W[i-9] ⊕W[i-2]
-W[i+5] = P_1(W[i-11]⊕W[i-4]⊕ROTL15W[i+2]) ⊕ROTL7W[i-8] ⊕W[i-1]
-W[i+6] = P_1(W[i-10]⊕W[i-3]⊕ROTL15W[i+3]) ⊕ROTL7W[i-7] ⊕W[i]
-W[i+7] = P_1(W[i-9] ⊕W[i-2]⊕ROTL15W[i+4]) ⊕ROTL7W[i-6] ⊕W[i+1]
+W[i]   = P_1(W[i-16]^W[i-9]^ROTL15W[i-3]) ^ROTL7W[i-13]^W[i-6]
+W[i+1] = P_1(W[i-15]^W[i-8]^ROTL15W[i-2]) ^ROTL7W[i-12]^W[i-5]
+W[i+2] = P_1(W[i-14]^W[i-7]^ROTL15W[i-1]) ^ROTL7W[i-11]^W[i-4]
+W[i+3] = P_1(W[i-13]^W[i-6]^ROTL15W[i])   ^ROTL7W[i-10]^W[i-3]
+W[i+4] = P_1(W[i-12]^W[i-5]^ROTL15W[i+1]) ^ROTL7W[i-9] ^W[i-2]
+W[i+5] = P_1(W[i-11]^W[i-4]^ROTL15W[i+2]) ^ROTL7W[i-8] ^W[i-1]
+W[i+6] = P_1(W[i-10]^W[i-3]^ROTL15W[i+3]) ^ROTL7W[i-7] ^W[i]
+W[i+7] = P_1(W[i-9] ^W[i-2]^ROTL15W[i+4]) ^ROTL7W[i-6] ^W[i+1]
 
 or
 
 for i = 16 to 67
-  W[i] = P_1(W[i-16] xor W[i-9]) xor (ROTL15W[i-3]))
-xor (ROTL7W[i-13]) xor W[i-6]
+  W[i] = P_1(W[i-16] ^ W[i-9]) ^ (ROTL15W[i-3]))
+^ (ROTL7W[i-13]) ^ W[i-6]
 end for
 
 where:
-P_1(X) = X xor ROTL15(X) xor ROTL23(X)
+P_1(X) = X ^ ROTL15(X) ^ ROTL23(X)
 
 
 

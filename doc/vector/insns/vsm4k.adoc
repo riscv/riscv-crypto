@@ -16,7 +16,7 @@ Encoding::
 {bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'rnds'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
