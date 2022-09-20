@@ -50,13 +50,10 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
 Operation::
 [source,pseudocode]
 --
 function clause execute (VAESES256k13(rnd, vs1, vs2)) = {
-  assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 

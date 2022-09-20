@@ -7,7 +7,7 @@ functions of the AES block cipher.
 
 [%header,cols="^2,4,8"]
 |===
-|VLENmin
+|EGW
 |Mnemonic
 |Instruction
 

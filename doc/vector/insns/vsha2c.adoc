@@ -126,7 +126,6 @@ Operation::
 [source,sail-ish]
 --
 function clause execute (VSHA256Ra(vs2, vs1, vd, vv)) = {
-  assert(VLEN>=128);
 	foreach (i from vstart to vl) {
 	  {f, e, b, a} : bits(128) = get_velem(vs2, EGW=128, i};
 	  {h, g, d, c} : bits(128) = get_velem(vd, EGW=128, i};

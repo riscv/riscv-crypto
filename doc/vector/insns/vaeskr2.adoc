@@ -60,16 +60,11 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
-
-
-
 Operation::
 [source,pseudocode]
 --
 function clause execute (VAESESFK1(rcon, vs2)) = {
-  assert(VLEN>=128);
+
   vlen = TBD
   foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);

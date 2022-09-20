@@ -17,7 +17,7 @@ for accelerated cryptographic operations.
 
 [%header,cols="^2,4,8"]
 |===
-|VLENmin
+|EGW
 |Mnemonic
 |Instruction
 

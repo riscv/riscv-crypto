@@ -58,7 +58,6 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAESESM(vs2, vd, vv)) = {
-  assert(VLEN>=128);
   foreach (i from vstart to vl) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, i);

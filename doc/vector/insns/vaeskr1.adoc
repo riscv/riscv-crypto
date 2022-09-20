@@ -64,7 +64,6 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAESESFK1(rcon, vs2)) = {
-  assert(VLEN>=128);
   vlen = tbd
   foreach (i from vstart to vlen) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);

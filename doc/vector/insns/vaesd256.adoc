@@ -55,13 +55,8 @@ The result (i.e. the ciphertext) is written to `EGW=128` element groups of `vd`.
 
 This instruction operates on element groups in the source and destination registers:
 
-- Element Group Width (EGW) = 128 bits
-- Effective Element Width (EEW) = 32 bits
-- Element Group Size (EGS) = 4 elements
-
 This instruction requires that: +
 
-- `Zvl128b` be implemented (i.e `VLEN>=128`).
 - `vl` is an integral multiple of `EGS`
 - `vstart` is an integral multiple of `EGS`
 
@@ -73,7 +68,6 @@ Operation::
 [source,sail]
 --
 function clause execute (VAES256E(vs1, vs2, vd,)) = {
-  assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   elementgroups = (vl/EGS)

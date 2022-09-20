@@ -6,7 +6,7 @@ Instructions for efficiently implementing GCM.
 [%header,cols="^2,4,8"]
 |===
 
-|VLENmin
+|EGW
 |Mnemonic
 |Instruction
 | 128 | vclmulgf.vv | <<insns-vclmulgf>>

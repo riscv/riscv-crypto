@@ -63,11 +63,11 @@ The next round state output of each element group is produced by applying the Su
 steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not
 depend on the data being operated upon.    
 
-- SubBytes(state)
-- ShiftRows(state)
-- AddRoundKey(state,roundkey)
+* SubBytes(state)
+* ShiftRows(state)
+* AddRoundKey(state,roundkey)
 
-(ASIICDOC limitation: Can't end on a bullet)
+//(ASIICDOC limitation???: Can't end on a bullet)
 
 Note::
 This is true for all .vs instructions in the Vector Crypto Extensions - COPY THIS TO THE OTHER INSTRUCTIONS
@@ -80,7 +80,6 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESEF(vs2, vd) = {
-  assert(VLEN>=128); 
   // calculate the number of element groups (eg)
   eg = (vl/EGS)  
   foreach (i from vstart to eg) {

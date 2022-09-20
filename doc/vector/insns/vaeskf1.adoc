@@ -64,14 +64,12 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAESESFK1(rnd, vs2)) = {
-  assert(VLEN>=128);
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   // assert round key in range
 
   elementgroups = (vl/EGS)
   egstart = (vstart/EGS)
-  vlen = vl/EGS
   
   foreach (i from egstart to elementgroups) {
     let current : bits(128) = get_velem(vs2, EGW=128, i);

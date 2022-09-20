@@ -60,8 +60,6 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
 [NOTE]
 ====
 The AES-256 KeySchedule uses 8 32-bit words to compute the next 4 32-bit
@@ -74,7 +72,6 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAESESFK1(rnd, vd, vs2)) = {
-  assert(VLEN>=128);
   // assert round key in range
   vlen = vl/EGS
   foreach (i from vstart to vlen) {

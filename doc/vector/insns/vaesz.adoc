@@ -58,13 +58,7 @@ This instruction only exists in the .vs form because the .vv form would be ident
 
 - AddRoundKey(state,roundkey)
 
-This instruction operates on element groups in the source and destination registers:
-
-- Element Group Width (EGW) = 128 bits
-- Effective Element Width (EEW) = 32 bits
-- Element Group Size (EGS) = 4 elements
-
-(Can't end on a bullet)
+This instruction operates on element groups in the source and destination registers
 
 Note::
 This is true for all .vs instructions in the Vector Crypto Extensions - COPY THIS TO THE OTHER INSTRUCTIONS
@@ -77,7 +71,6 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESZ(vs1, vd) = {
-  assert(VLEN>=128); 
   // calculate the number of element groups (eg)
   eg = (vl/EGS)  
   foreach (i from vstart to eg) {

@@ -67,17 +67,11 @@ on the data being operated upon.
 
 This instruction operates on element groups in the source and destination registers:
 
-- Element Group Width (EGW) = 128 bits
-- Effective Element Width (EEW) = 32 bits
-- Element Group Size (EGS) = 4 elements
-
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `EEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
-
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
 [source,sail]

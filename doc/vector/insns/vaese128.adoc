@@ -53,13 +53,10 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
 Operation::
 [source,sail]
 --
 function clause execute (VAES128E(vs1, vd, vv)) = {
-  assert(VLEN>=128);
   // calculate the number of element groups (eg)
   
   foreach (i from vstart to eg) {

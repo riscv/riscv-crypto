@@ -114,16 +114,10 @@ is written to vd.
 In this code the input elements are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
 The outputs are numbered from 16 to 19.
 
-
-
-
-// This instruction requires that `Zvl128b`be implemented (i.e `VLEN>=128`).
-
 Operation::
 [source,pseudocode]
 --
 function clause execute (VSHA2ms(vs2, vs1, vd)) = {
- // assert(VLEN>=128);
  // This pseudo code needs to be updated toi support SHA-256 _and_ SHA-512
 	foreach (i from vstart to vl) {
 	  {W[3],  W[2],  W[1],  W[0]}  : bits(EGW) = get_velem(vd, SEW, i};

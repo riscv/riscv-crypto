@@ -63,9 +63,9 @@ Vector-Vector Arguments::
 |EEW
 |Definition
 
-| Vs1 | input  | 128  | 4 | 32 | Operand A
-| Vs2 | input  | 128  | 4 | 32 | Operand B (to be inverted)
-| Vd  | output | 128  | 4 | 32 | Result 
+| Vs1 | input  | SEW  | 1 | SEW | Operand A
+| Vs2 | input  | SEW  | 1 | SEW | Operand B (to be inverted)
+| Vd  | output | SEW  | 1 | SEW | Result 
 |===
 
 Vector-Scalar/Immediate Arguments::
@@ -80,9 +80,9 @@ Vector-Scalar/Immediate Arguments::
 |EEW
 |Definition
 
-| Rs1/imm | input  | -    | - | -  | Operand A
-| Vs2     | input  | 128  | 4 | 32 | Operand B (to be inverted)
-| Vd      | output | 128  | 4 | 32 | Result 
+| Rs1/imm | input  | SEW  | 1 | SEW | Operand A
+| Vs2     | input  | SEW  | 1 | SEW | Operand B (to be inverted)
+| Vd      | output | SEW  | 1 | SEW | Result 
 |===
 
 Description:: 
@@ -96,7 +96,7 @@ integer register `rs1`, or a sign-extended 5-bit immediate.
 ====
 This instruction is performance-critical to SHA3. Specifically, the Chi step of the FIPS 202 Keccak Permutation. 
 Emulating it via 2 instructions is expected to have significant performance impact.
-The `.vv` form of the instruction is what is needed for SHA3; the `.vv` and `.vx` forms were added for completeness.
+The `.vv` form of the instruction is what is needed for SHA3; the `.vx` and `.vi` forms were added for completeness.
 
 ====
 
