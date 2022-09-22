@@ -33,24 +33,42 @@ Arguments::
 |EEW
 |Definition
 
-| Vs1 | input  | 128  | 4 | 32 | multiplier
-| Vs2 | input  | 128  | 4 | 32 | multiplicand
-| Vd  | output | 128  | 4 | 32 | carry-less product GF[2^128^]
+| Vd  | input  | 128  | 4 | 32 | Signature (Y~i-1~)
+| Vs1 | input  | 128  | 4 | 32 | Hash Subkey (H)
+| Vs2 | input  | 128  | 4 | 32 | Encryption Output (X~i~)
+| Vd  | output | 128  | 4 | 32 | Signature (Y~i~)
 |===
 
+
+
+// Note::
+//There are two options for how we define this instruction. The first option is the simpler where
+// the inputs are the multiplier and the multiplicand and the output is the product modulo the irreducible
+// polynomial. This would require that prior to this instruction the AES output would have been bytewise
+// bit-reversed and then added (XORed) with the output of the previous `vclmulgf` instruction.
+// The second option would have a third input, which would be the output of the previous vclmulgf. It would
+// have the AES output as an input, on which it would perform the bytewise bit-reversal and the XORing
+// with the previous output. This second instruction would encompass 3 instructions, but would also incur
+// additional delay. 
+
 Note::
-There are two options for how we define this instruction. The first option is the simpler where
-the inputs are the multiplier and the multiplicand and the output is the product modulo the irreducible
-polynomial. This would require that prior to this instruction the AES output would have been bytewise
-bit-reversed and then added (XORed) with the output of the previous vclmulgf instruction.
-The second option would have a third input, which would be the output of the previous vclmulgf. It would
-have the AES output as an input, on which it would perform the bytewise bit-reversal and the XORing
-with the previous output. This second instruction would encompass 3 instructions, but would also incur
-additional delay. 
+We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
+with the NIST specification. These reversals are inexpensive as they unconditionally swap bit positions
+and therefore do not require any logic.
 
 Description:: 
-This instruction performs a multiply between two 128-bit polynomials modulo the irreducible polynomial
+This instruction performs a polynomial multiply over GF(2^128^) between a Hash Subkey (H) and an input
+"signature"  
+
+a multiply between two 128-bit polynomials modulo the irreducible polynomial
 x^128^ + x^7^ + x^2^ + x + 1
+
+
+Y~i~ = (Y~i-1~ ^ X~i~) &#183; H `// as described in the spec with Y~0~ = 0^128^`
+
+or 
+
+Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~` 
 
 It treats each EGW=128 element group of `vs1` and `vs2` as the input polynomials.
 This instruction is intended to be used to implement a GHASH~H~ as defined in NIST Special Publication 800-38D
@@ -60,12 +78,30 @@ link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[here]
 This specification orders the coefficients in increasing order from left to right x~0~x~1~...x~127~
 for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^.
 
+The multiplication is defined in the spec as follows:
+
+. Let `R` be the bit string `11100001 || 0^120^`
+. Let `x~0~x~1~...x~127~` denote the sequence of bits in `X`.
+. Let `Z~0~ = 0^128^` and `V~0~ = Y`.
+. For i = 0 to 127 // calculate blocks `Z~i+1~` and `V~i+1~` as follows:
+.. `Z~i+1~ := X~i~ ? (Z~i~ ^ V~i~), Z~i~`
+.. `V~i+1~ := (V~i~ & 1) ? (V~i~ >> 1) &#8853; R, V~i~ >> 1`
+. Return `Z~128~`.
+
+Note::
+In the above definition, the least significant bit is on the left and the most significant it on the right.
+Shifting to the right by one place is effectively multiplying by 2.
+The V value is multiplied by 2 and then reduced if the shifted off MSB==1.
+This allows the value to remain representable in 128 bits. 
+
 In order to match the GHASH specification, the bits within bytes are reversed internally to the instruction
 so that the least significant bit is on the left. Thus, instead of the bits being ordered (7,6,5,4,3,2,1,0) they would be ordered (0,1,2,3,4,5,6,7).
 
 In order to avoid having to swap the order of the bytes, we are relying on the property:
 
   rev(A) * rev(B) = rev(A*B)>>1
+
+
 
 // This instruction effectively applies a single 128x128 carryless multiply producing a 255-bit product which it reduces
 // by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1,
@@ -94,11 +130,24 @@ function clause execute (VCLMULGF(vs2, vs1, vd)) = {
   foreach (i from egstart to elementgroups) {
     let prod[255:0]   = clmul_128(get_velem(vs1,i), get_velem(vs2,i));
       // Reduce product by irreducible polynomial
-    let prod[191:64] ^= clmul_64((prod[255:192], 0x87);
-    let prod[127:0]  ^= clmul_64((prod[191:128], 0x87);
+    let prod[191:64] ^= clmul_64(prod[255:192], 0x87);
+    let prod[127:0]  ^= clmul_64(prod[191:128], 0x87);
     set_velem(vd, EGW=128, i, prod[127:0]);
   }
   RETIRE_SUCCESS
+
+// The following code is to be corrected and moved to the appendix
+function clmul_128 (a, b) = {
+    let output : 128 = 0;
+    foreach (i from 0 to 127 by 1) {
+      output = if ((b >> i) & 1)
+        then output ^ (a << i);
+        else output;
+    }
+    output; /* Return value */
+  }
+
+
 }
 --
 
