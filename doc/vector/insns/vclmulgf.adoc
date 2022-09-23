@@ -128,10 +128,16 @@ function clause execute (VCLMULGF(vs2, vs1, vd)) = {
   egstart = (vstart/EGS)
 
   foreach (i from egstart to elementgroups) {
-    let prod[255:0]   = clmul_128(get_velem(vs1,i), get_velem(vs2,i));
+    let prod[254:0]   = clmul_128(get_velem(vs1,i), get_velem(vs2,i));
       // Reduce product by irreducible polynomial
-    let prod[191:64] ^= clmul_64(prod[255:192], 0x87);
-    let prod[127:0]  ^= clmul_64(prod[191:128], 0x87);
+    let t = prod[254:134] * 0x87;
+    let prod[133:6] ^= t;
+    let t = prod [133:128] * 0x87;
+    let prod 12:0 ^= t;
+
+  //  let prod[191:64] ^= clmul_64(prod[255:192], 0x87);
+  //  let prod[127:0]  ^= clmul_64(prod[191:128], 0x87);
+  
     set_velem(vd, EGW=128, i, prod[127:0]);
   }
   RETIRE_SUCCESS
