@@ -44,7 +44,9 @@ Arguments::
 Note to reviewers::
 This instruction will perform a single "iteration" of GHASH as described below. The details of this
 specification, especially the pseudo code, will be going through some refinements in the near future
-to get it to match the standardized GHASH/GCM behavior. 
+to get it to match the standardized GHASH/GCM behavior.
+We probably should change this instruction mnemonic as `vclmulgf` does not describe the full function 
+of the instruction.
 
 
 
@@ -136,8 +138,8 @@ function clause execute (VCLMULGF(vs2, vs1, vd)) = {
   foreach (i from egstart to elementgroups) {
     
     let Y = brev(get_velem(vd,EGW=128,i));  // previous partial-hash
-    let H = brev(get_velem(vs1,i)); // Hash subkey
-    let X = brev(get_velem(vs2,i)); // block cipher output
+    let H = brev(get_velem(vs1,EGW=128,i)); // Hash subkey
+    let X = brev(get_velem(vs2,EGW=128,i)); // block cipher output
 
     let sum = Y ^ X;
 
@@ -146,8 +148,9 @@ function clause execute (VCLMULGF(vs2, vs1, vd)) = {
     let red1 = clmul_13(prod[254:249], 0x87);
     let prod[133:121] ^= red1;
     let red2 = clmul_121(prod[248:128],0x87);
-    let prod[127:0] ^= red2;  
-    set_velem(vd, EGW=128, i, prod[127:0]);
+    let prod[127:0] ^= red2;
+    let result = brev(prod[127:0]);  // bit reverse in byte to get back to GCM standard ordering
+    set_velem(vd, EGW=128, i, result);
   }
   RETIRE_SUCCESS
 
