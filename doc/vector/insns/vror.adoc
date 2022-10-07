@@ -13,7 +13,7 @@ to encode these. This is the same limitation as exists in the vector shift instr
 Mnemonic::
 vror.vv vd, vs2, vs1, vm +
 vror.vx vd, vs2, rs1, vm +
-vror.vi vd, uimm, vs1, vm
+vror.vi vd, vs2m uimm, vm
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]
