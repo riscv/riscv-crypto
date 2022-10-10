@@ -8,7 +8,21 @@ Mnemonic::
 vaesdsm.vv vd, vs2 +
 vaesdsm.vs vd, vs2
 
-Encoding (Vector)::
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPIVV'},
+{bits: 5, name: 'funct5'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: '1'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Encoding (Vector-Scalar)::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -48,8 +62,8 @@ The inputs and outputs to this instruction are comprised of 128-bit element grou
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.    
 
-- ShiftRows(state)
-- SubBytes(state)
+- InvShiftRows(state)
+- InvSubBytes(state)
 - AddRoundKey(state,roundkey)
 
 

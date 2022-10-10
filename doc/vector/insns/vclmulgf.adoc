@@ -13,10 +13,10 @@ Encoding::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm=1'},
+{bits: 1, name: '1'},
 {bits: 6, name: 'funct6'},
 ]}
 ....
@@ -143,12 +143,13 @@ function clause execute (VCLMULGF(vs2, vs1, vd)) = {
 
     let sum = Y ^ X;
 
-    let prod[254:0]   = clmul_128(sum, H);
+    let prod[255:0]   = clmul_128(sum, H); // MSB is always 0
       // Reduce product by irreducible polynomial
-    let red1 = clmul_13(prod[254:249], 0x87);
-    let prod[133:121] ^= red1;
-    let red2 = clmul_121(prod[248:128],0x87);
-    let prod[127:0] ^= red2;
+      let red1 = clmul_121(prod[254:134], 0x87); // 128 bit product
+      let prod[133:6] ^= red1[127:0];
+      //   133:128 are modified by 254:249 x 0x87
+      let red2 = clmul_6(prod[133:128],0x87); // 13 bit product
+      let prod[12:0] ^= red2[12:0]
     let result = brev(prod[127:0]);  // bit reverse in byte to get back to GCM standard ordering
     set_velem(vd, EGW=128, i, result);
   }

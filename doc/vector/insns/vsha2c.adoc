@@ -23,7 +23,7 @@ Encoding (Vector-Vector)::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
@@ -37,7 +37,7 @@ Encoding (Vector-Vector)::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
@@ -125,12 +125,13 @@ permitted to cross register boundaries.
 Operation::
 [source,sail-ish]
 --
-function clause execute (VSHA256Ra(vs2, vs1, vd, vv)) = {
+function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
+// Need to separate based on EGW (128 or 256)
 	foreach (i from vstart to vl) {
 	  {f, e, b, a} : bits(128) = get_velem(vs2, EGW=128, i};
 	  {h, g, d, c} : bits(128) = get_velem(vd, EGW=128, i};
 	  MessageShed[3:0] : bits(128) = get_velem(vs1, EGW=128, i};
-	  {W1, W0} == VSHA256Ra ? MessageSched[1:0] : MessageSched[3:2];
+	  {W1, W0} == VSHA2cl ? MessageSched[1:0] : MessageSched[3:2]; // l vs h difference is the words selected
 
 	  T1 = h + sum1(e) + Ch(e,f,g) + W0;
 	  T2 = sum0(a) + Maj(a,b,c);

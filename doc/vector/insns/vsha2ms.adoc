@@ -5,7 +5,7 @@ Synopsis::
 Vector SHA-2 message schedule.
 
 Mnemonic::
-vsha256ms.vv vd, vs2, vs1
+vsha2ms.vv vd, vs2, vs1
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -13,7 +13,7 @@ Encoding (Vector-Vector)::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},

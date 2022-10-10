@@ -15,28 +15,28 @@ vrol.vv vd, vs2, vs1, vm +
 vrol.vx vd, vs2, rs1, vm + 
 vrol.vi vd, vs2, uimm, vm
 
-Encoding (Vector-Scalar)::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 7, name: 'OP-V'},
-{bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'rs1'},
-{bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm'},
-{bits: 6, name: 'funct6'},
-]}
-....
-
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPIVX'},
+{bits: 5, name: 'rs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -49,7 +49,7 @@ Encoding (Vector-Immediate)::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVI'},
 {bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},

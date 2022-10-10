@@ -14,7 +14,7 @@ Encoding (Vector-Vector)::
 {reg:[
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
+{bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'funct5'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
@@ -56,12 +56,12 @@ Arguments::
 Description:: 
 Perform the final-round decryption function of the AES block cipher.
 
-The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key. Each `EGW=128` element group next round state output is produced by applying the ShiftRows, SubBytes,  and AddRoundkey steps to the corresponding inputs.
+The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key. Each `EGW=128` element group next round state output is produced by applying the InvShiftRows, InvSubBytes,  and AddRoundkey steps to the corresponding inputs.
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.    
 
-- ShiftRows(state)
-- SubBytes(state)
+- InvShiftRows(state)
+- InvSubBytes(state)
 - AddRoundKey(state,roundkey)
 
 
