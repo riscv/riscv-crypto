@@ -117,6 +117,14 @@ function clause execute (VROL_VX(vs2, rs1, vd)) = {
   }
   RETIRE_SUCCESS
 }
+
+function clause execute (VROL_VI(vs2, imm, vd)) = {
+  foreach (i from vstart to vl) {
+    set_velem(vd, EEW=SEW, i,
+    get_velem(vs2, i) <<< (imm & (SEW-1))
+  }
+  RETIRE_SUCCESS
+}
 --
 
 Included in::
