@@ -5,7 +5,7 @@ Synopsis::
 Vector SM3 Compression
 
 Mnemonic::
-vsm3r.vi vd, vs2, rnd
+vsm3c.vi vd, vs2, rnd
 
 Encoding::
 [wavedrom, , svg]
