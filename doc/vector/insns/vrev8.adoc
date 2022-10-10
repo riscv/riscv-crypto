@@ -34,11 +34,11 @@ Arguments::
 |Definition
 
 | Vs2 | input  | SEW  | 1 | SEW | Input elements
-| Vd  | output | SEW  | 1 | SEW | Byte-revesed elements
+| Vd  | output | SEW  | 1 | SEW | Byte-reversed elements
 |===
 
 Description:: 
-This instruction reverses the order of the bytes in `vs2`, effectively performing an endian swap.
+This instruction reverses the order of the bytes in each element of `vs2`, effectively performing an element-wise endian swap.
 
 Operation::
 [source,sail]
