@@ -52,7 +52,7 @@ of the instruction.
 
 Description:: 
 This instruction performs a single "iteration" of the GHASH~H~ algorithm.
-It takes as it's inputs the previously generated hash as well as the current
+It takes as its inputs the previously generated hash as well as the current
 output of the block cipher and the Hash Subkey (H).
 It adds the hash to the block cipher output and then multiplies over GF[2~128~] the sum
 by H.
@@ -67,10 +67,10 @@ swap bit positions and therefore do not require any logic.
 
 Note::
 To understand the inputs from the algorithm point of view, they can be viewed as being bit-serial
-with the least significant bit (i.e., bit 0) arriving first and the subsequent bits being concatenated on the right.
+with the least significant bit (i.e. bit 0) arriving first and the subsequent bits being concatenated on the right.
 The first group of 8 bits is byte 0, the second is byte 1 and so on until byte 15.
 When we represent these elements in a RISC-V vector element group, byte 0 is the rightmost byte and byte 15 is
-the left most. Since the left most bit of each byte is now holding the lsb, we perform a bit-reverse operation to
+the leftmost. Since the leftmost bit of each byte is now holding the lsb, we perform a bit-reverse operation to
 get the bits in the order 7 to 0.
 Now the element group holds the most significant bit (i.e., bit 127) on the left and the least significant bit
 (i.e., bit 0) on the right. While this is the reverse of how bits are shown in the specification, it is in the
@@ -102,13 +102,15 @@ The multiplication is defined in the spec as follows:
 .. `V~i+1~ := (V~i~ & 1) ? (V~i~ >> 1) &#8853; R, V~i~ >> 1`
 . Return `Z~128~`.
 
+
+
 Note::
 In the above definition, the least significant bit is on the left and the most significant it on the right.
 Shifting to the right by one place is effectively multiplying by 2.
 The V value is multiplied by 2 and then reduced if the shifted off MSB==1.
 This allows the value to remain representable in 128 bits. 
 
-In order to match the GHASH specification, the bits within bytes are reversed internally to the instruction
+In order to match the GHASH specification, the bits within bytes are reversed internally by the instruction
 so that the least significant bit is on the left. Thus, instead of the bits being ordered (7,6,5,4,3,2,1,0) they would be ordered (0,1,2,3,4,5,6,7).
 
 // This instruction effectively applies a single 128x128 carryless multiply producing a 255-bit product which it reduces
