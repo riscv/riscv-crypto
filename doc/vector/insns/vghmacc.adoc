@@ -145,10 +145,11 @@ function clause execute (VGHMACC(vs2, vs1, vd)) = {
 
     let prod[254:0]   = clmul_128(Y, H);
       // Reduce product by irreducible polynomial
-    let red1 = clmul_13(prod[254:249], 0x87);
-    let prod[133:121] ^= red1;
-    let red2 = clmul_121(prod[248:128],0x87);
-    let prod[127:0] ^= red2;
+      let red1 = clmul_121(prod[254:249], 0x87);
+      let prod[133:6] ^= red1[127:0];
+      //   133:128 are modified by 254:249 x 0x87
+      let red2 = clmul_6(prod[133:128],0x87);
+      let prod[127:0] ^= red2;
 
     let sum[127:0] = brev(prod) ^ X; // bit reverse in byte to get back to GCM standard ordering
 
