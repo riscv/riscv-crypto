@@ -175,7 +175,7 @@ include::insns/vbrev8.adoc[leveloffset=+2]
 <<<
 include::insns/vclmul.adoc[leveloffset=+2]
 <<<
-include::insns/vclmaccgh.adoc[leveloffset=+2]
+include::insns/vghmacc.adoc[leveloffset=+2]
 <<<
 include::insns/vclmulh.adoc[leveloffset=+2]
 <<<
