@@ -1,0 +1,185 @@
+[[insns-vghmacc, Vector Carryless Multiply over Galois-Field 2^128]]
+= vghmacc.vv
+
+Synopsis::
+Vector Carryless Multiply Accumulate over GHASH Galois-Field
+
+Mnemonic::
+vghmacc.vv vd, vs2, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm=1'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | Partial-hash (Y~i-1~)
+| Vs1 | input  | 128  | 4 | 32 | Hash Subkey (H)
+| Vs2 | input  | 128  | 4 | 32 | Block Cipher output (X~i~)
+| Vd  | output | 128  | 4 | 32 | Partial-hash (Y~i~)
+|===
+
+
+
+Note to reviewers::
+This instruction will perform a single "iteration" of GHASH as described below. The details of this
+specification, especially the pseudo code, will be going through some refinements in the near future
+to get it to match the standardized GHASH/GCM behavior.
+
+
+
+Description:: 
+This instruction performs a single "iteration" of the GHASH~H~ algorithm.
+It takes as its inputs the previously generated hash as well as the current
+output of the block cipher and the Hash Subkey (H).
+It adds the hash to the block cipher output and then multiplies over GF[2~128~] the sum
+by H.
+
+The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
+modulo the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1
+
+Note::
+We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
+with the NIST specification. These reversals are inexpensive to implement as they unconditionally
+swap bit positions and therefore do not require any logic.
+
+Note::
+To understand the inputs from the algorithm point of view, they can be viewed as being bit-serial
+with the least significant bit (i.e. bit 0) arriving first and the subsequent bits being concatenated on the right.
+The first group of 8 bits is byte 0, the second is byte 1 and so on until byte 15.
+When we represent these elements in a RISC-V vector element group, byte 0 is the rightmost byte and byte 15 is
+the leftmost. Since the leftmost bit of each byte is now holding the lsb, we perform a bit-reverse operation to
+get the bits in the order 7 to 0.
+Now the element group holds the most significant bit (i.e., bit 127) on the left and the least significant bit
+(i.e., bit 0) on the right. While this is the reverse of how bits are shown in the specification, it is in the
+order that we are used to, and allows us to use standard polynomial multiply operations and to use 0x87 as the least
+significant 128 bits of the irreducible polynomial.
+
+
+// Y~i~ = (Y~i-1~ ^ X~i~) &#183; H `// as described in the spec with Y~0~ = 0^128^`
+// or 
+
+The operation can be compactly defined as
+Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~`
+
+
+It treats each EGW=128 element group of `vs1` and `vs2` as the input polynomials.
+This instruction is intended to be used to implement a GHASH~H~ as defined in NIST Special Publication 800-38D
+"Recommendation for Block Cipher Modes of Operation:
+Galois/Counter Mode (GCM) and GMAC". See
+link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[here]
+This specification orders the coefficients in increasing order from left to right x~0~x~1~...x~127~
+for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^.
+
+The multiplication is defined in the spec as follows:
+
+. Let `R` be the bit string `11100001 || 0^120^`
+. Let `x~0~x~1~...x~127~` denote the sequence of bits in `X`.
+. Let `Z~0~ = 0^128^` and `V~0~ = Y`.
+. For i = 0 to 127 // calculate blocks `Z~i+1~` and `V~i+1~` as follows:
+.. `Z~i+1~ := X~i~ ? (Z~i~ ^ V~i~), Z~i~`
+.. `V~i+1~ := (V~i~ & 1) ? (V~i~ >> 1) &#8853; R, V~i~ >> 1`
+. Return `Z~128~`.
+
+
+
+Note::
+In the above definition, the least significant bit is on the left and the most significant it on the right.
+Shifting to the right by one place is effectively multiplying by 2.
+The V value is multiplied by 2 and then reduced if the shifted off MSB==1.
+This allows the value to remain representable in 128 bits. 
+
+In order to match the GHASH specification, the bits within bytes are reversed internally by the instruction
+so that the least significant bit is on the left. Thus, instead of the bits being ordered (7,6,5,4,3,2,1,0) they would be ordered (0,1,2,3,4,5,6,7).
+
+// This instruction effectively applies a single 128x128 carryless multiply producing a 255-bit product which it reduces
+// by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1,
+// and adding it to the least significant 128 bits,
+// producing a 128-bit result which is written to the corresponding element group in `vd`.
+
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`
+
+// It requires that `Zvl128b`be implemented (i.e `VLEN>=128`).
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VGHMACC(vs2, vs1, vd)) = {
+  // operands are input with bits reversed in each byte
+
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+  elementgroups = (vl/EGS)
+  egstart = (vstart/EGS)
+
+  foreach (i from egstart to elementgroups) {
+    
+    let Y = brev(get_velem(vd,EGW=128,i));  // previous partial-hash
+    let H = brev(get_velem(vs1,EGW=128,i)); // Hash subkey
+    let X = get_velem(vs2,EGW=128,i);       // block cipher output
+
+
+    let prod[254:0]   = clmul_128(Y, H);
+      // Reduce product by irreducible polynomial
+    let red1 = clmul_13(prod[254:249], 0x87);
+    let prod[133:121] ^= red1;
+    let red2 = clmul_121(prod[248:128],0x87);
+    let prod[127:0] ^= red2;
+
+    let sum[127:0] = brev(prod) ^ X; // bit reverse in byte to get back to GCM standard ordering
+
+    let result = sum[127:0]; 
+    set_velem(vd, EGW=128, i, result);
+  }
+  RETIRE_SUCCESS
+
+// The following code is to be corrected and moved to the appendix
+function clmul_128 (a, b) = {
+    let output : 128 = 0;
+    foreach (i from 0 to 127 by 1) {
+      output = if ((b >> i) & 1)
+        then output ^ (a << i);
+        else output;
+    }
+    output; /* Return value */
+  }
+
+
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkg>>
+| v0.1.0
+| In Development
+|===
