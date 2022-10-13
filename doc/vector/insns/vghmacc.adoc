@@ -1,11 +1,11 @@
-[[insns-vclmulgf, Vector Carryless Multiply over Galois-Field 2^128]]
-= vclmulgf.vv
+[[insns-vghmacc, Vector Carryless Multiply over Galois-Field 2^128]]
+= vghmacc.vv
 
 Synopsis::
-Vector Carryless Multiply over Galois-Field 2^128
+Vector Carryless Multiply Accumulate over GHASH Galois-Field
 
 Mnemonic::
-vclmulgf.vv vd, vs2, vs1
+vghmacc.vv vd, vs2, vs1
 
 Encoding::
 [wavedrom, , svg]
@@ -45,8 +45,6 @@ Note to reviewers::
 This instruction will perform a single "iteration" of GHASH as described below. The details of this
 specification, especially the pseudo code, will be going through some refinements in the near future
 to get it to match the standardized GHASH/GCM behavior.
-We probably should change this instruction mnemonic as `vclmulgf` does not describe the full function 
-of the instruction.
 
 
 
@@ -82,7 +80,7 @@ significant 128 bits of the irreducible polynomial.
 // or 
 
 The operation can be compactly defined as
-Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~` 
+Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~`
 
 It treats each EGW=128 element group of `vs1` and `vs2` as the input polynomials.
 This instruction is intended to be used to implement a GHASH~H~ as defined in NIST Special Publication 800-38D
@@ -129,7 +127,7 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 Operation::
 [source,pseudocode]
 --
-function clause execute (VCLMULGF(vs2, vs1, vd)) = {
+function clause execute (VGHMACC(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
 
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
@@ -141,18 +139,20 @@ function clause execute (VCLMULGF(vs2, vs1, vd)) = {
     
     let Y = brev(get_velem(vd,EGW=128,i));  // previous partial-hash
     let H = brev(get_velem(vs1,EGW=128,i)); // Hash subkey
-    let X = brev(get_velem(vs2,EGW=128,i)); // block cipher output
+    let X = get_velem(vs2,EGW=128,i);       // block cipher output
 
-    let sum = Y ^ X;
 
-    let prod[255:0]   = clmul_128(sum, H); // MSB is always 0
+    let prod[254:0]   = clmul_128(Y, H);
       // Reduce product by irreducible polynomial
-      let red1 = clmul_121(prod[254:134], 0x87); // 128 bit product
+      let red1 = clmul_121(prod[254:134], 0x87);// 128-bit product
       let prod[133:6] ^= red1[127:0];
       //   133:128 are modified by 254:249 x 0x87
-      let red2 = clmul_6(prod[133:128],0x87); // 13 bit product
-      let prod[12:0] ^= red2[12:0]
-    let result = brev(prod[127:0]);  // bit reverse in byte to get back to GCM standard ordering
+      let red2 = clmul_6(prod[133:128],0x87); //13-bit product
+      let prod[12:0] ^= red2[12:0];
+
+    let sum[127:0] = brev(prod) ^ X; // bit reverse in byte to get back to GCM standard ordering
+
+    let result = sum[127:0]; 
     set_velem(vd, EGW=128, i, result);
   }
   RETIRE_SUCCESS
