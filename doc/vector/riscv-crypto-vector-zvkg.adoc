@@ -9,7 +9,7 @@ Instructions for efficiently implementing GCM.
 |EGW
 |Mnemonic
 |Instruction
-| 128 | vclmulgf.vv | <<insns-vclmulgf>>
+| 128 | vghmacc.vv | <<insns-vghmacc>>
 
 |===
 
