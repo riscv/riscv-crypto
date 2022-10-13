@@ -1,7 +1,7 @@
 [[crypto-vector-scalar-instructions]]
 === Crypto Vector-Scalar Instructions
 
-The RISC-V Vector Extension defines three forms of vector-scalar operations, based teh source of the scalar operand:
+The RISC-V Vector Extension defines three forms of vector-scalar operations, based on the source of the scalar operand:
 
 - A five-bit immediate
 - A scalar _x_ register

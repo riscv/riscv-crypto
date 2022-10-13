@@ -15,7 +15,7 @@ functions of the AES block cipher.
 | 128 | vaesd128.[vv,vs] | <<insns-vaesd128>>
 | 128 | vaese256.[vv,vs] | <<insns-vaese256>>
 | 128 | vaesd256.[vv,vs] | <<insns-vaesd256>>
-| 128 | vaes128k10.vv | <<insns-vaes128k10>>
+| 128 | vaes128k10.v  | <<insns-vaes128k10>>
 | 128 | vaes256k13.vv | <<insns-vaes256k13>>
 | 128 | vaes256k14.vv | <<insns-vaes256k14>>
 |===

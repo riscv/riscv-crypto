@@ -5,7 +5,7 @@ Synopsis::
 Vector AES round zero encryption/decryption instruction.
 
 Mnemonic::
-vaesz.vs vd, vs2, vs1
+vaesz.vs vd, vs2
 
 Encoding (Vector-Scalar)::
 [wavedrom, , svg]

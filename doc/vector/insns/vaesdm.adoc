@@ -5,8 +5,8 @@ Synopsis::
 Vector AES middle round decryption instruction.
 
 Mnemonic::
-vaesdsm.vv vd, vs2 +
-vaesdsm.vs vd, vs2
+vaesdm.vv vd, vs2 +
+vaesdm.vs vd, vs2
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -77,7 +77,7 @@ therefore must be a multiple of `EGS=4`. +
 Operation::
 [source,sail]
 --
-function clause execute (VAESDSM(vs1, vd, vv)) = {
+function clause execute (VAESDM(vs1, vd, vv)) = {
   // calculate the number of element groups (eg)
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
