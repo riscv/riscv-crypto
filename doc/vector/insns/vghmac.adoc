@@ -1,11 +1,11 @@
-[[insns-vghmacc, Vector Carryless Multiply over Galois-Field 2^128]]
-= vghmacc.vv
+[[insns-vghmac, Vector Carryless Multiply over Galois-Field 2^128]]
+= vghmac.vv
 
 Synopsis::
 Vector Carryless Multiply Accumulate over GHASH Galois-Field
 
 Mnemonic::
-vghmacc.vv vd, vs2, vs1
+vghmac.vv vd, vs2, vs1
 
 Encoding::
 [wavedrom, , svg]
@@ -29,7 +29,7 @@ Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
@@ -118,8 +118,8 @@ so that the least significant bit is on the left. Thus, instead of the bits bein
 
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `EEW=32` elements to be processed and 
-therefore must be a multiple of `EGS=4`. + 
+`vl` must be set to the number of `EEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`
 
 // It requires that `Zvl128b`be implemented (i.e `VLEN>=128`).
@@ -127,7 +127,7 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 Operation::
 [source,pseudocode]
 --
-function clause execute (VGHMACC(vs2, vs1, vd)) = {
+function clause execute (VGHMAC(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
 
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
@@ -136,7 +136,7 @@ function clause execute (VGHMACC(vs2, vs1, vd)) = {
   egstart = (vstart/EGS)
 
   foreach (i from egstart to elementgroups) {
-    
+
     let Y = brev(get_velem(vd,EGW=128,i));  // previous partial-hash
     let H = brev(get_velem(vs1,EGW=128,i)); // Hash subkey
     let X = get_velem(vs2,EGW=128,i);       // block cipher output
