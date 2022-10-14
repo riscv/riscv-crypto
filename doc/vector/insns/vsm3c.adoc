@@ -29,7 +29,7 @@ Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
@@ -39,7 +39,7 @@ Arguments::
 | Vd   | output | 256  | 8 | 32 | Next state {A,B,C,D,E,F,G,H}
 |===
 
-Description:: 
+Description::
 Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
 
@@ -51,7 +51,7 @@ Note::
 The rounds number is used in the rotation of the constant as well to inform the
 behavior which differs between rounds 0-15, and rounds 16-63.
 
-It treats each 256-bit 8-element group of `vd` as eight 32-bit words,  
+It treats each 256-bit 8-element group of `vd` as eight 32-bit words,
 and each 256-bit 8-element group of `vs2` as eight 32-bit words. Only 4 of these words are consumed by
 this instruction, the rest are don't-cares.
 
@@ -71,10 +71,10 @@ This instruction consumes the "W" message schedule inputs and internally generat
 // It probably makes sense to have vs1 and vs2 hold eight 32-bit words each and have 4 versions of this instruction;
 // one for each pair of inputs.
 // This fits more naturally with the generating instructions and doesn't leave us with the oddity of 64-bit and 256-bit element groups
-// Vd (in) = {A,B,C,D,E,F,G,H} 
+// Vd (in) = {A,B,C,D,E,F,G,H}
 // vs1 = W[0:7]  // 8 expanded words
 // vs2 = W’[0:7] // 8 expanded words with XORing
-// Vd (out) = {A,B,C,D,E,F,G,H} 
+// Vd (out) = {A,B,C,D,E,F,G,H}
 
 
 
@@ -87,7 +87,7 @@ This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rnd, vs2)) = {
+function clause execute (VSM3C(rnd, vs2)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
   // assert round key in range
@@ -95,10 +95,10 @@ function clause execute (VAESESFK1(rnd, vs2)) = {
   elementgroups = (vl/EGS)
   egstart = (vstart/EGS)
   vlen = vl/EGS
-  
-  
-// your code goes here
- SS1 <- ROTL7((ROTL12(A) + E + (ROTLjmod32(T_j))
+
+
+  // your code goes here
+  SS1 <- ROTL7((ROTL12(A) + E + (ROTLjmod32(T_j))
   SS2 <- SS1 xor ROTL12(A)
   TT1 <- FF_j(A, B, C) + D + SS2 + W'[i]
   TT2 <- GG_j(E, F, G) + H + SS1 + W[i]
@@ -124,10 +124,8 @@ function clause execute (VAESESFK1(rnd, vs2)) = {
   F <- E1
   E2 <- P_0(TT2)
 
-Output: {A2, A1, C2, C1, E2, E1, G2, G1}
+  Output: {A2, A1, C2, C1, E2, E1, G2, G1}
 
-
-  }
   RETIRE_SUCCESS
 }
 --
