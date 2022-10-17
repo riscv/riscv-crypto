@@ -43,9 +43,9 @@ Perform the round-0 function of the AES block cipher. The function is identical 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.
 Each element group of source `vs2` holds the current round state
 and each 128-bit element group of `vs1` holds the round key.
-There is only a `.vs` form of the instruction. Element group 0 of the single register `vs1` holds a single element group
-that is used as the round key for all of the element groups in `vs2`. While in this case `vs1` is a single register, both
-`vs2` and `vd` can be register groups. 
+There is only a `.vs` form of the instruction. Element group 0 of the single register `vs2` holds a single element group
+that is used as the round key for all of the element groups in `vs2`. While in this case `vs2` is a single register, 
+`vd` can be register groups. 
 The next round state output of each element group is produced by applying the AddRoundkey
 step to the corresponding inputs. This instruction must always be implemented such that its execution latency does not
 depend on the data being operated upon.    
@@ -61,7 +61,6 @@ This instruction only exists in the .vs form because the .vv form would be ident
 This instruction operates on element groups in the source and destination registers
 
 Note::
-This is true for all .vs instructions in the Vector Crypto Extensions - COPY THIS TO THE OTHER INSTRUCTIONS
 Since the least significant element group of register `vs1` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
 otherwise the instruction encoding is reserved.
@@ -75,7 +74,7 @@ function clause execute (VAESZ(vs1, vd) = {
   eg = (vl/EGS)  
   foreach (i from vstart to eg) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
-    let rkey  : bits(128) = get_velem(vs2, EGW=128, i);
+    let rkey  : bits(128) = get_velem(vs2, EGW=128, 0);
     let ark   : bits(128) = state ^ rkey;
     set_velem(vd, EGW=128, i, ark);
   }
