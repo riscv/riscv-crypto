@@ -55,8 +55,11 @@ Arguments::
 
 Description:: 
 This instruction implements the middle-round function of the AES block cipher.
-It treats each `EGW=128` element group of `vs2` as the current AES round state,
-and each `EGW=128` element group of `vs1` as the round key.
+It treats each `EGW=128` element group of `vd` as the current AES round state,
+and each `EGW=128` element group of `vs2` as the round key.
+In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a single element group that is used
+as the round key for all of the element groups in `vd`. While in this case `vs2` is a single register,
+`vd` can be a register group. 
 
 The result (i.e. the next round state) is written to each `EGW=128` element group of `vd`.
 
@@ -69,7 +72,7 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 // This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Note::
-Since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
+For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
 otherwise the instruction encoding is reserved.
 
