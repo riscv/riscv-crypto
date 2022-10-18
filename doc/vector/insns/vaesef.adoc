@@ -60,7 +60,9 @@ In the case of the `.vs` form of the instruction, element group 0 of the single 
 as the round key for all of the element groups in `vd`. While in this case `vs2` is a single register,
 `vd` can be a register group. 
 The next round state output of each element group is produced by applying the SubBytes, ShiftRows, and AddRoundkey
-steps to the corresponding inputs. This instruction must always be implemented such that its execution latency does not
+steps to the corresponding inputs and is written to each `EGW=128` element group of `vd`.
+
+This instruction must always be implemented such that its execution latency does not
 depend on the data being operated upon.    
 
 * SubBytes(state)
@@ -70,8 +72,7 @@ depend on the data being operated upon.
 //(ASIICDOC limitation???: Can't end on a bullet)
 
 Note::
-This is true for all .vs instructions in the Vector Crypto Extensions - COPY THIS TO THE OTHER INSTRUCTIONS
-Since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
+For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
 otherwise the instruction encoding is reserved.
 
