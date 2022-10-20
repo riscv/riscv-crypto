@@ -8,13 +8,12 @@ SEW differentiates between SHA-256 and SHA-512
 [%header,cols="^2,^2,^2,^2,2"]
 |===
 |`SEW`
-|`VLENmin`
-|`VEGW`
+|`EGW`
 |SHA-2
 |Extension
 
-|32 | 128 | 128 | SHA-256 | Zvknha, Zvknhb
-|64 | 128 | 256 | SHA-512 | Zvknhb
+|32 | 128 | SHA-256 | Zvknha, Zvknhb
+|64 | 256 | SHA-512 | Zvknhb
 |===
 
 NOTE::

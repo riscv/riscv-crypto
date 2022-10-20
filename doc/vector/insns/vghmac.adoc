@@ -1,4 +1,4 @@
-[[insns-vghmac, Vector Carryless Multiply over Galois-Field 2^128]]
+[[insns-vghmac, Vector Carryless Multiply Accumulate over Galois-Field 2^128]]
 = vghmac.vv
 
 Synopsis::
@@ -90,7 +90,7 @@ link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[here]
 This specification orders the coefficients in increasing order from left to right x~0~x~1~...x~127~
 for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^.
 
-The multiplication is defined in the spec as follows:
+The multiplication over GF(2^128^) is defined in the spec as follows:
 
 . Let `R` be the bit string `11100001 || 0^120^`
 . Let `x~0~x~1~...x~127~` denote the sequence of bits in `X`.
@@ -150,7 +150,7 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
       let red2 = clmul_6(prod[133:128],0x87); //13-bit product
       let prod[12:0] ^= red2[12:0];
 
-    let sum[127:0] = brev(prod) ^ X; // bit reverse in byte to get back to GCM standard ordering
+    let sum[127:0] = brev(prod) ^ X; // bit reverse bytes of product to get back to GCM standard ordering
 
     let result = sum[127:0]; 
     set_velem(vd, EGW=128, i, result);
@@ -159,7 +159,7 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
 
 // The following code is to be corrected and moved to the appendix
 function clmul_128 (a, b) = {
-    let output : 128 = 0;
+    let output : 255 = 0;
     foreach (i from 0 to 127 by 1) {
       output = if ((b >> i) & 1)
         then output ^ (a << i);

@@ -89,12 +89,17 @@ otherwise the instruction encoding is reserved.
 Operation::
 [source,sail]
 --
-function clause execute (VAESDS(vs2, vd, vv)) = {
-// calculate the number of element groups (eg)
-  eg = (vl/EGS) 
-  foreach (i from vstart to eg) {
-    let keyelem = if vv then i else 0;
-    let state : bits(128) = get_velem(vd, EGW=128, i);
+function clause execute (VAESDS(vs2, vd, suffix)) = {
+  // assert((vl%EGS) == 0)       // vl must be a multiple of EGS
+  // assert((vstart%EGS) == 0) //  vstart must be a multiple of EGS
+
+  // only process full element groups
+  eg_len = floor(vl/EGS)
+  eg_start = ceil(vstart/EGS)
+
+  foreach (i from eg_start to eg_len-1) {
+    let keyelem = if suffix == "vv" then i else 0;
+    let state : bits(128) = get_velem(vd,  EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
     let sr    : bits(128) = aes_inv_shift_rows(state);
     let sb    : bits(128) = aes_inv_sub_bytes(sr);

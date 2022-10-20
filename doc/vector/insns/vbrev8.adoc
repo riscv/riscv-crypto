@@ -34,7 +34,7 @@ Arguments::
 |Definition
 
 | Vs2 | input  | SEW  | 1 | SEW | Input bytes
-| Vd  | output | SEW  | 1 | SEW | Bit-revesed bytes
+| Vd  | output | SEW  | 1 | SEW | Bit-reversed bytes
 |===
 
 Description:: 
@@ -47,11 +47,13 @@ Operation::
 [source,sail]
 --
 function clause execute (VBREV8(vs2)) = {
+  // Need to add mask/tail handling
+
   foreach (i from vstart to vl) {
-    input = get_velem(vs2, SEW, i);
+    let input = get_velem(vs2, SEW, i);
     let output : SEW = 0;
-    foreach (i from 0 to SEW by 8) 
-      output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);
+    foreach (i from 0 to SEW-8 by 8) 
+      let output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);
     set_velem(vd, SEW, i, output)
   }
   RETIRE_SUCCESS

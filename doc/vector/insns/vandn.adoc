@@ -103,29 +103,19 @@ The `.vv` form of the instruction is what is needed for SHA3; the `.vx` and `.vi
 Operation::
 [source,sail]
 --
-function clause execute (VANDN_VV(vs2, vs1, vd)) = {
-  foreach (i from vstart to vl) {
-    set_velem(vd, EEW=SEW, i,
-      get_velem(vs1, EEW=SEW, i) & ~get_velem(vs2, EEW=SEW, i));
+function clause execute (VANDN(vs2, vs1, vd, suffix)) = {
+  foreach (i from vstart to vl-1) {
+    let op1 = match suffix {
+      "vv" => get_velem(vs1, EEW=SEW, i),
+      "vx" => sext_or_truncate_to_sew(X(rs1)),
+      "vi" => sext(imm)
+    };
+    let op2 = get_velem(vs2, EEW=SEW, i); 
+    set_velem(vd, EEW=SEW, i, op & ~op2);
   }
   RETIRE_SUCCESS
 }
 
-function clause execute (VANDN_VX(vs2, rs1, vd)) = {
-  foreach (i from vstart to vl) {
-    set_velem(vd, EEW=SEW, i, 
-      sext_or_truncate_to_sew(X(rs1)) & ~get_velem(vs2, EEW=SEW, i) );
-  }
-  RETIRE_SUCCESS
-}
-
-function clause execute (VANDN_VI(vs2, imm, vd)) = {
-  foreach (i from vstart to vl) {
-    set_velem(vd, EEW=SEW, i, 
-        zext(imm) & ~get_velem(vs2, EEW=SEW, i);
-  }
-  RETIRE_SUCCESS
-}
 --
 
 Included in::
