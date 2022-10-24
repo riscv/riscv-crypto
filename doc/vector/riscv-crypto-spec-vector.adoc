@@ -135,36 +135,38 @@ include::./riscv-crypto-vector-zvksh.adoc[]
 [[crypto_vector_insns, reftext="Vector Cryptography Instructions"]]
 == Instructions
 
-include::insns/vaes128k10.adoc[leveloffset=+2]
-<<< 
-include::insns/vaes256k13.adoc[leveloffset=+2]
-<<<  
-include::insns/vaes256k14.adoc[leveloffset=+2]
-<<<
-include::insns/vaesd128.adoc[leveloffset=+2]
-<<< 
-include::insns/vaesd256.adoc[leveloffset=+2]
-<<<
+// include::insns/vaes128k10.adoc[leveloffset=+2]
+// <<< 
+// include::insns/vaes256k13.adoc[leveloffset=+2]
+// <<<  
+// include::insns/vaes256k14.adoc[leveloffset=+2]
+// <<<
+// include::insns/vaesd128.adoc[leveloffset=+2]
+// <<< 
+// include::insns/vaesd256.adoc[leveloffset=+2]
+// <<<
 include::insns/vaesdf.adoc[leveloffset=+2]
 <<<
 include::insns/vaesdm.adoc[leveloffset=+2]
 <<<   
-include::insns/vaese128.adoc[leveloffset=+2]
-<<<
-include::insns/vaese256.adoc[leveloffset=+2]
-<<<
+// include::insns/vaese128.adoc[leveloffset=+2]
+// <<<
+// include::insns/vaese256.adoc[leveloffset=+2]
+// <<<
 include::insns/vaesef.adoc[leveloffset=+2]
 <<<
 include::insns/vaesem.adoc[leveloffset=+2]
 <<<
-include::insns/vaeskf1.adoc[leveloffset=+2]
+include::insns/vaeskf.adoc[leveloffset=+2]
 <<<
-include::insns/vaeskf2.adoc[leveloffset=+2]
-<<<
-include::insns/vaeskr1.adoc[leveloffset=+2]
-<<<
-include::insns/vaeskr2.adoc[leveloffset=+2]
-<<<
+// include::insns/vaeskf1.adoc[leveloffset=+2]
+// <<<
+// include::insns/vaeskf2.adoc[leveloffset=+2]
+// <<<
+// include::insns/vaeskr1.adoc[leveloffset=+2]
+// <<<
+// include::insns/vaeskr2.adoc[leveloffset=+2]
+// <<<
 include::insns/vaesz.adoc[leveloffset=+2]
 <<<
 include::insns/vandn.adoc[leveloffset=+2]
