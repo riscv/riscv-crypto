@@ -46,7 +46,7 @@ and each `EGW=128` element group of `vd` as the previous AES round key.
 The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 14.
 Out of range values signal an illegal instruction exception.
 
-It applies a single AES-256 KeySchedule round to each element group, and
+It applies a single AES KeySchedule round to each element group, and
 writes the 128-bit result to the corresponding element group in `vd`.
 
 This instruction only returns the generated key to the same element group as the source.
@@ -84,9 +84,13 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 
 [NOTE]
 ====
-The AES-256 KeySchedule uses 8 32-bit words to compute the next 4 32-bit
+The AES KeySchedule consumes 5 32-bit words to compute the next 4 32-bit
 words of the KeySchedule, while the round function consumes these words
 in chunks of 128-bits.
+The difference between AES-128 and AES-256 is where the 5th word comes from.
+In AES-128 it comes from the current round key, and in AES-256 it comes from the
+previous round key. When using this instruction for AES-128, the register holding
+the current round key should also be used for the previous round key argument.
 ====
 
 
