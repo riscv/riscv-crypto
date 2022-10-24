@@ -76,14 +76,13 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VSM4R(vd, vs2)) = {
-  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
-  // assert round key in range
 
-  elementgroups = (vl/EGS)
-  egstart = (vstart/EGS)
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
   
-  foreach (i from egstart to elementgroups) {
+  foreach (i from eg_start to eg_len-1) {
     let rk[0:3] : bits(128) = get_velem(vs2, EGW=128, i);
     let X[0:3] : bits(128) = get_velem(vd, EGW=128, i);
 

@@ -58,25 +58,26 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rnd, vs2)) = {
+function clause execute (VAESESKF1(rnd, vs2)) = {
+ if((unsigned(rnd) > 10) | unsigned(rnd) = 0) then {
+    handle_illegal();  RETIRE_SUCCESS
+    } else {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
-  // assert round key in range
 
-  elementgroups = (vl/EGS)
-  egstart = (vstart/EGS)
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
   
-  foreach (i from egstart to elementgroups) {
-    let current : bits(128) = get_velem(vs2, EGW=128, i);
-    let next    : bits(128) = aes_128_forward_key_schedule(rnd, current);
-    set_velem(vd, EGW=128, i, next);
+  foreach (i from eg_start to eg_len-1) {
+      let current : bits(128) = get_velem(vs2, EGW=128, i);
+      let next    : bits(128) = aes_128_forward_key_schedule(rnd, current);
+      set_velem(vd, EGW=128, i, next);
+    }
+    RETIRE_SUCCESS
   }
-  RETIRE_SUCCESS
 }
 --
 

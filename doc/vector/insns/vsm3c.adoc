@@ -90,11 +90,11 @@ Operation::
 function clause execute (VSM3C(rnd, vs2)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
-  // assert round key in range
 
-  elementgroups = (vl/EGS)
-  egstart = (vstart/EGS)
-  vlen = vl/EGS
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
 
 
   // your code goes here

@@ -68,28 +68,26 @@ This instruction is only defined for `SEW=64`. The use of any other SEW with thi
 Operation::
 [source,sail]
 --
+function clause execute (VCLMULH(vs2, vs1, vd, suffix)) = {
+
+  foreach (i from vstart to vl-1) {
+    let op1 : bits (64) = if suffix =="vv" then get_velem(vs1,i) else X(vs1); 
+    let op2 : bits (64) = get_velem(vs2,i);
+    let product : bits (64) = clmulh(op1,op2);
+    set_velem(vd, i, product);
+  }
+  RETIRE_SUCCESS
+}
+
 function clmulh(x, y, SEW) = { // TODO: not real Sail Code yet
   // i=0 could be skipped, as x >> SEW will be 0
   result : bits(SEW) = zeros();
   foreach (i from 0 to (SEW - 1)) {
-    if y[i] == bitone then result = result ^ (x >> (SEW - i));
+    if y[i] == 1 then result = result ^ (x >> (SEW - i));
   };
   result
 }
 
-function clause execute (VCLMULH_VV(vs2, vs1, vd)) = {
-  foreach (i from vstart to vl) {
-      set_velem(vd, i, clmulh(get_velem(vs1,i), get_velem(vs2,i)));
-  }
-  RETIRE_SUCCESS
-}
-
-function clause execute (VCLMULH_VX(vs2, rs1, vd)) = {
-  foreach (i from vstart to vl) {
-      set_velem(vd, i, clmulh(X(rs1), get_velem(vs2,i)));
-  }
-  RETIRE_SUCCESS
-}
 --
 
 Included in::

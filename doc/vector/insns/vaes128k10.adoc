@@ -54,13 +54,17 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAES128k10(rnd, vs2)) = {
+
+//  eg_len = floor(vl/EGS) // only process full element groups
+//  eg_start = ceil(vstart/EGS)
+
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
-  elementgroups = (vl/EGS)
-  egstart = (vstart/EGS)
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
   
-  foreach (i from egstart to elementgroups) {
+  foreach (i from eg_start to eg_len-1) {
     let rky : bits(128) = get_velem(vs2, EGW=128, i);
     foreach (rnd from 1 to 9)
       let rky    : bits(128) = aes_128_forward_key_schedule(rnd, rky);

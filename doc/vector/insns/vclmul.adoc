@@ -74,26 +74,25 @@ to 64 bits as appropriate.
 Operation::
 [source,sail]
 --
+
+
+function clause execute (VCLMUL(vs2, vs1, vd, suffix)) = {
+
+  foreach (i from vstart to vl-1) {
+    let op1 : bits (64) = if suffix =="vv" then get_velem(vs1,i) else X(vs1); 
+    let op2 : bits (64) = get_velem(vs2,i);
+    let product : bits (64) = clmul(op1,op2);
+    set_velem(vd, i, product);
+  }
+  RETIRE_SUCCESS
+}
+
 function clmul(x, y, EEW) = { // TODO: not real Sail Code yet
   result : bits(EEW) = zeros();
   foreach (i from 0 to (EEW - 1)) {
-    if y[i] == bitone then result = result ^ (x << i);
+    if y[i] == 1 then result = result ^ (x << i);
   };
   result
-}
-
-function clause execute (VCLMUL_VV(vs2, vs1, vd)) = {
-  foreach (i from vstart to vl) {
-      set_velem(vd, i, clmul(get_velem(vs1,i), get_velem(vs2,i)));
-  }
-  RETIRE_SUCCESS
-}
-
-function clause execute (VCLMUL_VX(vs2, rs1, vd)) = {
-  foreach (i from vstart to vl) {
-      set_velem(vd, i, clmul(X(rs1), get_velem(vs2,i)));
-  }
-  RETIRE_SUCCESS
 }
 --
 

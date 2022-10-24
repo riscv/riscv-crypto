@@ -43,7 +43,7 @@ Description::
 This instruction implements a single round of the reverse AES-256 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key,
 and each 128-bit element group of `vd` as the next (in forward sequence) AES round key.
-The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 10.
+The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 14.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-256 KeySchedule round to each element group, and
@@ -63,16 +63,24 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rcon, vs2)) = {
+function clause execute (VAESESKR2(vd, rcon, vs2)) = {
+ if((unsigned(rnd) > 14) | unsigned(rnd) = 0) then {
+    handle_illegal();  RETIRE_SUCCESS
+  } else {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
-  vlen = TBD
-  foreach (i from vstart to vlen) {
-    let current : bits(128) = get_velem(vs2, EGW=128, i);
-    let next : bits(128) = get_velem(vd, EGW=128, i);
-    let previous    : bits(128) = aes_128_forward_key_schedule(rcon, current, previous);
-    set_velem(vd, EGW=128, i, previous);
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
+      let current  : bits(128) = get_velem(vs2, EGW=128, i);
+      let next     : bits(128) = get_velem(vd, EGW=128, i);
+      let previous : bits(128) = aes_256_reverse_key_schedule(rcon, current, previous);
+      set_velem(vd, EGW=128, i, previous);
+    }
+    RETIRE_SUCCESS
   }
-  RETIRE_SUCCESS
 }
 --
 

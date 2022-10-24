@@ -14,8 +14,8 @@ themsleves --- will likely change. Alternatively, we may choose to differentiate
 between these two by other means.
 
 Question::
-Do we need two versions? Can we have one version and use a slideDown or 
-the like without hurting performance?
+Do we need two versions? We are evaluating if there is an advantage to having both as opposed to
+having one version and using a slideDown or the like between invocations.
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -58,7 +58,7 @@ Arguments::
 |Definition
 
 | Vd  | input  | 4*SEW  | 4 | SEW | current state {c, d, g, h}
-| Vs1 | input  | 4*SEW  | 4 | SEW | MessageSched[3:0]
+| Vs1 | input  | 4*SEW  | 4 | SEW | MessageSched plus constant[3:0]
 | Vs2 | input  | 4*SEW  | 4 | SEW | current state {a, b, e, f}
 | Vd  | output | 4*SEW  | 4 | SEW | next state {a, b, e, f} 
 |===
@@ -91,7 +91,9 @@ VLMUL must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
 is written to vd.
 
-These instructions take in two SEW words of the message schedule _W1_ and _W0_
+These instructions take in two SEW words _W1_ and _W0_ which are next two words of the message 
+schedule after they have been incremented by the appropriate constant (see
+link:https://doi.org/10.6028/NIST.FIPS.180-4[FIPS PUB 180-4 Secure Hash Standard (SHS)])
 and eight SEW word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
 output is the new values of _a, b, e_ and _f_ after performing 2 rounds of the hash
 computation. The other 4 variables, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
@@ -127,11 +129,18 @@ Operation::
 --
 function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 // Need to separate based on EGW (128 or 256)
-	foreach (i from vstart to vl) {
+
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
 	  {f, e, b, a} : bits(128) = get_velem(vs2, EGW=128, i};
 	  {h, g, d, c} : bits(128) = get_velem(vd, EGW=128, i};
-	  MessageShed[3:0] : bits(128) = get_velem(vs1, EGW=128, i};
-	  {W1, W0} == VSHA2cl ? MessageSched[1:0] : MessageSched[3:2]; // l vs h difference is the words selected
+	  MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i};
+	  {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
 
 	  T1 = h + sum1(e) + Ch(e,f,g) + W0;
 	  T2 = sum0(a) + Maj(a,b,c);

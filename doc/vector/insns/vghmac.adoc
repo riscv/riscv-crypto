@@ -122,21 +122,18 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-// It requires that `Zvl128b`be implemented (i.e `VLEN>=128`).
-
 Operation::
 [source,pseudocode]
 --
 function clause execute (VGHMAC(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
-
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
-  elementgroups = (vl/EGS)
-  egstart = (vstart/EGS)
 
-  foreach (i from egstart to elementgroups) {
-
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
     let Y = brev(get_velem(vd,EGW=128,i));  // previous partial-hash
     let H = brev(get_velem(vs1,EGW=128,i)); // Hash subkey
     let X = get_velem(vs2,EGW=128,i);       // block cipher output
@@ -159,15 +156,14 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
 
 // The following code is to be corrected and moved to the appendix
 function clmul_128 (a, b) = {
-    let output : 255 = 0;
+    let result : 255 = 0;
     foreach (i from 0 to 127 by 1) {
-      output = if ((b >> i) & 1)
-        then output ^ (a << i);
-        else output;
+      result = if ((b >> i) & 1)
+        then result ^ (a << i);
+        else result;
     }
-    output; /* Return value */
+    result; /* Return value */
   }
-
 
 }
 --

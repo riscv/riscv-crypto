@@ -119,10 +119,8 @@ include::./riscv-crypto-vector-zvkns.adoc[]
 <<<
 include::./riscv-crypto-vector-zvknh.adoc[]
 <<< 
-// include::./riscv-crypto-vector-zvknhb.adoc[]
-// <<<  
-include::./riscv-crypto-vector-zvknf.adoc[]
-<<<
+// include::./riscv-crypto-vector-zvknf.adoc[]
+// <<<
 include::./riscv-crypto-vector-zvkb.adoc[]
 <<<
 include::./riscv-crypto-vector-zvkg.adoc[]

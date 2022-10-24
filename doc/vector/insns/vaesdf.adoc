@@ -90,13 +90,12 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESDS(vs2, vd, suffix)) = {
-  // assert((vl%EGS) == 0)       // vl must be a multiple of EGS
-  // assert((vstart%EGS) == 0) //  vstart must be a multiple of EGS
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
-  // only process full element groups
-  eg_len = floor(vl/EGS)
-  eg_start = ceil(vstart/EGS)
-
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
   foreach (i from eg_start to eg_len-1) {
     let keyelem = if suffix == "vv" then i else 0;
     let state : bits(128) = get_velem(vd,  EGW=128, i);

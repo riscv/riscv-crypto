@@ -69,8 +69,6 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
 Note::
 For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
@@ -81,7 +79,13 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VAESESM(vs2, vd, vv)) = {
-  foreach (i from vstart to vl) {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, i);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);

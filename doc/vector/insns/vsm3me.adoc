@@ -64,12 +64,11 @@ Operation::
 function clause execute (VSM3ME(vs2, vs1)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
-  // assert round key in range
 
-  elementgroups = (vl/EGS)
-  egstart = (vstart/EGS)
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
   
-  foreach (i from egstart to elementgroups) {
+  foreach (i from eg_start to eg_len-1) {
     // let current : bits(128) = get_velem(vs2, EGW=128, i);
     // let rk[3:0] = current // This pseudo code is temporary - it will be rewritten!!!!!!!!!!!!
   

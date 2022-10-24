@@ -81,9 +81,13 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESEF(vs2, vd) = {
-  // calculate the number of element groups (eg)
-  eg = (vl/EGS)  
-  foreach (i from vstart to eg) {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, i);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);

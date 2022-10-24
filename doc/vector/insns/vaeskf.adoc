@@ -1,11 +1,11 @@
-[[insns-vaeskf2, Vector AES-256 Forward KeySchedule]]
-= vaeskf2.vi
+[[insns-vaeskf2, Vector AES Forward KeySchedule]]
+= vaeskf.vi
 
 Synopsis::
-Vector AES-256 Forward KeySchedule
+Vector AES Forward KeySchedule
 
 Mnemonic::
-vaeskf2.vi vd, vs2, uimm
+vaeskf.vi vd, vs2, uimm
 
 Encoding::
 [wavedrom, , svg]
@@ -33,14 +33,14 @@ Arguments::
 |EEW
 |Definition
 
-| Vd   | input  | 128  | 4 | 32 | Previous Round key
-| uimm | input  | -    | - | -  | Round Number (rnd)
+| Vd   | input  | 128  | 4 | 32 | Round key 2 (AES256 ? Previous Round Key : Current Round Key)
+| uimm | input  | -    | - | -  | Round constant (rcon)
 | Vs2  | input  | 128  | 4 | 32 | Current Round key
 | Vd   | output | 128  | 4 | 32 | Next round key
 |===
 
 Description:: 
-This instruction implements a single round of the forward AES-256 KeySchedule.
+This instruction implements a single round of the forward AES KeySchedule.
 It treats each `EGW=128` element group of `vs2` as the current AES round key,
 and each `EGW=128` element group of `vd` as the previous AES round key.
 The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 14.
@@ -53,6 +53,28 @@ This instruction only returns the generated key to the same element group as the
 If it is desired to have the same key in all vector groups, either the input vector groups
 need to contain the same values, or the output from a particular group needs to be "broadcast"
 to the other groups using an instruction such as vrgather.
+
+[%autowidth]
+[%header,cols="4,2,2,2,2"]
+|===
+|rcon[3:0]
+|AES-128 round
+|AES-256 round
+|Value
+|Comment
+
+| 0x0000 | - | odd | none       | Used for odd AES-256 rounds
+| 0x0001 |  1 |  2   | 0x01000000 |
+| 0x0010 |  2 |  4   | 0x02000000 |
+| 0x0011 |  3 |  6   | 0x04000000 | 
+| 0x0100 |  4 |  8   | 0x08000000 |
+| 0x0101 |  5 |  10  | 0x10000000 |
+| 0x0110 |  6 |  12  | 0x20000000 |
+| 0x0111 |  7 |  14  | 0x40000000 | Highest constant for AES-256
+| 0x1000 |  8 |  -   | 0x80000000 |
+| 0x1001 |  9 |  -   | 0x1b000000 | 0x01 x 29 over GF(28)
+| 0x1010 | 10 |  -   | 0x36000000 | Highest constant for AES-128
+|===  
 
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
@@ -69,23 +91,32 @@ in chunks of 128-bits.
 
 
 Operation::
-[source,pseudocode]
+[source,Sail]
 --
-function clause execute (VAESESKF2(rnd, vd, vs2)) = {
- if((unsigned(rnd) > 14) | unsigned(rnd) = 0) then {
+function clause execute (VAESESKF(rcon, vd, vs2)) = {
+ if((unsigned(rcon) > 10) then {
     handle_illegal();  RETIRE_SUCCESS
   } else {
-    assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
-  
+
+// Insert constant table here
+
   foreach (i from eg_start to eg_len-1) {
-      let current : bits(128) = get_velem(vs2, EGW=128, i);
-      let previous : bits(128) = get_velem(vd, EGW=128, i);
-      let next    : bits(128) = aes_256_forward_key_schedule(rnd, current, previous);
-      set_velem(vd, EGW=128, i, next);
+      let current[3:0]  : bits(32)  = get_velem(vs2, EGW=128, i);
+      let previous[3:0] : bits(32)  = get_velem(vd, EGW=128, i);
+
+      let w[3] : bits(32) = if (rcon==0) then
+        previous[3] XOR SubWord(current[0])
+      else
+        previous[3] XOR SubWord(RotWord(current[0])) XOR Const[rcon];
+      w[2] : bits(32) = w[3] XOR previous[2]
+      w[1] : bits(32) = w[2] XOR previous[1]
+      w[0] : bits(32) = w[3] XOR previous[0]
+      set_velem(vd, EGW=128, i, w[3:0]);
     }
     RETIRE_SUCCESS
   }

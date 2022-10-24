@@ -99,6 +99,14 @@ scalar integer register `rs1`, or a zero-extended immediate.
 Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.
 
+[NOTE]
+====
+For all element widths except for `SEW=64`, the immediate form of this instruction (i.e., `vrol.vi`) is
+not needed as the same result can be achieved by negating  the rotate amount and using the immediate form
+of rotate right instruction (i.e., vror.vi). However, when `SEW=64`, the 5-bit immediate is not wide enough
+to do this for all cases . Therefore, we have included this immediate form for rotate left.
+====
+
 Operation::
 [source,sail]
 --

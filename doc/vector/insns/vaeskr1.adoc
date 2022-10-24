@@ -63,15 +63,24 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESFK1(rcon, vs2)) = {
-  vlen = tbd
-  foreach (i from vstart to vlen) {
-    let current : bits(128) = get_velem(vs2, EGW=128, i);
-    let previous    : bits(128) = aes_128_reverse_key_schedule(rcon, current);
-    set_velem(vd, EGW=128, i, previous);
+function clause execute (VAESESKR1(rcon, vs2)) = {
+   if((unsigned(rnd) > 10) | unsigned(rnd) = 0) then {
+    handle_illegal();  RETIRE_SUCCESS
+  } else {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
+      let current : bits(128) = get_velem(vs2, EGW=128, i);
+      let previous    : bits(128) = aes_128_reverse_key_schedule(rcon, current);
+      set_velem(vd, EGW=128, i, previous);
+    }
+    RETIRE_SUCCESS
   }
-  RETIRE_SUCCESS
-}
+} 
 --
 
 Included in::
