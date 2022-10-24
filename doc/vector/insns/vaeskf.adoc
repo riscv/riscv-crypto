@@ -1,4 +1,4 @@
-[[insns-vaeskf2, Vector AES Forward KeySchedule]]
+[[insns-vaeskf, Vector AES Forward KeySchedule]]
 = vaeskf.vi
 
 Synopsis::
