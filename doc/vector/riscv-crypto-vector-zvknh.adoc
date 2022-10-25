@@ -5,7 +5,9 @@ Instructions for accelerating SHA-2
 
 SEW differentiates between SHA-256 and SHA-512 
 
-[%header,cols="^2,^2,^2,^2,2"]
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
+
+[%header,cols="^2,^2,^2,^2"]
 |===
 |`SEW`
 |`EGW`
@@ -18,7 +20,6 @@ SEW differentiates between SHA-256 and SHA-512
 
 NOTE::
 - We are currently defining two variations of Zvknh: Zvknha for SHA-256 only, and Zvknhb for SHA-256 and SHA-512
-- Question: Is this the best way to do this?
 
 
 For SHA-256, implementations with VLEN < 128 require software to use LMUL>1 to combine

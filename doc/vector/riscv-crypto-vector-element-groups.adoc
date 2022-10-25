@@ -15,11 +15,16 @@ that operates on them:
 - Effective Element Width (EEW) - number of bits in each element
 
 When the EEW is explicitly defined for a vector crypto instruction, the current `SEW` is ignored by that instruction.
+This was done to enable other SEW values to be used without requiring an additional `vsetvl` instruction.
 
 As with all vector instructions, the number of elements processed by a vector instruction is specified by the
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
 Attempting to execute a Vector Crypto Instruction when this this ratio is not an
 integral value will result in an illegal instruction exception.
+
+Tip::
+To help ensure that the proper `vl` is used, programmers are encouraged to set SEW to the match the EEW of the
+instructions being executed.
 
 Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
 Attempting to execute a Vector Crypto Instruction when this this ratio is not an
@@ -48,9 +53,9 @@ for accelerated cryptographic operations.
 | EEW
 | EGS
 
-| AES      | <<zvkns>>, <<zvknf>> | 128 | 32 | 4
-| SHA256   | <<zvknha>>           | 128 | 32 | 4
-| SHA512   | <<zvknhb>>           | 256 | 64 | 4
+| AES      | <<zvkns>>            | 128 | 32 | 4
+| SHA256   | <<zvknh>>a           | 128 | 32 | 4
+| SHA512   | <<zvknh>>b           | 256 | 64 | 4
 | GCM      | <<zvkgb>>            | 128 | 32 | 4
 | SM4      | <<zvksed>>           | 128 | 32 | 4
 | SM3      | <<Zvksh>>            | 256 | 32 | 8

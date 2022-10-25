@@ -5,6 +5,8 @@ Instructions for accelerating full-round
 encryption, decryption and key-schedule
 functions of the AES block cipher.
 
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
+
 [%header,cols="^2,4,8"]
 |===
 |EGW

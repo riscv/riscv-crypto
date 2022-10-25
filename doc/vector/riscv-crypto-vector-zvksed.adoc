@@ -11,6 +11,8 @@ Systems which implement `VLEN<128` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
 for accelerated cryptographic operations.
 
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
+
 [%header,cols="^2,4,8"]
 |===
 |EGW

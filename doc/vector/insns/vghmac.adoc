@@ -1,4 +1,4 @@
-[[insns-vghmac, Vector Carryless Multiply Accumulate over Galois-Field 2^128]]
+[[insns-vghmac, Vector GHASH Multiply Accumulate]]
 = vghmac.vv
 
 Synopsis::
@@ -51,12 +51,12 @@ to get it to match the standardized GHASH/GCM behavior.
 Description:: 
 This instruction performs a single "iteration" of the GHASH~H~ algorithm.
 It takes as its inputs the previously generated hash as well as the current
-output of the block cipher and the Hash Subkey (H).
+output of the block cipher (in GCM, this is the cipher text) and the Hash Subkey (H).
 It adds the hash to the block cipher output and then multiplies over GF[2~128~] the sum
 by H.
 
 The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
-modulo the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1
+modulo the irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1) used by GHASH.
 
 Note::
 We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent

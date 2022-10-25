@@ -1,7 +1,9 @@
 [[zvkg,Zvkg]]
 === `Zvkg` - Vector GCM instructions for Cryptography
 
-Instructions for efficiently implementing GCM.
+Instruction for efficiently implementing Galois/Counter Mode (GCM).
+
+To help avoid side-channel timing attacks, this instruction shall be implemented with data-independent timing.
 
 [%header,cols="^2,4,8"]
 |===

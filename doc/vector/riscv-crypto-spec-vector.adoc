@@ -70,13 +70,16 @@ for more information.
 [acknowledgments]
 == Acknowledgments
 
-Contributors to all versions of the specification (in alphabetical order)
+Contributors to this specification (in alphabetical order)
 include: +
+Alan Baum,
+Barna Ibrahim,
 Barry Spinney,
 Ben Marshall,
 Derek Atkins,
 link:mailto:kad@rivosinc.com[Ken Dockser] (Editor),
 Markku-Juhani O. Saarinen,
+Nicolas Brunie, 
 Richard Newell
 
 We are all very grateful to the huge number of other people who have
@@ -103,7 +106,7 @@ include::./riscv-crypto-vector-scalar-instructions.adoc[]
 == Extensions Overview
 
 The group of extensions introduced by the Vector Cryptography Instruction Set
-Extension is listed here.
+Extension specification is listed here.
 
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.

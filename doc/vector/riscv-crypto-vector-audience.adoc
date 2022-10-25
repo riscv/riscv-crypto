@@ -1,10 +1,10 @@
 [[crypto_vector_audience]]
 === Intended Audience
 
-Cryptography is a specialised subject, requiring people with many different
+Cryptography is a specialized subject, requiring people with many different
 backgrounds to cooperate in its secure and efficient implementation.
 Where possible, we have written this specification to be understandable by
-all, though we recognise that the motivations and references to
+all, though we recognize that the motivations and references to
 algorithms or other specifications and standards may be unfamiliar to those
 who are not domain experts.
 
@@ -46,11 +46,6 @@ in hardware.
 No cryptography background is assumed.
 We expect them to identify interesting test cases from the
 specification. An understanding of their real-world usage will help with this.
-We do not expect verification engineers in this sense to be experts
-in entropy source design or certification, since this is a very
-specialised area.
-We do expect them however to identify all of the _architectural_
-test cases around the entropy source interface.
 
 These are by no means the only people concerned with the specification,
 but they are the ones we considered most while writing it.

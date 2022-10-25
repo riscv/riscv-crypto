@@ -97,7 +97,7 @@ This instruction performs a bitwise right rotation on vector elements.
 The data to be rotated is in the vector register group specifed by `vs2` and
 the rotate amount value can come from a vector register group `vs1`, a scalar
 integer register `rs1`, or a zero-extended 5-bit immediate.
-Only the low `log2(SEW)` bits of the rotate-amount value are used to contror
+Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.
 
 Operation::

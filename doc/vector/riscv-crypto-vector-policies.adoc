@@ -14,14 +14,14 @@ policies:
   This fits a common pattern in other parts of the RISC-V specification,
   where recommended (but not required) instruction sequences for performing
   particular tasks are given as an example, such that both hardware and
-  software implementers can optimise for only a single use-case.
+  software implementers can optimize for only a single use-case.
   
-* The extension will be designed to support _existing_ standardised
+* The extension will be designed to support _existing_ standardized
   cryptographic constructs well.
   It will not try to support proposed standards, or cryptographic
   constructs which exist only in academia.
   Cryptographic standards which are settled upon concurrently with or after
-  the RISC-V cryptographic extension standardisation will be dealt with
+  the RISC-V cryptographic extension standardization will be dealt with
   by future additions to, or versions of, the RISC-V cryptographic
   standard extension.
   
@@ -35,8 +35,8 @@ policies:
   
 * Regarding side-channel countermeasures:
   Where relevant, proposed instructions must aim to remove the
-  possibility of any timing side-channels.
-  Some instructions are designed to _enable_
-  power and electro-magnetic side-channel secure implementation,
-  but this is not mandated as part of the RISC-V ISA specification.
+  possibility of any timing side-channels. All cryptographic instructions
+  shall be implemented with data-independent timing. That is, the latency of
+  the execution of these instructions shall not vary with different input values.
+
 

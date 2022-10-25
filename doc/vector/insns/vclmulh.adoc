@@ -1,4 +1,4 @@
-[[insns-vclmulh, Vector Carry-less Multiply]]
+[[insns-vclmulh, Vector Carry-less Multiply Return High Half]]
 = vclmulh.[vv,vx]
 
 Synopsis::

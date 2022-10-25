@@ -9,9 +9,7 @@ vsha2ch.vv vd, vs2, vs1 +
 vsha2cl.vv vd, vs2, vs1
 
  NB: We are currently proposing that the two variants of this instruction be 
-differentiated by the suffixes h and l. These suffixes --- and indeed the mnemonics
-themsleves --- will likely change. Alternatively, we may choose to differentiate
-between these two by other means.
+differentiated by the suffixes h and l.
 
 Question::
 Do we need two versions? We are evaluating if there is an advantage to having both as opposed to

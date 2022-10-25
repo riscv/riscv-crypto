@@ -8,7 +8,7 @@ functions of the AES block cipher.
 All of these instructions work on 128-bit element groups.
 For the best performance, it is suggested that they be implemented on systems with `VLEN`>=128.
 On systems with `VLEN`<128, element groups may be formed by concatenating 32-bit elements (or element
-groups of 32-bit elements) from registers within a register group.  
+groups of 32-bit elements) from registers within a register group by using an LMUL >1.
 // Systems which do not meet these requirements cannot support the <<zvkns>> extension.
 
 // It is _possible_ to formulate these instructions such that they work
@@ -20,6 +20,8 @@ groups of 32-bit elements) from registers within a register group.
 Systems which implement `VLEN<128` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
 for accelerated cryptographic operations.
+
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
 [%header,cols="^2,4,8"]
 |===

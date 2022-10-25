@@ -15,6 +15,8 @@ consider the existing
 Scalar Cryptography Extensions, specifically Zkne and Zknd,
 for accelerated cryptographic operations.
 
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
+
 [%header,cols="^2,4,8"]
 |===
 |EGW

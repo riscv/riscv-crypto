@@ -40,6 +40,9 @@ Arguments::
 Description:: 
 This instruction reverses the order of the bytes in each element of `vs2`, effectively performing an element-wise endian swap.
 
+Note::
+This word-wise endian swapping is needed for several cryptographic algorithms including SHA2 and SM3.
+
 Operation::
 [source,sail]
 --

@@ -96,10 +96,6 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 
 NB:: W~13~ is not used by the instruction for producing the next 4 message schedule words.
 
-Question:: Should we require W~13~ to reduce the verification space?
-
-
-
 Note:: Many vector units that are wider than 128 bits may choose to only implement one
 128-bit datapath for this instruction. This needs to be transparent to code in terms
 of functionality. A vector length setting of wider than 128 bits would require some
