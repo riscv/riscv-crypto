@@ -108,6 +108,12 @@ include::./riscv-crypto-vector-scalar-instructions.adoc[]
 The group of extensions introduced by the Vector Cryptography Instruction Set
 Extension specification is listed here.
 
+[NOTE]
+====
+All instructions in this document shall be executed with data independent execution time. This is, the latency of
+instruction execution shall not vary based on the values of the inputs.
+====
+
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.
 
