@@ -78,6 +78,7 @@ the process is similar to AES-128:
   NextRoundKey[0] = NextRoundKey[1] XOR PreviousRoundKey[0];
 
 For odd rounds, procvess is simpler and no Round Constant is used:
+
   NextRoundKey[3] = SubWord(CurrentRoundKey[0]) XOR PreviousRoundKey[3];
   NextRoundKey[2] = NextRoundKey[3] XOR PreviousRoundKey[2];
   NextRoundKey[1] = NextRoundKey[2] XOR PreviousRoundKey[1];
