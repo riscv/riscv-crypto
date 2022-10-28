@@ -122,17 +122,29 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
     let Y = brev8(get_velem(vd,EGW=128,i));  // current partial-hash
     let H = brev8(get_velem(vs1,EGW=128,i)); // Hash subkey
     let X = get_velem(vs2,EGW=128,i);       // next block cipher output
+    let Z : bits(128) = 0;
 
-
-    let prod[254:0]   = clmul_128(Y, H);
-      // Reduce product by irreducible polynomial
-      let red1 = clmul_121(prod[254:134], 0x87);// 128-bit product
-      let prod[133:6] ^= red1[127:0];
+// Old code begin
+//    let prod[254:0]   = clmul_128(Y, H);
+//      // Reduce product by irreducible polynomial
+//      let red1 = clmul_121(prod[254:134], 0x87);// 128-bit product
+//      let prod[133:6] ^= red1[127:0];
       //   133:128 are modified by 254:249 x 0x87
-      let red2 = clmul_8(prod[133:128],0x87); //13-bit product
-      let prod[12:0] ^= red2[12:0];
+//      let red2 = clmul_8(prod[133:128],0x87); //13-bit product
+//      let prod[12:0] ^= red2[12:0];
+// old code end 
 
-    let sum[127:0] = brev(prod) ^ X; // bit reverse bytes of product to get back to GCM standard ordering
+for (int bit = 0; bit < 128; bit++) {
+      if bit_to_bool(Y[bit])
+        Z ^= H
+
+      bool reduce = bit_to_bool(H[127]);
+      H = H << 1; // left shift H by 1
+      if (reduce)
+        H ^= 0x87; // Reduce using x^7 + x^2 + x^1 + 1 polynomial
+    }
+
+    let sum[127:0] = brev(Z) ^ X; // bit reverse bytes of product to get back to GCM standard ordering
 
     let result = sum[127:0]; 
     set_velem(vd, EGW=128, i, result);
