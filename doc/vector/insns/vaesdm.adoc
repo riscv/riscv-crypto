@@ -49,7 +49,7 @@ Arguments::
 |Definition
 
 | Vd  | input  | 128  | 4 | 32 | round state
-| Vs2 | input  | 128  | 4 | 32 | Round key
+| Vs2 | input  | 128  | 4 | 32 | round key
 | Vd  | output | 128  | 4 | 32 | new round state
 |===
 
@@ -89,7 +89,7 @@ otherwise the instruction encoding is reserved.
 Operation::
 [source,sail]
 --
-function clause execute (VAESDM(vs1, vd, suffix)) = {
+function clause execute (VAESDM(vs2, vd, suffix)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
@@ -98,7 +98,7 @@ function clause execute (VAESDM(vs1, vd, suffix)) = {
   
   foreach (i from eg_start to eg_len-1) {
     let keyelem = if suffix == "vv" then i else 0;
-    let state : bits(128) = get_velem(vs1, EGW=128, i);
+    let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
     let sr    : bits(128) = aes_inv_shift_rows(state);
     let sb    : bits(128) = aes_inv_sub_bytes(sr);
