@@ -51,8 +51,14 @@ If SEW is other than 32 or 64, this instruction takes the undefined instruction 
 This instruction takes in a subset of the last 16 message-schedule `SEW`-sized "words"
 and produces the next 4 message-schedule words.
 
+The message schedule words must be endian swapped before being consumed by this instruction.
+
 Four `SEW` message schedule words are packed into each `EGW` element group of the
-source and destination registers.
+source and destination registers. The message schedule words are packed into the
+element groups from the left to the right with the most significant word on the left
+and the least significant word on the right.
+
+
 
 This instructions takes in 11 of the last 16 words of the message schedule. The last 16
 words of the message schedule are shown here in an element group.

@@ -1,5 +1,5 @@
 [[crypto_vector_instructions]]
-=== Instructions 1
+=== Crypto Vector Cryptographic Instructions
 
 OP-V (0x57)
 Crypto Vector instructions except Zvkb

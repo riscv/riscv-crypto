@@ -1,5 +1,5 @@
 [[crypto_vector_instructions_Zvkb]]
-=== Instructions 2
+=== Crypto Vector Bitmanip Instructions
 
 OP-V (0x57)
 Vector instructions with *Zvkb (in bold)*
