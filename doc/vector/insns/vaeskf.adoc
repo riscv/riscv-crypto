@@ -84,7 +84,7 @@ For odd rounds, procvess is simpler and no Round Constant is used:
   NextRoundKey[1] = NextRoundKey[2] XOR PreviousRoundKey[1];
   NextRoundKey[0] = NextRoundKey[1] XOR PreviousRoundKey[0];
 
-The RoundConstant is stored in the unsigned 5-bit `rnd` immediate. Legal values are 0 - 14.
+The RoundConstant is stored in the unsigned 5-bit `rnd` immediate. Legal values are 0 - 10.
 Out of range values signal an illegal instruction exception.
 
 
