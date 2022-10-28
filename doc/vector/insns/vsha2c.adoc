@@ -113,6 +113,7 @@ the upper two words.
 
 
 
+
 Note::
 It is recommended that implementations have VLEN>=128 for these instructions.
 Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN>=256.
@@ -135,8 +136,8 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-	  {f, e, b, a} : bits(128) = get_velem(vs2, EGW=128, i};
-	  {h, g, d, c} : bits(128) = get_velem(vd, EGW=128, i};
+	  {a, b, e, f} : bits(128) = get_velem(vs2, EGW=128, i};
+	  {c, d, g, h} : bits(128) = get_velem(vd, EGW=128, i};
 	  MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i};
 	  {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
 

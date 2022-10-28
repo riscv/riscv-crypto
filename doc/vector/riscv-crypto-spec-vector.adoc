@@ -211,6 +211,8 @@ include::insns/vsm4r.adoc[leveloffset=+2]
 == Bibliography
 
 bibliography::../riscv-crypto-spec.bib[ieee]
-include::./riscv-crypto_vector-inst-table.adoc[]
-include::./riscv-crypto_vector-zvkb-inst-table.adoc[]
+
+
+include::./riscv-crypto-vector-inst-table.adoc[]
+include::./riscv-crypto-vector-zvkb-inst-table.adoc[]
 include::./riscv-crypto-vector-appx-sail.adoc[]
