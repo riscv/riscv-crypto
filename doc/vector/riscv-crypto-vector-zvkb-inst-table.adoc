@@ -1,3 +1,4 @@
+[appendix]
 [[crypto_vector_instructions_Zvkb]]
 === Crypto Vector Bitmanip Instructions
 

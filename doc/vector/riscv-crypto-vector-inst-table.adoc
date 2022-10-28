@@ -1,3 +1,4 @@
+[appendix]
 [[crypto_vector_instructions]]
 === Crypto Vector Cryptographic Instructions
 

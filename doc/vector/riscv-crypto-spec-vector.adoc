@@ -212,7 +212,10 @@ include::insns/vsm4r.adoc[leveloffset=+2]
 
 bibliography::../riscv-crypto-spec.bib[ieee]
 
-
+[[Encodings]]
+== Encodings
 include::./riscv-crypto-vector-inst-table.adoc[]
 include::./riscv-crypto-vector-zvkb-inst-table.adoc[]
+
+
 include::./riscv-crypto-vector-appx-sail.adoc[]
