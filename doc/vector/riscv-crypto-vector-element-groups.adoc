@@ -1,7 +1,7 @@
 [[crypto-vector-element-groups]]
 === Crypto Vector Element Groups
 
-Many vector crypto instructions operate on larger operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller elements that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks comprised of four 32-bit words using 128-bit round keys that are generated from 128-, 192-, and 256-bit cipher keys.
+Many vector crypto instructions operate on larger operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bit wide. In many cases, these operands are comprised of smaller elements that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks comprised of four 32-bit words using 128-bit round keys that are generated from 128-, 192-, and 256-bit cipher keys.
 
 In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
 we treat these operands as a vector of one of more element groups (see 
@@ -15,15 +15,15 @@ that operates on them:
 - Effective Element Width (EEW) - number of bits in each element
 
 When the EEW is explicitly defined for a vector crypto instruction, the current `SEW` is ignored by that instruction.
-This was done to enable other SEW values to be used without requiring an additional `vsetvl` instruction.
+This was done to enable other SEW values to be used without requiring an additional `vsetvl` instruction (or one of its variants).
 
 As with all vector instructions, the number of elements processed by a vector instruction is specified by the
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
-Attempting to execute a Vector Crypto Instruction when this this ratio is not an
+Attempting to execute a Vector Crypto Instruction when this ratio is not an
 integral value will result in an illegal instruction exception.
 
 Tip::
-To help ensure that the proper `vl` is used, programmers are encouraged to set SEW to the match the EEW of the
+To help ensure that the proper `vl` is used, programmers are encouraged to set SEW to match the EEW of the
 instructions being executed.
 
 Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 

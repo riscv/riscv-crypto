@@ -2,7 +2,7 @@
 == Introduction
 
 This document describes the proposed _vector_ cryptography
-extension for RISC-V.
+extensions for RISC-V.
 All instructions proposed here are based on the Vector registers.
 The instructions are designed to be highly performant, with large
 application and server-class cores being the main target.
