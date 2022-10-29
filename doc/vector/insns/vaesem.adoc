@@ -89,7 +89,7 @@ otherwise the instruction encoding is reserved.
 Operation::
 [source,pseudocode]
 --
-function clause execute (VAESESM(vs2, vd, vv)) = {
+function clause execute (VAESESM(vs2, vd, suffix)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
@@ -97,8 +97,9 @@ function clause execute (VAESESM(vs2, vd, vv)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
+    let keyelem = if suffix == "vv" then i else 0;
     let state : bits(128) = get_velem(vd, EGW=128, i);
-    let rkey  : bits(128) = get_velem(vs2, EGW=128, i);
+    let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
     let sb    : bits(128) = aes_fwd_sub_bytes(state);
     let sr    : bits(128) = aes_fwd_shift_rows(sb);
     let mix   : bits(128) = aes_fwd_mix_columns(sr);
