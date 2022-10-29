@@ -50,6 +50,6 @@ for accelerated cryptographic operations.
 // | 128
 | vsha2ms.vv   | <<insns-vsha2ms>>
 // | 128
-| vsha2c.vv    | <<insns-vsha2c>>
+| vsha2c[hl].vv    | <<insns-vsha2c>>
 |===
 
