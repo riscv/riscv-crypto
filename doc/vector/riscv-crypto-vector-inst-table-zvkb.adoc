@@ -4,7 +4,7 @@
 
 OP-V (0x57)
 Vector instructions with *Zvkb (in bold)*
-
+[%auto-width]
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| Integer               4+| Integer               4+| FP
@@ -15,12 +15,13 @@ Vector instructions with *Zvkb (in bold)*
 | OPIVI  | | |I|            |        | | |             |        | | |
 |===
 
+[%auto-width]
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| funct6                  4+| funct6                 4+| funct6
 
 | 000000 |V|X|I| vadd       | 000000 |V| | vredsum     | 000000 |V|F| vfadd
-| 000001 |V|X|I| *vandn*      | 000001 |V| | vredand     | 000001 |V| | vfredusum
+| 000001 |V|X|I| *vandn*    | 000001 |V| | vredand     | 000001 |V| | vfredusum
 | 000010 |V|X| | vsub       | 000010 |V| | vredor      | 000010 |V|F| vfsub
 | 000011 | |X|I| vrsub      | 000011 |V| | vredxor     | 000011 |V| | vfredosum
 | 000100 |V|X| | vminu      | 000100 |V| | vredminu    | 000100 |V|F| vfmin
@@ -34,7 +35,7 @@ Vector instructions with *Zvkb (in bold)*
 | 001100 |V|X|I| vrgather   | 001100 |V|X| *vclmul*    | 001100 | | |
 | 001101 | | | |            | 001101 |V|X| *vclmulh*   | 001101 | | |
 | 001110 | |X|I| vslideup   | 001110 | |X| vslide1up   | 001110 | |F| vfslide1up
-| 001110 |V| | |vrgatherei16|        | | |             |        | | |           
+| 001110 |V| | | vrgatherei16|        | | |             |        | | |           
 | 001111 | |X|I| vslidedown | 001111 | |X| vslide1down | 001111 | |F| vfslide1down
 |===
 
@@ -108,6 +109,7 @@ Vector instructions with *Zvkb (in bold)*
 
 <<<
 
+[%auto-width]
 .VXUNARY0 encoding space
 [cols="2,14"]
 |===
