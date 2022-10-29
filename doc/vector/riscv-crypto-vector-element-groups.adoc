@@ -1,7 +1,7 @@
 [[crypto-vector-element-groups]]
 === Crypto Vector Element Groups
 
-Many vector crypto instructions operate on larger operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bit wide. In many cases, these operands are comprised of smaller elements that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks comprised of four 32-bit words using 128-bit round keys that are generated from 128-, 192-, and 256-bit cipher keys.
+Many vector crypto instructions operate on larger operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller elements that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks comprised of four 32-bit words using 128-bit round keys that are generated from 128-, 192-, and 256-bit cipher keys.
 
 In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
 we treat these operands as a vector of one of more element groups (see 
@@ -15,7 +15,7 @@ that operates on them:
 - Effective Element Width (EEW) - number of bits in each element
 
 When the EEW is explicitly defined for a vector crypto instruction, the current `SEW` is ignored by that instruction.
-This was done to enable other SEW values to be used without requiring an additional `vsetvl` instruction (or one of its variants).
+This was done to enable other SEW values to be used without requiring an additional `vsetvl`-type instruction.
 
 As with all vector instructions, the number of elements processed by a vector instruction is specified by the
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
