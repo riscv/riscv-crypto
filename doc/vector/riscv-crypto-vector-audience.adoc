@@ -41,8 +41,7 @@ In particular, they should be aware of the literature around efficiently
 implementing AES and SM4 SBoxes in hardware.
 
 Verification engineers::
-Responsible for ensuring the correct implementation of the extension
-in hardware.
+Responsible for ensuring the correct implementation of the extensions in hardware.
 No cryptography background is assumed.
 We expect them to identify interesting test cases from the
 specification. An understanding of their real-world usage will help with this.
