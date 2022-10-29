@@ -104,25 +104,28 @@ Operation::
 [source,sail]
 --
 function clause execute (VROR_VV(vs2, vs1, vd)) = {
-  foreach (i from vstart to vl) {
+  foreach (i from vstart to vl - 1) {
     set_velem(vd, EEW=SEW, i,
       get_velem(vs2, i) >>> (get_velem(vs1, i) & (SEW-1))
+    )
   }
   RETIRE_SUCCESS
 }
 
 function clause execute (VROR_VX(vs2, rs1, vd)) = {
-  foreach (i from vstart to vl) {
+  foreach (i from vstart to vl - 1) {
     set_velem(vd, EEW=SEW, i, 
       get_velem(vs2, i) >>> (X(rs1) & (SEW-1))
+    )
   }
   RETIRE_SUCCESS
 }
 
 function clause execute (VROR_VI(vs2, imm, vd)) = {
-  foreach (i from vstart to vl) {
+  foreach (i from vstart to vl - 1) {
     set_velem(vd, EEW=SEW, i, 
       get_velem(vs2, i) >>> (imm & (SEW-1))
+    )
   }
   RETIRE_SUCCESS
 }

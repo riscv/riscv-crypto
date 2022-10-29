@@ -49,7 +49,7 @@ Arguments::
 |Definition
 
 | Vd  | input  | 128  | 4 | 32 | round state
-| Vs2 | input  | 128  | 4 | 32 | Round key
+| Vs2 | input  | 128  | 4 | 32 | round key
 | Vd  | output | 128  | 4 | 32 | new round state
 |===
 
