@@ -16,6 +16,6 @@ for implementing common cryptographic workloads securely & efficiently.
 | vror.[vv,vx,vi]    | <<insns-vror>>
 | vbrev8.v           | <<insns-vbrev8>>
 | vrev8.v            | <<insns-vrev8>>
-| vandn.[vv,vs,vx]   | <<insns-vandn>>
+| vandn.[vv,vx,vi]   | <<insns-vandn>>
 |===
 
