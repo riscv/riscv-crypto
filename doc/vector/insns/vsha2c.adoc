@@ -51,20 +51,20 @@ Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
 | Vd  | input  | 4*SEW  | 4 | SEW | current state {c, d, g, h}
 | Vs1 | input  | 4*SEW  | 4 | SEW | MessageSched plus constant[3:0]
 | Vs2 | input  | 4*SEW  | 4 | SEW | current state {a, b, e, f}
-| Vd  | output | 4*SEW  | 4 | SEW | next state {a, b, e, f} 
+| Vd  | output | 4*SEW  | 4 | SEW | next state {a, b, e, f}
 |===
- 
-Description:: 
 
-- When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128
-- When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256
+Description::
+
+- When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128 (`zvknha` and `zvknhb`)
+- When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256 (`zvkhnb` only)
 
 If SEW is other than 32 or 64, this instruction takes the undefined instruction exception.
 
@@ -136,9 +136,9 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-	  {a, b, e, f} : bits(128) = get_velem(vs2, EGW=128, i};
-	  {c, d, g, h} : bits(128) = get_velem(vd, EGW=128, i};
-	  MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i};
+	  {a, b, e, f} : bits(128) = get_velem(vs2, EGW=128, i);
+	  {c, d, g, h} : bits(128) = get_velem(vd, EGW=128, i);
+	  MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i);
 	  {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
 
 	  T1 = h + sum1(e) + Ch(e,f,g) + W0;
@@ -176,7 +176,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkn1h>>
+| <<zvknh,zvknh[ab]>>
 | v0.1.0
 | In Development
 |===
