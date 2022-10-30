@@ -30,6 +30,9 @@ Since `vstart` is expressed in elements, the starting element group is `vstart`/
 Attempting to execute a Vector Crypto Instruction when this this ratio is not an
 integral value will result in an illegal instruction exception.
 
+The corresponding `EMUL is calculated as `EMUL` = (`EEW`/`SEW`)*`LMUL`. If the `EMUL` would be out of range
+(`EMUL`>8 or `EMUL`<1/8), the instruction encoding is reserved. 
+
 For the best performance, it is suggested that Vector Crypto instructions be implemented in
 vector units that have `VLEN` that is at least as wide as each instruction's `EGW`.
 Element groups can be formed
