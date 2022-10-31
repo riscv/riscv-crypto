@@ -1,40 +1,40 @@
 [[crypto-vector-scalar-instructions]]
 === Crypto Vector-Scalar Instructions
 
-The RISC-V Vector Extension defines three forms of vector-scalar operations, based on the source of the scalar operand:
+The RISC-V Vector Extension defines three encodings for Vector-Scalar operations which get their scalar operand from a GPR or FP register:
 
-- A five-bit immediate
-- A scalar _x_ register
-- A scalar _f_ register
+- OPIVX: Scalar GPR _x_ register
+- OPFVF: Scalar FP _f_ register
+- OPMVX: Scalar GPR _x_ register
 
-However, there are also Vector Reduction Operations where the scalar operand is provided by element 0 of
+However, the Vector Extensions include Vector Reduction Operations which can also be considered
+Vector-Scalar operations because a scalar operand is provided from element 0 of
 vector register `vs1`. The vector operand is provided in vector register group `vs2`.
-These reduction operations all use the `.vs` suffix in their mnemonics.
+These reduction operations all use the `.vs` suffix in their mnemonics. Additionally, the reduction operations all produce a scalar result in element 0 of the destination register, `vd`.
 
-The reduction operations all produce a scalar result in element 0 of the destination register, `vd`.
-
-For the vector crypto extensions, we are defining vector-scalar instructions that are similar to these
-Vector Reduction Operations in that they get a scalar operand from vector element group 0. 
-(see link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups])
-However, they differ from the reduction operations in that they return vector results to `vd`, which is also a
-source vector operand. These vector-scalar crypto instructions will also use the `.vs` suffix in their mnemonics.
+For the vector crypto extensions, we have defined Vector-Scalar instructions that are similar to these
+Vector Reduction Operations in that they get a scalar operand from vector element group 0 
+(see link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]).
+However, they differ from the Reduction Operations in that they return _vector_ results to `vd`, which
+is also a source vector operand. These Vector-Scalar crypto instructions also use the `.vs` suffix in their mnemonics.
 
 We are defining these instructions for use where a single key, specified as a single element group, is to be
-applied to each element group of a vector group of element groups. For example, it is common for multiple
-AES encryption rounds to be performed in parallel with the same round key (e.g. in counter modes). Rather than having to first
-splat the common key across the whole vector group, these vector-scalar vector crypto instructions allow the
-round key to be specified as a scalar.
+applied to each element group of a vector of element groups. For example, it is common for multiple
+AES encryption rounds to be performed in parallel with the same round key (e.g. in counter modes).
+Rather than having to first splat the common key across the whole vector group, these vector-scalar
+crypto instructions allow the round key to be specified as a scalar element group.
+// In the case of AES256 all-rounds instructions we need to provide two 128-bit keys; one is held in `vs1` and
+// the other is held in `vs2`. The 128-bit data to be processed is held in `vd`.
+// A vector-scalar form of this instruction looks different from the existing vector-scalar instructions in that
+// both `vs1` and `vs2` are treated as scalar operands that apply to the vector operands of `vd`. 
 
-In the case of AES256 all-rounds instructions we need to provide two 128-bit keys; one is held in `vs1` and
-the other is held in `vs2`. The 128-bit data to be processed is held in `vd`.
-A vector-scalar form of this instruction looks different from the existing vector-scalar instructions in that
-both `vs1` and `vs2` are treated as scalar operands that apply to the vector operands of `vd`. 
-
-Note::
-Previously, the AES and SM4 instructions that performed rounds operations (including AES all-rounds instructions)
-were defined to be destructive operations where the data source was provided in `vd` and the key was provided in
-`vs2`. With the advent of the new crypto vector-scalar instructions, we are changing these instructions
-to use `vs1` for the key and `vs2`for the data.
-In the case of vector-scalar instructions, the scalar key will be held in
-element group 0 of `vs1`. This is done to remain consistent with the use of `vs1` for the scalar element in
-all of the existing vector-scalar operations as well as the vector reduction operations. 
+// [NOTE]
+// ====
+// Previously, the AES and SM4 instructions that performed rounds operations (including AES all-rounds instructions)
+// were defined to be destructive operations where the data source was provided in `vd` and the key was provided in
+// `vs2`. With the advent of the new crypto vector-scalar instructions, we are changing these instructions
+// to use `vs1` for the key and `vs2` for the data.
+// In the case of vector-scalar instructions, the scalar key will be held in
+// element group 0 of `vs1` . This is done to remain consistent with the use of `vs1` for the scalar element in
+// all of the existing vector-scalar operations as well as the vector reduction operations. 
+// ====
