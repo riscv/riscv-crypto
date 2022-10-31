@@ -40,7 +40,7 @@ For the best performance, it is suggested that Vector Crypto instructions be imp
 vector units that have `VLEN` that is at least as wide as each instruction's `EGW`.
 Element groups can be formed
 across registers in implementations where `VLEN`< `EGW` by using an `LMUL`>1. 
-However, use of an instruction with `VLEN`< `EEW` where `EEW`>`SEW` is reserved.
+However, use of an instruction with `VLEN`< `EEW` where `EEW`> `SEW` is reserved.
 
 Note::
 There is no need to check for `VLEN`< `EEW` for any Standard implementation, as
@@ -60,8 +60,8 @@ for accelerated cryptographic operations.
 | EGS
 
 | AES      | <<zvkns>>            | 128 | 32 | 4
-| SHA256   | <<zvknh>>a           | 128 | 32 | 4
-| SHA512   | <<zvknh>>b           | 256 | 64 | 4
+| SHA256   | <<zvknh,zvknh[ab]>>           | 128 | 32 | 4
+| SHA512   | <<zvknh,zvknh[ab]>>           | 256 | 64 | 4
 | GCM      | <<zvkgb>>            | 128 | 32 | 4
 | SM4      | <<zvksed>>           | 128 | 32 | 4
 | SM3      | <<Zvksh>>            | 256 | 32 | 8
