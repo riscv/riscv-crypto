@@ -20,7 +20,7 @@ pass to a colleague.
 Cryptographers and cryptographic software developers::
 These are the people we expect to write code using the instructions
 in this specification.
-They should understand fairly obviously the motivations for the
+They should understand the motivations for the
 instructions we include, and be familiar with most of the algorithms
 and outside standards to which we refer.
 
@@ -41,7 +41,8 @@ In particular, they should be aware of the literature around efficiently
 implementing AES and SM4 SBoxes in hardware.
 
 Verification engineers::
-Responsible for ensuring the correct implementation of the extensions in hardware.
+These people are responsible for ensuring the correct implementation of the
+extensions in hardware.
 No cryptography background is assumed.
 We expect them to identify interesting test cases from the
 specification. An understanding of their real-world usage will help with this.

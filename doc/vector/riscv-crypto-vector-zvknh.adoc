@@ -1,4 +1,4 @@
-[[zvknh,Zvknh]]
+[[zvknh, zvknh[ab]]]
 === `Zvknh[ab]` - NIST Suite: Vector SHA-2
 
 Instructions for accelerating SHA-2

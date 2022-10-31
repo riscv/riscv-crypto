@@ -178,7 +178,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvknh[ab]>>
+| <<zvknh, zvknh[ab]>>
 | v0.1.0
 | In Development
 |===
