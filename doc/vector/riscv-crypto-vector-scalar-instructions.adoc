@@ -13,16 +13,30 @@ vector register `vs1`. The vector operand is provided in vector register group `
 These reduction operations all use the `.vs` suffix in their mnemonics. Additionally, the reduction operations all produce a scalar result in element 0 of the destination register, `vd`.
 
 For the vector crypto extensions, we have defined Vector-Scalar instructions that are similar to these
-Vector Reduction Operations in that they get a scalar operand from vector element group 0 
-(see link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]).
-However, they differ from the Reduction Operations in that they return _vector_ results to `vd`, which
-is also a source vector operand. These Vector-Scalar crypto instructions also use the `.vs` suffix in their mnemonics.
+Vector Reduction Operations in that they get a scalar operand from a vector register. However, they differ
+from the Reduction Operations in that they get a scalar element group
+(see link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups])
+from `vs2` and they return _vector_ results to `vd`, which is also a source vector operand.
+These Vector-Scalar crypto instructions also use the `.vs` suffix in their mnemonics.
 
-We are defining these instructions for use where a single key, specified as a single element group, is to be
-applied to each element group of a vector of element groups. For example, it is common for multiple
-AES encryption rounds to be performed in parallel with the same round key (e.g. in counter modes).
+[NOTE]
+====
+We chose to use `vs2` as the scalar operand, and vd as the vector operand, so that we could use the `vs1`
+specifier as additional encoding bits for these instructions. This allows these instructions to have a
+much smaller encoding footprint, leaving more rooms for other instructions in the future.
+====
+
+These instructions enable a single key, specified as a single element group in `vs2`, to be
+applied to each element group of a vector of element groups in `vd`.
+
+[NOTE]
+====
+It is common for multiple AES encryption rounds (for example) to be performed in parallel with the same
+round key (e.g. in counter modes).
 Rather than having to first splat the common key across the whole vector group, these vector-scalar
 crypto instructions allow the round key to be specified as a scalar element group.
+====
+
 // In the case of AES256 all-rounds instructions we need to provide two 128-bit keys; one is held in `vs1` and
 // the other is held in `vs2`. The 128-bit data to be processed is held in `vd`.
 // A vector-scalar form of this instruction looks different from the existing vector-scalar instructions in that
