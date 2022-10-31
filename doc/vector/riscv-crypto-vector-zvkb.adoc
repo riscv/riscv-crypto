@@ -1,7 +1,7 @@
 [[zvkb,Zvkb]]
-=== `Zvkb` - Vector Bitmanip instructions for Cryptography
+=== `Zvkb` - Vector Bit-manipulation instructions used in Cryptography
 
-General purpose bitmanipulation instructions which are essential
+General purpose bit-manipulation instructions which are essential
 for implementing common cryptographic workloads securely & efficiently.
 
 [%header,cols="^2,4"]

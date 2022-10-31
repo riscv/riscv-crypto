@@ -3,14 +3,14 @@
 
 Instructions for accelerating SHA-2
 
-SEW differentiates between SHA-256 and SHA-512 
+`SEW` differentiates between SHA-256 (`SEW`=32) and SHA-512 (`SEW`=64). 
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
 [%header,cols="^2,^2,^2,^2"]
 |===
-|`SEW`
-|`EGW`
+|SEW
+|EGW
 |SHA-2
 |Extension
 
@@ -18,28 +18,17 @@ To help avoid side-channel timing attacks, these instructions shall be implement
 |64 | 256 | SHA-512 | Zvknhb
 |===
 
-NOTE::
-- We are currently defining two variations of Zvknh: Zvknha for SHA-256 only, and Zvknhb for SHA-256 and SHA-512
-
+[NOTE]
+====
+If Zvknhb is implemented, `SEW` is used to differentiate between SHA-256 (SEW=32) and SHA-512 (SEW=64).
+If Zvknha is implemented, only SHA-256 is supported, and SEW must be 32.
+====
 
 For SHA-256, implementations with VLEN < 128 require software to use LMUL>1 to combine
-elements from register groups to provide all four elements of the element group.
+32-bit elements from register groups to provide all four elements of the element group.
 
 For SHA-512, implementations with VLEN < 256 require software to use LMUL>1 to combine
-elements from register groups to provide all four elements of the element group.
-
-// Systems which do not meet these requirements cannot support the <<zvknha>>
-// extension.
-
-// It is _possible_ to formulate these instructions such that they work
-// on systems with a narrower `VLEN` (i.e 32 or 64) and use `LMUL=2,4` to
-// create inputs which are large enough to contain enough information.
-// However, this incurs a large amount of complexity in the instructions
-// design and implementation.
-
-Systems which implement `VLEN<128` should consider the existing
-Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
-for accelerated cryptographic operations.
+64-bit elements from register groups to provide all four elements of the element group.
 
 [%header,cols="^2,4"]
 |===

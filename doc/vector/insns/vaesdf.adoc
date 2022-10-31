@@ -54,11 +54,12 @@ Arguments::
 |===
 
 Description:: 
-Perform the final-round decryption function of the AES block cipher.
+Performs the final-round decryption function of the AES block cipher.
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key.
 
-In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a single element group that is used
+In the `.vs` form of the instruction, element group 0 of the single register `vs2` holds
+a single element group that is used
 as the round key for all of the element groups in `vd`. While in this case `vs2` is a single register,
 `vd` can be a register group. 
 

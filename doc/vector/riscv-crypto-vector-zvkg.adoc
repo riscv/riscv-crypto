@@ -1,7 +1,15 @@
 [[zvkg,Zvkg]]
-=== `Zvkg` - Vector GCM instructions for Cryptography
+=== `Zvkg` - Vector GCM/GMAC instruction for Cryptography
 
-Instruction for efficiently implementing Galois/Counter Mode (GCM).
+Instruction to enable the efficient implementation of Galois/Counter Mode (GCM) and
+Galois Message Authentication Code (GMAC).
+
+[NOTE]
+====
+GCM is used in conjunction with block ciphers (e.g., AES and SM4) to encrypt a message and
+provide authentication.
+GMAC is used to provide authentication of a message without encryption.
+====
 
 To help avoid side-channel timing attacks, this instruction shall be implemented with data-independent timing.
 

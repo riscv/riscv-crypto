@@ -7,15 +7,8 @@ functions of the AES block cipher.
 
 All of these instructions work on 128-bit element groups.
 For the best performance, it is suggested that they be implemented on systems with `VLEN`>=128.
-On systems with `VLEN`<128, element groups may be formed by concatenating 32-bit elements (or element
-groups of 32-bit elements) from registers within a register group by using an LMUL >1.
-// Systems which do not meet these requirements cannot support the <<zvkns>> extension.
-
-// It is _possible_ to formulate these instructions such that they work
-// on systems with a narrower `VLEN` (i.e 32 or 64) and use `LMUL=2,4` to
-// create inputs which are large enough to contain enough information.
-// However, this incurs a large amount of complexity in the instructions
-// design and implementation.
+On systems with `VLEN`<128, element groups may be formed by concatenating 32-bit elements
+from two or four registers by using an LMUL =2 and LMUL=4 respectively.
 
 Systems which implement `VLEN<128` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>

@@ -82,7 +82,7 @@ Markku-Juhani O. Saarinen,
 Nicolas Brunie, 
 Richard Newell
 
-We are all very grateful to the huge number of other people who have
+We are all very grateful to the many other people who have
 helped to improve this specification through their comments, reviews,
 feedback and questions.
 
@@ -108,8 +108,8 @@ include::./riscv-crypto-vector-scalar-instructions.adoc[]
 The group of extensions introduced by the Vector Cryptography Instruction Set
 Extension specification is listed here.
 
-All cryptographic instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
-<<zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but not <<zvkb>>) shall be executed with
+All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
+<<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvkb>>) shall be executed with
 data independent execution latency.
 That is, the latency of an instruction's execution shall not vary based on the values
 of its inputs. This behavior is the same as described as described in the `Zkt` extension for

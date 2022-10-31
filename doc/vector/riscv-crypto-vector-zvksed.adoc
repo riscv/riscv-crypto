@@ -5,7 +5,8 @@ Instructions for accelerating single round
 encryption, decryption and key-schedule
 functions of the SM4 block cipher.
 
-All of these instructions work on 128-bit element groups.
+All of these instructions work on 128-bit element groups comprised of four
+32-bit elements.
 
 Systems which implement `VLEN<128` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
