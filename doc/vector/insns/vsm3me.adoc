@@ -49,13 +49,12 @@ This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`
 If vstart is not zero, it needs to be scaled similarly.
 // This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
 
-Note::
+[NOTE]
+====
 For the best performance, it is recommended that implementations have VLEN>=256.
 When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
 specified register groups can be combined to form the full element group.
-
-It is important to note that ELEN>=SEW is a requirement as elements are not
-permitted to cross register boundaries.
+====
 
 
 Operation::

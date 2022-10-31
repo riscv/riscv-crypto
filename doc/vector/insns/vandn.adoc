@@ -91,13 +91,12 @@ active elements in the vector register group specified by `vs2`.
 The other operand can come from a vector register group `vs1`, a scalar
 integer register `rs1`, or a sign-extended 5-bit immediate.
 
-[TIP]
+[NOTE]
 .Note on necessity of instruction
 ====
 This instruction is performance-critical to SHA3. Specifically, the Chi step of the FIPS 202 Keccak Permutation. 
 Emulating it via 2 instructions is expected to have significant performance impact.
 The `.vv` form of the instruction is what is needed for SHA3; the `.vx` and `.vi` forms were added for completeness.
-
 ====
 
 Operation::

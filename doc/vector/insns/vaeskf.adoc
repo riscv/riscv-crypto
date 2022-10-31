@@ -87,8 +87,8 @@ For odd rounds, procvess is simpler and no Round Constant is used:
   NextRoundKey[1] = NextRoundKey[2] XOR PreviousRoundKey[1];
   NextRoundKey[0] = NextRoundKey[1] XOR PreviousRoundKey[0];
 
-The RoundConstant is stored in the unsigned 5-bit `rnd` immediate. Legal values are 0 - 10.
-Out of range values signal an illegal instruction exception.
+The RoundConstant is stored in the unsigned 5-bit `rnd` immediate. Legal values for rnd[3:0]
+are 0 - 10. Out of range values are reserved.
 
 
 [%autowidth]
@@ -113,21 +113,27 @@ Out of range values signal an illegal instruction exception.
 | 0x1010 | 10 |  -   | 0x36000000 | Highest constant for AES-128
 |===  
 
+[NOTE]
+====
 The constants for AES-128 Rounds 9 and 10 may appear to follow a different pattern from
 the other constants. However, they all follow the same pattern where the most significant
 byte is multiplied by 2 modulo x^8^ + x^4^ + X^3^ + x + 1.
+====
+
 
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `EEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
-Likewise, `vstart` must be a multiple of `EGS=4`
+Likewise, `vstart` must be a multiple of `EGS=4`.
+
 
 [NOTE]
 ====
 The AES KeySchedule consumes 5 32-bit words to compute the next 4 32-bit
 words of the KeySchedule, while the round function consumes these words
 in chunks of 128-bits.
+
 The difference between AES-128 and AES-256 is where the 5th word comes from.
 In AES-128 it comes from the current round key, and in AES-256 it comes from the
 previous round key. When using this instruction for AES-128, the register holding

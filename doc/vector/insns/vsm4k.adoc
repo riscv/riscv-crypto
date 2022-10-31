@@ -46,7 +46,7 @@ It treats each 128-bit element group of `vs2` as the last four round keys.
 The rounds number is stored in the unsigned 5-bit `rnds` immediate. Legal values are 0 - 7 and indicate which
 group of four rounds are being generated. For example, if `rnds`=1, then round keys 4, 5, 6, and 7 are
 being generated.
-Out of range values signal an illegal instruction exception.
+Out of range values are reserved.
 
   
   vs2 = {rK[i-4], rK[i-3],rK[i-2], rK[i-1]} // last 4 round keys +
@@ -56,8 +56,10 @@ Out of range values signal an illegal instruction exception.
 Each of the 32 rounds consumes the last 4 32-bit keys along with a round constant and produces the next 32-bit key.
 
 
-Note:
-The initial input to the round key generation is produced by ^ing the 128-bit encryption key with a so-called system parameter: FK[3:0]
+[NOTE]
+====
+The initial input to the round key generation is produced by XORing the 128-bit encryption key with a so-called system parameter: FK[3:0]
+====
 
 ////
 .System Parameters
@@ -85,13 +87,15 @@ The round keys are rK[0] to rK[31]
 
 The round constants and the S-box are described below and can be found at https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
 
-Note::
+[NOTE]
+====
 The round constants can be generated on the fly fairly cheaply.
 If the bytes of the constants are assigned an incrementing index from 0 to 127, the value of each byte is equal to its index multiplied by 7 modulo 256.
 Since the results are all limited to 8 bits, the modulo operation occurs for free:
 
 	B[n] = n + 2n + 4n;
        = 8n + ~n + 1;
+====
 
 ////
 .Round Constants

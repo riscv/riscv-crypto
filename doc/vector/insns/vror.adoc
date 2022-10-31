@@ -6,9 +6,11 @@ Vector rotate right by vector/scalar/immediate.
 
 Only the log2(SEW) bits are used for the rotate amount.
 
-Note::
+[NOTE]
+====
 The immediate form of this instruction doesn't support all rotate amounts as 6 bits are required
-to encode these. This is the same limitation as exists in the vector shift instructions
+to encode these. This is the same limitation as exists in the vector shift instructions.
+====
 
 Mnemonic::
 vror.vv vd, vs2, vs1, vm +

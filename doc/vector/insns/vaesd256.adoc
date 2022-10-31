@@ -54,9 +54,11 @@ Arguments::
 | Vd  | output | 128  | 4 | 32 | Plain text 
 |===
 
-Note::
-This instruction does not support a vector-scalar form where the round keys are provided as scalars because it uses two
-registers to hold the final two 128-bit round keys.
+[NOTE]
+====
+This instruction does not support a vector-scalar form where the round keys are provided as scalars because
+it uses two registers to hold the final two 128-bit round keys.
+====
 
 Description:: 
 This instruction implements the entire AES-256 block cipher decryption

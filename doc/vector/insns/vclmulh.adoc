@@ -60,7 +60,8 @@ The other operand can come from a vector register group `vs1`, or a scalar
 integer register `rs1`.
 For the scalar integer register, the operand is zero extended or truncated
 to `SEW` bits as appropriate.
-For each elements the `SEW-1` upper bits of the `(2 * SEW - 1)`-bit result are 
+
+For each element, the `SEW-1` upper bits of the `(2*SEW-1)`-bit result are 
 returned. The most significant bit of each `SEW`-wide element is always 0.
 
 This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.

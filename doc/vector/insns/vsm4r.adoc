@@ -53,10 +53,12 @@ vd (in) = {x[0], X[1], X[2], X[3]} +
 vs2 = {rk[0],rk[1], rk[2], rk[3]} +
 vd (out) = {x[4], X[5], X[6], X[7]} +
 
-Note: The SM4 standard is available at: https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
+The SM4 standard is available at: https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
 
-Note:
+[NOTE]
+====
 In SM4, encryption and decryption are identical except that decryption consumes the round keys in the reverse order.
+====
 
 Each round is produced by the following +
   B = (X[i-3] &#8853; X[i-2] &#8853; X[i-1] &#8853; rk[i-4]) +

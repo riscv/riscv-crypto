@@ -99,13 +99,18 @@ Likewise, `vstart` must be a multiple of `EGS=4`
 
 // This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
+[NOTE]
+====
+W~13~ is not used by the instruction for producing the next 4 message schedule words.
+====
 
-NB:: W~13~ is not used by the instruction for producing the next 4 message schedule words.
-
-Note:: Many vector units that are wider than 128 bits may choose to only implement one
-128-bit datapath for this instruction. This needs to be transparent to code in terms
-of functionality. A vector length setting of wider than 128 bits would require some
-sort of instruction expansion.
+// [NOTE]
+// ====
+// Many vector units that are wider than 128 bits may choose to only implement one
+// 128-bit datapath for this instruction. This needs to be transparent to code in terms
+// of functionality. A vector length setting of wider than 128 bits would require some
+// sort of instruction expansion.
+// ====
 
 This instruction is not masked. If any element groups are not to be processed, the _vl_
 must be set accordingly.
@@ -171,7 +176,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvknh>>
+| <<zvknh[ab]>>
 | v0.1.0
 | In Development
 |===

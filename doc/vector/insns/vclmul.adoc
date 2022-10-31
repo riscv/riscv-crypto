@@ -56,20 +56,23 @@ Arguments::
 Description:: 
 This instruction performs a carry-less multiply operation to all
 active elements in the vector register group specified by `vs2`.
-It returns the least significant EEW bits of the product.
-
-This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.
-
-Note::
-The 64-bit carryless multiply is used for implementing GCM in the absence of the <<vghmac,insns-vghmac>> instruction.
-We do not make these two instructions exclusive as the 64-bit carryless multiply is readily derived from the `vghmac`
-logic and can have utility in other areas. Likewise, we treat other SEW values as reserved so as not to preclude
-future extensions from using this opcode with different element widths as may be used in generating CRCs, for example.
-
 The other operand can come from a vector register group `vs1`, or a scalar
 integer register `rs1`.
 For the scalar integer register, the operand is zero extended or truncated
 to 64 bits as appropriate.
+It returns the least significant EEW bits of the product.
+
+This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.
+
+[NOTE]
+====
+The 64-bit carryless multiply is used for implementing GCM in the absence of the <<vghmac,insns-vghmac>> instruction.
+We do not make these two instructions exclusive as the 64-bit carryless multiply is readily derived from the `vghmac`
+logic and can have utility in other areas. Likewise, we treat other SEW values as reserved so as not to preclude
+future extensions from using this opcode with different element widths as may be used in generating CRCs, for example.
+====
+
+
 
 Operation::
 [source,sail]

@@ -108,11 +108,14 @@ include::./riscv-crypto-vector-scalar-instructions.adoc[]
 The group of extensions introduced by the Vector Cryptography Instruction Set
 Extension specification is listed here.
 
-[NOTE]
-====
-All instructions in this document shall be executed with data independent execution time. This is, the latency of
-instruction execution shall not vary based on the values of the inputs.
-====
+All cryptographic instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
+<<zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but not <<zvkb>>) shall be executed with
+data independent execution latency.
+That is, the latency of an instruction's execution shall not vary based on the values
+of its inputs. This behavior is the same as described as described in the `Zkt` extension for
+scalar instructions. This behavior in these Vector Crypto instructions is independent of the
+implementation of the Zkt extension; it does not require that Zkt is implemented.
+
 
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.

@@ -58,12 +58,15 @@ In the RISC-V little-endian register representation, the byte order is swapped. 
 performs bit swaps to put the bits within bytes in the standard ordering from right to left
 (i.e., 7,6,5,4,3,2,1,0). 
 
-Note::
+[Note]
+====
 We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
 with the NIST specification. These reversals are inexpensive to implement as they unconditionally
 swap bit positions and therefore do not require any logic.
+====
 
-// Note::
+// [Note]
+// ====
 // To understand the inputs from the algorithm point of view, they can be viewed as being bit-serial
 // with the least significant bit (i.e. bit 0) arriving first and the subsequent bits being concatenated on the right.
 // The first group of 8 bits is byte 0, the second is byte 1 and so on until byte 15.
@@ -74,6 +77,7 @@ swap bit positions and therefore do not require any logic.
 // (i.e., bit 0) on the right. While this is the reverse of how bits are shown in the specification, it is in the
 // order that we are used to, and allows us to use standard polynomial multiply operations and to use 0x87 as the least
 // significant 128 bits of the irreducible polynomial.
+// ====
 
 The operation can be compactly defined as
 Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~`
@@ -90,7 +94,8 @@ Each EGW=128 element group of `vs1` and `vs2` are the input polynomials.
 // .. `V~i+1~ := (V~i~ & 1) ? (V~i~ >> 1) &#8853; R, V~i~ >> 1`
 // . Return `Z~128~`.
 
-// Note::
+// [Note]
+// ====
 // In the above definition, the least significant bit is on the left and the most significant it on the right.
 // Shifting to the right by one place is effectively multiplying by 2.
 // The V value is multiplied by 2 and then reduced if the shifted off MSB==1.
@@ -100,6 +105,7 @@ Each EGW=128 element group of `vs1` and `vs2` are the input polynomials.
 // by multiplying the most significant 127 bits by the irreducible polynomial x^128^ + x^7^ + x^2^ + x + 1,
 // and adding it to the least significant 128 bits,
 // producing a 128-bit result which is written to the corresponding element group in `vd`.
+// ====
 
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.

@@ -11,9 +11,12 @@ vsha2cl.vv vd, vs2, vs1
  NB: We are currently proposing that the two variants of this instruction be 
 differentiated by the suffixes h and l.
 
-Question::
-Do we need two versions? We are evaluating if there is an advantage to having both as opposed to
+[NOTE]
+.Issue to be resolved soon.
+====
+We are evaluating if there is an advantage to having two versions of this instruction as opposed to
 having one version and using a slideDown or the like between invocations.
+====
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -68,15 +71,14 @@ Description::
 
 If SEW is other than 32 or 64, this instruction takes the undefined instruction exception.
 
-Note::
+[NOTE]
+====
 The `vsha2ch` version of this instruction reads the two high words from vs1 while the
 `vsha2cl` version only reads the two low words.
 Otherwise, these versions of the instruction are identical.
 The two forms of the instruction save code from having to swap these two words
 if there were just a single instruction.
-
-NB: This is very preliminary draft that is being distributed for discussion purposes only. The code is not
-executable - it is largely a copy of the pseudo code in FIPS PUB 180-4 Secure Hash Standard (SHS).
+====
 
 // Many vector units that are wider than 128 bits may choose to only implement one
 // 128-bit datapath for this instruction. This needs to be transparent to code in terms
@@ -111,17 +113,20 @@ These sha two-rounds instructions only require two message schedule words in *Vs
 The instruction sha256ra accesses the lower two words, while sha256rb accesses
 the upper two words.
 
-
-
-
-Note::
+[NOTE]
+====
 It is recommended that implementations have VLEN>=128 for these instructions.
 Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN>=256.
 When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
 specified register groups can be combined to form the full element group.
+====
 
-It is important to note that ELEN>=SEW is a requirement as elements are not
-permitted to cross register boundaries.
+[NOTE]
+.To reviewers
+====
+The following pseudo is largely a copy of the pseudo code in FIPS PUB 180-4 Secure Hash Standard (SHS).
+We are in the process of updating it including making it work for EGW=128 and EGW=256 
+====
 
 Operation::
 [source,sail-ish]
@@ -176,7 +181,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkn1h>>
+| <<zvknh[ab]>>
 | v0.1.0
 | In Development
 |===

@@ -71,11 +71,12 @@ depend on the data being operated upon.
 
 //(ASIICDOC limitation???: Can't end on a bullet)
 
-Note::
+[NOTE]
+====
 For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
 otherwise the instruction encoding is reserved.
-
+====
 
 Operation::
 [source,sail]

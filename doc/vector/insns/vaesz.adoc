@@ -47,24 +47,29 @@ There is only a `.vs` form of the instruction. Element group 0 of the single reg
 that is used as the round key for all of the element groups in `vs2`. While in this case `vs2` is a single register, 
 `vd` can be a register group. 
 The next round state output of each element group is produced by applying the AddRoundkey
-step to the corresponding inputs. This instruction must always be implemented such that its execution latency does not
-depend on the data being operated upon.    
+step to the corresponding inputs.
 
-Note::
+This instruction must always be implemented such that its execution latency does not
+depend on the data being operated upon. 
+
+- AddRoundKey(state,roundkey)
+
+[NOTE]
+====
 This instruction is needed to avoid the need to "splat" a 128-bit vector register group when the round key is the same for
 all 128-bit "lanes". Such a splat would typically be implemented with a `vrgather` instruction which would hurt performance
 in many implementations. 
 This instruction only exists in the `.vs` form because the `.vv` form would be identical to the VXOR instruction.
-
-- AddRoundKey(state,roundkey)
+====
 
 This instruction operates on element groups in the source and destination registers
 
-Note::
+[NOTE]
+====
 Since the least significant element group of register `vs1` is used for all element groups in register groups `vd`
 and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
 otherwise the instruction encoding is reserved.
-
+====
 
 Operation::
 [source,sail]
