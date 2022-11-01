@@ -109,6 +109,7 @@ function clause execute (VANDN(vs2, vs1, vd, suffix)) = {
       "vx" => sext_or_truncate_to_sew(X(vs1)),
       "vi" => sext(vs1)
     };
+                 // insert mask handling code here
     let op2 = get_velem(vs2, EEW=SEW, i); 
     set_velem(vd, EEW=SEW, i, op & ~op2);
   }

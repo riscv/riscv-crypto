@@ -50,6 +50,7 @@ Operation::
 --
 function clause execute (VREV8(vs2)) = {
   foreach (i from vstart to vl-1) {
+                 // insert mask handling code here
     input = get_velem(vs2, SEW, i);
     let output : SEW = 0;
     let j = SEW - 1;
