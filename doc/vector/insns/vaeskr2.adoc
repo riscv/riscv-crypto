@@ -52,7 +52,7 @@ writes the 128-bit result to the corresponding element group in `vd`.
 This instruction only returns the generated key to the same element group as the source.
 If it is desired to have the same key in all vector groups, either the input vector groups
 need to contain the same values, or the output from a particular group needs to be "broadcast"
-to the other groups using an instruction such as vrgather.
+to the other groups using an instruction such as _vrgather_.
 
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
