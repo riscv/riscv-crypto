@@ -56,6 +56,8 @@ Arguments::
 Description:: 
 Performs the final-round decryption function of the AES block cipher.
 
+The instruction encoding is reserved if vector register group `vd` overlaps with `vs2`.
+
 The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key.
 
 In the `.vs` form of the instruction, element group 0 of the single register `vs2` holds

@@ -45,6 +45,8 @@ It treats each `EGW=128` element group of `vs2` as the CurrentRoundKey,
 and each `EGW=128` element group of `vd` as RoundKeyA.
 It writes the 128-bit result to the corresponding element group in `vd`.
 
+The instruction encoding is reserved if vector register group `vd` overlaps with `vs2`.
+
 NOTE::
 This description is still a work in progress. 
 
