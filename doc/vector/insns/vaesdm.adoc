@@ -82,8 +82,8 @@ therefore must be a multiple of `EGS=4`. +
 
 [NOTE]
 ====
-For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`
-and `vs2`, the destination vector register group cannot overlap with the single `vs` vector register,
+For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`,
+the destination vector register group `vd` cannot overlap with the single `vs2` vector register,
 otherwise the instruction encoding is reserved.
 ====
 
