@@ -2,7 +2,7 @@
 [[crypto_vector_instructions]]
 === Crypto Vector Cryptographic Instructions
 
-OP-V (0x57)
+OP-P (0x77)
 Crypto Vector instructions except Zvkb
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
