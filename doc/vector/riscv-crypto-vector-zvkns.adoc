@@ -26,11 +26,11 @@ To help avoid side-channel timing attacks, these instructions shall be implement
 | 128 | vaesem.[vv,vs]  | <<insns-vaesem>>
 | 128 | vaesdf.[vv,vs]  | <<insns-vaesdf>>
 | 128 | vaesdm.[vv,vs]  | <<insns-vaesdm>>
-| 128 | vaeskf.vi      | <<insns-vaeskf>>
-// | 128 | vaeskf1.vv      | <<insns-vaeskf1>>
-// | 128 | vaeskf2.vv      | <<insns-vaeskf2>>
-// | 128 | vaeskr1.vv      | <<insns-vaeskr1>>
-// | 128 | vaeskr2.vv      | <<insns-vaeskr2>>
+// | 128 | vaeskf.vi      | <<insns-vaeskf>>
+| 128 | vaeskf1.vi      | <<insns-vaeskf1>>
+| 128 | vaeskf2.vi      | <<insns-vaeskf2>>
+// | 128 | vaeskr1.vi      | <<insns-vaeskr1>>
+// | 128 | vaeskr2.vi      | <<insns-vaeskr2>>
 | 128 | vaesz.vs        | <<insns-vaesz>>
 |===
 
