@@ -40,11 +40,6 @@ Arguments::
 Description:: 
 This instruction reverses the order of the bits in each byte in `vs2`.
 
-[NOTE]
-====
-In some ways this is similar to how the bit logical instructions operate in that SEW does not affect the function.
-====
-
 Operation::
 [source,sail]
 --

@@ -40,16 +40,23 @@ Arguments::
 |===
 
 Description:: 
-This instruction implements a single round of the forward AES KeySchedule.
-It treats each `EGW=128` element group of `vs2` as the CurrentRoundKey,
-and each `EGW=128` element group of `vd` as RoundKeyA.
+This instruction implements a single round of the forward AES KeySchedule. It operates on `EGW=128` element groups. It treats each element group of `vs2` as the CurrentRoundKey,
+and each element group of `vd` as RoundKeyA.
 It writes the 128-bit result to the corresponding element group in `vd`.
+
+The most significant bit of the immediate (i.e., rcon[4]) is used to indicate if the instruction is
+performing an AES-256 instruction (rcon[4]==1) or an AES-128 instruction (rcon[4]==0). For AES-128, the 
+vd source operand is not used.
+
+NOTE::
+Since the vd source operand is not used when rcon[4]==0, implementations can choose to not read vd.
+There is no functional harm in implementations reading vd, it just creates an artificial RAW hazard.
+
+
 
 The instruction encoding is reserved if vector register group `vd` overlaps with `vs2`.
 
 NOTE::
-This description is still a work in progress. 
-
 The same instruction is used for generating AES-128 and AES-256 round keys, but the
 code sequence is different. Vd is only a source if rcon[4]==1 as two previous round
 keys are needed for AES-256, but only one previous round key is needed for AES-128.
@@ -89,30 +96,31 @@ For odd rounds, procvess is simpler and no Round Constant is used:
   NextRoundKey[1] = NextRoundKey[2] XOR PreviousRoundKey[1];
   NextRoundKey[0] = NextRoundKey[1] XOR PreviousRoundKey[0];
 
-The RoundConstant is stored in the unsigned 5-bit `rnd` immediate. Legal values for rnd[3:0]
-are 0 - 10. Out of range values are reserved.
+The RoundConstant is stored in the unsigned 5-bit `rnd` immediate. Legal
+values for rnd[3:0] are 0 - 10. Out of range values are reserved.
 
 
 [%autowidth]
-[%header,cols="4,2,2,2,2"]
+[%header,cols="4,4,2,2,2,2"]
 |===
-|rcon[3:0]
+|rcon[4:0] AES-128
+|rcon[4:0] AES-256 
 |AES-128 round
 |AES-256 round
 |Value
 |Comment
 
-| 0x0000 | - | odd | none       | Used for odd AES-256 rounds
-| 0x0001 |  1 |  2   | 0x01000000 |
-| 0x0010 |  2 |  4   | 0x02000000 |
-| 0x0011 |  3 |  6   | 0x04000000 | 
-| 0x0100 |  4 |  8   | 0x08000000 |
-| 0x0101 |  5 |  10  | 0x10000000 |
-| 0x0110 |  6 |  12  | 0x20000000 |
-| 0x0111 |  7 |  14  | 0x40000000 | Highest constant for AES-256
-| 0x1000 |  8 |  -   | 0x80000000 |
-| 0x1001 |  9 |  -   | 0x1b000000 |
-| 0x1010 | 10 |  -   | 0x36000000 | Highest constant for AES-128
+| 0x00000 | 0x10000 |- | odd | none       | Used for odd AES-256 rounds
+| 0x00001 | 0x10001 |1 |  2   | 0x01000000 |
+| 0x00010 | 0x10010 |2 |  4   | 0x02000000 |
+| 0x00011 | 0x10011 |3 |  6   | 0x04000000 | 
+| 0x00100 | 0x10100 |4 |  8   | 0x08000000 |
+| 0x00101 | 0x10101 |5 |  10  | 0x10000000 |
+| 0x00110 | 0x10110 |6 |  12  | 0x20000000 |
+| 0x00111 | 0x10111 |7 |  14  | 0x40000000 | Highest constant for AES-256
+| 0x01000 | -       |8 |  -   | 0x80000000 |
+| 0x01001 | -       |9 |  -   | 0x1b000000 |
+| 0x01010 | -       |10|  -   | 0x36000000 | Highest constant for AES-128
 |===  
 
 [NOTE]
