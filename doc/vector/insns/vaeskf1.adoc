@@ -1,0 +1,95 @@
+[[insns-vaeskf1, Vector AES-128 Forward KeySchedule]]
+= vaeskf1.vi
+
+Synopsis::
+Vector AES-128 Forward KeySchedule
+
+Mnemonic::
+vaeskf1.vi vd, vs2, uimm
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPIVI'},
+{bits: 5, name: 'uimm'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: 'funct6'},
+]}
+....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS 
+|EEW
+|Definition
+
+| uimm | input  | -    | - | -  | Round Number (rnd)
+| Vs2  | input  | 128  | 4 | 32 | Current round key
+| Vd   | output | 128  | 4 | 32 | Next round key
+|===
+
+Description:: 
+This instruction implements a single round of the forward AES-128 KeySchedule.
+It treats each 128-bit element group of `vs2` as the current AES round key.
+The round number is stored in the unsigned 5-bit `rnd`immediate. Legal values are 1 - 10.
+Out of range values signal an illegal instruction exception.
+
+It applies a single AES-128 KeySchedule round to each element group, and
+writes the 128-bit result to the corresponding element group in `vd`.
+
+This instruction ignores `vtype.vsew`. +
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `EEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`
+
+
+Operation::
+[source,Sail]
+--
+function clause execute (VAESESKF1(rnd, vd, vs2)) = {
+ if((unsigned(rnd[3:0]) > 10) then {
+    handle_illegal();  RETIRE_SUCCESS
+  } else {
+  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+
+// Insert constant table here
+
+  foreach (i from eg_start to eg_len-1) {
+      let CurrentRoundKey[3:0]  : bits(32)  = get_velem(vs2, EGW=128, i);
+      let w[3] : bits(32) =  CurrentRoundKey[3] XOR SubWord(RotWord(CurrentRoundKey[0])) XOR Const[rnd];
+      let w[2] : bits(32) = w[3] XOR CurrentRoundKey[2]
+      let w[1] : bits(32) = w[2] XOR CurrentRoundKey[1]
+      let w[0] : bits(32) = w[1] XOR CurrentRoundKey[0]
+      set_velem(vd, EGW=128, i, w[3:0]);
+    }
+    RETIRE_SUCCESS
+  }
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkns>>
+| v0.1.0
+| In Development
+|===

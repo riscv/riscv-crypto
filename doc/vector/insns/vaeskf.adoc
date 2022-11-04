@@ -101,26 +101,25 @@ values for rnd[3:0] are 0 - 10. Out of range values are reserved.
 
 
 [%autowidth]
-[%header,cols="4,4,2,2,2,2"]
+[%header,cols="4,2,2,2,2"]
 |===
-|rcon[4:0] AES-128
-|rcon[4:0] AES-256 
+|rcon[4:0]
 |AES-128 round
 |AES-256 round
 |Value
 |Comment
 
-| 0x00000 | 0x10000 |- | odd | none       | Used for odd AES-256 rounds
-| 0x00001 | 0x10001 |1 |  2   | 0x01000000 |
-| 0x00010 | 0x10010 |2 |  4   | 0x02000000 |
-| 0x00011 | 0x10011 |3 |  6   | 0x04000000 | 
-| 0x00100 | 0x10100 |4 |  8   | 0x08000000 |
-| 0x00101 | 0x10101 |5 |  10  | 0x10000000 |
-| 0x00110 | 0x10110 |6 |  12  | 0x20000000 |
-| 0x00111 | 0x10111 |7 |  14  | 0x40000000 | Highest constant for AES-256
-| 0x01000 | -       |8 |  -   | 0x80000000 |
-| 0x01001 | -       |9 |  -   | 0x1b000000 |
-| 0x01010 | -       |10|  -   | 0x36000000 | Highest constant for AES-128
+| 0x00000 | - | odd  | none       | Used for odd AES-256 rounds
+| 0x00001 | 1 |  2   | 0x01000000 |
+| 0x00010 | 2 |  4   | 0x02000000 |
+| 0x00011 | 3 |  6   | 0x04000000 | 
+| 0x00100 | 4 |  8   | 0x08000000 |
+| 0x00101 | 5 |  10  | 0x10000000 |
+| 0x00110 | 6 |  12  | 0x20000000 |
+| 0x00111 | 7 |  14  | 0x40000000 | Highest constant for AES-256
+| 0x01000 | 8 |  -   | 0x80000000 |
+| 0x01001 | 9 |  -   | 0x1b000000 |
+| 0x01010 |10 |  -   | 0x36000000 | Highest constant for AES-128
 |===  
 
 [NOTE]

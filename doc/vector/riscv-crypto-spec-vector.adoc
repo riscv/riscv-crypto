@@ -169,12 +169,12 @@ include::insns/vaesef.adoc[leveloffset=+2]
 <<<
 include::insns/vaesem.adoc[leveloffset=+2]
 <<<
-include::insns/vaeskf.adoc[leveloffset=+2]
+// include::insns/vaeskf.adoc[leveloffset=+2]
+// <<<
+include::insns/vaeskf1.adoc[leveloffset=+2]
 <<<
-// include::insns/vaeskf1.adoc[leveloffset=+2]
-// <<<
-// include::insns/vaeskf2.adoc[leveloffset=+2]
-// <<<
+include::insns/vaeskf2.adoc[leveloffset=+2]
+<<<
 // include::insns/vaeskr1.adoc[leveloffset=+2]
 // <<<
 // include::insns/vaeskr2.adoc[leveloffset=+2]
