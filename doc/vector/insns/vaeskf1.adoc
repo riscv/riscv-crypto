@@ -41,7 +41,7 @@ Arguments::
 Description:: 
 This instruction implements a single round of the forward AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round number is stored in the unsigned 5-bit `rnd`immediate. Legal values are 1 - 10.
+The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 10.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-128 KeySchedule round to each element group, and
