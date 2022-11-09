@@ -110,9 +110,11 @@ Extension specification is listed here.
 
 All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
 <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvkb>>) shall be executed with
-data independent execution latency.
+data-independent execution latency.
 That is, the latency of an instruction's execution shall not vary based on the values
-of its inputs. This behavior is the same as described as described in the `Zkt` extension for
+of its _data_. To be clear, _data_ refers to an instruction's operands and does not include 
+other parameters of vector execution such as those specified in `vtype` and `vl`.
+This behavior is the same as described as described in the `Zkt` extension for
 scalar instructions. This behavior in these Vector Crypto instructions is independent of the
 implementation of the Zkt extension; it does not require that Zkt is implemented.
 

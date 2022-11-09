@@ -55,7 +55,7 @@ Encoding (Vector-Immediate)::
 {bits: 5, name: 'uimm[4:0]'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
-{bits: 1, name: 'uimm[5]'},
+{bits: 1, name: 'i5'},
 {bits: 6, name: 'funct5'},
 ]}
 ....
