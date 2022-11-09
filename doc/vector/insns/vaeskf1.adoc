@@ -11,13 +11,13 @@ Encoding::
 [wavedrom, , svg]
 ....
 {reg:[
-{bits: 7, name: 'OP-V'},
+{bits: 7, name: 'OP-P'},
 {bits: 5, name: 'vd'},
-{bits: 3, name: 'OPIVI'},
+{bits: 3, name: 'OPMVV'},
 {bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm'},
-{bits: 6, name: 'funct6'},
+{bits: 1, name: '1'},
+{bits: 6, name: '100010'},
 ]}
 ....
 
@@ -41,7 +41,7 @@ Arguments::
 Description:: 
 This instruction implements a single round of the forward AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round number is stored in the unsigned 5-bit `rnd`immediate. Legal values are 1 - 10.
+The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 10.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-128 KeySchedule round to each element group, and
