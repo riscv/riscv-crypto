@@ -8,8 +8,8 @@ Only the log2(SEW) bits are used for the rotate amount.
 
 [NOTE]
 ====
-The immediate form of this instruction doesn't support all rotate amounts as 6 bits are required
-to encode these. This is the same limitation as exists in the vector shift instructions.
+The ``.vi` form of this instruction uses a 6-bit unsigned immediate value that is specified
+in bits 26,19:15 of the instruction encoding.
 ====
 
 Mnemonic::
@@ -52,10 +52,11 @@ Encoding (Vector-Immediate)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPIVI'},
-{bits: 5, name: 'uimm'},
+{bits: 5, name: 'uimm[4:0]'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
-{bits: 6, name: 'funct6'},
+{bits: 1, name: 'uimm[5]'},
+{bits: 6, name: 'funct5'},
 ]}
 ....
 
@@ -98,7 +99,7 @@ Description::
 This instruction performs a bitwise right rotation on vector elements.
 The data to be rotated is in the vector register group specified by `vs2` and
 the rotate amount value can come from a vector register group `vs1`, a scalar
-integer register `rs1`, or a zero-extended 5-bit immediate.
+integer register `rs1`, or a zero-extended 6-bit immediate.
 Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.
 
@@ -124,10 +125,10 @@ function clause execute (VROR_VX(vs2, rs1, vd)) = {
   RETIRE_SUCCESS
 }
 
-function clause execute (VROR_VI(vs2, imm, vd)) = {
+function clause execute (VROR_VI(vs2, imm[5:0], vd)) = {
   foreach (i from vstart to vl - 1) {
     set_velem(vd, EEW=SEW, i, 
-      get_velem(vs2, i) >>> (imm & (SEW-1))
+      get_velem(vs2, i) >>> (imm[5:0] & (SEW-1))
     )
   }
   RETIRE_SUCCESS

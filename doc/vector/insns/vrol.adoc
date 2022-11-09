@@ -1,21 +1,14 @@
 [[insns-vrol, Vector Rotate Left]]
-= vrol.[vv,vx,vi]
+= vrol.[vv,vx]
 
 Synopsis::
-Vector rotate left by vector/scalar/immediate.
+Vector rotate left by vector/scalar.
 
 Only the log2(SEW) bits are used for the rotate amount.
-
-[NOTE]
-====
-The immediate form of this instruction doesn't support all rotate amounts as 6 bits are required
-to encode these. This is the same limitation as exists in the vector shift instructions.
-====
 
 Mnemonic::
 vrol.vv vd, vs2, vs1, vm +
 vrol.vx vd, vs2, rs1, vm + 
-vrol.vi vd, vs2, uimm, vm
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -39,20 +32,6 @@ Encoding (Vector-Scalar)::
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPIVX'},
 {bits: 5, name: 'rs1'},
-{bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm'},
-{bits: 6, name: 'funct6'},
-]}
-....
-
-Encoding (Vector-Immediate)::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 7, name: 'OP-V'},
-{bits: 5, name: 'vd'},
-{bits: 3, name: 'OPIVI'},
-{bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 6, name: 'funct6'},
@@ -88,7 +67,7 @@ Vector-Scalar/Immediate Arguments::
 |EEW
 |Definition
 
-| Rs1/imm | input  | -    | - | -   | Rotate amount
+| Rs1     | input  | -    | - | -   | Rotate amount
 | Vs2     | input  | SEW  | 1 | SEW | Data
 | Vd      | output | SEW  | 1 | SEW | Rotated data
 |===
@@ -96,17 +75,15 @@ Vector-Scalar/Immediate Arguments::
 Description:: 
 This instruction performs a bitwise left rotation on vector elements.
 The data to be rotated is in the vector register group specified by `vs2` and
-the rotate amount value can come from a vector register group `vs1`, a
-scalar integer register `rs1`, or a zero-extended immediate.
+the rotate amount value can come from a vector register group `vs1`, or a
+scalar integer register `rs1`.
 Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.
 
 [NOTE]
 ====
-For all element widths except for `SEW=64`, the immediate form of this instruction (i.e., `vrol.vi`) is
-not needed as the same result can be achieved by negating  the rotate amount and using the immediate form
-of rotate right instruction (i.e., vror.vi). However, when `SEW=64`, the 5-bit immediate is not wide enough
-to do this for all cases . Therefore, we have included this immediate form for rotate left.
+There is no immediate form of this instruction (i.e., `vrol.vi`) as the same result can be achieved by negating
+the rotate amount and using the immediate form of rotate right instruction (i.e., vror.vi).
 ====
 
 Operation::
@@ -131,14 +108,6 @@ function clause execute (VROL_VX(vs2, rs1, vd)) = {
   RETIRE_SUCCESS
 }
 
-function clause execute (VROL_VI(vs2, imm, vd)) = {
-  foreach (i from vstart to vl - 1) {
-    set_velem(vd, EEW=SEW, i,
-      get_velem(vs2, i) <<< (imm & (SEW-1))
-    )
-  }
-  RETIRE_SUCCESS
-}
 --
 
 Included in::

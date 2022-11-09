@@ -12,7 +12,7 @@ for implementing common cryptographic workloads securely & efficiently.
 
 | vclmul.[vv,vx]     | <<insns-vclmul>>
 | vclmulh.[vv,vx]    | <<insns-vclmulh>>
-| vrol.[vv,vx,vi]    | <<insns-vrol>>
+| vrol.[vv,vx]       | <<insns-vrol>>
 | vror.[vv,vx,vi]    | <<insns-vror>>
 | vbrev8.v           | <<insns-vbrev8>>
 | vrev8.v            | <<insns-vrev8>>
