@@ -48,8 +48,9 @@ Vector instructions with *Zvkb (in bold)*
 | 010001 |V|X|I| vmadc      | 010001 | | |             | 010001 | | |
 | 010010 |V|X| | vsbc       | 010010 |V| | VXUNARY0    | 010010 |V| | VFUNARY0
 | 010011 |V|X| | vmsbc      | 010011 | | |             | 010011 |V| | VFUNARY1
-| 010100 | | | |            | 010100 |V| | VMUNARY0    | 010100 | | |
-| 010101 | | | |            | 010101 | | |             | 010101 | | |
+| 010100 |V|X| | *vror*     | 010100 |V| | VMUNARY0    | 010100 | | |
+| 010101 |V|X| | *vrol*     | 010101 | | |             | 010101 | | |
+| 01010x | | |I| *vror*     |        | | |             |        | | |    
 | 010110 | | | |            | 010110 | | |             | 010110 | | |
 | 010111 |V|X|I| vmerge/vmv | 010111 |V| | vcompress   | 010111 | |F| vfmerge/vfmv
 | 011000 |V|X|I| vmseq      | 011000 |V| | vmandn      | 011000 |V|F| vmfeq
@@ -70,9 +71,9 @@ Vector instructions with *Zvkb (in bold)*
 | 100001 |V|X|I| vsadd      | 100001 |V|X| vdiv        | 100001 | |F| vfrdiv
 | 100010 |V|X| | vssubu     | 100010 |V|X| vremu       | 100010 | | |
 | 100011 |V|X| | vssub      | 100011 |V|X| vrem        | 100011 | | |
-| 100100 |V|X|I| *vrol*     | 100100 |V|X| vmulhu      | 100100 |V|F| vfmul
+| 100100 | | | |            | 100100 |V|X| vmulhu      | 100100 |V|F| vfmul
 | 100101 |V|X|I| vsll       | 100101 |V|X| vmul        | 100101 | | |
-| 100110 |V|X|I| *vror*     | 100110 |V|X| vmulhsu     | 100110 | | |
+| 100110 | | | |            | 100110 |V|X| vmulhsu     | 100110 | | |
 | 100111 |V|X| | vsmul      | 100111 |V|X| vmulh       | 100111 | |F| vfrsub
 |        | | |I| vmv<nr>r   |        | | |             |        | | |
 | 101000 |V|X|I| vsrl       | 101000 | | |             | 101000 |V|F| vfmadd
