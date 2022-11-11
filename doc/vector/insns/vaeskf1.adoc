@@ -58,7 +58,7 @@ Operation::
 [source,Sail]
 --
 function clause execute (VAESESKF1(rnd, vd, vs2)) = {
- if((unsigned(rnd[3:0]) > 10) then {
+ if(unsigned(rnd[3:0]) > 10) then {
     handle_illegal();  RETIRE_SUCCESS
   } else {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
@@ -71,7 +71,8 @@ function clause execute (VAESESKF1(rnd, vd, vs2)) = {
 
   foreach (i from eg_start to eg_len-1) {
       let CurrentRoundKey[3:0]  : bits(32)  = get_velem(vs2, EGW=128, i);
-      let w[3] : bits(32) =  CurrentRoundKey[3] XOR SubWord(RotWord(CurrentRoundKey[0])) XOR Const[rnd];
+      let w[3] : bits(32) =  CurrentRoundKey[3] XOR aes_subword_fwd(aes_rotword(CurrentRoundKey[0])) XOR
+        aes_decode_rcon(rnd);
       let w[2] : bits(32) = w[3] XOR CurrentRoundKey[2]
       let w[1] : bits(32) = w[2] XOR CurrentRoundKey[1]
       let w[0] : bits(32) = w[1] XOR CurrentRoundKey[0]
@@ -79,6 +80,15 @@ function clause execute (VAESESKF1(rnd, vd, vs2)) = {
     }
     RETIRE_SUCCESS
   }
+}
+
+val aes_rotword : bits(32) -> bits(32)
+function aes_rotword(x) = {
+let a3 : bits (8) = x[ 7.. 0];
+let a2 : bits (8) = x[15.. 8];
+let a1 : bits (8) = x[23..16];
+let a0 : bits (8) = x[31..24];
+a1 @ a2 @ a3 @a0 /* Return Value */
 }
 --
 

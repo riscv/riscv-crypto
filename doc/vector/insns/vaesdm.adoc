@@ -103,10 +103,10 @@ function clause execute (VAESDM(vs2, vd, suffix)) = {
     let keyelem = if suffix == "vv" then i else 0;
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
-    let sr    : bits(128) = aes_inv_shift_rows(state);
-    let sb    : bits(128) = aes_inv_sub_bytes(sr);
+    let sr    : bits(128) = aes_shift_rows_inv(state);
+    let sb    : bits(128) = aes_subbytes_inv(sr);
     let ark   : bits(128) = sb ^ rkey;
-    let mix   : bits(128) = aes_inv_mix_columns(ark);
+    let mix   : bits(128) = aes_mixcolumns_inv(ark);
     set_velem(vd, EGW=128, i, mix);
   }
   RETIRE_SUCCESS

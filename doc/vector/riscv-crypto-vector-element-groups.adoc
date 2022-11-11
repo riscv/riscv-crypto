@@ -60,8 +60,8 @@ for accelerated cryptographic operations.
 | EGS
 
 | AES      | <<zvkns>>            | 128 | 32 | 4
-| SHA256   | <<zvknh,zvknh[ab]>>           | 128 | 32 | 4
-| SHA512   | <<zvknh,zvknh[ab]>>           | 256 | 64 | 4
+| SHA256   | <<zvknh,zvknh[ab]>>  | 128 | 32 | 4
+| SHA512   | <<zvknh,zvknhb>>     | 256 | 64 | 4
 | GCM      | <<zvkg>>             | 128 | 32 | 4
 | SM4      | <<zvksed>>           | 128 | 32 | 4
 | SM3      | <<Zvksh>>            | 256 | 32 | 8

@@ -141,10 +141,10 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-	  {a, b, e, f} : bits(128) = get_velem(vs2, EGW=128, i);
-	  {c, d, g, h} : bits(128) = get_velem(vd, EGW=128, i);
-	  MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i);
-	  {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
+	  let {a, b, e, f} : bits(128) = get_velem(vs2, EGW=128, i);
+	  let {c, d, g, h} : bits(128) = get_velem(vd, EGW=128, i);
+	  let MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i);
+	  let {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
 
 	  T1 = h + sum1(e) + Ch(e,f,g) + W0;
 	  T2 = sum0(a) + Maj(a,b,c);
@@ -168,7 +168,7 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 	  c = b;
 	  b = a;
 	  a = T1 + T2;
-	  set_velem(vd, EGW=128, i, {f,e,b,a);
+	  set_velem(vd, EGW=128, i, {f,e,b,a});
   }
   RETIRE_SUCCESS
 }

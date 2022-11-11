@@ -69,8 +69,6 @@ depend on the data being operated upon.
 * ShiftRows(state)
 * AddRoundKey(state,roundkey)
 
-//(ASIICDOC limitation???: Can't end on a bullet)
-
 [NOTE]
 ====
 For the `.vs` form, since the least significant element group of register `vs2` is used for all element groups in register groups `vd`,
@@ -92,8 +90,8 @@ function clause execute (VAESEF(vs2, vd, suffix) = {
     let keyelem = if suffix == "vv" then i else 0;
     let state : bits(128) = get_velem(vd, EGW=128, i);
     let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
-    let sb    : bits(128) = aes_fwd_sub_bytes(state);
-    let sr    : bits(128) = aes_fwd_shift_rows(sb);
+    let sb    : bits(128) = aes_subbytes_fwd(state);
+    let sr    : bits(128) = aes_shift_rows_fwd(sb);
     let ark   : bits(128) = sr ^ rkey;
     set_velem(vd, EGW=128, i, ark);
   }

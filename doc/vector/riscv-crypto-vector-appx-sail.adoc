@@ -10,6 +10,7 @@ is recommended reading in order to best understand the supporting code.
 
 [source,sail]
 ----
-include::../../extern/sail-riscv/model/riscv_types_kext.sail[lines=12..-1]
+// include::../../extern/sail-riscv/model/riscv_types_kext.sail[lines=12..-1]
+include::./sail/riscv_types_kext.sail[lines=12..-1]
 ----
 
