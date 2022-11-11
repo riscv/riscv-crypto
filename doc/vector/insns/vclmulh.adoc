@@ -17,8 +17,8 @@ Encoding (Vector-Vector)::
 {bits: 3, name: 'OPIVV'},
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: '001101'},
 ]}
 ....
 
@@ -31,8 +31,8 @@ Encoding (Vector-Scalar)::
 {bits: 3, name: 'OPIVX'},
 {bits: 5, name: 'rs1'},
 {bits: 5, name: 'vs2'},
-{bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: '001101'},
 ]}
 ....
 
