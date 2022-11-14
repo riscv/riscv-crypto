@@ -6,8 +6,9 @@ OP-P (0x77)
 Crypto Vector instructions except Zvkb
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[cols="4,1,1,1,1,4,1,1,1,4,1,1,1"]
 |===
-5+^| Integer               4+^| Integer               4+^| FP
+5+^|Integer 4+^|Integer 4+^| FP
 
 | funct3 | | | |            | funct3 | | |             | funct3 | | |
 | OPIVV  |V| | |            | OPMVV  |V| |             | OPFVV  |V| |
@@ -16,6 +17,8 @@ Crypto Vector instructions except Zvkb
 |===
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[cols="6,1,1,1,1,6,1,1,6,6,1,1,1"]
+
 |===
 5+^| funct6                  4+^| funct6                 4+^| funct6
 
