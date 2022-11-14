@@ -6,8 +6,9 @@ OP-P (0x77)
 Crypto Vector instructions except Zvkb
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[cols="4,1,1,1,1,4,1,1,1,4,1,1,1"]
 |===
-5+| Integer               4+| Integer               4+| FP
+5+^|Integer 4+^|Integer 4+^| FP
 
 | funct3 | | | |            | funct3 | | |             | funct3 | | |
 | OPIVV  |V| | |            | OPMVV  |V| |             | OPFVV  |V| |
@@ -16,10 +17,12 @@ Crypto Vector instructions except Zvkb
 |===
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
-|===
-5+| funct6                  4+| funct6                 4+| funct6
+[cols="6,1,1,1,1,6,1,1,6,6,1,1,1"]
 
-| 100000 | | | |            | 100000 |V| | vsm3me      | 100000 | | |             
+|===
+5+^| funct6                  4+^| funct6                 4+^| funct6
+
+|100000||||| 100000 |V| | vsm3me      | 100000 | | |             
 | 100001 | | | |            | 100001 |V| | vsm4k.vi    | 100001 | | |             
 | 100010 | | | |            | 100010 |V| | vaesfk1.vi  | 100010 | | |             
 | 100011 | | | |            | 100011 | | |             | 100011 | | |
@@ -43,7 +46,7 @@ Crypto Vector instructions except Zvkb
 .VAES.vv and VAES.vs encoding space
 [cols="2,14"]
 |===
-|  vs1  |
+|vs1|
 
 | 00000 | vaesdm
 | 00001 | vaesdf
