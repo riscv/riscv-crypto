@@ -24,6 +24,6 @@ To help avoid side-channel timing attacks, these instructions shall be implement
 |Instruction
 
 | 256 | vsm3me.vv | <<insns-vsm3me>>
-| 256 | vsm3c.vv   | <<insns-vsm3c>>
+| 256 | vsm3c.vi   | <<insns-vsm3c>>
 |===
 

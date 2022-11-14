@@ -350,3 +350,15 @@ function aes_mixcolumns_inv(x) = {
   let oc3 : bits(32) = aes_mixcolumn_inv(aes_get_column(x, 3));
   (oc3 @ oc2 @ oc1 @ oc0) /* Return value */
 }
+
+/* Performs the word rotation for AES key schedule
+*/
+
+val aes_rotword : bits(32) -> bits(32)
+function aes_rotword(x) = {
+  let a3 : bits (8) = x[ 7.. 0];
+  let a2 : bits (8) = x[15.. 8];
+  let a1 : bits (8) = x[23..16];
+  let a0 : bits (8) = x[31..24];
+  (a1 @ a2 @ a3 @ a0) /* Return Value */
+}
