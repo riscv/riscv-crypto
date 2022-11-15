@@ -46,7 +46,7 @@ schedule expansion with EGW=128 (`zvknha` and `zvknhb`)
 - When `SEW`=64, this instruction implements 4 rounds of SHA-512 message
 schedule expansion with EGW=256 (`zvknhb` only)
 
-If SEW is other than 32 or 64, this instruction takes the undefined instruction exception.
+If SEW is other than 32 or 64, this instruction takes the illegal instruction exception.
 
 This instruction takes in a subset of the last 16 message-schedule `SEW`-sized "words"
 and produces the next 4 message-schedule words.
