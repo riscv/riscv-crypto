@@ -5,8 +5,8 @@ Synopsis::
 Vector Carry-less Multiply Upper Part by vector or scalar.
 
 Mnemonic::
-vclmulh.vv vd, vs2, vs1 +
-vclmulh.vx vd, vs2, rs1
+vclmulh.vv vd, vs2, vs1, vm +
+vclmulh.vx vd, vs2, rs1, vm
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
