@@ -35,7 +35,7 @@ Vector instructions with *Zvkb (in bold)*
 | 001100 |V|X|I| vrgather   | 001100 |V|X| *vclmul*    | 001100 | | |
 | 001101 | | | |            | 001101 |V|X| *vclmulh*   | 001101 | | |
 | 001110 | |X|I| vslideup   | 001110 | |X| vslide1up   | 001110 | |F| vfslide1up
-| 001110 |V| | | vrgatherei16|        | | |             |        | | |           
+| 001110 |V| | | vrgatherei16|        | | |             |        | | |
 | 001111 | |X|I| vslidedown | 001111 | |X| vslide1down | 001111 | |F| vfslide1down
 |===
 
@@ -50,7 +50,7 @@ Vector instructions with *Zvkb (in bold)*
 | 010011 |V|X| | vmsbc      | 010011 | | |             | 010011 |V| | VFUNARY1
 | 010100 |V|X| | *vror*     | 010100 |V| | VMUNARY0    | 010100 | | |
 | 010101 |V|X| | *vrol*     | 010101 | | |             | 010101 | | |
-| 01010x | | |I| *vror*     |        | | |             |        | | |    
+| 01010x | | |I| *vror*     |        | | |             |        | | |
 | 010110 | | | |            | 010110 | | |             | 010110 | | |
 | 010111 |V|X|I| vmerge/vmv | 010111 |V| | vcompress   | 010111 | |F| vfmerge/vfmv
 | 011000 |V|X|I| vmseq      | 011000 |V| | vmandn      | 011000 |V|F| vmfeq
@@ -99,7 +99,7 @@ Vector instructions with *Zvkb (in bold)*
 | 110110 | | | |            | 110110 |V|X| vwsubu.w    | 110110 |V|F| vfwsub.w
 | 110111 | | | |            | 110111 |V|X| vwsub.w     | 110111 | | |
 | 111000 | | | |            | 111000 |V|X| vwmulu      | 111000 |V|F| vfwmul
-| 111001 | | | |            | 111001 | | |             | 111001 | | |      
+| 111001 | | | |            | 111001 | | |             | 111001 | | |
 | 111010 | | | |            | 111010 |V|X| vwmulsu     | 111010 | | |
 | 111011 | | | |            | 111011 |V|X| vwmul       | 111011 | | |
 | 111100 | | | |            | 111100 |V|X| vwmaccu     | 111100 |V|F| vfwmacc

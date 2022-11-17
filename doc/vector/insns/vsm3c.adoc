@@ -17,7 +17,7 @@ Encoding::
 {bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '101011'},
 ]}
 ....
 

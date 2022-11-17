@@ -18,7 +18,7 @@ We are evaluating if there is an advantage to having two versions of this instru
 having one version and using a slideDown or the like between invocations.
 ====
 
-Encoding (Vector-Vector)::
+Encoding (Vector-Vector) High part::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -28,11 +28,11 @@ Encoding (Vector-Vector)::
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '101110'},
 ]}
 ....
 
-Encoding (Vector-Vector)::
+Encoding (Vector-Vector) Low part::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -42,7 +42,7 @@ Encoding (Vector-Vector)::
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '101111'},
 ]}
 ....
 

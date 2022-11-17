@@ -17,7 +17,7 @@ Encoding::
 {bits: 5, name: 'uimm'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '100001'},
 ]}
 ....
 
@@ -29,7 +29,7 @@ Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
@@ -38,7 +38,7 @@ Arguments::
 | Vd   | output | 128  | 4 | 32 | Next 4 round keys rK'[0:3]
 |===
 
-Description:: 
+Description::
 This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys
 as defined in SM4 (see
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
