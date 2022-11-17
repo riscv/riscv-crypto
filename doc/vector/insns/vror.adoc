@@ -4,11 +4,11 @@
 Synopsis::
 Vector rotate right by vector/scalar/immediate.
 
-Only the log2(SEW) bits are used for the rotate amount.
+Only the low log2(SEW) bits are used for the rotate amount.
 
 [NOTE]
 ====
-The ``.vi` form of this instruction uses a 6-bit unsigned immediate value that is specified
+The `.vi` form of this instruction uses a 6-bit unsigned immediate value that is specified
 in bits 26,19:15 of the instruction encoding.
 ====
 

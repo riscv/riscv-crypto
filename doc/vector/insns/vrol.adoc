@@ -4,7 +4,7 @@
 Synopsis::
 Vector rotate left by vector/scalar.
 
-Only the log2(SEW) bits are used for the rotate amount.
+Only the low log2(SEW) bits are used for the rotate amount.
 
 Mnemonic::
 vrol.vv vd, vs2, vs1, vm +
