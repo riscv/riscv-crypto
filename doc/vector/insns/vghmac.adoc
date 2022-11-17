@@ -130,16 +130,6 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
     let X = get_velem(vs2,EGW=128,i);       // next block cipher output
     let Z : bits(128) = 0;
 
-// Old code begin
-//    let prod[254:0]   = clmul_128(Y, H);
-//      // Reduce product by irreducible polynomial
-//      let red1 = clmul_121(prod[254:134], 0x87);// 128-bit product
-//      let prod[133:6] ^= red1[127:0];
-      //   133:128 are modified by 254:249 x 0x87
-//      let red2 = clmul_8(prod[133:128],0x87); //13-bit product
-//      let prod[12:0] ^= red2[12:0];
-// old code end 
-
 for (int bit = 0; bit < 128; bit++) {
       if bit_to_bool(Y[bit])
         Z ^= H
@@ -157,16 +147,7 @@ for (int bit = 0; bit < 128; bit++) {
   }
   RETIRE_SUCCESS
 
-// The following code is to be corrected and moved to the appendix
-function clmul_128 (a, b) = {
-    let result : 255 = 0;
-    foreach (i from 0 to 127 by 1) {
-      result = if ((b >> i) & 1)
-        then result ^ (a << i);
-        else result;
-    }
-    result; /* Return value */
-  }
+
 
 }
 --

@@ -132,7 +132,6 @@ Operation::
 [source,sail-ish]
 --
 function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
-// Need to separate based on EGW (128 or 256)
 
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
@@ -141,13 +140,25 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-	  let {a, b, e, f} : bits(128) = get_velem(vs2, EGW=128, i);
-	  let {c, d, g, h} : bits(128) = get_velem(vd, EGW=128, i);
-	  let MessageShedPlusC[3:0] : bits(128) = get_velem(vs1, EGW=128, i);
+	  let {a, b, e, f} : bits(4*SEW) = get_velem(vs2, 4*SEW, i);
+	  let {c, d, g, h} : bits(4*SEW) = get_velem(vd, 4*SEW, i);
+	  let MessageShedPlusC[3:0] : bits(4*SEW) = get_velem(vs1, 4*SEW, i);
 	  let {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
 
-	  T1 = h + sum1(e) + Ch(e,f,g) + W0;
-	  T2 = sum0(a) + Maj(a,b,c);
+	  let T1 : bits(SEW) = h + sum1(e) + Ch(e,f,g) + W0;
+	  let T2 : bits(SEW) = sum0(a) + Maj(a,b,c);
+	  h  = g;
+	  g  = f;
+	  f  = e;	
+	  e  = d + T1;
+	  d  = c;
+	  c  = b;
+	  b  = a;
+	  a  = T1 + T2;
+
+
+	  T1  = h + sum1(e) + Ch(e,f,g) + W1;
+	  T2  = sum0(a) + Maj(a,b,c);
 	  h = g;
 	  g = f;
 	  f = e;	
@@ -156,22 +167,28 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 	  c = b;
 	  b = a;
 	  a = T1 + T2;
-
-
-	  T1 = h + sum1(e) + Ch(e,f,g) + W1;
-	  T2 = sum0(a) + Maj(a,b,c);
-	  h = g;
-	  g = f;
-	  f = e;	
-	  e = d + T1;
-	  d = c;
-	  c = b;
-	  b = a;
-	  a = T1 + T2;
-	  set_velem(vd, EGW=128, i, {f,e,b,a});
+	  set_velem(vd, 4*SEW, i, {f,e,b,a});
   }
   RETIRE_SUCCESS
 }
+
+function sum0(x) = {
+	match SEW {
+		32 => ROTR(x,2)XOR ROTR(x,13)XOR ROTR(x,22),
+		64 => ROTR(x,28)XOR ROTR(x,34)XOR ROTR(x,39)
+	}
+}
+
+function sum1(x) = {
+	match SEW {
+		32 => ROTR(x,6) ROTR(x,11) ROTR(x,25),
+		64 => ROTR(x,14)XOR ROTR(x,18)XOR ROTR(x,41)
+	}
+}
+
+Ch = 
+Maj 
+
 --
 
 Included in::

@@ -79,8 +79,6 @@ function clause execute (VAESESKF2(rnd, vd, vs2)) = {
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
 
-// Insert constant table here
-
   foreach (i from eg_start to eg_len-1) {
       let CurrentRoundKey[3:0]  : bits(32)  = get_velem(vs2, EGW=128, i);
       let RoundKeyB[3:0] : bits(32)  = get_velem(vd, EGW=128, i); // Previous round key

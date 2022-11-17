@@ -44,12 +44,10 @@ Operation::
 [source,sail]
 --
 function clause execute (VBREV8(vs2)) = {
-  // Need to add mask/tail handling
 
   foreach (i from vstart to vl-1) {
-                 // insert mask handling code here
     let input = get_velem(vs2, SEW, i);
-    let output : SEW = 0;
+    let output : bits(SEW) = 0;
     foreach (i from 0 to SEW-8 by 8) 
       let output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);
     set_velem(vd, SEW, i, output)

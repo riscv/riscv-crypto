@@ -84,17 +84,17 @@ function clause execute (VCLMUL(vs2, vs1, vd, suffix)) = {
   foreach (i from vstart to vl-1) {
     let op1 : bits (64) = if suffix =="vv" then get_velem(vs1,i) else X(vs1); 
     let op2 : bits (64) = get_velem(vs2,i);
-    let product : bits (64) = clmul(op1,op2);
+    let product : bits (64) = clmul(op1,op2,EEW);
     set_velem(vd, i, product);
   }
   RETIRE_SUCCESS
 }
 
-function clmul(x, y, EEW) = { // TODO: not real Sail Code yet
-  result : bits(EEW) = zeros();
-  foreach (i from 0 to (EEW - 1)) {
+function clmul(x, y, width) = {
+  let result : bits(width) = zeros();
+  foreach (i from 0 to (width - 1)) {
     if y[i] == 1 then result = result ^ (x << i);
-  };
+  }
   result
 }
 --

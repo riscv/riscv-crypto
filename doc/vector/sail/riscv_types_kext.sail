@@ -356,9 +356,25 @@ function aes_mixcolumns_inv(x) = {
 
 val aes_rotword : bits(32) -> bits(32)
 function aes_rotword(x) = {
-  let a3 : bits (8) = x[ 7.. 0];
-  let a2 : bits (8) = x[15.. 8];
-  let a1 : bits (8) = x[23..16];
-  let a0 : bits (8) = x[31..24];
-  (a1 @ a2 @ a3 @ a0) /* Return Value */
+  let a0 : bits (8) = x[ 7.. 0];
+  let a1 : bits (8) = x[15.. 8];
+  let a2 : bits (8) = x[23..16];
+  let a3 : bits (8) = x[31..24];
+  (a0 @ a3 @ a2 @ a1) /* Return Value */
+}
+
+val brev : bits(SEW) -> bits(SEW)
+function brev(x) = {
+  let output : bits(SEW) = 0;
+  foreach (i from 0 to SEW-8 by 8) 
+    output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);
+  output /* Return Value */
+}
+
+val reverse_bits_in_byte : bits(8) -> bits(8)
+function reverse_bits_in_byte(x) = {
+  let output : bits(8) = 0;
+  foreach (i from 0 to 7) 
+    output[i] = x[7-i]);
+  output /* Return Value */
 }
