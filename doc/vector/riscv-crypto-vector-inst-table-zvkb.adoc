@@ -4,8 +4,8 @@
 
 OP-V (0x57)
 Vector instructions with *Zvkb (in bold)*
-[%auto-width]
-// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+//[%auto-width]
+[%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| Integer               4+| Integer               4+| FP
 
@@ -15,8 +15,8 @@ Vector instructions with *Zvkb (in bold)*
 | OPIVI  | | |I|            |        | | |             |        | | |
 |===
 
-[%auto-width]
-// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+//[%auto-width]
+[%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| funct6                  4+| funct6                 4+| funct6
 
@@ -39,7 +39,7 @@ Vector instructions with *Zvkb (in bold)*
 | 001111 | |X|I| vslidedown | 001111 | |X| vslide1down | 001111 | |F| vfslide1down
 |===
 
-// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| funct6                  4+| funct6                 4+| funct6
 
@@ -63,7 +63,7 @@ Vector instructions with *Zvkb (in bold)*
 | 011111 | |X|I| vmsgt      | 011111 |V| | vmxnor      | 011111 | |F| vmfge
 |===
 
-// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| funct6                  4+| funct6                 4+| funct6
 
@@ -86,7 +86,7 @@ Vector instructions with *Zvkb (in bold)*
 | 101111 |V|X|I| vnclip     | 101111 |V|X| vnmsac      | 101111 |V|F| vfnmsac
 |===
 
-// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
 5+| funct6                  4+| funct6                 4+| funct6
 
@@ -110,9 +110,9 @@ Vector instructions with *Zvkb (in bold)*
 
 <<<
 
-[%auto-width]
+//[%auto-width]
 .VXUNARY0 encoding space
-[cols="2,14"]
+[%autowidth,cols="2,14"]
 |===
 |  vs1  |
 
