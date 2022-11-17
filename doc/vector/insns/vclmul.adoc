@@ -5,8 +5,8 @@ Synopsis::
 Vector Carry-less Multiply by vector or scalar - returning low half of product.
 
 Mnemonic::
-vclmul.vv vd, vs2, vs1 +
-vclmul.vx vd, vs2, rs1
+vclmul.vv vd, vs2, vs1, vm +
+vclmul.vx vd, vs2, rs1, vm
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
