@@ -17,7 +17,7 @@ Encoding (Vector-Vector)::
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '101101'},
 ]}
 ....
 

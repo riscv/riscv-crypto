@@ -17,7 +17,7 @@ Encoding::
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '100000'},
 ]}
 ....
 
@@ -29,7 +29,7 @@ Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
@@ -38,7 +38,7 @@ Arguments::
 | Vd  | output | 256  | 8 | 32 | Message words W[16:23]
 |===
 
-Description:: 
+Description::
 This instruction implements 8 rounds of SM3 message expansion,  producing eight 32-bit
 outputs in a 256-bit 8-element group.
 It treats each 256-bit 8-element group of `vs1` and `vs2` as the data input.

@@ -14,10 +14,10 @@ Encoding (Vector)::
 {bits: 7, name: 'OP-V'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPIVV'},
-{bits: 5, name: 'funct5'},
+{bits: 5, name: '01000'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
-{bits: 6, name: 'funct6'},
+{bits: 6, name: '010010'},
 ]}
 ....
 
@@ -29,7 +29,7 @@ Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
@@ -37,7 +37,7 @@ Arguments::
 | Vd  | output | SEW  | 1 | SEW | Bit-reversed bytes
 |===
 
-Description:: 
+Description::
 This instruction reverses the order of the bits in each byte in `vs2`.
 
 Operation::
@@ -48,7 +48,7 @@ function clause execute (VBREV8(vs2)) = {
   foreach (i from vstart to vl-1) {
     let input = get_velem(vs2, SEW, i);
     let output : bits(SEW) = 0;
-    foreach (i from 0 to SEW-8 by 8) 
+    foreach (i from 0 to SEW-8 by 8)
       let output[i+7..i] = reverse_bits_in_byte(input[i+7..i]);
     set_velem(vd, SEW, i, output)
   }

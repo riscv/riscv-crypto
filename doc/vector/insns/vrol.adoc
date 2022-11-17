@@ -8,7 +8,7 @@ Only the low log2(SEW) bits are used for the rotate amount.
 
 Mnemonic::
 vrol.vv vd, vs2, vs1, vm +
-vrol.vx vd, vs2, rs1, vm + 
+vrol.vx vd, vs2, rs1, vm +
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
