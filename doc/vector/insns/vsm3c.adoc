@@ -5,7 +5,7 @@ Synopsis::
 Vector SM3 Compression
 
 Mnemonic::
-vsm3c.vi vd, vs2, rnd
+vsm3c.vi vd, vs2, rnds
 
 Encoding::
 [wavedrom, , svg]
@@ -89,7 +89,7 @@ This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 Operation::
 [source,pseudocode]
 --
-function clause execute (VSM3C(rnd, vs2)) = {
+function clause execute (VSM3C(rnds, vs2)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
@@ -99,7 +99,7 @@ function clause execute (VSM3C(rnd, vs2)) = {
   foreach (i from eg_start to eg_len-1) {
 
 
-  // your code goes here
+  // missing relation between rnds and the successive j values
   SS1 <- ROTL7((ROTL12(A) + E + (ROTLjmod32(T_j))
   SS2 <- SS1 xor ROTL12(A)
   TT1 <- FF_j(A, B, C) + D + SS2 + W'[i]
