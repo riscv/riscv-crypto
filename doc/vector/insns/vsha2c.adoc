@@ -69,7 +69,7 @@ Description::
 - When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128 (`zvknha` and `zvknhb`)
 - When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256 (`zvkhnb` only)
 
-If SEW is other than 32 or 64, this instruction takes the undefined instruction exception.
+If SEW is other than 32 or 64, this instruction takes the illegal instruction exception.
 
 [NOTE]
 ====
