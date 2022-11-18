@@ -126,7 +126,6 @@ function clause execute (VSM3C(rnds, vs2)) = {
   RETIRE_SUCCESS
   }
 
-  function ROL32(x,n) = (X << N) | (X >> (32 - N))
   function FF1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
   function FF2(X, Y, Z) = (((X) & (Y)) | ((X) & (Z)) | ((Y) & (Z)))
 

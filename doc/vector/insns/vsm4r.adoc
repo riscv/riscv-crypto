@@ -63,7 +63,7 @@ In SM4, encryption and decryption are identical except that decryption consumes 
 Each round is produced by the following +
   B = (X[i-3] &#8853; X[i-2] &#8853; X[i-1] &#8853; rk[i-4]) +
   S = subBytes(B); 1 s-box per byte +
-  X[i]= X[i-4] &#8853; S &#8853; ROTL2(S) &#8853; ROTL10(S) &#8853; ROTL18(S) &#8853; ROTL24(S) +
+  X[i]= X[i-4] &#8853; S &#8853; ROL2(S) &#8853; ROL10(S) &#8853; ROL18(S) &#8853; ROL24(S) +
 
 Each of the 32 rounds consumes the last 4 32-bit outputs with a round key and produces the next 32-bit output.
 
@@ -90,20 +90,20 @@ function clause execute (VSM4R(vd, vs2)) = {
 
     // 1st round
     B = (X1 ^ X2 ^ X3 ^ rk0)
-    S = SUB_BYTES_SM4(B); 1 s-box per byte
-    let Y0 : bits(32) = X0 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
+    S = sm4_subword(B); 1 s-box per byte
+    let Y0 : bits(32) = X0 ^ S ^ ROL(S,2)^ ROL(S,10)^ ROL(S,18) ^ ROL(S,24)
     // 2nd round
     B = (X2 ^ X3 ^ X4 ^ rk1)
-    S = SUB_BYTES_SM4(B); 1 s-box per byte
-    Y1= X1 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
+    S = sm4_subword(B); 1 s-box per byte
+    Y1= X1 ^ S ^ ROL(S,2)^ ROL(S,10)^ ROL(S,18) ^ ROL(S,24)
     //3rd round
     B = (X3 ^ Y0 ^ X1 ^ rk2)
-    S = SUB_BYTES_SM4(B); 1 s-box per byte
-    Y2= X2 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
+    S = sm4_subword(B); 1 s-box per byte
+    Y2= X2 ^ S ^ ROL(S,2)^ ROL(S,10)^ ROL(S,18) ^ ROL(S,24)
     //4th round
     B = (Y0 ^ Y1 ^ Y2 ^ rk3)
-    S = SUB_BYTES_SM4(B); 1 s-box per byte
-    Y3= X3 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
+    S = sm4_subword(B); 1 s-box per byte
+    Y3= X3 ^ S ^ ROL(S,2)^ ROL(S,10)^ ROL(S,18) ^ ROL(S,24)
     set_velem(vd, EGW=128, i, (Y0, Y1, Y2, Y3));
   }
   RETIRE_SUCCESS

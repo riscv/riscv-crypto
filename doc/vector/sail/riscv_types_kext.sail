@@ -378,3 +378,14 @@ function reverse_bits_in_byte(x) = {
     output[i] = x[7-i]);
   output /* Return Value */
 }
+
+val rol32 : bits(32) -> bits(32)
+function ROL32(x,n) = (X << N) | (X >> (32 - N))
+
+val sm4_subword : bits(32) -> bits(32)
+function sm4_subword(x) = {
+  sm4_sbox(x[31..24]) @
+  sm4_sbox(x[23..16]) @
+  sm4_sbox(x[15.. 8]) @
+  sm4_sbox(x[ 7.. 0])
+}
