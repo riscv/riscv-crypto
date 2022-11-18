@@ -14,7 +14,7 @@ Encoding::
 {bits: 7, name: 'OP-P'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'uimm'},
+{bits: 5, name: 'rnd'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
 {bits: 6, name: '100001'},
@@ -33,7 +33,7 @@ Arguments::
 |EEW
 |Definition
 
-| uimm | input  | -    | - | -  | Round group (rnds)
+| uimm | input  | -    | - | -  | Round group (rnd)
 | Vs2  | input  | 128  | 4 | 32 | Current 4 round keys rK[0:3]
 | Vd   | output | 128  | 4 | 32 | Next 4 round keys rK'[0:3]
 |===
@@ -43,8 +43,8 @@ This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32
 as defined in SM4 (see
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
 It treats each 128-bit element group of `vs2` as the last four round keys.
-The rounds number is stored in the unsigned 5-bit `rnds` immediate. Legal values are 0 - 7 and indicate which
-group of four rounds are being generated. For example, if `rnds`=1, then round keys 4, 5, 6, and 7 are
+The rounds number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 0 - 7 and indicate which
+group of four rounds are being generated. For example, if `rnd`=1, then round keys 4, 5, 6, and 7 are
 being generated.
 Out of range values are reserved.
 
@@ -97,73 +97,6 @@ Since the results are all limited to 8 bits, the modulo operation occurs for fre
        = 8n + ~n + 1;
 ====
 
-////
-.Round Constants
-[%autowidth]
-[%header,cols="^2,^2"]
-|===
-|CK
-|constant
-
-| 0  | 00070E15
-| 1  | 1C232A31
-| 2  | 383F464D
-| 3  | 545B6269
-| 4  | 70777E85
-| 5  | 8C939AA1
-| 6  | A8AFB6BD
-| 7  | C4CBD2D9
-| 8  | E0E7EEF5
-| 9  | FC030A11
-| 10 | 181F262D
-| 11 | 343B4249
-| 12 | 50575E65
-| 13 | 6C737A81
-| 14 | 888F969D
-| 15 | A4ABB2B9
-| 16 | C0C7CED5
-| 17 | DCE3EAF1
-| 18 | F8FF060D
-| 19 | 141B2229
-| 20 | 30373E45
-| 21 | 4C535A61
-| 22 | 686F767D
-| 23 | 848B9299
-| 24 | A0A7AEB5
-| 25 | BCC3CAD1
-| 26 | D8DFE6ED
-| 27 | F4FB0209
-| 28 | 10171E25
-| 29 | 2C333A41
-| 30 | 484F565D
-| 31 | 646B7279
-|===
-
-.SBOX
-[%autowidth]
-[%header,cols="^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2,^2"]
-|===
-|  |  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 |  A |  B |  C |  D |  E |  F
-
-| 0 | D6 | 90 | E9 | FE | CC | E1 | 3D | B7 | 16 | B6 | 14 | C2 | 28 | FB | 2C | 05
-| 1 | 2B | 67 | 9A | 76 | 2A | BE | 04 | C3 | AA | 44 | 13 | 26 | 49 | 86 | 06 | 99
-| 2 | 9C | 42 | 50 | F4 | 91 | EF | 98 | 7A | 33 | 54 | 0B | 43 | ED | CF | AC | 62
-| 3 | E4 | B3 | 1C | A9 | C9 | 08 | E8 | 95 | 80 | DF | 94 | FA | 75 | 8F | 3F | A6
-| 4 | 47 | 07 | A7 | FC | F3 | 73 | 17 | BA | 83 | 59 | 3C | 19 | E6 | 85 | 4F | A8
-| 5 | 68 | 6B | 81 | B2 | 71 | 64 | DA | 8B | F8 | EB | 0F | 4B | 70 | 56 | 9D | 35
-| 6 | 1E | 24 | 0E | 5E | 63 | 58 | D1 | A2 | 25 | 22 | 7C | 3B | 01 | 21 | 78 | 87
-| 7 | D4 | 00 | 46 | 57 | 9F | D3 | 27 | 52 | 4C | 36 | 02 | E7 | A0 | C4 | C8 | 9E
-| 8 | EA | BF | 8A | D2 | 40 | C7 | 38 | B5 | A3 | F7 | F2 | CE | F9 | 61 | 15 | A1
-| 9 | E0 | AE | 5D | A4 | 9B | 34 | 1A | 55 | AD | 93 | 32 | 30 | F5 | 8C | B1 | E3
-| A | 1D | F6 | E2 | 2E | 82 | 66 | CA | 60 | C0 | 29 | 23 | AB | 0D | 53 | 4E | 6F
-| B | D5 | DB | 37 | 45 | DE | FD | 8E | 2F | 03 | FF | 6A | 72 | 6D | 6C | 5B | 51
-| C | 8D | 1B | AF | 92 | BB | DD | BC | 7F | 11 | D9 | 5C | 41 | 1F | 10 | 5A | D8
-| D | 0A | C1 | 31 | 88 | A5 | CD | 7B | BD | 2D | 74 | D0 | 12 | B8 | E5 | B4 | B0
-| E | 89 | 69 | 97 | 4A | 0C | 96 | 77 | 7E | 65 | B9 | F1 | 09 | C5 | 6E | C6 | 84
-| F | 18 | F0 | 7D | EC | 3A | DC | 4D | 20 | 79 | EE | 5F | 3E | D7 | CB | 39 | 48
-|===
-////
-
 This instruction only returns the generated keys to the same element group as the source.
 If it is desired to have the same key in all vector groups, either the input vector groups
 need to contain the same values, or the output from a particular group needs to be "broadcast"
@@ -172,13 +105,12 @@ to the other groups using an instruction such as vrgather.
 This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
 `vl` needs to be set to four times the number of element groups.
 If vstart is not zero, it needs to be scaled similarly.
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN&ge;128`).
 
 Operation::
 [source,sail]
 --
 
-function clause execute (VAESESFK1(rnd, vs2)) = {
+function clause execute (vsm4k(rnd, vs2)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
@@ -186,29 +118,78 @@ function clause execute (VAESESFK1(rnd, vs2)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-    let rk[0:3] : bits(128) = get_velem(vs2, EGW=128, i);
+    let (rk0, rk1, rk2, rk3) : bits(128) = get_velem(vs2, 128, i);
     
-  // 1st round
-  B = (rK[1] ^ rK[2] ^ rK[3] ^ CK[rnds])
-  S = subBytes(B); 1 s-box per byte
-  rK[4]= rK[0] ^ S ^ ROTL13(S)^ ROTL23(S);
-  // 2nd round
-  B = (rK[2] ^ rK[3] ^ rK[4] ^ CK[rnds+1])
-  S = subBytes(B); 1 s-box per byte
-  rK[5]= rK[1] ^ S ^ ROTL13(S)^ ROTL23(S);
-  // 3rd round
-  B = (rK[3] ^ rK[4] ^ rK[5] ^ CK[rnds+2])
-  S = subBytes(B); 1 s-box per byte
-  rK[6]= rK[2] ^ S ^ ROTL13(S)^ ROTL23(S);
-  // 4th round
-  B = (rK[4] ^ rK[5] ^ rK[6] ^ CK[rnds+3])
-  S = subBytes(B); 1 s-box per byte
-  rK[7]= rK[3] ^ S ^ ROTL13(S)^ ROTL23(S);
-  set_velem(vd, EGW=128, i, rK[7:4]);
+    let B : bits(32) = rk1 ^ rk2 ^ rk3 ^ CK(4 * rnd);
+    let S : bits(32) = SUB_BYTES_SM4(B);
+    let rk4 : bits(32) = ROUND_KEY(rk0, S);
 
+    B = rk2 ^ rk3 ^ rk4 ^ CK(4 * round + 1);
+    S = SUB_BYTES_SM4(B);
+    let rk5 : bits(32) = ROUND_KEY(rk1, S);
+
+    B = rk3 ^ rk4 ^ rk5 ^ CK(4 * round + 2);
+    S = SUB_BYTES_SM4(B);
+    let rk6 : bits(32) = ROUND_KEY(rk2, S);
+
+    B = rk4 ^ rk5 ^ rk6 ^ CK(4 * round + 3);
+    S = SUB_BYTES_SM4(B);
+    let rk7 : bits(32) = ROUND_KEY(rk3, S);
+
+    // Update the destination register.
+   set_velem(vd, EGW=128, i, (rk4, rk5, rk6, rk7));
   }
   RETIRE_SUCCESS
 }
+
+function ROUND_KEY(X, S) = ((X) ^ ((S) ^ ROL32((S), 13) ^ ROL32((S), 23)))
+
+function CK(BYTE) = (ck[(BYTE)])
+function SBOX(BYTE)  = (sm4_sbox[(BYTE)])
+
+function SUB_BYTES_SM4(B) = \
+  (SBOX(B, 0)) @ SBOX(B, 1) @ SBOX(B, 2) @ SBOX((B, 3))
+
+function ROL32(x,n) = (X << N) | (X >> (32 - N))
+
+sm4_sbox[256] = {
+	0xD6, 0x90, 0xE9, 0xFE, 0xCC, 0xE1, 0x3D, 0xB7, 0x16, 0xB6, 0x14, 0xC2,
+	0x28, 0xFB, 0x2C, 0x05, 0x2B, 0x67, 0x9A, 0x76, 0x2A, 0xBE, 0x04, 0xC3,
+	0xAA, 0x44, 0x13, 0x26, 0x49, 0x86, 0x06, 0x99, 0x9C, 0x42, 0x50, 0xF4,
+	0x91, 0xEF, 0x98, 0x7A, 0x33, 0x54, 0x0B, 0x43, 0xED, 0xCF, 0xAC, 0x62,
+	0xE4, 0xB3, 0x1C, 0xA9, 0xC9, 0x08, 0xE8, 0x95, 0x80, 0xDF, 0x94, 0xFA,
+	0x75, 0x8F, 0x3F, 0xA6, 0x47, 0x07, 0xA7, 0xFC, 0xF3, 0x73, 0x17, 0xBA,
+	0x83, 0x59, 0x3C, 0x19, 0xE6, 0x85, 0x4F, 0xA8, 0x68, 0x6B, 0x81, 0xB2,
+	0x71, 0x64, 0xDA, 0x8B, 0xF8, 0xEB, 0x0F, 0x4B, 0x70, 0x56, 0x9D, 0x35,
+	0x1E, 0x24, 0x0E, 0x5E, 0x63, 0x58, 0xD1, 0xA2, 0x25, 0x22, 0x7C, 0x3B,
+	0x01, 0x21, 0x78, 0x87, 0xD4, 0x00, 0x46, 0x57, 0x9F, 0xD3, 0x27, 0x52,
+	0x4C, 0x36, 0x02, 0xE7, 0xA0, 0xC4, 0xC8, 0x9E, 0xEA, 0xBF, 0x8A, 0xD2,
+	0x40, 0xC7, 0x38, 0xB5, 0xA3, 0xF7, 0xF2, 0xCE, 0xF9, 0x61, 0x15, 0xA1,
+	0xE0, 0xAE, 0x5D, 0xA4, 0x9B, 0x34, 0x1A, 0x55, 0xAD, 0x93, 0x32, 0x30,
+	0xF5, 0x8C, 0xB1, 0xE3, 0x1D, 0xF6, 0xE2, 0x2E, 0x82, 0x66, 0xCA, 0x60,
+	0xC0, 0x29, 0x23, 0xAB, 0x0D, 0x53, 0x4E, 0x6F, 0xD5, 0xDB, 0x37, 0x45,
+	0xDE, 0xFD, 0x8E, 0x2F, 0x03, 0xFF, 0x6A, 0x72, 0x6D, 0x6C, 0x5B, 0x51,
+	0x8D, 0x1B, 0xAF, 0x92, 0xBB, 0xDD, 0xBC, 0x7F, 0x11, 0xD9, 0x5C, 0x41,
+	0x1F, 0x10, 0x5A, 0xD8, 0x0A, 0xC1, 0x31, 0x88, 0xA5, 0xCD, 0x7B, 0xBD,
+	0x2D, 0x74, 0xD0, 0x12, 0xB8, 0xE5, 0xB4, 0xB0, 0x89, 0x69, 0x97, 0x4A,
+	0x0C, 0x96, 0x77, 0x7E, 0x65, 0xB9, 0xF1, 0x09, 0xC5, 0x6E, 0xC6, 0x84,
+	0x18, 0xF0, 0x7D, 0xEC, 0x3A, 0xDC, 0x4D, 0x20, 0x79, 0xEE, 0x5F, 0x3E,
+	0xD7, 0xCB, 0x39, 0x48
+};
+
+// SM4 Constant Key (CK) - section 7.3.2. of the IETF draft.
+ck[32] = {
+	0x00070E15, 0x1C232A31, 0x383F464D, 0x545B6269,
+	0x70777E85, 0x8C939AA1, 0xA8AFB6BD, 0xC4CBD2D9,
+	0xE0E7EEF5, 0xFC030A11, 0x181F262D, 0x343B4249,
+	0x50575E65, 0x6C737A81, 0x888F969D, 0xA4ABB2B9,
+	0xC0C7CED5, 0xDCE3EAF1, 0xF8FF060D, 0x141B2229,
+	0x30373E45, 0x4C535A61, 0x686F767D, 0x848B9299,
+	0xA0A7AEB5, 0xBCC3CAD1, 0xD8DFE6ED, 0xF4FB0209,
+	0x10171E25, 0x2C333A41, 0x484F565D, 0x646B7279
+};
+
+
 --
 
 Included in::

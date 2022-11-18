@@ -85,26 +85,26 @@ function clause execute (VSM4R(vd, vs2)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-    let rk[0:3] : bits(128) = get_velem(vs2, EGW=128, i);
-    let X[0:3] : bits(128) = get_velem(vd, EGW=128, i);
+    let (rk0, rk1, rk2, rk3) : bits(128) = get_velem(vs2, EGW=128, i);
+    let (X0, X1, X2, X3) : bits(128) = get_velem(vd, EGW=128, i);
 
     // 1st round
-    B = (X[1] ^ X[2] ^ X[3] ^ rk[0])
-    S = subBytes(B); 1 s-box per byte
-    Y[0]= X[0] ^ S ^ ROTL2(S)^ ROTL10(S)^ ROTL18(S) ^ ROTL24(S)
+    B = (X1 ^ X2 ^ X3 ^ rk0)
+    S = SUB_BYTES_SM4(B); 1 s-box per byte
+    let Y0 : bits(32) = X0 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
     // 2nd round
-    B = (X[2] ^ X[3] ^ X[4] ^ rk[1])
-    S = subBytes(B); 1 s-box per byte
-    Y[1]= X[1] ^ S ^ ROTL2(S)^ ROTL10(S)^ ROTL18(S) ^ ROTL24(S)
+    B = (X2 ^ X3 ^ X4 ^ rk1)
+    S = SUB_BYTES_SM4(B); 1 s-box per byte
+    Y1= X1 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
     //3rd round
-    B = (X[3] ^ Y[0] ^ X[1] ^ rk[2])
-    S = subBytes(B); 1 s-box per byte
-    Y[2]= X[2] ^ S ^ ROTL2(S)^ ROTL102(S)^ ROTL18(S) ^ ROTL24(S)
+    B = (X3 ^ Y0 ^ X1 ^ rk2)
+    S = SUB_BYTES_SM4(B); 1 s-box per byte
+    Y2= X2 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
     //4th round
-    B = (Y[0] ^ Y[1] ^ Y[2] ^ rk[3])
-    S = subBytes(B); 1 s-box per byte
-    Y[3]= X[3] ^ S ^ ROTL2(S)^ ROTL10(S)^ ROTL18(S) ^ ROTL24(S)
-    set_velem(vd, EGW=128, i, Y[0:3]);
+    B = (Y0 ^ Y1 ^ Y2 ^ rk3)
+    S = SUB_BYTES_SM4(B); 1 s-box per byte
+    Y3= X3 ^ S ^ ROTL(S,2)^ ROTL(S,10)^ ROTL(S,18) ^ ROTL(S,24)
+    set_velem(vd, EGW=128, i, (Y0, Y1, Y2, Y3));
   }
   RETIRE_SUCCESS
 }
