@@ -67,27 +67,13 @@ Where the "-" characters are not consumed and are therefore don't cares.
 
 This instruction consumes the "W" message schedule inputs and internally generates the "W'" values as needed
 
-
-
-// NB::
-// It probably makes sense to have vs1 and vs2 hold eight 32-bit words each and have 4 versions of this instruction;
-// one for each pair of inputs.
-// This fits more naturally with the generating instructions and doesn't leave us with the oddity of 64-bit and 256-bit element groups
-// Vd (in) = {A,B,C,D,E,F,G,H}
-// vs1 = W[0:7]  // 8 expanded words
-// vs2 = W’[0:7] // 8 expanded words with XORing
-// Vd (out) = {A,B,C,D,E,F,G,H}
-
-
-
-
 This instruction treats `EEW=32` regardless of `vtype.vsew`
 `vl` needs to be set to eight times the number of element groups.
 If vstart is not zero, it needs to be scaled similarly.
 This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
 Operation::
-[source,pseudocode]
+[source,sail]
 --
 function clause execute (VSM3C(rnds, vs2)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
@@ -98,38 +84,65 @@ function clause execute (VSM3C(rnds, vs2)) = {
   
   foreach (i from eg_start to eg_len-1) {
 
+  let {a, b, c, d, e, f, g, h} : bits(256) : bits(256) = get_velem(vd, 256, i);
+  let {w0, w1, u_w2, u_w3, w4, w5, u_w6, u_w7} : bits(256) = get_velem(vd, 256, i);
+         // u_w inputs are unused
 
-  // missing relation between rnds and the successive j values
-  SS1 <- ROTL7((ROTL12(A) + E + (ROTLjmod32(T_j))
-  SS2 <- SS1 xor ROTL12(A)
-  TT1 <- FF_j(A, B, C) + D + SS2 + W'[i]
-  TT2 <- GG_j(E, F, G) + H + SS1 + W[i]
-  D <- C0
-  C1 <- ROTL9(B)
-  B <- A0
-  A1 <- TT1
-  H <- G0
-  G1 <- ROTL19(F)
-  F <- E0
-  E1 <- P_0(TT2)
+  let x0 :bits(32) = w0 ^ w4;  // W'[0]
+  let x1 :bits(32) = w1 ^ w5;  // W'[1]
 
-  SS1 <- ROTL7((ROTL12(A1) + E1 + (ROTLjmod32(T_j))
-  SS2 <- SS1 xor ROTL12(A1)
-  TT1 <- FF_j(A1, A0, C1) + C0 + SS2 + W'[i+1]
-  TT2 <- GG_j(E1, E0, G1) + G0 + SS1 + W[i+1]
-  D <- C1
-  C2 <- ROTL9(A0)
-  B <- A1
-  A2 <- TT1
-  H <- G1
-  G2 <- ROTL19(E0)
-  F <- E1
-  E2 <- P_0(TT2)
+  let j = 2 * rnds;
+  let ss1 : bits(32) = ROL32(ROL32(A, 12) + E + ROL32(T_j(j), j % 32), 7);
+  let ss2 : bits(32) = ss1 ^ ROL32(A, 12);
+  let tt1 : bits(32) = FF_j(A, B, C, j) + D + ss2 + x0;
+  let tt2 : bits(32) = GG_j(E, F, G, j) + H + ss1 + w0;
+  D = C;
+  let : bits(32) C1 = ROL32(B, 9);
+  B = A;
+  let A1 : bits(32) = tt1;
+  H = G;
+  let G1 : bits(32) = ROL32(F, 19);
+  F = E;
+  let E1 : bits(32) = P_0(tt2);
 
-  Output: {A2, A1, C2, C1, E2, E1, G2, G1}
+  j = 2 * round + 1;
+  ss1 = ROL32(ROL32(A1, 12) + E1 + ROL32(T_j(j), j % 32), 7);
+  ss2 = ss1 ^ ROL32(A1, 12);
+  tt1 = FF(A1, B, C1, j) + D + ss2 + x1;
+  tt2 = GG_j(E1, F, G1, j) + H + ss1 + w1;
+  D = C1;
+  let C2 : bits(32) = ROL32(B, 9);
+  B = A1;
+  let A2 : bits(32) = tt1;
+  H = G1;
+  let G2 = : bits(32) ROL32(F, 19);
+  F = E1;
+  let E2 = : bits(32) P_0(tt2);
+
+  // Update the destination register.
+  set_velem(vd, 256, i, (A2, A1, C2, C1, E2, E1, G2, G1));
+      }
 
   RETIRE_SUCCESS
-}
+  }
+
+  function ROL32(x,n) = (X << N) | (X >> (32 - N))
+  function FF1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
+  function FF2(X, Y, Z) = (((X) & (Y)) | ((X) & (Z)) | ((Y) & (Z)))
+
+  function FF_j(X, Y, Z, J) = (((J) <= 15) ? FF1(X, Y, Z) : FF2(X, Y, Z))
+
+  function GG1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
+  function GG2(X, Y, Z) = (((X) & (Y)) | ((~(X)) & (Z)))
+.
+  function GG_j(X, Y, Z, J) = (((J) <= 15) ? GG1(X, Y, Z) : GG2(X, Y, Z))
+
+  function T_j(J) = (((J) <= 15) ? (0x79CC4519) : (0x7A879D8A))
+
+  function P_0(X) = ((X) ^ ROL32((X),  9) ^ ROL32((X), 17))
+
+
+
 --
 
 Included in::

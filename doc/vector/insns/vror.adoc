@@ -4,7 +4,7 @@
 Synopsis::
 Vector rotate right by vector/scalar/immediate.
 
-Only the low log2(SEW) bits are used for the rotate amount.
+Only the least significant log2(SEW) bits are used for the rotate amount.
 
 [NOTE]
 ====

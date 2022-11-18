@@ -124,7 +124,7 @@ In this code the input elements are numbered from 0 (16 words ago) to 15 (most r
 The outputs are numbered from 16 to 19.
 
 Operation::
-[source,pseudocode]
+[source,sail]
 --
 function clause execute (VSHA2ms(vs2, vs1, vd)) = {
   // This pseudo code needs to be updated to support SHA-256 _and_ SHA-512
@@ -138,23 +138,14 @@ function clause execute (VSHA2ms(vs2, vs1, vd)) = {
     {W[3],  W[2],  W[1],  W[0]}  : bits(EGW) = get_velem(vd, SEW, i);
     {W[11], W[10], W[9],  W[4]}  : bits(EGW) = get_velem(vs1, SEW, i);
     {W[15], W[14], W[13], W[12]} : bits(EGW) = get_velem(vs2, SEW, i);
+  
+    W[16] = sig1(W[14]) + W[9]  + sig0(W[1]) + W[0];
+    W[17] = sig1(W[15]) + W[10] + sig0(W[2]) + W[1];
+    W[18] = sig1(W[16]) + W[11] + sig0(W[3]) + W[2];
+    W[19] = sig1(W[17]) + W[12] + sig0(W[4]) + W[3];
+
+    set_velem(vd, EGW, i, {W[19],W[18],W[17],W[16]});
   }
-
-
-  W[16] = sig1(W[14]) + W[9]  + sig0(W[1]) + W[0];
-  W[17] = sig1(W[15]) + W[10] + sig0(W[2]) + W[1];
-  W[18] = sig1(W[16]) + W[11] + sig0(W[3]) + W[2];
-  W[19] = sig1(W[17]) + W[12] + sig0(W[4]) + W[3];
-
-  // This can also be viewed as
-  res[0] = sig1(VS2[2]) + VS1[1]  + sig0(Vd[1]) + Vd[0];
-  res[1] = sig1(VS2[3]) + VS1[2] + sig0(Vd[2]) + Vd[1];
-  res[2] = sig1(res[0])   VS1[3] + sig0(Vd[3]) + Vd[2];
-  res[3] = sig1(res[1]) + VS2[0] + sig0(Vs1[0]) + Vd[3];
-  vd = {res[3], res[2], res[1], res[0]};
-
-  set_velem(vd, EGW, i, {W[19],W[18],W[17],W[16]});
-
   RETIRE_SUCCESS
 }
 

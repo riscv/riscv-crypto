@@ -58,7 +58,7 @@ specified register groups can be combined to form the full element group.
 
 
 Operation::
-[source,pseudocode]
+[source,sail]
 --
 function clause execute (VSM3ME(vs2, vs1)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
@@ -68,44 +68,32 @@ function clause execute (VSM3ME(vs2, vs1)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-    // let current : bits(128) = get_velem(vs2, EGW=128, i);
-    // let rk[3:0] = current // This pseudo code is temporary - it will be rewritten!!!!!!!!!!!!
-  
-W[i]   = P_1(W[i-16]^W[i-9]^ROTL15W[i-3]) ^ROTL7W[i-13]^W[i-6]
-W[i+1] = P_1(W[i-15]^W[i-8]^ROTL15W[i-2]) ^ROTL7W[i-12]^W[i-5]
-W[i+2] = P_1(W[i-14]^W[i-7]^ROTL15W[i-1]) ^ROTL7W[i-11]^W[i-4]
-W[i+3] = P_1(W[i-13]^W[i-6]^ROTL15W[i])   ^ROTL7W[i-10]^W[i-3]
-W[i+4] = P_1(W[i-12]^W[i-5]^ROTL15W[i+1]) ^ROTL7W[i-9] ^W[i-2]
-W[i+5] = P_1(W[i-11]^W[i-4]^ROTL15W[i+2]) ^ROTL7W[i-8] ^W[i-1]
-W[i+6] = P_1(W[i-10]^W[i-3]^ROTL15W[i+3]) ^ROTL7W[i-7] ^W[i]
-W[i+7] = P_1(W[i-9] ^W[i-2]^ROTL15W[i+4]) ^ROTL7W[i-6] ^W[i+1]
+    let (w0, w1, w2, w3, w4, w5, w6, w7)= \
+       : bits(256) = get_velem(vs1, 256, i);
+    let (w8,  w9, w10, w11, w12, w13, w14, w15)
+       : bits(256) = get_velem(vs2, 256, i);
 
-or
+    // Arguments are W[i-16], W[i-9], W[i-13], W[i-6].
+    // Note that some of the newly computed words are used in later invocations.
+    let w16 = ZVKSH_W(w0,  w7, w13,  w3, w10);
+    let w17 = ZVKSH_W(w1,  w8, w14,  w4, w11);
+    let w18 = ZVKSH_W(w2,  w9, w15,  w5, w12);
+    let w19 = ZVKSH_W(w3, w10, w16,  w6, w13);
+    let w20 = ZVKSH_W(w4, w11, w17,  w7, w14);
+    let w21 = ZVKSH_W(w5, w12, w18,  w8, w15);
+    let w22 = ZVKSH_W(w6, w13, w19,  w9, w16);
+    let w23 = ZVKSH_W(w7, w14, w20, w10, w17);
 
-W[16] = P_1(W[0]⊕W[7] ⊕ROTL15W[13])⊕ROTL7W[3] ⊕W[10]
-W[17] = P_1(W[1]⊕W[8] ⊕ROTL15W[14])⊕ROTL7W[4] ⊕W[11]
-W[18] = P_1(W[2]⊕W[9] ⊕ROTL15W[15])⊕ROTL7W[5] ⊕W[12]
-W[19] = P_1(W[3]⊕W[10]⊕ROTL15W[16])⊕ROTL7W[6] ⊕W[13]
-W[20] = P_1(W[4]⊕W[11]⊕ROTL15W[17])⊕ROTL7W[7] ⊕W[14]
-W[21] = P_1(W[5]⊕W[12]⊕ROTL15W[18])⊕ROTL7W[8] ⊕W[15]
-W[22] = P_1(W[6]⊕W[13]⊕ROTL15W[19])⊕ROTL7W[9] ⊕W[16]
-W[23] = P_1(W[7]⊕W[14]⊕ROTL15W[20])⊕ROTL7W[10]⊕W[17]
-
-or
-
-for i = 16 to 67
-  W[i] = P_1(W[i-16] ^ W[i-9]) ^ (ROTL15W[i-3]))
-^ (ROTL7W[i-13]) ^ W[i-6]
-end for
-
-where:
-P_1(X) = X ^ ROTL15(X) ^ ROTL23(X)
-
-
-
+    // Update the destination register.
+    SET_EGU32x8_LE(vd, w16, w17, w18, w19, w20, w21, w22, w23);
   }
   RETIRE_SUCCESS
 }
+
+  function P_1(X) ((X) ^ ROL32((X), 15) ^ ROL32((X), 23))
+
+  function ZVKSH_W(M16, M9, M3, M13, M6) = \
+  (P1( (M16) ^  (M9) ^ ROL32((M3), 15) ) ^ ROL32((M13), 7) ^ (M6))
 --
 
 Included in::

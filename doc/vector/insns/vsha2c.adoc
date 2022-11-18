@@ -129,7 +129,7 @@ We are in the process of updating it including making it work for EGW=128 and EG
 ====
 
 Operation::
-[source,sail-ish]
+[source,sail]
 --
 function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 
@@ -145,8 +145,8 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 	  let MessageShedPlusC[3:0] : bits(4*SEW) = get_velem(vs1, 4*SEW, i);
 	  let {W1, W0} == VSHA2cl ? MessageSchedPlusC[1:0] : MessageSchedPlusC[3:2]; // l vs h difference is the words selected
 
-	  let T1 : bits(SEW) = h + sum1(e) + Ch(e,f,g) + W0;
-	  let T2 : bits(SEW) = sum0(a) + Maj(a,b,c);
+	  let T1 : bits(SEW) = h + sum1(e) + ch(e,f,g) + W0;
+	  let T2 : bits(SEW) = sum0(a) + maj(a,b,c);
 	  h  = g;
 	  g  = f;
 	  f  = e;	
@@ -157,8 +157,8 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 	  a  = T1 + T2;
 
 
-	  T1  = h + sum1(e) + Ch(e,f,g) + W1;
-	  T2  = sum0(a) + Maj(a,b,c);
+	  T1  = h + sum1(e) + ch(e,f,g) + W1;
+	  T2  = sum0(a) + maj(a,b,c);
 	  h = g;
 	  g = f;
 	  f = e;	
@@ -174,20 +174,24 @@ function clause execute (VSHA2c(vs2, vs1, vd, vv)) = {
 
 function sum0(x) = {
 	match SEW {
-		32 => ROTR(x,2)XOR ROTR(x,13)XOR ROTR(x,22),
-		64 => ROTR(x,28)XOR ROTR(x,34)XOR ROTR(x,39)
+		32 => rotr(x,2)XOR rotr(x,13)XOR rotr(x,22),
+		64 => rotr(x,28)XOR rotr(x,34)XOR rotr(x,39)
 	}
 }
 
 function sum1(x) = {
 	match SEW {
-		32 => ROTR(x,6) ROTR(x,11) ROTR(x,25),
-		64 => ROTR(x,14)XOR ROTR(x,18)XOR ROTR(x,41)
+		32 => rotr(x,6) rotr(x,11) rotr(x,25),
+		64 => rotr(x,14)XOR rotr(x,18)XOR rotr(x,41)
 	}
 }
 
-Ch = 
-Maj 
+function ch(x, y, z) = ((x & y) ^ ((~x) & z))
+
+
+function maj(x, y, z) =  ((x & y) ^ (x & z) ^ (y & z))
+
+function ROTR(x,n) = (x >> n) | (x << w - n)
 
 --
 
