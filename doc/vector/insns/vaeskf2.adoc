@@ -43,7 +43,7 @@ Description::
 This instruction implements a single round of the forward AES-256 KeySchedule.
 It treats each `EGW=128` element group of `vs2` as the current AES round key,
 and each `EGW=128` element group of `vd` as the previous AES round key.
-The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 14.
+The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 2 - 14.
 Out of range values signal an illegal instruction exception.
 
 It applies a single AES-256 KeySchedule round to each element group, and
@@ -83,7 +83,7 @@ function clause execute (VAESESKF2(rnd, vd, vs2)) = {
       let CurrentRoundKey[3:0]  : bits(32)  = get_velem(vs2, EGW=128, i);
       let RoundKeyB[3:0] : bits(32)  = get_velem(vd, EGW=128, i); // Previous round key
 
-      let w[3] : bits(32) = if (rnd[0]==0) then
+      let w[3] : bits(32) = if (rnd[0]==1) then
         RoundKeyB[3] XOR aes_subword_fwd(CurrentRoundKey[0])
       else
         RoundKeyB[3] XOR aes_subword_fwd(aes_rotword(CurrentRoundKey[0])) XOR aes_decode_rcon(rnd>>1);
