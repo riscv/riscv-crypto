@@ -33,10 +33,10 @@ Arguments::
 |EEW
 |Definition
 
-| Vd   | input  | 256  | 8 | 32 | Current state {A,B,C,D,E,F,G,H}
+| Vd   | input  | 256  | 8 | 32 | Current state {H,G.F,E,D,C,B,A}
 | uimm | input  | -    | - | -  | round number (rnds)
-| Vs2  | input  | 256  | 8 | 32 | Message words {w[0], w[1], -, -, w[4], w[5], -, -}
-| Vd   | output | 256  | 8 | 32 | Next state {A,B,C,D,E,F,G,H}
+| Vs2  | input  | 256  | 8 | 32 | Message words {-,-,w[5],w[4],-,-,w[1],w[0]}
+| Vd   | output | 256  | 8 | 32 | Next state {H,G.F,E,D,C,B,A}
 |===
 
 Description::
@@ -57,11 +57,21 @@ It treats each 256-bit 8-element group of `vd` as eight 32-bit words,
 and each 256-bit 8-element group of `vs2` as eight 32-bit words. Only 4 of these words are consumed by
 this instruction, the rest are don't-cares.
 
-vs2 = {w[j], w[j+1], w[j+2], w[j+3], w[j+4], w[j+5], w[j+6], w[j+7]}
+[NOTE]
+====
+To align with the SM3 specification, we byte swap the inputs from big-endian to little-endian,
+we perform the operations in little-endian, 
+and then we byte swap the output from little endian to big endian.
+====
+
+The elements are listed here in the order they appear in the register, with the most significant
+element on the left, and the least significant on the right.
+
+vs2 = {w[7], w[6], w[5], w[4], w[3], w[2], w[1], w[0]}
 
 The values consumed by the instruction are
 
-vs2 = {w[j], w[j+1], -, -, w[j+4], w[j+5], -, -}
+vs2 = {- , - , w[5], w[4], -, -, w[1], w[0]}
 
 Where the "-" characters are not consumed and are therefore don't cares.
 
@@ -84,8 +94,10 @@ function clause execute (VSM3C(rnds, vs2)) = {
   
   foreach (i from eg_start to eg_len-1) {
 
-  let {a, b, c, d, e, f, g, h} : bits(256) : bits(256) = get_velem(vd, 256, i);
-  let {w0, w1, u_w2, u_w3, w4, w5, u_w6, u_w7} : bits(256) = get_velem(vd, 256, i);
+// load state with swap to little endian
+  let {H, G, F, E, D, C, B, A} : bits(256) : bits(256) = brev8(get_velem(vd, 256, i));   // order of elements in register
+//load message schedule with swap to little endian
+  let {u_w7, u_w6, w5, w4, u_w3, u_w2, w1, w0} : bits(256) = brev8(get_velem(vd, 256, i));
          // u_w inputs are unused
 
   let x0 :bits(32) = w0 ^ w4;  // W'[0]
@@ -119,8 +131,9 @@ function clause execute (VSM3C(rnds, vs2)) = {
   F = E1;
   let E2 = : bits(32) P_0(tt2);
 
-  // Update the destination register.
-  set_velem(vd, 256, i, (A2, A1, C2, C1, E2, E1, G2, G1));
+  // Update the destination register - swap back to big endian
+  let result : bits(256) = {brev8(G1),brev8(G2), brev8(E1), BREV8(E2), BREV8(C1), BREV8(C2), BREV8(A1), BREV8(A2)};
+   set_velem(vd, 256, i, result);
       }
 
   RETIRE_SUCCESS

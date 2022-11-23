@@ -33,9 +33,9 @@ Arguments::
 |EEW
 |Definition
 
-| Vs1 | input  | 256  | 8 | 32 | Message words W[0:7]
-| Vs2 | input  | 256  | 8 | 32 | Message words W[8:15]
-| Vd  | output | 256  | 8 | 32 | Message words W[16:23]
+| Vs1 | input  | 256  | 8 | 32 | Message words W[7:0]
+| Vs2 | input  | 256  | 8 | 32 | Message words W[15:8]
+| Vd  | output | 256  | 8 | 32 | Message words W[23:16]
 |===
 
 Description::
@@ -43,11 +43,16 @@ This instruction implements 8 rounds of SM3 message expansion,  producing eight 
 outputs in a 256-bit 8-element group.
 It treats each 256-bit 8-element group of `vs1` and `vs2` as the data input.
 
+[NOTE]
+====
+To align with the SM3 specification, we byte swap the inputs from big-endian to little-endian,
+we perform the operations in little-endian, 
+and then we byte swap the output from little endian to big endian.
+====
 
 This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`
 `vl` needs to be set to eight times the number of element groups.
 If vstart is not zero, it needs to be scaled similarly.
-// This instruction requires that `Zvl256b` be implemented (i.e `VLEN>=256`).
 
 [NOTE]
 ====
@@ -68,24 +73,51 @@ function clause execute (VSM3ME(vs2, vs1)) = {
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-    let (w0, w1, w2, w3, w4, w5, w6, w7)= \
-       : bits(256) = get_velem(vs1, 256, i);
-    let (w8,  w9, w10, w11, w12, w13, w14, w15)
-       : bits(256) = get_velem(vs2, 256, i);
+    let w[7:0]  : bits(256) = get_velem(vs1, 256, i);
+    let w[15:8] : bits(256) = get_velem(vs2, 256, i);
+    
+    // Byte Swap inputs from big-endian to little-endian
+    let w15 = brev8(w[15]);
+    let w14 = brev8(w[14]);
+    let w13 = brev8(w[13]);
+    let w12 = brev8(w[12]);
+    let w11 = brev8(w[11]);
+    let w10 = brev8(w[10]);
+    let w9  = brev8(w[9]);
+    let w8  = brev8(w[8]);
+    let w7  = brev8(w[7]);
+    let w6  = brev8(w[6]);
+    let w5  = brev8(w[5]);
+    let w4  = brev8(w[4]);
+    let w3  = brev8(w[3]);
+    let w2  = brev8(w[2]);
+    let w1  = brev8(w[1]);
+    let w0  = brev8(w[0]);
 
-    // Arguments are W[i-16], W[i-9], W[i-13], W[i-6].
+    // Arguments are W[i-16], W[i-9], W[i-3], W[i-13], W[i-6].
     // Note that some of the newly computed words are used in later invocations.
-    let w16 = ZVKSH_W(w0,  w7, w13,  w3, w10);
-    let w17 = ZVKSH_W(w1,  w8, w14,  w4, w11);
-    let w18 = ZVKSH_W(w2,  w9, w15,  w5, w12);
-    let w19 = ZVKSH_W(w3, w10, w16,  w6, w13);
-    let w20 = ZVKSH_W(w4, w11, w17,  w7, w14);
-    let w21 = ZVKSH_W(w5, w12, w18,  w8, w15);
-    let w22 = ZVKSH_W(w6, w13, w19,  w9, w16);
-    let w23 = ZVKSH_W(w7, w14, w20, w10, w17);
+    let w[16] = ZVKSH_W(w0,  w7, w13,  w3, w10);
+    let w[17] = ZVKSH_W(w1,  w8, w14,  w4, w11);
+    let w[18] = ZVKSH_W(w2,  w9, w15,  w5, w12);
+    let w[19] = ZVKSH_W(w3, w10, w16,  w6, w13);
+    let w[20] = ZVKSH_W(w4, w11, w17,  w7, w14);
+    let w[21] = ZVKSH_W(w5, w12, w18,  w8, w15);
+    let w[22] = ZVKSH_W(w6, w13, w19,  w9, w16);
+    let w[23] = ZVKSH_W(w7, w14, w20, w10, w17);
+
+  // Byte swap outputs from little-endian back to big-endian
+    let w16 : Bits(32) = brev8(W[16]);
+    let w17 : Bits(32) = brev8(W[17]);
+    let w18 : Bits(32) = brev8(W[18]);
+    let w19 : Bits(32) = brev8(W[19]);
+    let w20 : Bits(32) = brev8(W[20]);
+    let w21 : Bits(32) = brev8(W[21]);
+    let w22 : Bits(32) = brev8(W[22]);
+    let w23 : Bits(32) = brev8(W[23]);
+
 
     // Update the destination register.
-    SET_EGU32x8_LE(vd, w16, w17, w18, w19, w20, w21, w22, w23);
+    set_velem(vd, 256, i {w23, w22, w21, w20, w19, w18, w17, w16});
   }
   RETIRE_SUCCESS
 }
