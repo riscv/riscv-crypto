@@ -22,8 +22,8 @@ reader.
 For the sake of brevity, our pseudo code does not include the handling of
 masks or tail elements. Such handling is the same as described for most
 RISC-V Vector instructions as described in the *RISC-V Vector Extension*
-specification. This includes the behavior of the _undisturbed_ and _agnostic_
-policies for masks and tails. 
+specification. The instructions in this specification follow the
+_undisturbed_ and _agnostic_ policies for masks and tails in effect. 
 
 In many cases the pseudo code includes
 calls to supporting functions which are too verbose to include directly
