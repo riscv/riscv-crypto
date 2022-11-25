@@ -106,18 +106,18 @@ function clause execute (VSM3ME(vs2, vs1)) = {
     let w[23] = ZVKSH_W(w7, w14, w20, w10, w17);
 
   // Byte swap outputs from little-endian back to big-endian
-    let w16 : Bits(32) = brev8(W[16]);
-    let w17 : Bits(32) = brev8(W[17]);
-    let w18 : Bits(32) = brev8(W[18]);
-    let w19 : Bits(32) = brev8(W[19]);
-    let w20 : Bits(32) = brev8(W[20]);
-    let w21 : Bits(32) = brev8(W[21]);
-    let w22 : Bits(32) = brev8(W[22]);
-    let w23 : Bits(32) = brev8(W[23]);
+    let w16 : Bits(32) = rev8(W[16]);
+    let w17 : Bits(32) = rev8(W[17]);
+    let w18 : Bits(32) = rev8(W[18]);
+    let w19 : Bits(32) = rev8(W[19]);
+    let w20 : Bits(32) = rev8(W[20]);
+    let w21 : Bits(32) = rev8(W[21]);
+    let w22 : Bits(32) = rev8(W[22]);
+    let w23 : Bits(32) = rev8(W[23]);
 
 
     // Update the destination register.
-    set_velem(vd, 256, i {w23, w22, w21, w20, w19, w18, w17, w16});
+    set_velem(vd, 256, i, {w23, w22, w21, w20, w19, w18, w17, w16});
   }
   RETIRE_SUCCESS
 }
