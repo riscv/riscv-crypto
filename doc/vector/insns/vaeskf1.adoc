@@ -47,6 +47,9 @@ Out of range values signal an illegal instruction exception.
 It applies a single AES-128 KeySchedule round to each element group, and
 writes the 128-bit result to the corresponding element group in `vd`.
 
+This instruction must always be implemented such that its execution latency does not
+depend on the data being operated upon. 
+
 This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `EEW=32` elements to be processed and 
