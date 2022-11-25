@@ -77,22 +77,22 @@ function clause execute (VSM3ME(vs2, vs1)) = {
     let w[15:8] : bits(256) = get_velem(vs2, 256, i);
     
     // Byte Swap inputs from big-endian to little-endian
-    let w15 = brev8(w[15]);
-    let w14 = brev8(w[14]);
-    let w13 = brev8(w[13]);
-    let w12 = brev8(w[12]);
-    let w11 = brev8(w[11]);
-    let w10 = brev8(w[10]);
-    let w9  = brev8(w[9]);
-    let w8  = brev8(w[8]);
-    let w7  = brev8(w[7]);
-    let w6  = brev8(w[6]);
-    let w5  = brev8(w[5]);
-    let w4  = brev8(w[4]);
-    let w3  = brev8(w[3]);
-    let w2  = brev8(w[2]);
-    let w1  = brev8(w[1]);
-    let w0  = brev8(w[0]);
+    let w15 = rev8(w[15]);
+    let w14 = rev8(w[14]);
+    let w13 = rev8(w[13]);
+    let w12 = rev8(w[12]);
+    let w11 = rev8(w[11]);
+    let w10 = rev8(w[10]);
+    let w9  = rev8(w[9]);
+    let w8  = rev8(w[8]);
+    let w7  = rev8(w[7]);
+    let w6  = rev8(w[6]);
+    let w5  = rev8(w[5]);
+    let w4  = rev8(w[4]);
+    let w3  = rev8(w[3]);
+    let w2  = rev8(w[2]);
+    let w1  = rev8(w[1]);
+    let w0  = rev8(w[0]);
 
     // Arguments are W[i-16], W[i-9], W[i-3], W[i-13], W[i-6].
     // Note that some of the newly computed words are used in later invocations.
@@ -106,18 +106,18 @@ function clause execute (VSM3ME(vs2, vs1)) = {
     let w[23] = ZVKSH_W(w7, w14, w20, w10, w17);
 
   // Byte swap outputs from little-endian back to big-endian
-    let w16 : Bits(32) = brev8(W[16]);
-    let w17 : Bits(32) = brev8(W[17]);
-    let w18 : Bits(32) = brev8(W[18]);
-    let w19 : Bits(32) = brev8(W[19]);
-    let w20 : Bits(32) = brev8(W[20]);
-    let w21 : Bits(32) = brev8(W[21]);
-    let w22 : Bits(32) = brev8(W[22]);
-    let w23 : Bits(32) = brev8(W[23]);
+    let w16 : Bits(32) = rev8(W[16]);
+    let w17 : Bits(32) = rev8(W[17]);
+    let w18 : Bits(32) = rev8(W[18]);
+    let w19 : Bits(32) = rev8(W[19]);
+    let w20 : Bits(32) = rev8(W[20]);
+    let w21 : Bits(32) = rev8(W[21]);
+    let w22 : Bits(32) = rev8(W[22]);
+    let w23 : Bits(32) = rev8(W[23]);
 
 
     // Update the destination register.
-    set_velem(vd, 256, i {w23, w22, w21, w20, w19, w18, w17, w16});
+    set_velem(vd, 256, i, {w23, w22, w21, w20, w19, w18, w17, w16});
   }
   RETIRE_SUCCESS
 }
