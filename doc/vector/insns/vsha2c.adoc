@@ -73,8 +73,8 @@ If SEW is other than 32 or 64, this instruction takes the illegal instruction ex
 
 [NOTE]
 ====
-The `vsha2ch` version of this instruction reads the two high words from vs1 while the
-`vsha2cl` version only reads the two low words.
+The `vsha2ch` version of this instruction reads the two message schedule high words from `vs1` while the
+`vsha2cl` version only reads the two message schedule low words.
 Otherwise, these versions of the instruction are identical.
 The two forms of the instruction save code from having to swap these two words
 if there were just a single instruction.
@@ -108,10 +108,6 @@ the input and the output, this would require code to copy the *Vd* register befo
 executing one of these instructions so that would be available as input to the next
 instruction for the input of _c_, _d_, _g_, and _h_. This would use up one more
 vector register and require one more instruction, without any benefit.
-
-These sha two-rounds instructions only require two message schedule words in *Vs1*.
-The instruction sha256ra accesses the lower two words, while sha256rb accesses
-the upper two words.
 
 [NOTE]
 ====
