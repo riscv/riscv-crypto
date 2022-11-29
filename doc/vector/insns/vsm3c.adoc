@@ -97,7 +97,7 @@ function clause execute (VSM3C(rnds, vs2)) = {
   // load state with swap to little endian
   let {H, G, F, E, D, C, B, A} : bits(256) : bits(256) = rev8(get_velem(vd, 256, i));   // order of elements in register
   //load message schedule with swap to little endian
-  let {u_w7, u_w6, w5, w4, u_w3, u_w2, w1, w0} : bits(256) = rev8(get_velem(vd, 256, i));
+  let {u_w7, u_w6, w5, w4, u_w3, u_w2, w1, w0} : bits(256) = rev8(get_velem(vs2, 256, i));
   // u_w inputs are unused
 
   let x0 :bits(32) = w0 ^ w4;  // W'[0]
