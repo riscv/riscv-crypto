@@ -45,7 +45,7 @@ Arguments::
 |Direction
 |EGW
 |EGS 
-|EEW
+|SEW
 |Definition
 
 | Vd  | input  | 128  | 4 | 32 | round state
@@ -54,6 +54,8 @@ Arguments::
 |===
 
 Description:: 
+`SEW` must be 32, otherwise the instruction encoding is reserved.
+
 This instruction implements the middle-round decryption function of the AES
 block cipher.
 
@@ -75,10 +77,10 @@ The result (i.e. the next round state) is written to each `EGW=128` element grou
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon. 
 
-This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `EEW=32` elements to be processed and 
+`vl` must be set to the number of `SEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

@@ -1,5 +1,5 @@
 [[zvksh,Zvksh]]
-=== `Zvksh` - ShangMi Suite: SM3 Hash Function Instructions
+=== `Zvksh` - ShangMi Suite: SM3 Secure Hash
 
 Instructions for accelerating
 functions of the SM3 Hash Function.

@@ -1,5 +1,5 @@
 [[zvksed,Zvksed]]
-=== `Zvksed` - ShangMi Suite: SM4 Block Cipher Instructions
+=== `Zvksed` - ShangMi Suite: SM4 Block Cipher
 
 Instructions for accelerating single round 
 encryption, decryption and key-schedule

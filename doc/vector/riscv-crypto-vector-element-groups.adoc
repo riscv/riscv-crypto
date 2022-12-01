@@ -14,38 +14,23 @@ that operates on them:
 - Element Group Size (EGS) - number of elements in an element group
 - Effective Element Width (EEW) - number of bits in each element
 
-When the EEW is explicitly defined for a vector crypto instruction, the current `SEW` is ignored by that instruction.
-
-Note::
-We chose to not require that the instructions with a fixed `EEW` only be executed with `SEW`=`EEW` so that
-sophisticated coders could use other SEW values that are needed for other instructions without requiring
-an additional `vsetvl`-type instruction.
+For all of the vector crypto instructions in this specification, the current `EEW`=`SEW`.
 
 As with all vector instructions, the number of elements processed by a vector instruction is specified by the
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
 Using a Vector Crypto Instruction when this ratio is not an integer is reserved.
 
-Tip::
-To help ensure that the proper `vl` is used, programmers are encouraged to set `SEW` to match the `EEW` of the
-instructions being executed. The `EEW` for each cryptographic instruction was chosen to match what is
+Note::
+The required `SEW` for each cryptographic instruction was chosen to match what is
 typically needed for other instructions when implementing the targeted algorithm. 
 
 Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
 Using a Vector Crypto Instruction when this this ratio is not an integer is reserved.
 
-The corresponding `EMUL` is calculated as `EMUL` = (`EEW`/`SEW`)*`LMUL`. If the `EMUL` would be out of range
-(`EMUL`>8 or `EMUL`<1/8), the instruction encoding is reserved. 
-
 For the best performance, it is suggested that Vector Crypto instructions be implemented in
 vector units that have `VLEN` that is at least as wide as each instruction's `EGW`.
 Element groups can be formed
-across registers in implementations where `VLEN`< `EGW` by using an `LMUL`>1. 
-However, use of an instruction with `VLEN`< `EEW` where `EEW`> `SEW` is reserved.
-
-Note::
-There is no need to check for `VLEN`< `EEW` for any Standard implementation, as
-all Standard Vector Extensions require a minimum VLEN of at least 32 bits, and
-the only Vector Crypto instructions that use EEW>32 require that SEW=EEW.
+across registers in implementations where `VLEN`< `EGW` by using an `LMUL`>1.
 
 Systems which implement `VLEN` < `EGW` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
@@ -56,7 +41,7 @@ for accelerated cryptographic operations.
 | Instruction Group
 | Extension
 | EGW
-| EEW
+| SEW
 | EGS
 
 | AES      | <<zvkns>>            | 128 | 32 | 4

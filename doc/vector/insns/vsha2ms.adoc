@@ -30,7 +30,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|EEW
+|SEW
 |Definition
 
 | Vd  | input  | 4*SEW  | 4 | SEW | Message words {W[3],  W[2],  W[1],  W[0]}
@@ -40,13 +40,11 @@ Arguments::
 |===
 
 Description::
-
+`SEW` must be either 32 or 64, otherwise this instruction encoding is reserved.
 - When `SEW`=32, this instruction implements 4 rounds of SHA-256 message
 schedule expansion with EGW=128 (`zvknha` and `zvknhb`)
 - When `SEW`=64, this instruction implements 4 rounds of SHA-512 message
 schedule expansion with EGW=256 (`zvknhb` only)
-
-If SEW is other than 32 or 64, this instruction takes the illegal instruction exception.
 
 This instruction takes in a subset of the last 16 message-schedule `SEW`-sized "words"
 and produces the next 4 message-schedule words.
@@ -122,6 +120,11 @@ NB:: for implementations with `VLEN < EGW`, the minimal `VLMUL` is `EGW / VLEN`.
 
 In this code the input elements are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
 The outputs are numbered from 16 to 19.
+
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

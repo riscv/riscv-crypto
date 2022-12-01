@@ -30,7 +30,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|EEW
+|SEW
 |Definition
 
 | Vd   | input  | 256  | 8 | 32 | Current state {H,G.F,E,D,C,B,A}
@@ -40,6 +40,8 @@ Arguments::
 |===
 
 Description::
+`SEW` must be 32, otherwise the instruction encoding is reserved.
+
 Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
 
@@ -77,10 +79,10 @@ Where the "-" characters are not consumed and are therefore don't cares.
 
 This instruction consumes the "W" message schedule inputs and internally generates the "W'" values as needed
 
-This instruction treats `EEW=32` regardless of `vtype.vsew`
-`vl` needs to be set to eight times the number of element groups.
-If vstart is not zero, it needs to be scaled similarly.
-This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

@@ -30,7 +30,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|EEW
+|SEW
 |Definition
 
 | Vd  | input  | 128  | 4 | 32 | Partial hash (Y~i~)
@@ -40,6 +40,8 @@ Arguments::
 |===
 
 Description:: 
+`SEW` must be 32, otherwise the instruction encoding is reserved.
+
 This instruction performs a single "iteration" of the GHASH~H~ algorithm
 as defined in 
 link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
@@ -107,11 +109,10 @@ Each EGW=128 element group of `vs1` and `vs2` are the input polynomials.
 // producing a 128-bit result which is written to the corresponding element group in `vd`.
 // ====
 
-This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `EEW=32` elements to be processed and
+`vl` must be set to the number of `SEW=32` elements to be processed and
 therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,pseudocode]

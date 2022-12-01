@@ -1,5 +1,5 @@
 [[zvknh, zvknh[ab]]]
-=== `Zvknh[ab]` - NIST Suite: Vector SHA-2
+=== `Zvknh[ab]` - NIST Suite: Vector SHA-2 Secure Hash
 
 Instructions for accelerating SHA-2
 

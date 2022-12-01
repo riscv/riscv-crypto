@@ -1,5 +1,5 @@
 [[zvkns,Zvkns]]
-=== `Zvkns` - NIST Suite: Vector AES Encryption & Decryption (Single Round)
+=== `Zvkns` - NIST Suite: Vector AES Block Cipher
 
 Instructions for accelerating single round 
 encryption, decryption and key-schedule

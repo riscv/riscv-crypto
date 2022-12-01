@@ -30,7 +30,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|EEW
+|SEW
 |Definition
 
 | Vs1 | input  | 256  | 8 | 32 | Message words W[7:0]
@@ -39,6 +39,8 @@ Arguments::
 |===
 
 Description::
+`SEW` must be 32, otherwise the instruction encoding is reserved.
+
 This instruction implements 8 rounds of SM3 message expansion,  producing eight 32-bit
 outputs in a 256-bit 8-element group.
 It treats each 256-bit 8-element group of `vs1` and `vs2` as the data input.
@@ -50,10 +52,6 @@ we perform the operations in little-endian,
 and then we byte swap the output from little endian to big endian.
 ====
 
-This instruction treats `EEW=32` and `EGS=8`, regardless of `vtype.vsew`
-`vl` needs to be set to eight times the number of element groups.
-If vstart is not zero, it needs to be scaled similarly.
-
 [NOTE]
 ====
 For the best performance, it is recommended that implementations have VLEN>=256.
@@ -61,6 +59,10 @@ When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements
 specified register groups can be combined to form the full element group.
 ====
 
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

@@ -30,7 +30,7 @@ Arguments::
 |Direction
 |EGW
 |EGS 
-|EEW
+|SEW
 |Definition
 
 | uimm | input  | -    | - | -  | Round Number (rnd)
@@ -39,6 +39,8 @@ Arguments::
 |===
 
 Description:: 
+`SEW` must be 32, otherwise the instruction encoding is reserved.
+
 This instruction implements a single round of the forward AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
 The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 10.
@@ -50,11 +52,10 @@ writes the 128-bit result to the corresponding element group in `vd`.
 This instruction must always be implemented such that its execution latency does not
 depend on the data being operated upon. 
 
-This instruction ignores `vtype.vsew`. +
 The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `EEW=32` elements to be processed and 
+`vl` must be set to the number of `SEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
-Likewise, `vstart` must be a multiple of `EGS=4`
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 
 Operation::

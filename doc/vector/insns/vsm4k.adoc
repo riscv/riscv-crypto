@@ -30,7 +30,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|EEW
+|SEW
 |Definition
 
 | uimm | input  | -    | - | -  | Round group (rnd)
@@ -39,6 +39,8 @@ Arguments::
 |===
 
 Description::
+`SEW` must be 32, otherwise the instruction encoding is reserved.
+
 This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32-bit round keys
 as defined in SM4 (see
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
@@ -102,9 +104,10 @@ If it is desired to have the same key in all vector groups, either the input vec
 need to contain the same values, or the output from a particular group needs to be "broadcast"
 to the other groups using an instruction such as vrgather.
 
-This instruction treats `EEW=32` and `EGS=4`, regardless of `vtype.vsew`
-`vl` needs to be set to four times the number of element groups.
-If vstart is not zero, it needs to be scaled similarly.
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
+Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]
