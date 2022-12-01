@@ -1,5 +1,5 @@
 [[insns-vsm4r, SM4 Rounds]]
-= vsm4r.vv
+= vsm4r.[vv,vs]
 
 Synopsis::
 Vector SM4 Rounds
@@ -7,7 +7,7 @@ Vector SM4 Rounds
 Mnemonic::
 vsm4r.vv vd, vs2
 
-Encoding::
+Encoding (Vector-Vector)::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -20,6 +20,21 @@ Encoding::
 {bits: 6, name: '101000'},
 ]}
 ....
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-P'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: '10000'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: '1'},
+{bits: 6, name: '101001'},
+]}
+....
+
 
 Arguments::
 
@@ -41,8 +56,12 @@ Arguments::
 Description::
 This instruction implements 4 rounds of SM4 Encryption/Decryption, producing four 32-bit outputs in
 a 128-bit 4-element group.
-It treats each 128-bit 4-element group of `vs2` as the four round keys and
-each 128-bit 4-element group of `vs2` as the data input.
+It treats each 128-bit 4-element group of `vd` as the state data input.
+The `.vv` form treats each 128-bit 4-element group of `vs2` as the four round keys and
+
+
+The case of the .vs form of the instruction, element group 0 of the single register vs2 holds a single element group that is used as the round key for all of the element groups in vd. While in this case vs2 is a single register, vd can be a register group; the instruction encoding is reserved if the vd register group overlaps with vs2.
+
 
 vd (in) = {x[i-4], X[i-3]. X[i-2], X[i-1]} +
 vs2 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
@@ -78,14 +97,15 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VSM4R(vd, vs2)) = {
-   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
+  assert((vl%EGS)<>0)     // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
   
   foreach (i from eg_start to eg_len-1) {
-    let (rk0, rk1, rk2, rk3) : bits(128) = get_velem(vs2, EGW=128, i);
+    let keyelem = if suffix == "vv" then i else 0;
+    let (rk0, rk1, rk2, rk3) : bits(128) = get_velem(vs2, EGW=128, keyelem);
     let (X0, X1, X2, X3) : bits(128) = get_velem(vd, EGW=128, i);
 
     // 1st round
