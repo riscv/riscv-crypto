@@ -96,11 +96,11 @@ function clause execute (VSM3C(rnds, vs2)) = {
   
   foreach (i from eg_start to eg_len-1) {
 
-// load state with swap to little endian
-  let {H, G, F, E, D, C, B, A} : bits(256) : bits(256) = brev8(get_velem(vd, 256, i));   // order of elements in register
-//load message schedule with swap to little endian
-  let {u_w7, u_w6, w5, w4, u_w3, u_w2, w1, w0} : bits(256) = brev8(get_velem(vd, 256, i));
-         // u_w inputs are unused
+  // load state with swap to little endian
+  let {H, G, F, E, D, C, B, A} : bits(256) : bits(256) = rev8(get_velem(vd, 256, i));   // order of elements in register
+  //load message schedule with swap to little endian
+  let {u_w7, u_w6, w5, w4, u_w3, u_w2, w1, w0} : bits(256) = rev8(get_velem(vs2, 256, i));
+  // u_w inputs are unused
 
   let x0 :bits(32) = w0 ^ w4;  // W'[0]
   let x1 :bits(32) = w1 ^ w5;  // W'[1]
@@ -134,7 +134,7 @@ function clause execute (VSM3C(rnds, vs2)) = {
   let E2 = : bits(32) P_0(tt2);
 
   // Update the destination register - swap back to big endian
-  let result : bits(256) = {brev8(G1),brev8(G2), brev8(E1), BREV8(E2), BREV8(C1), BREV8(C2), BREV8(A1), BREV8(A2)};
+  let result : bits(256) = {rev8(G1), rev8(G2), rev8(E1), rev8(E2), rev8(C1), rev8(C2), rev8(A1), rev8(A2)};
    set_velem(vd, 256, i, result);
       }
 
