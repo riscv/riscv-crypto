@@ -13,6 +13,8 @@ libffi-dev
 libgdk-pixbuf2.0-dev
 libpango1.0-dev
 libxml2-dev
+libwebp-dev
+libzstd-dev
 make
 pkg-config
 ruby
