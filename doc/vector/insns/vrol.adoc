@@ -55,7 +55,7 @@ Vector-Vector Arguments::
 | Vd  | output | SEW  | 1 | SEW | Rotated data 
 |===
 
-Vector-Scalar/Immediate Arguments::
+Vector-Scalar Arguments::
 
 [%autowidth]
 [%header,cols="4,2,2,2,2,2"]
@@ -63,7 +63,7 @@ Vector-Scalar/Immediate Arguments::
 |Register
 |Direction
 |EGW
-|EGS 
+|EGS
 |EEW
 |Definition
 
