@@ -36,12 +36,12 @@ jobs:
     steps:
     - name: Set output.name
       id: step1
-      run: echo "::set-output name=name::$NAME"
+      run: echo "name=$NAME" >> $GITHUB_OUTPUT
     - name: Set output.pdf-name
       id: step2
-      run: echo "::set-output name=pdf-name::$NAME.pdf"
+      run: echo "pdf-name=$NAME.pdf" >> $GITHUB_OUTPUT
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: 'true'
     - name: Install Ubuntu packages
@@ -55,16 +55,16 @@ jobs:
         ruby-version: "2.6"
         bundler-cache: true
     # Node.js for wavedrom
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '14'
+        node-version: '16'
     - name: Install Node.js dependencies
       run: npm install ${NPM_PACKAGE_FOLDER}
     - name: Generate PDF
@@ -72,7 +72,7 @@ jobs:
         PATH=${PATH}:${BUNDLE_BIN}:$(npm bin):$(pwd) \
         make -C doc/vector
     - name: Archive PDF result
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ env.NAME }}.pdf
         path: doc/vector/${{ env.NAME }}.pdf
