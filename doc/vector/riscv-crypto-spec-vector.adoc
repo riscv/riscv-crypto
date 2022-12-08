@@ -2,9 +2,9 @@
 = RISC-V Cryptography Extensions Volume II: Vector Instructions
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  31 October, 2022
-:revnumber: v0.0.x
-:revremark: This document is in development. Breaking changes should be expected.
+:revdate:  08 December, 2022
+:revnumber: v0.0.1
+// :revremark: This document is in development. Breaking changes should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
 //:doctype: report
@@ -49,7 +49,7 @@ endif::[]
 This document describes the Vector Cryptography extensions to the 
 RISC-V Instruction Set Architecture.
 
-This document is _in development_ and breaking changes should be
+This document is _stable_ and limited changes should be
 expected.
 For more information, see link:http://riscv.org/spec-state[here].
 
@@ -105,8 +105,35 @@ include::./riscv-crypto-vector-scalar-instructions.adoc[]
 [[crypto_vector_extensions]]
 == Extensions Overview
 
-The group of extensions introduced by the Vector Cryptography Instruction Set
-Extension specification is listed here.
+The section introduces all of the  extensions in the Vector Cryptography
+Instruction Set Extension Specification.
+
+Each of these extensions has a minimum ELEN, and can be built on any base vector extension that
+supports that minimum ELEN.
+
+Most of these extensions can be implemented on XLEN=32 designs. However, `Zvkb` requires
+XLEN=64 since `vcmul[h].vx` is only defined for SEW=64.
+
+[%header,cols="^2,^2,^2"]
+|===
+|Extension
+|min ELEN
+|min XLEN
+
+|Zvkns  | 32 | 32 
+|Zvknha | 32 | 32
+|Zvknhb | 64 | 32
+|Zvkb   | 64 | 64
+|Zvkg   | 32 | 32
+|Zvksed | 32 | 32
+|Zvksh  | 32 | 32
+|===
+
+It is recommended that the Vector Crypto Extensions be implemented on a base with `ELEN`
+of at least 128. Smaller `ELEN` values could make it hard to efficiently code cryptographic
+algorithms. See <<crypto-vector-element-groups>> for more details on the drawbacks of
+small `ELEN` values.
+
 
 All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
 <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvkb>>) shall be executed with
