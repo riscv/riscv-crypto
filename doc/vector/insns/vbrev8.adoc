@@ -38,7 +38,7 @@ Arguments::
 |===
 
 Description::
-This instruction reverses the order of the bits in each byte in `vs2`.
+This instruction reverses the order of the bits in each byte of each active element in `vs2`.
 
 Operation::
 [source,sail]
