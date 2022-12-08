@@ -20,9 +20,12 @@ As with all vector instructions, the number of elements processed by a vector in
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
 Using a Vector Crypto Instruction when this ratio is not an integer is reserved.
 
-Note::
+[NOTE]
+====
 The required `SEW` for each cryptographic instruction was chosen to match what is
 typically needed for other instructions when implementing the targeted algorithm. 
+====
+
 
 Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
 Using a Vector Crypto Instruction when this this ratio is not an integer is reserved.
@@ -31,6 +34,17 @@ For the best performance, it is suggested that Vector Crypto instructions be imp
 vector units that have `VLEN` that is at least as wide as each instruction's `EGW`.
 Element groups can be formed
 across registers in implementations where `VLEN`< `EGW` by using an `LMUL`>1.
+
+[NOTE]
+====
+It is important to keep in mind that using a larger `LMUL` reduces the number of
+register groups available. This can make it difficult or impossible to write
+efficient code for the intended cryptographic algorithms.
+
+For example, an implementation with `ELEN`=32 would need to set `VLEN`=8 to create a
+256-bit element group for `SM3`. This would mean that there would only be 4 register groups,
+3 of which would be consumed by a single `SM3` message-expansion instruction.
+====
 
 Systems which implement `VLEN` < `EGW` should consider the existing
 Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
@@ -51,5 +65,4 @@ for accelerated cryptographic operations.
 | SM4      | <<zvksed>>           | 128 | 32 | 4
 | SM3      | <<Zvksh>>            | 256 | 32 | 8
 |===
-
-NB: Some of the new vector crypto instructions use SEW as usual. For example: rotate, CLMUL  
+ 
