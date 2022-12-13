@@ -122,6 +122,6 @@ Vector instructions with *Zvkb (in bold)*
 | 00101 | vsext.vf4
 | 00110 | vzext.vf2
 | 00111 | vsext.vf2
-| 01000 | *vbrev*
+| 01000 | *vbrev8*
 | 01001 | *vrev8*
 |===
