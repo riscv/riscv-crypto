@@ -88,7 +88,7 @@ VLMUL must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
 is written to vd.
 
-These instructions take in two SEW words _W1_ and _W0_ which are next two words of the message 
+These instructions take in two SEW words _W1_ and _W0_ which are next two words of the message
 schedule after they have been incremented by the appropriate constant (see
 link:https://doi.org/10.6028/NIST.FIPS.180-4[FIPS PUB 180-4 Secure Hash Standard (SHS)])
 and eight SEW word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
@@ -105,6 +105,14 @@ the input and the output, this would require code to copy the *Vd* register befo
 executing one of these instructions so that would be available as input to the next
 instruction for the input of _c_, _d_, _g_, and _h_. This would use up one more
 vector register and require one more instruction, without any benefit.
+
+
+The case where the `vd` register group overlap with either `vs1` or `vs2` is _reserved_.
+
+[NOTE]
+====
+Preventing overlap between `vd` and `vs1` or `vs2` simplifies implementation with `VLEN < EGW`.
+====
 
 [NOTE]
 ====
