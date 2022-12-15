@@ -54,7 +54,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|SEW
+|EEW
 |Definition
 
 | Vd  | input  | 4*SEW  | 4 | SEW | current state {c, d, g, h}
@@ -82,7 +82,7 @@ if there were just a single instruction.
 // of functionality. A vector length setting of wider than 128 bits would require some
 // sort of instruction expansion.
 
-This instruction is not masked. If any 128-bit element groupss are not to be processed,
+This instruction is not masked. If any 128-bit element groups are not to be processed,
 the _vl_ must be set accordingly.
 VLMUL must be at least 1. In typical usage it is expected to be 1.
 There are three source operands: vd, vs1 and vs2. The result
