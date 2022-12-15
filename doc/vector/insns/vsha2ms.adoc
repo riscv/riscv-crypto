@@ -57,7 +57,6 @@ element groups from the left to the right with the most significant word on the 
 and the least significant word on the right.
 
 
-
 This instructions takes in 11 of the last 16 words of the message schedule. The last 16
 words of the message schedule are shown here in an element group.
 The subscripts show the relative age, where W~0~ is the oldest and W~15~ is the most recent
@@ -94,6 +93,14 @@ The number of words to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW` elements to be processed and
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`
+
+The case where the `vd` register group overlap with either `vs1` or `vs2` is _reserved_.
+
+[NOTE]
+====
+Preventing overlap between `vd` and `vs1` or `vs2` simplifies implementation with `VLEN < EGW` while not impacting larger VLEN since it does not make sense to reuse a register group for different message schedule indices.
+====
+
 
 // This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
 
