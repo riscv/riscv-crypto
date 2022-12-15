@@ -84,6 +84,13 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`.
 
+The case where the `vd` register group overlap with `vs2` is _reserved_.
+
+[NOTE]
+====
+Preventing overlap between `vd` and `vs2` simplifies implementation with `VLEN < EGW` while not impacting larger VLEN since it does not make sense to reuse a register group for both message words and current state.
+====
+
 Operation::
 [source,sail]
 --
