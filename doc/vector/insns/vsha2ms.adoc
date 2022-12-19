@@ -98,7 +98,9 @@ The case where the `vd` register group overlap with either `vs1` or `vs2` is _re
 
 [NOTE]
 ====
-Preventing overlap between `vd` and `vs1` or `vs2` simplifies implementation with `VLEN < EGW` while not impacting larger VLEN since it does not make sense to reuse a register group for different message schedule indices.
+Preventing overlap between `vd` and `vs1` or `vs2` simplifies implementation with `VLEN < EGW`.
+This restriction does not have any coding impact since proper implementation of the algorithm requires
+that `vd`, `vs1` and `vs2` each contain different portions of the message schedule.
 ====
 
 
