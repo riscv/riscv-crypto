@@ -94,7 +94,7 @@ The number of words to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-The case where the `vd` register group overlap with either `vs1` or `vs2` is _reserved_.
+The case where the `vd` register group overlaps with either `vs1` or `vs2` is _reserved_.
 
 [NOTE]
 ====
@@ -104,20 +104,10 @@ that `vd`, `vs1` and `vs2` each contain different portions of the message schedu
 ====
 
 
-// This instruction requires that `Zvl128b` be implemented (i.e `VLEN>=128`).
-
 [NOTE]
 ====
 W~13~ is not used by the instruction for producing the next 4 message schedule words.
 ====
-
-// [NOTE]
-// ====
-// Many vector units that are wider than 128 bits may choose to only implement one
-// 128-bit datapath for this instruction. This needs to be transparent to code in terms
-// of functionality. A vector length setting of wider than 128 bits would require some
-// sort of instruction expansion.
-// ====
 
 This instruction is not masked. If any element groups are not to be processed, the _vl_
 must be set accordingly. It is not possible to skip an intermediary element group.

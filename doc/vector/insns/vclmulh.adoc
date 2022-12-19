@@ -74,7 +74,7 @@ function clause execute (VCLMULH(vs2, vs1, vd, suffix)) = {
   foreach (i from vstart to vl-1) {
     let op1 : bits (64) = if suffix =="vv" then get_velem(vs1,i) else zext_or_truncate_to_sew(X(vs1));
     let op2 : bits (64) = get_velem(vs2, i);
-    let product : bits (64) = clmulh(op1, op2, width);
+    let product : bits (64) = clmulh(op1, op2, SEW);
     set_velem(vd, i, product);
   }
   RETIRE_SUCCESS
