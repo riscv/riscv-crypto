@@ -10,6 +10,7 @@ graphviz
 default-jre
 libcairo2-dev
 libffi-dev
+libgif-dev
 libgdk-pixbuf2.0-dev
 libpango1.0-dev
 libxml2-dev
