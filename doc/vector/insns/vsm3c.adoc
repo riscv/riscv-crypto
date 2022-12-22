@@ -94,7 +94,7 @@ Preventing overlap between `vd` and `vs2` simplifies implementation with `VLEN <
 Operation::
 [source,sail]
 --
-function clause execute (VSM3C(rnds, vs2)) = {
+function clause execute (VSM3C(rnds, vs2, vd)) = {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
