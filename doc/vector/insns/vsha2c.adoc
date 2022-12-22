@@ -186,7 +186,7 @@ function ch(x, y, z) = ((x & y) ^ ((~x) & z))
 
 function maj(x, y, z) =  ((x & y) ^ (x & z) ^ (y & z))
 
-function ROTR(x,n) = (x >> n) | (x << w - n)
+function ROTR(x,n) = (x >> n) | (x << SEW - n)
 
 --
 

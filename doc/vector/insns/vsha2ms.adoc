@@ -166,7 +166,7 @@ function sig1(x) = {
 	}
 }
 
-function ROTR(x,n) = (x >> n) | (x << w - n)
+function ROTR(x,n) = (x >> n) | (x << SEW - n)
 function SHR (x,n) = x >> n
 
 --
