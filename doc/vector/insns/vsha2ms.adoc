@@ -129,7 +129,8 @@ Operation::
 [source,sail]
 --
 function clause execute (VSHA2ms(vs2, vs1, vd)) = {
-  // This pseudo code needs to be updated to support SHA-256 _and_ SHA-512
+  // SEW32 = SHA-256
+  // SEW64 =  SHA-512
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
@@ -151,13 +152,15 @@ function clause execute (VSHA2ms(vs2, vs1, vd)) = {
   RETIRE_SUCCESS
 }
 
-// SHA256
-function sig0(x) = ROTR(x,7)  XOR ROTR(x,18) XOR SHR(x,3)
-function sig1(x) = ROTR(x,17) XOR ROTR(x,19) XOR SHR(x,10)
+function sig0(x) = {
+  (if SEW=32 then (ROTR(x,7) XOR ROTR(x,18) XOR SHR(x,3))
+  else (ROTR(x,1) XOR ROTR(x,8) XOR SHR(x,7)));
+}
 
-// SHA512
-function sig0(x) = ROTR(x,1)  XOR ROTR(x,8)  XOR SHR(x,7);
-function sig1(x) = ROTR(x,19) XOR ROTR(x,61) XOR SHR(x,6);
+function sig1(x) = {
+  (if SEW=32 then (ROTR(x,17) XOR ROTR(x,19) XOR SHR(x,10))
+  else ROTR(x,19) XOR ROTR(x,61) XOR SHR(x,6))
+}
 
 function ROTR(x,n) = (x >> n) | (x << w - n)
 function SHR (x,n) = x >> n
