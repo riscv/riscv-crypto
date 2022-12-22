@@ -169,15 +169,15 @@ function clause execute (VSHA2c(vs2, vs1, vd)) = {
 
 function sum0(x) = {
 	match SEW {
-		32 => rotr(x,2)XOR rotr(x,13)XOR rotr(x,22),
-		64 => rotr(x,28)XOR rotr(x,34)XOR rotr(x,39)
+		32 => rotr(x,2)  XOR rotr(x,13) XOR rotr(x,22),
+		64 => rotr(x,28) XOR rotr(x,34) XOR rotr(x,39)
 	}
 }
 
 function sum1(x) = {
 	match SEW {
-		32 => rotr(x,6) rotr(x,11) rotr(x,25),
-		64 => rotr(x,14)XOR rotr(x,18)XOR rotr(x,41)
+		32 => rotr(x,6)  XOR rotr(x,11) XOR rotr(x,25),
+		64 => rotr(x,14) XOR rotr(x,18) XOR rotr(x,41)
 	}
 }
 

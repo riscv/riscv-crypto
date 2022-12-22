@@ -153,13 +153,17 @@ function clause execute (VSHA2ms(vs2, vs1, vd)) = {
 }
 
 function sig0(x) = {
-  (if SEW=32 then (ROTR(x,7) XOR ROTR(x,18) XOR SHR(x,3))
-  else (ROTR(x,1) XOR ROTR(x,8) XOR SHR(x,7)));
+	match SEW {
+		32 => (ROTR(x,7) XOR ROTR(x,18) XOR SHR(x,3)),
+		64 => (ROTR(x,1) XOR ROTR(x,8) XOR SHR(x,7)));
+	}
 }
 
 function sig1(x) = {
-  (if SEW=32 then (ROTR(x,17) XOR ROTR(x,19) XOR SHR(x,10))
-  else ROTR(x,19) XOR ROTR(x,61) XOR SHR(x,6))
+	match SEW {
+		32 => (ROTR(x,17) XOR ROTR(x,19) XOR SHR(x,10),
+		64 => ROTR(x,19) XOR ROTR(x,61) XOR SHR(x,6));
+	}
 }
 
 function ROTR(x,n) = (x >> n) | (x << w - n)
