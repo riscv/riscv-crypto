@@ -379,6 +379,18 @@ function reverse_bits_in_byte(x) = {
   output /* Return Value */
 }
 
+val rev8 : bits(SEW) -> bits(SEW)
+function rev8(x) = {     // endian swap
+  let output : bits(SEW) = 0;
+    let j = SEW - 1;
+    foreach (k from 0 to (SEW - 8) by 8) {
+      output[k..(k + 7)] = x[(j - 7)..j];
+      j = j - 8;
+  output /* Return Value */
+  }
+  RETIRE_SUCCESS
+
+
 val rol32 : bits(32) -> bits(32)
 function ROL32(x,n) = (X << N) | (X >> (32 - N))
 
