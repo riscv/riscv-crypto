@@ -42,7 +42,7 @@ This instruction reverses the order of the bytes in each active element of `vs2`
 
 [NOTE]
 ====
-This word-wise endian swapping is needed for several cryptographic algorithms including SHA2 and SM3.
+This element-wise endian swapping is needed for several cryptographic algorithms including SHA2 and SM3.
 ====
 
 Operation::
