@@ -162,7 +162,7 @@ function clause execute (VSHA2c(vs2, vs1, vd)) = {
 	  c = b;
 	  b = a;
 	  a = T1 + T2;
-	  set_velem(vd, 4*SEW, i, {f,e,b,a});
+	  set_velem(vd, 4*SEW, i, {a,b,e,f});
   }
   RETIRE_SUCCESS
 }
