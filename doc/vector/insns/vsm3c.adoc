@@ -110,74 +110,72 @@ function clause execute (VSM3C(rnds, vs2, vd)) = {
   // u_w inputs are unused
 
 // perform endian swap
-let H = rev8(Hi);
-let G = rev8(Gi);
-let F = rev8(Fi);
-let E = rev8(Ei);
-let D = rev8(Di);
-let C = rev8(Ci);
-let B = rev8(Bi);
-let A = rev8(Ai);
+let H : bits(32) = rev8(Hi);
+let G : bits(32) = rev8(Gi);
+let F : bits(32) = rev8(Fi);
+let E : bits(32) = rev8(Ei);
+let D : bits(32) = rev8(Di);
+let C : bits(32) = rev8(Ci);
+let B : bits(32) = rev8(Bi);
+let A : bits(32) = rev8(Ai);
 
-let w5 = rev8(w5i);
-let w4 = rev8(w4i);
-let w1 = rev8(w1i);
-let w0 = rev8(w0i);
+let w5 = : bits(32) rev8(w5i);
+let w4 = : bits(32) rev8(w4i);
+let w1 = : bits(32) rev8(w1i);
+let w0 = : bits(32) rev8(w0i);
 
-  let x0 :bits(32) = w0 ^ w4;  // W'[0]
-  let x1 :bits(32) = w1 ^ w5;  // W'[1]
+let x0 :bits(32) = w0 ^ w4;  // W'[0]
+let x1 :bits(32) = w1 ^ w5;  // W'[1]
 
-  let j = 2 * rnds;
-  let ss1 : bits(32) = ROL32(ROL32(A, 12) + E + ROL32(T_j(j), j % 32), 7);
-  let ss2 : bits(32) = ss1 ^ ROL32(A, 12);
-  let tt1 : bits(32) = FF_j(A, B, C, j) + D + ss2 + x0;
-  let tt2 : bits(32) = GG_j(E, F, G, j) + H + ss1 + w0;
-  D = C;
-  let : bits(32) C1 = ROL32(B, 9);
-  B = A;
-  let A1 : bits(32) = tt1;
-  H = G;
-  let G1 : bits(32) = ROL32(F, 19);
-  F = E;
-  let E1 : bits(32) = P_0(tt2);
+let j = 2 * rnds;
+let ss1 : bits(32) = ROL32(ROL32(A, 12) + E + ROL32(T_j(j), j % 32), 7);
+let ss2 : bits(32) = ss1 ^ ROL32(A, 12);
+let tt1 : bits(32) = FF_j(A, B, C, j) + D + ss2 + x0;
+let tt2 : bits(32) = GG_j(E, F, G, j) + H + ss1 + w0;
+D = C;
+let : bits(32) C1 = ROL32(B, 9);
+B = A;
+let A1 : bits(32) = tt1;
+H = G;
+let G1 : bits(32) = ROL32(F, 19);
+F = E;
+let E1 : bits(32) = P_0(tt2);
 
-  j = 2 * round + 1;
-  ss1 = ROL32(ROL32(A1, 12) + E1 + ROL32(T_j(j), j % 32), 7);
-  ss2 = ss1 ^ ROL32(A1, 12);
-  tt1 = FF(A1, B, C1, j) + D + ss2 + x1;
-  tt2 = GG_j(E1, F, G1, j) + H + ss1 + w1;
-  D = C1;
-  let C2 : bits(32) = ROL32(B, 9);
-  B = A1;
-  let A2 : bits(32) = tt1;
-  H = G1;
-  let G2 = : bits(32) ROL32(F, 19);
-  F = E1;
-  let E2 = : bits(32) P_0(tt2);
+j = 2 * rnds + 1;
+ss1 = ROL32(ROL32(A1, 12) + E1 + ROL32(T_j(j), j % 32), 7);
+ss2 = ss1 ^ ROL32(A1, 12);
+tt1 = FF_j(A1, B, C1, j) + D + ss2 + x1;
+tt2 = GG_j(E1, F, G1, j) + H + ss1 + w1;
+D = C1;
+let C2 : bits(32) = ROL32(B, 9);
+B = A1;
+let A2 : bits(32) = tt1;
+H = G1;
+let G2 = : bits(32) ROL32(F, 19);
+F = E1;
+let E2 = : bits(32) P_0(tt2);
 
-  // Update the destination register - swap back to big endian
-  let result : bits(256) = {rev8(G1), rev8(G2), rev8(E1), rev8(E2), rev8(C1), rev8(C2), rev8(A1), rev8(A2)};
-   set_velem(vd, 256, i, result);
+// Update the destination register - swap back to big endian
+let result : bits(256) = {rev8(G1), rev8(G2), rev8(E1), rev8(E2), rev8(C1), rev8(C2), rev8(A1), rev8(A2)};
+set_velem(vd, 256, i, result);
       }
 
-  RETIRE_SUCCESS
-  }
+RETIRE_SUCCESS
+}
 
-  function FF1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
-  function FF2(X, Y, Z) = (((X) & (Y)) | ((X) & (Z)) | ((Y) & (Z)))
+function FF1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
+function FF2(X, Y, Z) = (((X) & (Y)) | ((X) & (Z)) | ((Y) & (Z)))
 
-  function FF_j(X, Y, Z, J) = (((J) <= 15) ? FF1(X, Y, Z) : FF2(X, Y, Z))
+function FF_j(X, Y, Z, J) = (((J) <= 15) ? FF1(X, Y, Z) : FF2(X, Y, Z))
 
-  function GG1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
-  function GG2(X, Y, Z) = (((X) & (Y)) | ((~(X)) & (Z)))
+function GG1(X, Y, Z) = ((X) ^ (Y) ^ (Z))
+function GG2(X, Y, Z) = (((X) & (Y)) | ((~(X)) & (Z)))
 .
-  function GG_j(X, Y, Z, J) = (((J) <= 15) ? GG1(X, Y, Z) : GG2(X, Y, Z))
+function GG_j(X, Y, Z, J) = (((J) <= 15) ? GG1(X, Y, Z) : GG2(X, Y, Z))
 
-  function T_j(J) = (((J) <= 15) ? (0x79CC4519) : (0x7A879D8A))
+function T_j(J) = (((J) <= 15) ? (0x79CC4519) : (0x7A879D8A))
 
-  function P_0(X) = ((X) ^ ROL32((X),  9) ^ ROL32((X), 17))
-
-
+function P_0(X) = ((X) ^ ROL32((X),  9) ^ ROL32((X), 17))
 
 --
 

@@ -120,24 +120,31 @@ function clause execute (vsm4k(rnd, vs2)) = {
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
   
+  let B : bits(32) = 0;
+  let S : bits(32) = 0;
+  let rk4 : bits(32) = 0;
+  let rk5 : bits(32) = 0;
+  let rk6 : bits(32) = 0;
+  let rk7 : bits(32) = 0;
+
   foreach (i from eg_start to eg_len-1) {
     let (rk0, rk1, rk2, rk3) : bits(128) = get_velem(vs2, 128, i);
     
-    let B : bits(32) = rk1 ^ rk2 ^ rk3 ^ CK(4 * rnd);
-    let S : bits(32) = sm4_subword(B);
-    let rk4 : bits(32) = ROUND_KEY(rk0, S);
-
-    B = rk2 ^ rk3 ^ rk4 ^ CK(4 * round + 1);
+    B = rk1 ^ rk2 ^ rk3 ^ ck(4 * rnd);
     S = sm4_subword(B);
-    let rk5 : bits(32) = ROUND_KEY(rk1, S);
+    rk4 = ROUND_KEY(rk0, S);
+
+    B = rk2 ^ rk3 ^ rk4 ^ ck(4 * round + 1);
+    S = sm4_subword(B);
+    rk5 = ROUND_KEY(rk1, S);
 
     B = rk3 ^ rk4 ^ rk5 ^ CK(4 * round + 2);
     S = sm4_subword(B);
-    let rk6 : bits(32) = ROUND_KEY(rk2, S);
+    rk6 = ROUND_KEY(rk2, S);
 
-    B = rk4 ^ rk5 ^ rk6 ^ CK(4 * round + 3);
+    B = rk4 ^ rk5 ^ rk6 ^ ck(4 * round + 3);
     S = sm4_subword(B);
-    let rk7 : bits(32) = ROUND_KEY(rk3, S);
+    rk7 = ROUND_KEY(rk3, S);
 
     // Update the destination register.
    set_velem(vd, EGW=128, i, (rk4, rk5, rk6, rk7));
