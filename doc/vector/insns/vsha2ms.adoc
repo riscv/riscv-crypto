@@ -34,8 +34,8 @@ Arguments::
 |Definition
 
 | Vd  | input  | 4*SEW  | 4 | SEW | Message words {W[3],  W[2],  W[1],  W[0]}
-| Vs1 | input  | 4*SEW  | 4 | SEW | Message words {W[11], W[10], W[9],  W[4]}
-| Vs2 | input  | 4*SEW  | 4 | SEW | Message words {W[15], W[14], W[13], W[12]}
+| Vs2 | input  | 4*SEW  | 4 | SEW | Message words {W[11], W[10], W[9],  W[4]}
+| Vs1 | input  | 4*SEW  | 4 | SEW | Message words {W[15], W[14], W[13], W[12]}
 | Vd  | output | 4*SEW  | 4 | SEW | Message words {W[19], W[18], W[17], W[16]}
 |===
 
@@ -139,8 +139,8 @@ function clause execute (VSHA2ms(vs2, vs1, vd)) = {
 
   foreach (i from eg_start to eg_len-1) {
     {W[3],  W[2],  W[1],  W[0]}  : bits(EGW) = get_velem(vd, SEW, i);
-    {W[11], W[10], W[9],  W[4]}  : bits(EGW) = get_velem(vs1, SEW, i);
-    {W[15], W[14], W[13], W[12]} : bits(EGW) = get_velem(vs2, SEW, i);
+    {W[11], W[10], W[9],  W[4]}  : bits(EGW) = get_velem(vs2, SEW, i);
+    {W[15], W[14], W[13], W[12]} : bits(EGW) = get_velem(vs1, SEW, i);
   
     W[16] = sig1(W[14]) + W[9]  + sig0(W[1]) + W[0];
     W[17] = sig1(W[15]) + W[10] + sig0(W[2]) + W[1];
