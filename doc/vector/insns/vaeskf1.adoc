@@ -43,10 +43,12 @@ Description::
 
 This instruction implements a single round of the forward AES-128 KeySchedule.
 It treats each 128-bit element group of `vs2` as the current AES round key.
-The round number is stored in the unsigned 5-bit `rnd` immediate. Legal values are 1 - 10.
-Out of range values signal an illegal instruction exception.
+The round number, which ranges from 1 to 10, comes from `uimm[3:0]`;
+`uimm[4]` is ignored.
+The out-of-range `uimm[3:0]` values of 0 and 11-15 are dealt with by inverting
+`uimm[3]`. Thus, 0 maps to 8, and 11-15 maps to 3-7.
 
-It applies a single AES-128 KeySchedule round to each element group, and
+This instruction performs a single AES-128 KeySchedule round on each element group, and
 writes the 128-bit result to the corresponding element group in `vd`.
 
 This instruction must always be implemented such that its execution latency does not
@@ -62,12 +64,12 @@ Operation::
 [source,Sail]
 --
 function clause execute (VAESESKF1(rnd, vd, vs2)) = {
- if(unsigned(rnd[3:0]) > 10) then {
-    handle_illegal();  RETIRE_SUCCESS
-  } else {
   assert((vl%EGS)<>0)       // vl must be a multiple of EGS
   assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
 
+ // project out-of-range immediates onto in-range values
+ if( (unsigned(rnd[3:0]) > 10) | (rnd[3:0] = 0)) then rnd[3] = ~rnd[3]
+ 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
 
@@ -83,9 +85,7 @@ function clause execute (VAESESKF1(rnd, vd, vs2)) = {
       set_velem(vd, EGW=128, i, w[3:0]);
     }
     RETIRE_SUCCESS
-  }
 }
-
 
 --
 

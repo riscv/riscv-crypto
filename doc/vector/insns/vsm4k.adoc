@@ -45,22 +45,22 @@ This instruction implements 4 rounds of the SM4 Key Expansion, producing four 32
 as defined in SM4 (see
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
 It treats each 128-bit element group of `vs2` as the last four round keys.
-The rounds number is stored in the lower 3 bits of the unsigned 5-bit `uimm` immediate. The bits in 
-uimm[4:3] are ignored. Round group numbers range from 0 to 7 and indicate which
+The Round group number (`rnd`) comes from `uimm[3:0]`; the bits in `uimm[4:3]` are ignored.
+Round group numbers range from 0 to 7 and indicate which
 group of four round keys are being generated. Round Keys range from 0-31.
 For example, if `rnd`=1, then round keys 4, 5, 6, and 7 are being generated.
 
   
-  vs2 = {rK[i-4], rK[i-3],rK[i-2], rK[i-1]} // last 4 round keys +
-  imm = 0 to 7; // group of 4 rounds +
-  vd (out) = {rK[i], rK[i+1],rK[i+2], rK[i+3]} // next 4 rounds keys +
+  vs2 = {rK[i-4], rK[i-3],rK[i-2], rK[i-1]} // last 4 round keys
+  rnd = 0 to 7; // group of 4 rounds
+  vd (out) = {rK[i], rK[i+1],rK[i+2], rK[i+3]} // next 4 rounds keys
 
 Each of the 32 rounds consumes the last 4 32-bit keys along with a round constant and produces the next 32-bit key.
 
 
 [NOTE]
 ====
-The initial input to the round key generation is produced by XORing the 128-bit encryption key with a so-called system parameter: FK[3:0]
+The initial round keys are generated before this instruction by XORing the 128-bit encryption key with a so-called system parameter: FK[0:3]
 ====
 
 ////
@@ -83,15 +83,17 @@ The initial input to the round key generation is produced by XORing the 128-bit 
 
 
 The round keys are rK[0] to rK[31]
-  B = (rK[i-3] &#8853; rK[i-2] &#8853; rK[i-1] &#8853; CK[round]); +
+  B = (rK[i-3] XOR rK[i-2] XOR rK[i-1] XOR CK[round]); +
   S = subBytes(B); + 
-  rK[i]= rK[i-4] &#8853; S &#8853; ROTL13(S) &#8853; ROTR23(S); +
+  rK[i]= rK[i-4] XOR S XOR ROTL13(S) XOR ROTR23(S); +
 
 The round constants and the S-box are described below and can be found at https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
 
 [NOTE]
 ====
-The round constants can be generated on the fly fairly cheaply.
+Implemenmtation Hint
+
+The round constants (CK) can be generated on the fly fairly cheaply.
 If the bytes of the constants are assigned an incrementing index from 0 to 127, the value of each byte is equal to its index multiplied by 7 modulo 256.
 Since the results are all limited to 8 bits, the modulo operation occurs for free:
 
@@ -156,7 +158,7 @@ function clause execute (vsm4k(uimm, vs2)) = {
 val round_key : bits(32) -> bits(32)
 function ROUND_KEY(X, S) = ((X) ^ ((S) ^ ROL32((S), 13) ^ ROL32((S), 23)))
 
-// SM4 Constant Key (CK) - section 7.3.2. of the IETF draft.
+// SM4 Constant Key (CK)
 let ck : list(bits(32)) = [|
 	0x00070E15, 0x1C232A31, 0x383F464D, 0x545B6269,
 	0x70777E85, 0x8C939AA1, 0xA8AFB6BD, 0xC4CBD2D9,
