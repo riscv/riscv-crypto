@@ -1,7 +1,7 @@
 [[crypto-vector-element-groups]]
 === Crypto Vector Element Groups
 
-Many vector crypto instructions operate on larger operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller elements that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks comprised of four 32-bit words using 128-bit round keys that are generated from 128-, 192-, and 256-bit cipher keys.
+Many vector crypto instructions operate on wider operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller operands that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks using 128-bit round keys.
 
 In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
 we treat these operands as a vector of one of more element groups (see 
@@ -14,11 +14,7 @@ that operates on them:
 - Element Group Size (EGS) - number of elements in an element group
 - Effective Element Width (EEW) - number of bits in each element
 
-For all of the vector crypto instructions in this specification, the current `EEW`=`SEW`.
-
-As with all vector instructions, the number of elements processed by a vector instruction is specified by the
-vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
-Using a Vector Crypto Instruction when this ratio is not an integer is reserved.
+For all of the vector crypto instructions in this specification, `EEW`=`SEW`.
 
 [NOTE]
 ====
@@ -26,29 +22,31 @@ The required `SEW` for each cryptographic instruction was chosen to match what i
 typically needed for other instructions when implementing the targeted algorithm. 
 ====
 
-
-Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
-Using a Vector Crypto Instruction when this this ratio is not an integer is reserved.
-
-For the best performance, it is suggested that Vector Crypto instructions be implemented in
-vector units that have `VLEN` that is at least as wide as each instruction's `EGW`.
-Element groups can be formed
-across registers in implementations where `VLEN`< `EGW` by using an `LMUL`>1.
+Element groups can be formed across registers in implementations where
+`VLEN`< `EGW` by using an `LMUL`>1.
 
 [NOTE]
 ====
-It is important to keep in mind that using a larger `LMUL` reduces the number of
-register groups available. This can make it difficult or impossible to write
-efficient code for the intended cryptographic algorithms.
+Since the V-extension requires a minimum of VLEN of 128, at most such implementations
+would require LMUL=2 to form the largest element groups in this specification.
 
-For example, an implementation with `ELEN`=32 would need to set `VLEN`=8 to create a
+However, implementations with a smaller VLEN, such as embedded designs, need to
+keep in mind that a larger `LMUL` reduces the number of register groups available. This
+can make it difficult or impossible to write efficient code for the intended cryptographic algorithms.
+
+For example, an implementation with `VLEN`=32 would need to set `LMUL`=8 to create a
 256-bit element group for `SM3`. This would mean that there would only be 4 register groups,
 3 of which would be consumed by a single `SM3` message-expansion instruction.
 ====
 
-Systems which implement `VLEN` < `EGW` should consider the existing
-Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
-for accelerated cryptographic operations.
+As with all vector instructions, the number of elements processed by a vector instruction is specified by the
+vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
+Using a Vector Crypto Instruction when this ratio is not an integer is reserved.
+
+Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
+Using a Vector Crypto Instruction when this this ratio is not an integer is reserved.
+
+
 
 [%header,cols="4,4,4,4,4"]
 |===

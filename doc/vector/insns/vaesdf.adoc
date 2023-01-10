@@ -35,6 +35,9 @@ Encoding (Vector-Scalar)::
 {bits: 6, name: '101001`'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32
+* Only for the `.vs` form: the `vd` register group overlaps the `vs2` register
 
 Arguments::
 
@@ -54,15 +57,15 @@ Arguments::
 |===
 
 Description::
-`SEW` must be 32, otherwise the instruction encoding is reserved.
+....
+This instruction performs the final-round decryption function of the AES block cipher.
 
-Performs the final-round decryption function of the AES block cipher.
+In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a
+single element group that is used
+as the round key for all of the element groups in register group `vd`.
 
-In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a single element group that is used
-as the round key for all of the element groups in `vd`. While in this case `vs2` is a single register,
-`vd` can be a register group; the instruction encoding is reserved if the `vd` register group overlaps with `vs2`. 
-
-The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key.
+The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2`
+holds the round key.
 
 Each `EGW=128` element group next round state output is produced by applying the InvShiftRows, InvSubBytes,  and AddRoundkey steps to the corresponding inputs and is written to each `EGW=128` element group of `vd`.
 
@@ -73,8 +76,6 @@ on the data being operated upon.
 - InvSubBytes(state)
 - AddRoundKey(state,roundkey)
 
-This instruction operates on element groups in the source and destination registers.
-
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 
@@ -82,7 +83,7 @@ The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`.
-
+....
 
 Operation::
 [source,sail]

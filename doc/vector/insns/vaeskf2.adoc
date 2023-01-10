@@ -20,6 +20,8 @@ Encoding::
 {bits: 6, name: '101010'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32
 
 Arguments::
 
@@ -40,23 +42,16 @@ Arguments::
 |===
 
 Description:: 
-`SEW` must be 32, otherwise the instruction encoding is reserved.
+....
+This instruction performs a single round of the forward AES-256 KeySchedule.
 
-This instruction implements a single round of the forward AES-256 KeySchedule.
-It treats each `EGW=128` element group of `vs2` as the current AES round key,
-and each `EGW=128` element group of `vd` as the previous AES round key.
+The inputs and outputs to this instruction are comprised of 128-bit element groups.
+Each `EGW=128` element group of source `vd` holds the previous round key.
+Each `EGW=128` element group of `vs2` holds the current round key.
 The round number, which ranges from 2 to 14, comes from `uimm[3:0]`;
 `uimm[4]` is ignored.
 The out-of-range `uimm[3:0]` values of 0-1 and 15 are dealt with by
 inverting `uimm[3]`. Thus, 0-1 maps to 8-9, and 15 maps to 7.
-
-This instruction performs a single AES-256 KeySchedule round on each element group, and
-writes the 128-bit result to the corresponding element group in `vd`.
-
-This instruction only returns the generated key to the same element group as the source.
-If it is desired to have the same key in all vector groups, either the input vector groups
-need to contain the same values, or the output from a particular group needs to be "broadcast"
-to the other groups using an instruction such as vrgather.
 
 This instruction must always be implemented such that its execution latency does not
 depend on the data being operated upon. 
@@ -66,12 +61,6 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`.
 
-[NOTE]
-====
-The AES-256 KeySchedule uses 8 32-bit words to compute the next 4 32-bit
-words of the KeySchedule, while the round function consumes these words
-in chunks of 128-bits.
-====
 Operation::
 [source,Sail]
 --

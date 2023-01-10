@@ -44,6 +44,8 @@ Encoding (Vector-Vector) Low part::
 {bits: 6, name: '101111'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32 or 64
 
 Arguments::
 
@@ -64,7 +66,6 @@ Arguments::
 |===
 
 Description::
-`SEW` must be either 32 or 64, otherwise this instruction encoding is reserved.
 - When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128 (`zvknha` and `zvknhb`)
 - When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256 (`zvkhnb` only)
 
@@ -76,12 +77,6 @@ Otherwise, these versions of the instruction are identical.
 The two forms of the instruction save code from having to swap these two words
 if there were just a single instruction.
 ====
-
-This instruction is not masked. If any 128-bit element groups are not to be processed,
-the _vl_ must be set accordingly.
-VLMUL must be at least 1. In typical usage it is expected to be 1.
-There are three source operands: vd, vs1 and vs2. The result
-is written to vd.
 
 These instructions take in two SEW words _W1_ and _W0_ which are next two words of the message
 schedule after they have been incremented by the appropriate constant (see

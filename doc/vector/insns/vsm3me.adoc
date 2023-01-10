@@ -20,6 +20,8 @@ Encoding::
 {bits: 6, name: '100000'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32
 
 Arguments::
 
@@ -39,10 +41,9 @@ Arguments::
 |===
 
 Description::
-`SEW` must be 32, otherwise the instruction encoding is reserved.
+This instruction implements 8 rounds of SM3 message expansion.
 
-This instruction implements 8 rounds of SM3 message expansion,  producing eight 32-bit
-outputs in a 256-bit 8-element group.
+It produces eight 32-bit outputs in a 256-bit 8-element group.
 It treats each 256-bit 8-element group of `vs1` and `vs2` as the data input.
 
 [NOTE]

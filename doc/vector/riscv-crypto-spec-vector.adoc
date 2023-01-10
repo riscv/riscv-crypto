@@ -2,8 +2,8 @@
 = RISC-V Cryptography Extensions Volume II: Vector Instructions
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  05 January, 2023
-:revnumber: v0.1.0
+:revdate:  10 January, 2023
+:revnumber: v0.1.1
 // :revremark: This document is in development. Some changes should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
@@ -145,13 +145,16 @@ small `ELEN` values..
 
 All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
 <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvkb>>) shall be executed with
-data-independent execution latency.
-That is, the latency of an instruction's execution shall not vary based on the values
-of its _data_. To be clear, _data_ refers to an instruction's operands and does not include 
-other parameters of vector execution such as those specified in `vtype` and `vl`.
-This behavior is the same as described as described in the `Zkt` extension for
-scalar instructions. This behavior in these Vector Crypto instructions is independent of the
-implementation of the Zkt extension; it does not require that Zkt is implemented.
+data-independent execution latency as defined in the 
+link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
+It is important to note that the Vector Crypto extensions are independent of the
+implementation of the `Zkt` extension and do not require that `Zkt` is implemented.
+// That is, the latency of an instruction's execution shall not vary based on the values
+// of its _data_. To be clear, _data_ refers to an instruction's operands and does not include 
+// other parameters of vector execution such as those specified in `vtype` and `vl`.
+// This behavior is the same as described as described in the `Zkt` extension for
+// scalar instructions. 
+
 
 
 Detection of individual cryptography extensions uses the
@@ -206,16 +209,10 @@ include::insns/vaesef.adoc[leveloffset=+2]
 <<<
 include::insns/vaesem.adoc[leveloffset=+2]
 <<<
-// include::insns/vaeskf.adoc[leveloffset=+2]
-// <<<
 include::insns/vaeskf1.adoc[leveloffset=+2]
 <<<
 include::insns/vaeskf2.adoc[leveloffset=+2]
 <<<
-// include::insns/vaeskr1.adoc[leveloffset=+2]
-// <<<
-// include::insns/vaeskr2.adoc[leveloffset=+2]
-// <<<
 include::insns/vaesz.adoc[leveloffset=+2]
 <<<
 include::insns/vandn.adoc[leveloffset=+2]
@@ -224,9 +221,9 @@ include::insns/vbrev8.adoc[leveloffset=+2]
 <<<
 include::insns/vclmul.adoc[leveloffset=+2]
 <<<
-include::insns/vghmac.adoc[leveloffset=+2]
-<<<
 include::insns/vclmulh.adoc[leveloffset=+2]
+<<<
+include::insns/vghmac.adoc[leveloffset=+2]
 <<<
 include::insns/vrev8.adoc[leveloffset=+2]
 <<<

@@ -20,6 +20,9 @@ Encoding::
 {bits: 6, name: '101011'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32
+*The `vd` register group overlaps with the `vs2` register group
 
 Arguments::
 
@@ -40,8 +43,6 @@ Arguments::
 |===
 
 Description::
-`SEW` must be 32, otherwise the instruction encoding is reserved.
-
 Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
 a 256-bit 8-element group.
 
@@ -83,8 +84,6 @@ The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW=32` elements to be processed and
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`.
-
-The case where the `vd` register group overlap with `vs2` is _reserved_.
 
 [NOTE]
 ====

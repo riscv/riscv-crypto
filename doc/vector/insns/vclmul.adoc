@@ -35,6 +35,8 @@ Encoding (Vector-Scalar)::
 {bits: 6, name: '001100'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 64
 
 Arguments::
 
@@ -53,16 +55,16 @@ Arguments::
 | Vd  | output | SEW  | 1 | SEW | carry-less product low
 |===
 
-Description:: 
-This instruction performs a carry-less multiply operation to all
+Description::
+....
+This instruction performs a carry-less multiply operation on all
 active elements in the vector register group specified by `vs2`.
 The other operand can come from a vector register group `vs1`, or a scalar
 integer register `rs1`.
 For the scalar integer register, the operand is zero extended or truncated
 to 64 bits as appropriate.
-It returns the least significant EEW bits of the product.
-
-This instruction is only defined for `SEW=64`. The use of any other SEW with this instruction is reserved.
+This instruction returns the least significant EEW bits of the product.
+....
 
 [NOTE]
 ====

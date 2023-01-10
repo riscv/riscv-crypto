@@ -20,6 +20,9 @@ Encoding (Vector-Vector)::
 {bits: 6, name: '101101'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32 or 64
+*The `vd` register group overlaps with either `vs1` or `vs2`
 
 Arguments::
 
@@ -40,7 +43,6 @@ Arguments::
 |===
 
 Description::
-`SEW` must be either 32 or 64, otherwise this instruction encoding is reserved.
 - When `SEW`=32, this instruction implements 4 rounds of SHA-256 message
 schedule expansion with EGW=128 (`zvknha` and `zvknhb`)
 - When `SEW`=64, this instruction implements 4 rounds of SHA-512 message
@@ -94,7 +96,7 @@ The number of words to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`
 
-The case where the `vd` register group overlaps with either `vs1` or `vs2` is _reserved_.
+
 
 [NOTE]
 ====
