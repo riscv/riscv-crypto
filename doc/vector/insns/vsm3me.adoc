@@ -22,6 +22,7 @@ Encoding::
 ....
 Reserved Encodings::
 * `SEW` is any value other than 32
+*The `vd` register group overlaps with the `vs2` register group.
 
 Arguments::
 
@@ -65,7 +66,7 @@ The number of element groups to be processed is `vl`/`EGS`.
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`.
 
-The case where the `vd` register group overlaps with `vs2` is _reserved_.
+
 
 [NOTE]
 ====
