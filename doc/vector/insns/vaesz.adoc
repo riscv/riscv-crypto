@@ -62,8 +62,6 @@ that is used as the round key for all of the element groups in `vs2`. While in t
 The next round state output of each element group is produced by applying the AddRoundkey
 step to the corresponding inputs.
 
-
-
 - AddRoundKey(state,roundkey)
 
 [NOTE]

@@ -108,39 +108,34 @@ include::./riscv-crypto-vector-scalar-instructions.adoc[]
 The section introduces all of the  extensions in the Vector Cryptography
 Instruction Set Extension Specification.
 
-These Vector Crypto Extensions can be built on any RISC-V base. However, XLEN=32 implementations
-will only be able to provide 32 bit values to the .vx vector-scalar instructions. 
+With the exception of <<zvknh,Zvknhb>>, each of these Vector Crypto Extensions can be build on _any_ embedded (Zve*)
+or application ("V") base Vector Extension. <<zvknh,Zvknhb>> requires `ELEN`=64 and therefore cannot be implemented
+on a Zve32* base.
 
-With the exception of Zvknhb, each of these Vector Crypto Extensions can be build on _any_ 
-base Vector Extension, embedded (Zve*) or application ("V"). Zvknhb requires ELEN=64 and therefore cannot be implemented on a Zve32* base.
+While the <<zvkb>> extension can be built on an Zve32x base, the `vclmul[h]` instructions will not be
+supported in such a case as they require `SEW`=64.
 
-While the Zvkb extension can be built on an Zve32* base, the vclmul[h] instructions will not be
-supported in such a case as they require SEW=64.
-
-While these Vector Crypto Extensions _can_ be built on implementations with `ELEN<128`, this will
-require code to be written with high `LMUL` values which result in too few register groups
-available to effectively code the intended algorithms. 
 See <<crypto-vector-element-groups>> for more details on vector element groups and the drawbacks of
 small `ELEN` values..
 
 
-[%header,cols="^2,^2,^2"]
-|===
-|Extension
-|min ELEN
-|min XLEN
-
-|Zvkns  | 32 | 32 
-|Zvknha | 32 | 32
-|Zvknhb | 64 | 32
-|Zvkb   | 32^1^ | 32^2^
-|Zvkg   | 32 | 32
-|Zvksed | 32 | 32
-|Zvksh  | 32 | 32
-|===
-1 - When ELEN=32, the clmul[h] instructions are not supported as they are only defined for SEW=64
-
-2 - When XLEN=32, scalar inputs are limited to zero/sign-extended 32-bit values.
+// [%header,cols="^2,^2,^2"]
+// |===
+// |Extension
+// |min ELEN
+// |min XLEN
+//
+// |Zvkns  | 32 | 32 
+// |Zvknha | 32 | 32
+// |Zvknhb | 64 | 32
+// |Zvkb   | 32^1^ | 32^2^
+// |Zvkg   | 32 | 32
+// |Zvksed | 32 | 32
+// |Zvksh  | 32 | 32
+// |===
+// 1 - When ELEN=32, the clmul[h] instructions are not supported as they are only defined for SEW=64
+// 
+// 2 - When XLEN=32, scalar inputs are limited to zero/sign-extended 32-bit values.
 
 
 All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,

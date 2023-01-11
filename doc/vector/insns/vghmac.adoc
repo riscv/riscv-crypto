@@ -20,6 +20,8 @@ Encoding::
 {bits: 6, name: '101100'},
 ]}
 ....
+Reserved Encodings::
+* `SEW` is any value other than 32 
 
 Arguments::
 
@@ -40,10 +42,9 @@ Arguments::
 |===
 
 Description:: 
-`SEW` must be 32, otherwise the instruction encoding is reserved.
+This instruction performs a single "iteration" of the GHASH~H~ algorithm.
 
-This instruction performs a single "iteration" of the GHASH~H~ algorithm
-as defined in 
+GHASH~H~ is defined in 
 link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
  "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
 (NIST Specification).

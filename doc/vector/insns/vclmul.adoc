@@ -56,15 +56,16 @@ Arguments::
 |===
 
 Description::
-....
-This instruction performs a carry-less multiply operation on all
+This instruction performs a carry-less multiply operation.
+
+It operates on all
 active elements in the vector register group specified by `vs2`.
 The other operand can come from a vector register group `vs1`, or a scalar
 integer register `rs1`.
 For the scalar integer register, the operand is zero extended or truncated
 to 64 bits as appropriate.
 This instruction returns the least significant EEW bits of the product.
-....
+
 
 [NOTE]
 ====

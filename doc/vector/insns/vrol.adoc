@@ -74,6 +74,7 @@ Vector-Scalar Arguments::
 
 Description:: 
 This instruction performs a bitwise left rotation on vector elements.
+
 The data to be rotated is in the vector register group specified by `vs2` and
 the rotate amount value can come from a vector register group `vs1`, or a
 scalar integer register `rs1`.

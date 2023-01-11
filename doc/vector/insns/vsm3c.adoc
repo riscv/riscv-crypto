@@ -43,8 +43,9 @@ Arguments::
 |===
 
 Description::
-Performs 2 rounds of SM3 Compression, producing eight 32-bit outputs in
-a 256-bit 8-element group.
+This instruction performs 2 rounds of SM3 Compression.
+
+The instruction produces eight 32-bit outputs in a 256-bit 8-element group.
 
 The round number is provided by the unsigned 5-bit `rnds` unsigned immediate. Legal values are 0 - 31
 and indicate which group of two rounds are being performed. For example, if rnds=1,
