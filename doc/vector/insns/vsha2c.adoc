@@ -46,6 +46,7 @@ Encoding (Vector-Vector) Low part::
 ....
 Reserved Encodings::
 * `SEW` is any value other than 32 or 64
+* The `vd` register group overlaps with either `vs1` or `vs2`
 
 Arguments::
 
@@ -96,7 +97,7 @@ executing one of these instructions so that would be available as input to the n
 instruction for the input of _c_, _d_, _g_, and _h_. This would use up one more
 vector register and require one more instruction, without any benefit.
 
-The case where the `vd` register group overlaps with either `vs1` or `vs2` is _reserved_.
+
 
 [NOTE]
 ====

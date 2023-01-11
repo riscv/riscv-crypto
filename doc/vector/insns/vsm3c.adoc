@@ -22,7 +22,7 @@ Encoding::
 ....
 Reserved Encodings::
 * `SEW` is any value other than 32
-*The `vd` register group overlaps with the `vs2` register group
+* The `vd` register group overlaps with the `vs2` register group
 
 Arguments::
 

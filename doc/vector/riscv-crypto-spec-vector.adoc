@@ -3,7 +3,7 @@
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
 :revdate:  11 January, 2023
-:revnumber: v0.1.2
+:revnumber: v0.1.3
 // :revremark: This document is in development. Some changes should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
@@ -96,9 +96,10 @@ include::riscv-crypto-vector-policies.adoc[]
 // ------------------------------------------------------------
 
 include::./riscv-crypto-vector-element-groups.adoc[]
+include::./riscv-crypto-vector-instruction-constraints.adoc[]
 include::./riscv-crypto-vector-scalar-instructions.adoc[]
 <<<
-
+    
 // ------------------------------------------------------------
 
 
@@ -160,7 +161,6 @@ unified software-based RISC-V discovery method.
 At the time of writing, these discovery mechanisms are still a work in
 progress.
 ====
-
 
 include::./riscv-crypto-vector-zvkns.adoc[]
 <<<
