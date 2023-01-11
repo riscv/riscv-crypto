@@ -57,7 +57,6 @@ Arguments::
 |===
 
 Description:: 
-....
 This instruction performs the final-round encryption function of the AES block cipher.
 
 In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a

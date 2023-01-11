@@ -41,7 +41,6 @@ Arguments::
 |===
 
 Description:: 
-....
 This instruction performs a single round of the forward AES-128 KeySchedule.
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.
