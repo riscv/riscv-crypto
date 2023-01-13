@@ -133,8 +133,10 @@ Operation::
 function clause execute (VSHA2ms(vs2, vs1, vd)) = {
   // SEW32 = SHA-256
   // SEW64 =  SHA-512
-  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0))  then {
+    handle_illegal();  // illegal instruction exception
+    RETIRE_SUCCESS
+  } else {
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
@@ -152,6 +154,7 @@ function clause execute (VSHA2ms(vs2, vs1, vd)) = {
     set_velem(vd, EGW, i, {W[19],W[18],W[17],W[16]});
   }
   RETIRE_SUCCESS
+  }
 }
 
 function sig0(x) = {

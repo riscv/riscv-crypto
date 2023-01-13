@@ -92,7 +92,6 @@ Operation::
 --
 function clause execute (VROL_VV(vs2, vs1, vd)) = {
   foreach (i from vstart to vl - 1) {
-                 // insert mask handling code here
     set_velem(vd, EEW=SEW, i,
       get_velem(vs2, i) <<< (get_velem(vs1, i) & (SEW-1))
     )

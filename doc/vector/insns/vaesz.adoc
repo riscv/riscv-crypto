@@ -79,8 +79,10 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESZ(vs2, vd) = {
-  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+   if( ((vl%EGS)<>0) | ((vstart%EGS)<>0))  then {
+    handle_illegal();  // illegal instruction exception
+    RETIRE_SUCCESS
+  } else {
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
@@ -92,6 +94,7 @@ function clause execute (VAESZ(vs2, vd) = {
     set_velem(vd, EGW=128, i, ark);
   }
   RETIRE_SUCCESS
+  }
 }
 --
 

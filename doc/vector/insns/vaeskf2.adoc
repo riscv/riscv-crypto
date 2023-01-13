@@ -64,8 +64,10 @@ Operation::
 [source,Sail]
 --
 function clause execute (VAESESKF2(rnd, vd, vs2)) = {
-  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vstart%EGS)<>0) //  vstart must be a multiple of EGS
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0))  then {
+    handle_illegal();  // illegal instruction exception
+    RETIRE_SUCCESS
+  } else {
 
  // project out-of-range immediates into in-range values
  if((unsigned(rnd[3:0]) < 2) |  (unsigned(rnd[3:0]) > 14)) then rnd[3] = ~rnd[3]
@@ -87,6 +89,7 @@ function clause execute (VAESESKF2(rnd, vd, vs2)) = {
       set_velem(vd, EGW=128, i, w[3:0]);
     }
     RETIRE_SUCCESS
+  }
 }
 --
 
