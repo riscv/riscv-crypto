@@ -46,7 +46,7 @@ This instruction implements 4 rounds of the SM4 Key Expansion.
 It produces four 32-bit round keys as defined in SM4 (see
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]).
 It treats each 128-bit element group of `vs2` as the last four round keys.
-The Round group number (`rnd`) comes from `uimm[3:0]`; the bits in `uimm[4:3]` are ignored.
+The Round group number (`rnd`) comes from `uimm[2:0]`; the bits in `uimm[4:3]` are ignored.
 Round group numbers range from 0 to 7 and indicate which
 group of four round keys are being generated. Round Keys range from 0-31.
 For example, if `rnd`=1, then round keys 4, 5, 6, and 7 are being generated.
