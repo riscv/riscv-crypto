@@ -21,7 +21,7 @@ Some Vector Crypto instructions are only defined for specific `SEW`, all other v
 * `vclmul` and `vclmulh`: `SEW` must be equal to 64
 
 Source/Destination overlap constraints::
-Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. When unspecified, a register refer to the full register group.
+Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. When unspecified, a register refers to the full register group.
 * `vaes*.vs`: the single register `vs2` cannot overlap with the register group `vd`
 * `vsm4r.vs`: the single register `vs2` cannot overlap with the register group `vd`
 * `vsha2c[hl].vv` and `vsha2ms.vv`: `vd` cannot overlap with either `vs1` or `vs2`
