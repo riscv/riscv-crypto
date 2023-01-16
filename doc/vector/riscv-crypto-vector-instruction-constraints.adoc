@@ -8,22 +8,22 @@ Since `vl` and `vstart` refer to elements, Vector Crypto instructions that use e
 An attempt to execute these instructions with values of `vl` or `vstart` that violate these constraints will raise an
 illegal instruction exception.
 
-* vaes*, vsha2*, vghmac, vsm4*: vl and vstart must be multiple of 4
-* vsm3*, vl and vstart must be multiple of 8
+* `vaes*`, `vsha2*`, `vghmac`, `vsm4*`: `vl` and `vstart` must be multiple of 4
+* `vsm3*`: `vl` and `vstart` must be multiple of 8
 
 SEW constraints::
 Some Vector Crypto instructions are only defined for specific `SEW`, all other values reserved.
 
-* vaes*, vghmac, vsm4*, vsm3*: SEW must be equal to 32
-* vsha2:
-** if `Zknha` is implemented: SEW must be equal to 32 
-** if `Zknhb` is implemented: SEW must be either to 32 or 64 
-* vclmul and vclmulh: SEW must be equal to 64-bit
+* `vaes*`, `vghmac`, `vsm4*`, `vsm3*`: `SEW` must be equal to 32
+* `vsha2`:
+** if `Zknha` is implemented: `SEW` must be equal to 32 
+** if `Zknhb` is implemented: `SEW` must be either equal to 32 or 64 
+* `vclmul` and `vclmulh`: `SEW` must be equal to 64
 
 Source/Destination overlap constraints::
-Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved.
-* vaes*.vs: the single register vs2 cannot overlap with the register group vd
-* vsm4r.vs: the single register vs2 cannot overlap with the register group vd
-* vsha2c[hl].vv and vsha2ms.vv: vd cannot overlap with either vs1 or vs2
-* vsm3me.vv: the case where the register group vd overlaps with the register group vs2 is reserved
-* vsm3c.vi: the case where the register group vd overlaps with the register group vs2 is reserved
+Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. When unspecified, a register refers to the full register group.
+* `vaes*.vs`: the single register `vs2` cannot overlap with the register group `vd`
+* `vsm4r.vs`: the single register `vs2` cannot overlap with the register group `vd`
+* `vsha2c[hl].vv` and `vsha2ms.vv`: `vd` cannot overlap with either `vs1` or `vs2`
+* `vsm3me.vv`: `vd` cannot overlap with  `vs2`
+* `vsm3c.vi`: `vd` cannot overlap with  `vs2`
