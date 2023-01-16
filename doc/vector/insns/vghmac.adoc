@@ -132,7 +132,7 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
     let X = get_velem(vs2,EGW=128,i);       // next block cipher output
     let Z : bits(128) = 0;
 
-for (int bit = 0; bit < 128; bit++) {
+    for (int bit = 0; bit < 128; bit++) {
       if bit_to_bool(Y[bit])
         Z ^= H
 
