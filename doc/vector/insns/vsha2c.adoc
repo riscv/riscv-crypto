@@ -86,13 +86,13 @@ and eight SEW word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
 output is the new values of _a, b, e_ and _f_ after performing 2 rounds of the hash
 computation. The other 4 variables, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
 
-These instructions are destructive, where *vd* holds the input values for _c_, _d_,
+These instructions are destructive, where `vd` holds the input values for _c_, _d_,
 _g_, and _h_, and after executing two rounds returns the output values of
 _a_, _b_, _e_ and _f_.
-Thus, the register _specifiers_ for Vd and Vs2 need to be swapped between
+Thus, the register _specifiers_ for `vd` and `vs2` need to be swapped between
 instructions. This is done since the input value of _c_, _d_, _g_, and _h_ is no
-longer needed. While we could have chosen to have *Vd* hold _a_, _b_, _e_ and _f_ for
-the input and the output, this would require code to copy the *Vd* register before
+longer needed. While we could have chosen to have `vd` hold _a_, _b_, _e_ and _f_ for
+the input and the output, this would require code to copy the `vd` register before
 executing one of these instructions so that would be available as input to the next
 instruction for the input of _c_, _d_, _g_, and _h_. This would use up one more
 vector register and require one more instruction, without any benefit.
