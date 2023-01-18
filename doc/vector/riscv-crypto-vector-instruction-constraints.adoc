@@ -53,7 +53,7 @@ Some Vector Crypto instructions are only defined for specific `SEW`, all other v
 // * `vclmul` and `vclmulh`: `SEW` must be equal to 64
 
 Source/Destination overlap constraints::
-Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. In the case of the '.vs' instructions, for implementations with VLEN ≥ 128 (which includes all application processors)  `vs2` refers to a single register. However, in implementations where VLEN < 128, `vs2` refers to a register group of two registers (VLEN=64) or four registers (VLEN=32).
+Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. In the case of the '.vs' instructions, for implementations with `VLEN` ≥ 128 (which includes all application processors)  `vs2` refers to a single register. However, in implementations where `VLEN` < 128, `vs2` refers to a register group of two registers (`VLEN`=64) or four registers (`VLEN`=32).
 
 [%autowidth]
 [%header,cols="4,4,4"]
