@@ -57,7 +57,7 @@ and then we byte swap the output from little endian to big endian.
 
 [NOTE]
 ====
-For the best performance, it is recommended that implementations have VLEN>=256.
+For the best performance, it is recommended that implementations have VLEN≥256.
 When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
 specified register groups can be combined to form the full element group.
 ====
