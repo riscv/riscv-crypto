@@ -25,7 +25,7 @@ typically needed for other instructions when implementing the targeted algorithm
 ====
 
 - A *Vector Element Group* is a vector of one or more element groups.
-- A *Scalar Element Groups* is a single element group. 
+- A *Scalar Element Group* is a single element group. 
 
 For background on the concept of element groups, see the non-normative document:
 link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups].
