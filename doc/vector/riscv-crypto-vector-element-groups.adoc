@@ -1,26 +1,35 @@
 [[crypto-vector-element-groups]]
-=== Crypto Vector Element Groups
+=== Element Groups
 
-Many vector crypto instructions operate on wider operands than instructions in the base vector extension. Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller operands that are combined. However, in other cases these operands are a single value. For example, AES operates on 128-bit blocks using 128-bit round keys.
+Many vector crypto instructions operate on wider operands than instructions in the base vector extension.
+Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller
+operands that are combined. However, in other cases these operands are a single value. For example, AES
+operates on 128-bit blocks using 128-bit round keys.
 
 In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
-we treat these operands as a vector of one of more element groups (see 
-link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]).
+we treat these operands as a vector of one of more _element groups_. An element group is comprised of
+a fixed number of EEW-sized elements.
 
 An element group is defined by three parameters, all of which are explicitly defined by each crypto instruction
 that operates on them:
 
-- Element Group Width (EGW) - total number of bits in an element group
-- Element Group Size (EGS) - number of elements in an element group
-- Effective Element Width (EEW) - number of bits in each element
+- Element Group Width (`EGW`) - total number of bits in an element group
+- Element Group Size (`EGS`) - number of elements in an element group
+- Effective Element Width (`EEW`) - number of bits in each element
 
 For all of the vector crypto instructions in this specification, `EEW`=`SEW`.
-
 [NOTE]
 ====
 The required `SEW` for each cryptographic instruction was chosen to match what is
 typically needed for other instructions when implementing the targeted algorithm. 
 ====
+
+- A *Vector Element Group* is a vector of one or more element groups.
+- A *Scalar Element Groups* is a single element group. 
+
+For background on the concept of element groups, see the non-normative document:
+link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups].
+
 
 Element groups can be formed across registers in implementations where
 `VLEN`< `EGW` by using an `LMUL`>1.
@@ -41,10 +50,10 @@ For example, an implementation with `VLEN`=32 would need to set `LMUL`=8 to crea
 
 As with all vector instructions, the number of elements processed by a vector instruction is specified by the
 vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
-Using a Vector Crypto Instruction when this ratio is not an integer is reserved.
+If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
 
 Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
-Using a Vector Crypto Instruction when this this ratio is not an integer is reserved.
+If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
 
 
 

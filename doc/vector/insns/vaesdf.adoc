@@ -57,7 +57,6 @@ Arguments::
 |===
 
 Description::
-....
 This instruction performs the final-round decryption function of the AES block cipher.
 
 In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a
@@ -83,7 +82,6 @@ The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW=32` elements to be processed and 
 therefore must be a multiple of `EGS=4`. + 
 Likewise, `vstart` must be a multiple of `EGS=4`.
-....
 
 Operation::
 [source,sail]

@@ -1,5 +1,5 @@
 [[crypto-vector-scalar-instructions]]
-=== Crypto Vector-Scalar Instructions
+=== Vector-Scalar Instructions
 
 The RISC-V Vector Extension defines three encodings for Vector-Scalar operations which get their scalar operand from a GPR or FP register:
 
@@ -26,8 +26,15 @@ specifier as additional encoding bits for these instructions. This allows these 
 much smaller encoding footprint, leaving more rooms for other instructions in the future.
 ====
 
-These instructions enable a single key, specified as a single element group in `vs2`, to be
-applied to each element group of a vector of element groups in `vd`.
+These instructions enable a single key, specified as a scalar element group in `vs2`, to be
+applied to each element group of register group `vd`.
+
+[NOTE]
+====
+Scalar element groups will occupy at most a single register in application processors. However, in implementations where
+VLEN<128, they will occupy 2 (VLEN=64) or 4 (LVEN=32) registers.
+====
+
 
 [NOTE]
 ====

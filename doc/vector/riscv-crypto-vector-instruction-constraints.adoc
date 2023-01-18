@@ -1,29 +1,79 @@
 [[crypto-vector-instruction-constraints]]
-=== Crypto Vector Instructions Constraints
+=== Instruction Constraints
 The following is a quick reference for the various constraints of specific Vector Crytpo instructions.
 
 vl and vstart constraints::
 Since `vl` and `vstart` refer to elements, Vector Crypto instructions that use elements groups
 (See <<crypto-vector-element-groups>>) require that these values are a multiple of the Element Group Size (EGS).
-An attempt to execute these instructions with values of `vl` or `vstart` that violate these constraints will raise an
+Instructions that violate these `vl` or `vstart` constraints will will raise an
 illegal instruction exception.
 
-* `vaes*`, `vsha2*`, `vghmac`, `vsm4*`: `vl` and `vstart` must be multiple of 4
-* `vsm3*`: `vl` and `vstart` must be multiple of 8
+// * `vaes*`, `vsha2*`, `vghmac`, `vsm4*`: `vl` and `vstart` must be multiple of 4
+// * `vsm3*`: `vl` and `vstart` must be multiple of 8
+
+[%autowidth]
+[%header,cols="4,4"]
+|===
+| Instructions 
+| Required Multiple
+
+| vaes*   | 4
+| vsha2*  | 4
+| vghmac  | 4
+| vsm3*   | 8 
+| vsm4*   | 4
+
+|===
+// | vaes*, vsha2*, vghmac, vsm4*| 4
 
 SEW constraints::
 Some Vector Crypto instructions are only defined for specific `SEW`, all other values reserved.
 
-* `vaes*`, `vghmac`, `vsm4*`, `vsm3*`: `SEW` must be equal to 32
-* `vsha2`:
-** if `Zknha` is implemented: `SEW` must be equal to 32 
-** if `Zknhb` is implemented: `SEW` must be either equal to 32 or 64 
-* `vclmul` and `vclmulh`: `SEW` must be equal to 64
+[%autowidth]
+[%header,cols="4,4"]
+|===
+| Instructions 
+| Required SEW
+
+// | vaes*, vghmac, vsm4*, vsm3*| 32
+| vaes*         | 32
+| Zknha: vsha2* | 32
+| Zknhb: vsha2* | 32 or 64
+| vghmac        | 32
+| vsm3*         | 32
+| vsm4*         | 32
+
+
+|===
+
+// * `vaes*`, `vghmac`, `vsm4*`, `vsm3*`: `SEW` must be equal to 32
+// * `vsha2*`:
+// ** if `Zknha` is implemented: `SEW` must be equal to 32 
+// ** if `Zknhb` is implemented: `SEW` must be either equal to 32 or 64 
+// * `vclmul` and `vclmulh`: `SEW` must be equal to 64
 
 Source/Destination overlap constraints::
-Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. When unspecified, a register refers to the full register group.
-* `vaes*.vs`: the single register `vs2` cannot overlap with the register group `vd`
-* `vsm4r.vs`: the single register `vs2` cannot overlap with the register group `vd`
-* `vsha2c[hl].vv` and `vsha2ms.vv`: `vd` cannot overlap with either `vs1` or `vs2`
-* `vsm3me.vv`: `vd` cannot overlap with  `vs2`
-* `vsm3c.vi`: `vd` cannot overlap with  `vs2`
+Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are reserved. In the case of the '.vs' instructions, for implementations with VLEN` ≥ 128 (which includes all application processors)  `vs2` refers to a single register. However, in implementations where VLEN < 128, `vs2` refers to a register group of two registers (VLEN=64) or four registers (VLEN=32).
+
+[%autowidth]
+[%header,cols="4,4,4"]
+|===
+| Instruction
+| Register 
+| Cannot Overlap
+
+| vaes*.vs      | vs2      | vd
+| vsm4r.vs      | vs2      | vd 
+| vsha2c[hl]    | vs1, vs2 | vd
+| vsha2ms       | vs1, vs2 | vd
+| sm3me         | vs2      | vd
+| vsm3c         | vs2      | vd
+
+
+|===
+
+// * `vaes*.vs`: the single register `vs2` cannot overlap with the register group `vd`
+// * `vsm4r.vs`: the single register `vs2` cannot overlap with the register group `vd`
+// * `vsha2c[hl].vv` and `vsha2ms.vv`: `vd` cannot overlap with either `vs1` or `vs2`
+// * `vsm3me.vv`: `vd` cannot overlap with  `vs2`
+// * `vsm3c.vi`: `vd` cannot overlap with  `vs2`

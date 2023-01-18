@@ -108,8 +108,8 @@ that `vd`, `vs1` and `vs2` each are different registers.
 
 [NOTE]
 ====
-It is recommended that implementations have VLEN>=128 for these instructions.
-Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN>=256.
+It is recommended that implementations have VLEN≥128 for these instructions.
+Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN≥256.
 When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
 specified register groups can be combined to form the full element group.
 ====
