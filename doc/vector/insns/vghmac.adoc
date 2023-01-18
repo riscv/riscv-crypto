@@ -42,7 +42,7 @@ Arguments::
 |===
 
 Description:: 
-This instruction performs a single "iteration" of the GHASH~H~ algorithm.
+A single "iteration" of the GHASH~H~ algorithm is performed.
 
 GHASH~H~ is defined in 
 link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]

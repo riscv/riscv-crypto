@@ -29,7 +29,7 @@ We do not expect architects to have a cryptography background.
 We nonetheless expect architects to be able to examine our instructions
 for implementation issues, understand how the instructions will be used
 in context, and advise on how best to fit the functionality the
-cryptographers want to the ISA interface.
+cryptographers want.
 
 Digital design engineers & micro-architects::
 These are the people who will implement the specification inside a

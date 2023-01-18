@@ -2,7 +2,7 @@
 = vaeskf2.vi
 
 Synopsis::
-Vector AES-256 Forward KeySchedule
+Vector AES-256 Forward KeySchedule generation
 
 Mnemonic::
 vaeskf2.vi vd, vs2, uimm
@@ -42,7 +42,7 @@ Arguments::
 |===
 
 Description:: 
-This instruction performs a single round of the forward AES-256 KeySchedule.
+A single round of the forward AES-256 KeySchedule is performed.
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.
 Each `EGW=128` element group of source `vd` holds the previous round key.
@@ -52,13 +52,13 @@ The round number, which ranges from 2 to 14, comes from `uimm[3:0]`;
 The out-of-range `uimm[3:0]` values of 0-1 and 15 are dealt with by
 inverting `uimm[3]`. Thus, 0-1 maps to 8-9, and 15 maps to 7.
 
-This instruction must always be implemented such that its execution latency does not
-depend on the data being operated upon. 
-
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and 
-therefore must be a multiple of `EGS=4`. + 
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// This instruction must always be implemented such that its execution latency does not depend
+// on the data being operated upon.
+//
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and 
+// therefore must be a multiple of `EGS=4`. + 
+// Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,Sail]

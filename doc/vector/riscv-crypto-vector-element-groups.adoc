@@ -56,7 +56,7 @@ Since `vstart` is expressed in elements, the starting element group is `vstart`/
 If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
 
 
-
+[%autowidth]
 [%header,cols="4,4,4,4,4"]
 |===
 | Instruction Group

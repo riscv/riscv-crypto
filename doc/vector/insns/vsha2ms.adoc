@@ -21,7 +21,9 @@ Encoding (Vector-Vector)::
 ]}
 ....
 Reserved Encodings::
-* `SEW` is any value other than 32 or 64
+* `SEW` is any value other than (based on the extension implemented):
+** `zvknha`: 32
+** `zvknhb`: 32 or 64
 * The `vd` register group overlaps with either `vs1` or `vs2`
 
 Arguments::
@@ -43,24 +45,23 @@ Arguments::
 |===
 
 Description::
-- When `SEW`=32, this instruction implements 4 rounds of SHA-256 message
-schedule expansion with EGW=128 (`zvknha` and `zvknhb`)
-- When `SEW`=64, this instruction implements 4 rounds of SHA-512 message
-schedule expansion with EGW=256 (`zvknhb` only)
+- `SEW`=32: 4 rounds of SHA-256 message schedule expansion are performed (`zvknha` and `zvknhb`)
+- `SEW`=64: 4 rounds of SHA-512 message schedule expansion are performed (`zvkhnb`)
 
-This instruction takes in a subset of the last 16 message-schedule `SEW`-sized "words"
-and produces the next 4 message-schedule words.
+A subset of the last 16 message-schedule `SEW`-sized "words" are consumed and
+the next 4 message-schedule words are produced.
 
 The message schedule words must be endian swapped before being consumed by this instruction.
 
-Four `SEW` message schedule words are packed into each `EGW` element group of the
-source and destination registers. The message schedule words are packed into the
+Four `SEW` message schedule words are packed into each element group of the
+source and destination registers. From a vector register point of view, 
+the message schedule words are packed into the
 element groups from the left to the right with the most significant word on the left
 and the least significant word on the right.
 
 
 This instructions takes in 11 of the last 16 words of the message schedule. The last 16
-words of the message schedule are shown here in an element group.
+words of the message schedule are shown here in element groups.
 The subscripts show the relative age, where W~0~ is the oldest and W~15~ is the most recent
 of the 16 words.
 
@@ -91,10 +92,10 @@ The instruction calculates the next 4 words of the message schedule:
 
 `{W~19~, W~18~, W~17~, W~16~}`
 
-The number of words to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`
+// The number of words to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW` elements to be processed and
+// therefore must be a multiple of `EGS=4`. +
+// Likewise, `vstart` must be a multiple of `EGS=4`
 
 
 
@@ -111,21 +112,21 @@ that `vd`, `vs1` and `vs2` each contain different portions of the message schedu
 W~13~ is not used by the instruction for producing the next 4 message schedule words.
 ====
 
-This instruction is not masked. If any element groups are not to be processed, the _vl_
-must be set accordingly. It is not possible to skip an intermediary element group.
-`VLMUL` must be at least 1. In typical usage it is expected to be 1.
-There are three source operands: `vd`, `vs1` and `vs2`. The result
-is written to `vd`.
+// This instruction is not masked. If any element groups are not to be processed, the _vl_
+// must be set accordingly. It is not possible to skip an intermediary element group.
+// `VLMUL` must be at least 1. In typical usage it is expected to be 1.
+// There are three source operands: `vd`, `vs1` and `vs2`. The result
+// is written to `vd`.
 
-NB:: for implementations with `VLEN < EGW`, the minimal `VLMUL` is `EGW / VLEN`.
+// NB:: for implementations with `VLEN < EGW`, the minimal `VLMUL` is `EGW / VLEN`.
 
-In this code the input elements are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
-The outputs are numbered from 16 to 19.
+// In this code the input elements are numbered from 0 (16 words ago) to 15 (most recent message-schedule word).
+// The outputs are numbered from 16 to 19.
 
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and
+// therefore must be a multiple of `EGS=4`. +
+// Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

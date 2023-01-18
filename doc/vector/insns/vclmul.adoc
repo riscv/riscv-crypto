@@ -56,15 +56,14 @@ Arguments::
 |===
 
 Description::
-This instruction performs a carry-less multiply operation.
+A carry-less multiply is performed and the low half of the product is returned. This operation is sometimes also referred to as a polynomial multiply.
 
-It operates on all
-active elements in the vector register group specified by `vs2`.
-The other operand can come from a vector register group `vs1`, or a scalar
+All active elements in the `vs2` vector register are multiplied by 
+either a vector register group `vs1`, or a scalar
 integer register `rs1`.
 For the scalar integer register, the operand is zero extended or truncated
 to 64 bits as appropriate.
-This instruction returns the least significant EEW bits of the product.
+The least significant EEW bits of the product are returned.
 
 
 [NOTE]

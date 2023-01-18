@@ -86,7 +86,7 @@ Vector-Scalar/Immediate Arguments::
 |===
 
 Description:: 
-This instruction performs the bitwise _and-not_ operation.
+A bitwise _and-not_ operation is performed.
 
 It operates on all
 active elements in the vector register group specified by `vs2`.

@@ -1,5 +1,5 @@
 [[zvkg,Zvkg]]
-=== `Zvkg` - Vector GCM/GMAC instruction for Cryptography
+=== `Zvkg` - Vector GCM/GMAC
 
 Instruction to enable the efficient implementation of Galois/Counter Mode (GCM) and
 Galois Message Authentication Code (GMAC).
@@ -13,13 +13,15 @@ GMAC is used to provide authentication of a message without encryption.
 
 To help avoid side-channel timing attacks, this instruction shall be implemented with data-independent timing.
 
-[%header,cols="^2,4,8"]
+[%autowidth]
+[%header,cols="^2,4,4,4"]
 |===
 
+|SEW
 |EGW
 |Mnemonic
 |Instruction
-| 128 | vghmac.vv | <<insns-vghmac>>
+| 32 | 128 | vghmac.vv | <<insns-vghmac>>
 
 |===
 

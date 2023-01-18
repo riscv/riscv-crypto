@@ -38,9 +38,7 @@ Arguments::
 |===
 
 Description::
-This instruction reverses the order of the bytes in each element, effectively performing an endian swap.
-
-It operates on each active element of `vs2`.
+A byte reversal is performed on each element of `vs2`, effectively performing an endian swap.
 
 [NOTE]
 ====

@@ -2,7 +2,7 @@
 = vsm3me.vv
 
 Synopsis::
-Vector SM3 Message Expansion - 8 rounds per instruction
+Vector SM3 Message Expansion
 
 Mnemonic::
 vsm3me.vv vd, vs2, vs1
@@ -42,10 +42,11 @@ Arguments::
 |===
 
 Description::
-This instruction implements 8 rounds of SM3 message expansion.
+Eight rounds of SM3 message expansion are performed.
 
-It produces eight 32-bit outputs in a 256-bit 8-element group.
-It treats each 256-bit 8-element group of `vs1` and `vs2` as the data input.
+The sixteen most recent 32-bit message words are read in as two
+eight-element groups.
+The next eight 32-bit message words are generated and returned in an eight-element group.
 
 [NOTE]
 ====
@@ -61,10 +62,10 @@ When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements
 specified register groups can be combined to form the full element group.
 ====
 
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and
+// therefore must be a multiple of `EGS=8`. +
+// Likewise, `vstart` must be a multiple of `EGS=8`.
 
 
 

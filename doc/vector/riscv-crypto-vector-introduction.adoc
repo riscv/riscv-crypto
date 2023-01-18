@@ -8,6 +8,6 @@ The instructions are designed to be highly performant, with large
 application and server-class cores being the main target.
 A companion document _Volume I: Scalar & Entropy Source Instructions_,
 describes
-cryptographic instruction proposals for smaller cores, which do not
+cryptographic instruction proposals for smaller cores which do not
 implement the vector extension.
 

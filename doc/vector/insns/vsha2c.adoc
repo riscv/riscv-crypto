@@ -2,20 +2,11 @@
 = vsha2c[hl].vv
 
 Synopsis::
-Vector SHA-2 2 rounds of compression.
+Vector SHA-2 Two rounds of compression.
 
 Mnemonic::
 vsha2ch.vv vd, vs2, vs1 +
 vsha2cl.vv vd, vs2, vs1
-
-[NOTE]
-====
-Having a high and low version of this instruction will typically improve performance when 
-interleaving independent hashing operations (i.e., when hashing several files at once).
-The alternative would be to have a single version of the instruction that only operates
-on the lower two words of the input which would require additional instructions to slide
-the upper two words into the lower two words.
-====
 
 Encoding (Vector-Vector) High part::
 [wavedrom, , svg]
@@ -45,7 +36,8 @@ Encoding (Vector-Vector) Low part::
 ]}
 ....
 Reserved Encodings::
-* `SEW` is any value other than 32 or 64
+* `zvknhq`: `SEW` is any value other than 32
+* `zvknhb`: `SEW` is any value other than 32 or 64
 * The `vd` register group overlaps with either `vs1` or `vs2`
 
 Arguments::
@@ -67,8 +59,8 @@ Arguments::
 |===
 
 Description::
-- When `SEW`=32, this instruction implements 2 rounds of SHA-256 compression with EGW=128 (`zvknha` and `zvknhb`)
-- When `SEW`=64, this instruction implements 2 rounds of SHA-512 compression with EGW=256 (`zvkhnb` only)
+- `SEW`=32: 2 rounds of SHA-256 compression are performed (`zvknha` and `zvknhb`)
+- `SEW`=64: 2 rounds of SHA-512 compression are performed (`zvkhnb`)
 
 [NOTE]
 ====
@@ -79,13 +71,24 @@ The two forms of the instruction save code from having to swap these two words
 if there were just a single instruction.
 ====
 
-These instructions take in two SEW words _W1_ and _W0_ which are next two words of the message
-schedule after they have been incremented by the appropriate constant (see
+[NOTE]
+====
+Having a high and low version of this instruction will typically improve performance when 
+interleaving independent hashing operations (i.e., when hashing several files at once).
+The alternative would be to have a single version of the instruction that only operates
+on the lower two words of the input which would require additional instructions to slide
+the upper two words into the lower two words.
+====
+
+These instructions take in two SEW words _W1_ and _W0_ which are the next two words of the message
+schedule incremented by the appropriate constant (see
 link:https://doi.org/10.6028/NIST.FIPS.180-4[FIPS PUB 180-4 Secure Hash Standard (SHS)])
 and eight SEW word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
 output is the new values of _a, b, e_ and _f_ after performing 2 rounds of the hash
-computation. The other 4 variables, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
+computation. The new values, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
 
+[NOTE]
+====
 These instructions are destructive, where `vd` holds the input values for _c_, _d_,
 _g_, and _h_, and after executing two rounds returns the output values of
 _a_, _b_, _e_ and _f_.
@@ -96,7 +99,7 @@ the input and the output, this would require code to copy the `vd` register befo
 executing one of these instructions so that would be available as input to the next
 instruction for the input of _c_, _d_, _g_, and _h_. This would use up one more
 vector register and require one more instruction, without any benefit.
-
+====
 
 
 [NOTE]
@@ -114,10 +117,10 @@ When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements
 specified register groups can be combined to form the full element group.
 ====
 
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and
+// therefore must be a multiple of `EGS=4`. +
+// Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

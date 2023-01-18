@@ -57,7 +57,7 @@ Arguments::
 |===
 
 Description::
-This instruction implements 4 rounds of SM4 Encryption/Decryption.
+Four rounds of SM4 Encryption/Decryption are performed.
 
 It  produces four 32-bit outputs in a 128-bit 4-element group.
 It treats each 128-bit 4-element group of `vd` as the state data input.
@@ -74,27 +74,27 @@ vd (in) = {x[0], X[1], X[2], X[3]} +
 vs2 = {rk[0],rk[1], rk[2], rk[3]} +
 vd (out) = {x[4], X[5], X[6], X[7]} +
 
-A draft of the SM4 standard is available at: https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
+A draft of the SM4 standard is available at: 
 
 [NOTE]
 ====
 In SM4, encryption and decryption are identical except that decryption consumes the round keys in the reverse order.
 ====
-
+// XOR = &#8853;
 Each round is produced by the following +
-  B = (X[i-3] &#8853; X[i-2] &#8853; X[i-1] &#8853; rk[i-4]) +
+  B = (X[i-3] XOR X[i-2] XOR X[i-1] XOR rk[i-4]) +
   S = subBytes(B); 1 s-box per byte +
-  X[i]= X[i-4] &#8853; S &#8853; ROL2(S) &#8853; ROL10(S) &#8853; ROL18(S) &#8853; ROL24(S) +
+  X[i]= X[i-4] XOR S XOR ROL2(S) XOR ROL10(S) XOR ROL18(S) XOR ROL24(S) +
 
 Each of the 32 rounds consumes the last 4 32-bit outputs with a round key and produces the next 32-bit output.
 
 NB: The rounds start with i=4 as {X[3],x[2],X[1],X[0]} is the initial data input to the round function
 and rk[0] is the initial round key.
 
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and
+// therefore must be a multiple of `EGS=4`. +
+// Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,pseudocode]

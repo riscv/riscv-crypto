@@ -4,6 +4,7 @@
 General purpose bit-manipulation instructions which are essential
 for implementing common cryptographic workloads securely & efficiently.
 
+[%autowidth]
 [%header,cols="^2,4"]
 |===
 |Mnemonic

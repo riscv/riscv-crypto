@@ -4,8 +4,6 @@
 Synopsis::
 Vector rotate left by vector/scalar.
 
-Only the least significant log2(SEW) bits are used for the rotate amount.
-
 Mnemonic::
 vrol.vv vd, vs2, vs1, vm +
 vrol.vx vd, vs2, rs1, vm +
@@ -73,7 +71,7 @@ Vector-Scalar Arguments::
 |===
 
 Description:: 
-This instruction performs a bitwise left rotation on vector elements.
+A bitwise left rotation is performed on each element of `vs2`
 
 The data to be rotated is in the vector register group specified by `vs2` and
 the rotate amount value can come from a vector register group `vs1`, or a

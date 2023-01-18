@@ -23,7 +23,7 @@ policies:
   Cryptographic standards which are settled upon concurrently with or after
   the RISC-V cryptographic extension standardization will be dealt with
   by future additions to, or versions of, the RISC-V cryptographic
-  standard extension.
+  standard extensions.
   
 * Historically, there has been some discussion
   cite:[LSYRR:04]

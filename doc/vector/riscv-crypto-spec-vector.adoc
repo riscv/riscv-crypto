@@ -110,15 +110,15 @@ include::./riscv-crypto-vector-software-portabilty.adoc[]
 The section introduces all of the  extensions in the Vector Cryptography
 Instruction Set Extension Specification.
 
-With the exception of <<zvknh,Zvknhb>>, each of these Vector Crypto Extensions can be build on _any_ embedded (Zve*)
-or application ("V") base Vector Extension. <<zvknh,Zvknhb>> requires `ELEN`=64 and therefore cannot be implemented
+With the exception of <<zvknh,Zvknhb>>, each of these Vector Crypto Extensions can be built on _any_ embedded (Zve*)
+or application ("V") base Vector Extension. <<zvknh,Zvknhb>> requires `SEW`=64 and therefore cannot be implemented
 on a Zve32* base.
 
 While the <<zvkb>> extension can be built on an Zve32x base, the `vclmul[h]` instructions will not be
 supported in such a case as they require `SEW`=64.
 
 See <<crypto-vector-element-groups>> for more details on vector element groups and the drawbacks of
-small `ELEN` values..
+small `VLEN` values..
 
 
 // [%header,cols="^2,^2,^2"]

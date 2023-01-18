@@ -1,36 +1,42 @@
 [[zvkns,Zvkns]]
 === `Zvkns` - NIST Suite: Vector AES Block Cipher
 
-Instructions for accelerating single round 
+Instructions for accelerating 
 encryption, decryption and key-schedule
 functions of the AES block cipher.
 
-All of these instructions work on 128-bit element groups.
+All of these instructions work on 128-bit element groups comprised of four
+32-bit elements.
+
 For the best performance, it is suggested that they be implemented on systems with `VLEN`>=128.
 On systems with `VLEN`<128, element groups may be formed by concatenating 32-bit elements
 from two or four registers by using an LMUL =2 and LMUL=4 respectively.
 
-Systems which implement `VLEN<128` should consider the existing
-Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
-for accelerated cryptographic operations.
+// Implementations with `VLEN<128` should consider the existing
+// Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
+// for accelerated cryptographic operations.
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
-[%header,cols="^2,4,8"]
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and 
+therefore must be a multiple of `EGS=4`. + 
+Likewise, `vstart` must be a multiple of `EGS=4`.
+
+[%autowidth]
+[%header,cols="^2,4,4,4"]
 |===
+|SEW
 |EGW
 |Mnemonic
 |Instruction
 
-| 128 | vaesef.[vv,vs]  | <<insns-vaesef>>
-| 128 | vaesem.[vv,vs]  | <<insns-vaesem>>
-| 128 | vaesdf.[vv,vs]  | <<insns-vaesdf>>
-| 128 | vaesdm.[vv,vs]  | <<insns-vaesdm>>
-// | 128 | vaeskf.vi      | <<insns-vaeskf>>
-| 128 | vaeskf1.vi      | <<insns-vaeskf1>>
-| 128 | vaeskf2.vi      | <<insns-vaeskf2>>
-// | 128 | vaeskr1.vi      | <<insns-vaeskr1>>
-// | 128 | vaeskr2.vi      | <<insns-vaeskr2>>
-| 128 | vaesz.vs        | <<insns-vaesz>>
+| 32 | 128 | vaesef.[vv,vs]  | <<insns-vaesef>>
+| 32| 128 | vaesem.[vv,vs]  | <<insns-vaesem>>
+| 32| 128 | vaesdf.[vv,vs]  | <<insns-vaesdf>>
+| 32| 128 | vaesdm.[vv,vs]  | <<insns-vaesdm>>
+| 32| 128 | vaeskf1.vi      | <<insns-vaeskf1>>
+| 32| 128 | vaeskf2.vi      | <<insns-vaeskf2>>
+| 32| 128 | vaesz.vs        | <<insns-vaesz>>
 |===
 

@@ -2,7 +2,7 @@
 = vaesz.vs
 
 Synopsis::
-Vector AES round zero encryption/decryption instruction.
+Vector AES round zero encryption/decryption
 
 Mnemonic::
 vaesz.vs vd, vs2
@@ -42,17 +42,17 @@ Arguments::
 |===
 
 Description:: 
-This instruction performs the round-0 function of the AES block cipher. The function is identical
-for encryption and decryption.
+
+A round-0 AES block cipher operation is performed. This operation is used for both encryption and decryption. 
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.
 
-There is only a `.vs` form of the instruction. Element group 0 of the single register `vs2` holds a
-single element group that is used
-as the round key for all of the element groups of the register group `vd` which holds the round state.
+There is only a `.vs` form of the instruction.
+`Vs2` holds a
+scalar element group that is used
+as the round key for all of the element groups in register group `vd`.
 
-
-The next round state output of each element group is produced by applying the AddRoundkey
+The new round state output of each element group is produced by applying the AddRoundkey
 step to the corresponding inputs.
 
 - AddRoundKey(state,roundkey)
@@ -67,13 +67,13 @@ This instruction only exists in the `.vs` form because the `.vv` form would be i
 
 This instruction operates on element groups in the source and destination registers.
 
-This instruction must always be implemented such that its execution latency does not
-depend on the data being operated upon.
-
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and 
-therefore must be a multiple of `EGS=4`. + 
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// This instruction must always be implemented such that its execution latency does not depend
+// on the data being operated upon.
+//
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and 
+// therefore must be a multiple of `EGS=4`. + 
+// Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,sail]

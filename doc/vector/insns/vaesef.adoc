@@ -2,7 +2,7 @@
 = vaesef.[vv,vs]
 
 Synopsis::
-Vector AES final round encryption instruction.
+Vector AES final-round encryption
 
 Mnemonic::
 vaesef.vv vd, vs2 +
@@ -37,7 +37,7 @@ Encoding (Vector-Scalar)::
 ....
 Reserved Encodings::
 * `SEW` is any value other than 32
-* Only for the `.vs` form: the `vd` register group overlaps the `vs2` register
+* Only for the `.vs` form: the `vd` register group overlaps the `vs2` scalar element group
 
 Arguments::
 
@@ -57,10 +57,10 @@ Arguments::
 |===
 
 Description:: 
-This instruction performs the final-round encryption function of the AES block cipher.
+A final-round encryption function of the AES block cipher is performed.
 
-In the case of the `.vs` form of the instruction, element group 0 of the single register `vs2` holds a
-single element group that is used
+In the case of the `.vs` form of the instruction, `vs2` holds a
+scalar element group that is used
 as the round key for all of the element groups in register group `vd`.
 
 The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key.
@@ -72,13 +72,13 @@ and AddRoundkey steps to the corresponding inputs and is written to each `EGW=12
 * ShiftRows(state)
 * AddRoundKey(state,roundkey)
 
-This instruction must always be implemented such that its execution latency does not depend
-on the data being operated upon.
-
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and 
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`. 
+// This instruction must always be implemented such that its execution latency does not depend
+// on the data being operated upon.
+//
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and 
+// therefore must be a multiple of `EGS=4`. + 
+// Likewise, `vstart` must be a multiple of `EGS=4`.
 
 
 Operation::

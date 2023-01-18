@@ -5,6 +5,12 @@ Instructions for accelerating single round
 encryption, decryption and key-schedule
 functions of the SM4 block cipher.
 
+There are various sources available that describe the SM4 block cipher. While not the final version of the standard,
+link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3] serves as a
+good reference.
+
+// https://datatracker.ietf.org/doc/id/draft-crypto-sm4-00
+
 All of these instructions work on 128-bit element groups comprised of four
 32-bit elements.
 
@@ -14,13 +20,20 @@ for accelerated cryptographic operations.
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
-[%header,cols="^2,4,8"]
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
+Likewise, `vstart` must be a multiple of `EGS=4`.
+
+[%autowidth]
+[%header,cols="^2,4,4,4"]
 |===
+|SEW
 |EGW
 |Mnemonic
 |Instruction
 
-| 128 | vsm4k.vi        | <<insns-vsm4k>>
-| 128 | vsm4r.[vv,vs]   | <<insns-vsm4r>>
+| 32 | 128 | vsm4k.vi        | <<insns-vsm4k>>
+| 32 | 128 | vsm4r.[vv,vs]   | <<insns-vsm4r>>
 |===
 

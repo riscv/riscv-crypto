@@ -27,7 +27,7 @@ illegal instruction exception.
 // | vaes*, vsha2*, vghmac, vsm4*| 4
 
 SEW constraints::
-Some Vector Crypto instructions are only defined for specific `SEW`, all other values reserved.
+Some Vector Crypto instructions are only defined for a specific `SEW`, all other values reserved.
 
 [%autowidth]
 [%header,cols="4,4"]

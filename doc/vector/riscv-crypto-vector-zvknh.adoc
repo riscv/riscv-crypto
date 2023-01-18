@@ -3,11 +3,12 @@
 
 Instructions for accelerating SHA-2
 
-`SEW` differentiates between SHA-256 (`SEW`=32) and SHA-512 (`SEW`=64). 
+`SEW` differentiates between SHA-256 (`SEW`=32) and SHA-512 (`SEW`=64).
+For SHA-256, these instructions work on 128-bit element groups comprised of four 32-bit elements.
+For SHA-256, these instructions work on 256-bit element groups comprised of four 64-bit elements.
 
-To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
-
-[%header,cols="^2,^2,^2,^2"]
+[%autowidth]
+[%header,cols="^2,^2,^2,2"]
 |===
 |SEW
 |EGW
@@ -30,7 +31,15 @@ For SHA-256, implementations with VLEN < 128 require software to use LMUL>1 to c
 For SHA-512, implementations with VLEN < 256 require software to use LMUL>1 to combine
 64-bit elements from register groups to provide all four elements of the element group.
 
-[%header,cols="^2,4"]
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
+
+The number of element groups to be processed is `vl`/`EGS`.
+`vl` must be set to the number of `SEW=32` elements to be processed and
+therefore must be a multiple of `EGS=4`. +
+Likewise, `vstart` must be a multiple of `EGS=4`.
+
+[%autowidth]
+[%header,cols="2,4"]
 |===
 // |`VLENmin`
 |Mnemonic

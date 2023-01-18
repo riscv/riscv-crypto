@@ -6,11 +6,7 @@ Vector rotate right by vector/scalar/immediate.
 
 Only the least significant log2(SEW) bits are used for the rotate amount.
 
-[NOTE]
-====
-The `.vi` form of this instruction uses a 6-bit unsigned immediate value that is specified
-in bits 26,19:15 of the instruction encoding.
-====
+
 
 Mnemonic::
 vror.vv vd, vs2, vs1, vm +
@@ -96,10 +92,9 @@ Vector-Scalar/Immediate Arguments::
 
 
 Description:: 
-This instruction performs a bitwise right rotation on vector elements.
+A bitwise right rotation is performed on each element of `vs2`.
 
-The data to be rotated is in the vector register group specified by `vs2` and
-the rotate amount value can come from a vector register group `vs1`, a scalar
+The rotate amount value can come from a vector register group `vs1`, a scalar
 integer register `rs1`, or a zero-extended 6-bit immediate.
 Only the low `log2(SEW)` bits of the rotate-amount value are used to control
 the rotate amount.

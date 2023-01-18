@@ -43,11 +43,13 @@ Arguments::
 |===
 
 Description::
-This instruction performs 2 rounds of SM3 Compression.
+Two rounds of SM3 compression are performed.
 
-The instruction produces eight 32-bit outputs in a 256-bit 8-element group.
+The current state of eight 32-bit words is read in as an element group. Eight 32-bit message words
+are read in, although only four of them are consumed. Based on the round group be being processed
+(as specified in rnds), the next state of eight 32-bit words is produced and written as an element group.
 
-The round number is provided by the unsigned 5-bit `rnds` unsigned immediate. Legal values are 0 - 31
+The round number is provided by the 5-bit `rnds` unsigned immediate. Legal values are 0 - 31
 and indicate which group of two rounds are being performed. For example, if rnds=1,
 then rounds 2 and 3 are being performed.
 
@@ -79,16 +81,18 @@ vs2 = {- , - , w[5], w[4], -, -, w[1], w[0]}
 
 Where the "-" characters are not consumed and are therefore don't cares.
 
-This instruction consumes the "W" message schedule inputs and internally generates the "W'" values as needed
+// This instruction consumes the "W" message schedule inputs and internally generates the "W'" values as needed
 
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`.
+// The number of element groups to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW=32` elements to be processed and
+// therefore must be a multiple of `EGS=8`. +
+// Likewise, `vstart` must be a multiple of `EGS=8`.
 
 [NOTE]
 ====
-Preventing overlap between `vd` and `vs2` simplifies implementation with `VLEN < EGW` while not impacting larger VLEN since it does not make sense to reuse a register group for both message words and current state.
+Preventing overlap between `vd` and `vs2` simplifies implementation with `VLEN < EGW`.
+This restriction does not have any coding impact since proper implementation of the algorithm requires
+that `vd`and `vs2` each are different registers.
 ====
 
 Operation::
