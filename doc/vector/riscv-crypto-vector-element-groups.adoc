@@ -3,58 +3,20 @@
 
 Many vector crypto instructions operate on wider operands than instructions in the base vector extension.
 Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller
-operands that are combined. However, in other cases these operands are a single value. For example, AES
-operates on 128-bit blocks using 128-bit round keys.
+operands that are combined (for example, each SHA-2 operand is comprised of 4 words). However, in other cases
+these operands are a single value (for example, AES round instructions, each operand is 128-bit block or
+round key).
 
 In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
 we treat these operands as a vector of one of more _element groups_. An element group is comprised of
 a fixed number of EEW-sized elements.
 
-An element group is defined by three parameters, all of which are explicitly defined by each crypto instruction
-that operates on them:
+Element groups are defined in the 
+link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]
+specification.
 
-- Element Group Width (`EGW`) - total number of bits in an element group
-- Element Group Size (`EGS`) - number of elements in an element group
-- Effective Element Width (`EEW`) - number of bits in each element
-
-For all of the vector crypto instructions in this specification, `EEW`=`SEW`.
-[NOTE]
-====
-The required `SEW` for each cryptographic instruction was chosen to match what is
-typically needed for other instructions when implementing the targeted algorithm. 
-====
-
-- A *Vector Element Group* is a vector of one or more element groups.
-- A *Scalar Element Group* is a single element group. 
-
-For background on the concept of element groups, see the non-normative document:
-link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups].
-
-
-Element groups can be formed across registers in implementations where
-`VLEN`< `EGW` by using an `LMUL`>1.
-
-[NOTE]
-====
-Since the V-extension requires a minimum of VLEN of 128, at most such implementations
-would require LMUL=2 to form the largest element groups in this specification.
-
-However, implementations with a smaller VLEN, such as embedded designs, need to
-keep in mind that a larger `LMUL` reduces the number of register groups available. This
-can make it difficult or impossible to write efficient code for the intended cryptographic algorithms.
-
-For example, an implementation with `VLEN`=32 would need to set `LMUL`=8 to create a
-256-bit element group for `SM3`. This would mean that there would only be 4 register groups,
-3 of which would be consumed by a single `SM3` message-expansion instruction.
-====
-
-As with all vector instructions, the number of elements processed by a vector instruction is specified by the
-vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
-If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
-
-Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
-If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
-
+Each vector crypto instruction that operates on elements groups explicitly specifies their three defining
+parameters: EGW, EGS, and EEW.
 
 [%autowidth]
 [%header,cols="4,4,4,4,4"]
@@ -72,4 +34,54 @@ If this ratio is not an integer for a vector crypto instruction, an illegal inst
 | SM4      | <<zvksed>>           | 128 | 32 | 4
 | SM3      | <<Zvksh>>            | 256 | 32 | 8
 |===
+
+[NOTE]
+====
+- Element Group Width (`EGW`) - total number of bits in an element group
+- Element Group Size (`EGS`) - number of elements in an element group
+- Effective Element Width (`EEW`) - number of bits in each element
+====
+
+For all of the vector crypto instructions in this specification, `EEW`=`SEW`.
+
+[NOTE]
+====
+The required `SEW` for each cryptographic instruction was chosen to match what is
+typically needed for other instructions when implementing the targeted algorithm. 
+====
+
+- A *Vector Element Group* is a vector of one or more element groups.
+- A *Scalar Element Group* is a single element group. 
+
+// Element groups can be formed across registers in implementations where
+// `VLEN`< `EGW` by using an `LMUL`>1.
+
+[NOTE]
+====
+Since the the *vector extension for application processors* requires a minimum of VLEN of 128,
+at most such implementations would require LMUL=2 to form the largest element groups in this specification.
+
+However, implementations with a smaller VLEN, such as embedded designs, need to
+keep in mind that a larger `LMUL` will be required to form the necessary element groups.
+It is important to keep in mind that this reduces the number of register groups available which
+can make it difficult or impossible to write efficient code for the intended cryptographic algorithms.
+
+For example, an implementation with `VLEN`=32 would need to set `LMUL`=8 to create a
+256-bit element group for `SM3`. This would mean that there would only be 4 register groups,
+3 of which would be consumed by a single `SM3` message-expansion instruction.
+====
+
+As with all vector instructions, the number of elements processed is specified by the
+vector length `vl`. The number of element groups operated upon is then `vl`/`EGS`.
+Likewise the starting element group is `vstart`/`EGS`.
+See <<crypto-vector-instruction-constraints>> for limitations on `vl` and `vstart`
+for vector crypto instructions.
+
+// If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
+
+// Since `vstart` is expressed in elements, the starting element group is `vstart`/`EGS`. 
+// If this ratio is not an integer for a vector crypto instruction, an illegal instruction exception is raised.
+
+
+
  

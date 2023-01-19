@@ -24,17 +24,14 @@ Encoding (Vector)::
 Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2,2,2,2"]
+[%header,cols="4,2,2"]
 |===
 |Register
 |Direction
-|EGW
-|EGS
-|EEW
 |Definition
 
-| Vs2 | input  | SEW  | 1 | SEW | Input elements
-| Vd  | output | SEW  | 1 | SEW | Byte-reversed elements
+| Vs2 | input  | Input elements
+| Vd  | output | Byte-reversed elements
 |===
 
 Description::

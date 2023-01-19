@@ -33,7 +33,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|SEW
+|EEW
 |Definition
 
 | Vs1 | input  | 256  | 8 | 32 | Message words W[7:0]

@@ -20,16 +20,17 @@ sake of simplicity where we believe that that our intent is clear to the
 reader.
 
 For the sake of brevity, our pseudo code does not include the handling of
-masks or tail elements. Such handling is the same as described for most
-RISC-V Vector instructions as described in the *RISC-V Vector Extension*
-specification. The instructions in this specification follow the
-_undisturbed_ and _agnostic_ policies for masks and tails in effect. 
+masks or tail elements. We follow the _undisturbed_ and _agnostic_ policies
+for masks and tails  as described in the *RISC-V "V" Vector Extension*
+specification.  
 
 In many cases the pseudo code includes
 calls to supporting functions which are too verbose to include directly
 in the specification.
 This supporting code is listed in
 <<crypto_vector_appx_sail>>.
+
+
 The 
 link:https://github.com/rems-project/sail/blob/sail2/manual.pdf[Sail Manual]
 is recommended reading in order to best understand the code snippets.
@@ -37,7 +38,7 @@ Also, the
 link:https://github.com/billmcspadden-riscv/sail/blob/cookbook_br/cookbook/doc/TheSailCookbook_Complete.pdf[The Sail Programming Language: A Sail Cookbook]
 is a good reference that is in the process of being written.
 
-The latest RISC-V Sail model: refer to
+For the latest RISC-V Sail model, refer to
 the formal model Github
 link:https://github.com/riscv/sail-riscv[repository].
 

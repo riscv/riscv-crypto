@@ -48,7 +48,7 @@ Arguments::
 |Direction
 |EGW
 |EGS 
-|SEW
+|EEW
 |Definition
 
 | vd  | input  | 128  | 4 | 32 | round state

@@ -59,35 +59,29 @@ Encoding (Vector-Immediate)::
 Vector-Vector Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2,2,2,2"]
+[%header,cols="4,2,2"]
 |===
 |Register
 |Direction
-|EGW
-|EGS 
-|EEW
 |Definition
 
-| Vs1 | input  | SEW  | 1 | SEW | Rotate amount
-| Vs2 | input  | SEW  | 1 | SEW | Data
-| Vd  | output | SEW  | 1 | SEW | Rotated data 
+| Vs1 | input  | Rotate amount
+| Vs2 | input  | Data
+| Vd  | output | Rotated data 
 |===
 
 Vector-Scalar/Immediate Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2,2,2,2"]
+[%header,cols="4,2,2"]
 |===
 |Register
 |Direction
-|EGW
-|EGS 
-|EEW
 |Definition
 
-| Rs1/imm | input  | -    | - | -   | Rotate amount
-| Vs2     | input  | SEW  | 1 | SEW | Data
-| Vd      | output | SEW  | 1 | SEW | Rotated data
+| Rs1/imm | input  | Rotate amount
+| Vs2     | input  | Data
+| Vd      | output | Rotated data
 |===
 
 

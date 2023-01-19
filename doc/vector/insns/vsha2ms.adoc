@@ -35,7 +35,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|SEW
+|EEW
 |Definition
 
 | Vd  | input  | 4*SEW  | 4 | SEW | Message words {W[3],  W[2],  W[1],  W[0]}

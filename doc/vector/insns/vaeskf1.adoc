@@ -32,7 +32,7 @@ Arguments::
 |Direction
 |EGW
 |EGS 
-|SEW
+|EEW
 |Definition
 
 | uimm | input  | -    | - | -  | Round Number (rnd)

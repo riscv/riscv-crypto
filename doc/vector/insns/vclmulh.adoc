@@ -41,18 +41,15 @@ Reserved Encodings::
 Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2,2,2,2"]
+[%header,cols="4,2,2"]
 |===
 |Register
 |Direction
-|EGW
-|EGS 
-|EEW
 |Definition
 
-| Vs1 | input  | SEW  | 1 | SEW | multiplier
-| Vs2 | input  | SEW  | 1 | SEW | multiplicand
-| Vd  | output | SEW  | 1 | SEW | carry-less product high
+| Vs1 | input  | multiplier
+| Vs2 | input  | multiplicand
+| Vd  | output | carry-less product high
 |===
 
 Description:: 

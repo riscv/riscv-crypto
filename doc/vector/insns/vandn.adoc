@@ -54,35 +54,29 @@ Encoding (Vector-Immediate)::
 Vector-Vector Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2,2,2,2"]
+[%header,cols="4,2,2"]
 |===
 |Register
 |Direction
-|EGW
-|EGS 
-|EEW
 |Definition
 
-| Vs1 | input  | SEW  | 1 | SEW | Operand A
-| Vs2 | input  | SEW  | 1 | SEW | Operand B (to be inverted)
-| Vd  | output | SEW  | 1 | SEW | Result 
+| Vs1 | input  | Operand A
+| Vs2 | input  | Operand B (to be inverted)
+| Vd  | output | Result 
 |===
 
 Vector-Scalar/Immediate Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2,2,2,2"]
+[%header,cols="4,2,2"]
 |===
 |Register
 |Direction
-|EGW
-|EGS 
-|EEW
 |Definition
 
-| Rs1/imm | input  | SEW  | 1 | SEW | Operand A
-| Vs2     | input  | SEW  | 1 | SEW | Operand B (to be inverted)
-| Vd      | output | SEW  | 1 | SEW | Result 
+| Rs1/imm | input  | Operand A
+| Vs2     | input  | Operand B (to be inverted)
+| Vd      | output | Result 
 |===
 
 Description:: 

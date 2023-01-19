@@ -33,7 +33,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|SEW
+|EEW
 |Definition
 
 | Vd   | input  | 256  | 8 | 32 | Current state {H,G.F,E,D,C,B,A}

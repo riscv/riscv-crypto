@@ -48,7 +48,7 @@ Arguments::
 |Direction
 |EGW
 |EGS
-|SEW
+|EEW
 |Definition
 
 | Vd   | input  | 128  | 4 | 32 | Current state X[0:3]
