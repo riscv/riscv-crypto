@@ -8,10 +8,7 @@ these operands are a single value (for example, AES round instructions, each ope
 round key).
 
 In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
-we treat these operands as a vector of one of more _element groups_. An element group is comprised of
-a fixed number of EEW-sized elements.
-
-Element groups are defined in the 
+we treat these operands as a vector of one of more _element groups_ as defined in the 
 link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]
 specification.
 
@@ -24,7 +21,7 @@ parameters: EGW, EGS, and EEW.
 | Instruction Group
 | Extension
 | EGW
-| SEW
+| EEW
 | EGS
 
 | AES      | <<zvkns>>            | 128 | 32 | 4
