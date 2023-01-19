@@ -59,20 +59,10 @@ Arguments::
 Description::
 A middle-round AES block cipher decryption is performed.
 
-In the case of the `.vs` form of the instruction, `vs2` holds a
-scalar element group that is used
-as the round key for all of the element groups in register group `vd`.
-
-The inputs and outputs to this instruction are comprised of 128-bit element groups.  Each `EGW=128` element group of source `vd` holds the current round state and each `EGW=128` element group of `vs2` holds the round key. The new round state is written to each `EGW=128` element group of `vd`.
-
-Each `EGW=128` element group next round state output is produced by applying the InvShiftRows, InvSubBytes, AddRoundkey and InvMixColumns steps to the corresponding inputs.
-
-- InvShiftRows(state)
-- InvSubBytes(state)
-- AddRoundKey(state,roundkey)
-- InvMixColumns(state)
-
-
+The InvShiftRows and InvSubBytes steps are applied to each round state element group from `vd`.
+This is then XOed with the corresponding round key element group in `vs2` (vector-vector
+form) or the scalar element group in `vs2` (vector-scalar form). The result is then applied to the
+InvMixColumns step.
 
 // This instruction must always be implemented such that its execution latency does not depend
 // on the data being operated upon.

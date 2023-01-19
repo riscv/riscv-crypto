@@ -22,7 +22,7 @@ Encoding (Vector-Scalar)::
 ....
 Reserved Encodings::
 * `SEW` is any value other than 32
-* Only for the `.vs` form: the `vd` register group overlaps the `vs2` register
+* The `vd` register group overlaps the `vs2` register
 
 Arguments::
 

@@ -36,7 +36,7 @@ Encoding (Vector-Vector) Low part::
 ]}
 ....
 Reserved Encodings::
-* `zvknhq`: `SEW` is any value other than 32
+* `zvknha`: `SEW` is any value other than 32
 * `zvknhb`: `SEW` is any value other than 32 or 64
 * The `vd` register group overlaps with either `vs1` or `vs2`
 
