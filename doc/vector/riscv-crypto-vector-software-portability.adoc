@@ -23,7 +23,7 @@ with `VLEN` ≥ 128.
 While the doubling of `LMUL` for these instructions is safe for implementations with `VLEN` ≥ 256, it may be less
 optimal as it will result in unnecessary register pressure and might exact a performance penalty in
 some microarchitectures. Therefore, we suggest that in addition to providing portable code for SHA-512 and SM3,
-libraries should also include more optimal code for implementations with `VLEN` ≥ 128.
+libraries should also include more optimal code for implementations with `VLEN` ≥ 256.
 ====
 
 [%autowidth]
@@ -34,7 +34,7 @@ libraries should also include more optimal code for implementations with `VLEN` 
 | VLEN
 | LMUL
 
-| AVX-512 |  vsha2* | 64 | vl/2
+| SHA-512 |  vsha2* | 64 | vl/2
 | SM3     | vsm3*   | 32 | vl/4 
 |===
 
@@ -47,7 +47,7 @@ SHA-512 and SM3 optimized for implementations with `VLEN` ≥ 256.
 
 Embedded Processors::
 Embedded processors will typically have implementations with `VLEN` < 128. This will require code to be written with
-larger LMUL values to enable the element groups to be formed.
+larger `LMUL` values to enable the element groups to be formed.
 
 The `.vs` instructions require scalar element groups of `EGW`=128. On implementations with `VLEN` < 128, these scalar
 element groups will necessarily be formed across registers. This is different from most scalars in vector instructions
