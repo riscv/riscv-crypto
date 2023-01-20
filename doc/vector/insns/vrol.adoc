@@ -67,11 +67,11 @@ Vector-Scalar Arguments::
 Description:: 
 A bitwise left rotation is performed on each element of `vs2`
 
-The data to be rotated is in the vector register group specified by `vs2` and
-the rotate amount value can come from a vector register group `vs1`, or a
-scalar integer register `rs1`.
-Only the low `log2(SEW)` bits of the rotate-amount value are used to control
-the rotate amount.
+The elements in `vs2` are rotated left by the rotate amount specified by either 
+the cotrresponding elements of `vs1` (vector-vector), or integer register `rs1`
+(vector-scalar).
+Only the low log2(`SEW`) bits of the rotate-amount value are used, all other
+bits are ignored.
 
 [NOTE]
 ====

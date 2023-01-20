@@ -82,10 +82,9 @@ Vector-Scalar/Immediate Arguments::
 Description:: 
 A bitwise _and-not_ operation is performed.
 
-It operates on all
-active elements in the vector register group specified by `vs2`.
-The other operand can come from a vector register group `vs1`, a scalar
-integer register `rs1`, or a sign-extended 5-bit immediate.
+Each bit in each element in `vs2` is inverted and then ANDed with the corresponding bit in either
+`vs1` (vector-vector), the sign-extended or truncated value in scalar register `rs1` (vector-scalar),
+or a sign-extended 5-bit immediate (vector immediate).
 
 [NOTE]
 .Note on necessity of instruction

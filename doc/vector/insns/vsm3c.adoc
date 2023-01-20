@@ -59,10 +59,6 @@ The round number is used in the rotation of the constant as well to inform the
 behavior which differs between rounds 0-15, and rounds 16-63.
 ====
 
-It treats each 256-bit 8-element group of `vd` as eight 32-bit words,
-and each 256-bit 8-element group of `vs2` as eight 32-bit words. Only 4 of these words are consumed by
-this instruction, the rest are don't-cares.
-
 [NOTE]
 ====
 To align with the SM3 specification, we byte swap the inputs from big-endian to little-endian,
@@ -70,16 +66,23 @@ we perform the operations in little-endian,
 and then we byte swap the output from little endian to big endian.
 ====
 
-The elements are listed here in the order they appear in the register, with the most significant
-element on the left, and the least significant on the right.
+[NOTE]
+====
+Preventing overlap between `vd` and `vs2` simplifies implementation with `VLEN < EGW`.
+This restriction does not have any coding impact since proper implementation of the algorithm requires
+that `vd`and `vs2` each are different registers.
+====
 
-vs2 = {w[7], w[6], w[5], w[4], w[3], w[2], w[1], w[0]}
+// The elements are listed here in the order they appear in the register, with the most significant
+// element on the left, and the least significant on the right.
 
-The values consumed by the instruction are
+// vs2 = {w[7], w[6], w[5], w[4], w[3], w[2], w[1], w[0]}
 
-vs2 = {- , - , w[5], w[4], -, -, w[1], w[0]}
+// The values consumed by the instruction are
 
-Where the "-" characters are not consumed and are therefore don't cares.
+// vs2 = {- , - , w[5], w[4], -, -, w[1], w[0]}
+
+// Where the "-" characters are not consumed and are therefore don't cares.
 
 // This instruction consumes the "W" message schedule inputs and internally generates the "W'" values as needed
 
@@ -87,13 +90,6 @@ Where the "-" characters are not consumed and are therefore don't cares.
 // `vl` must be set to the number of `SEW=32` elements to be processed and
 // therefore must be a multiple of `EGS=8`. +
 // Likewise, `vstart` must be a multiple of `EGS=8`.
-
-[NOTE]
-====
-Preventing overlap between `vd` and `vs2` simplifies implementation with `VLEN < EGW`.
-This restriction does not have any coding impact since proper implementation of the algorithm requires
-that `vd`and `vs2` each are different registers.
-====
 
 Operation::
 [source,sail]

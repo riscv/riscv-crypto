@@ -44,19 +44,20 @@ Arguments::
 Description:: 
 A single "iteration" of the GHASH~H~ algorithm is performed.
 
+The bits within the bytes in `Vd` and `Vs1` are byte-modified by reversing their order.
+The 128-bit element group in the byte-modified `Vd` is carry-less multiplied by the
+byte-modified `Vs1` over GF(2^128^).
+The bits within the bytes of the product are reversed and then added over GF[2] to `vs2`. 
+
 GHASH~H~ is defined in 
 link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
  "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
 (NIST Specification).
-It produces the next partial hash (Y~i+1~) by multiplying (over GF(2^128^)) the current partial
-hash (Y~i~) by the Hash Subkey (H) and adding (over GF[2]) this product to the next block of
-cipher text (X~i+1~).
-The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
-modulo the irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1) used by GHASH.
 
-The NIST Specification orders the coefficients from left to right x~0~x~1~x~2~...x~127~
-for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^. This is effectively a big-endian representation
-that additionally has the bits within the bytes ordered from left to right (i.e., 0,1,2,3,4,5,6,7).
+The NIST Specification orders the bit-wide coefficients from left to right x~0~x~1~x~2~...x~127~
+for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^. This means that 
+the bits within the bytes ordered from left to right (i.e., 0,1,2,3,4,5,6,7).
+
 In the RISC-V little-endian register representation, the byte order is swapped. This instruction internally
 performs bit swaps to put the bits within bytes in the standard ordering from right to left
 (i.e., 7,6,5,4,3,2,1,0). 
@@ -67,6 +68,17 @@ We are bit-reversing the bytes of inputs and outputs so that the intermediate va
 with the NIST specification. These reversals are inexpensive to implement as they unconditionally
 swap bit positions and therefore do not require any logic.
 ====
+
+
+//The next partial hash (Y~i+1~) is produced by multiplying (over GF(2^128^)) the current partial
+//hash (Y~i~) by the Hash Subkey (H) and adding (over GF[2]) this product to the next block of
+//cipher text (X~i+1~).
+//The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
+//modulo the irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1) used by GHASH.
+
+
+
+
 
 // [Note]
 // ====
@@ -82,10 +94,10 @@ swap bit positions and therefore do not require any logic.
 // significant 128 bits of the irreducible polynomial.
 // ====
 
-The operation can be compactly defined as
-Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~`
+// The operation can be compactly defined as
+// Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~`
 
-Each EGW=128 element group of `vs1` and `vs2` are the input polynomials.
+// Each EGW=128 element group of `vs1` and `vs2` are the input polynomials.
 
 // The multiplication over GF(2^128^) is defined in the spec as follows:
 //
@@ -110,10 +122,10 @@ Each EGW=128 element group of `vs1` and `vs2` are the input polynomials.
 // producing a 128-bit result which is written to the corresponding element group in `vd`.
 // ====
 
-The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
-therefore must be a multiple of `EGS=4`. +
-Likewise, `vstart` must be a multiple of `EGS=4`.
+//The number of element groups to be processed is `vl`/`EGS`.
+//`vl` must be set to the number of `SEW=32` elements to be processed and
+//therefore must be a multiple of `EGS=4`. +
+//Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
 [source,pseudocode]

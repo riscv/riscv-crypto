@@ -47,20 +47,18 @@ Arguments::
 |Direction
 |Definition
 
-| Vs1 | input  |  multiplier
+| Vs1/Rs1 | input  |  multiplier
 | Vs2 | input  |  multiplicand
 | Vd  | output | carry-less product low
 |===
 
 Description::
-A carry-less multiply is performed and the low half of the product is returned. This operation is sometimes also referred to as a polynomial multiply.
+Produces the low half of 128-bit carry-less product.
 
-All active elements in the `vs2` vector register are multiplied by 
-either a vector register group `vs1`, or a scalar
-integer register `rs1`.
-For the scalar integer register, the operand is zero extended or truncated
-to 64 bits as appropriate.
-The least significant EEW bits of the product are returned.
+Each 64-bit element in the `vs2` vector register is carry-less multiplied by 
+either each 64-bit element in `vs1` (vector-vector), or the 64-bit value
+from integer register `rs1` (vector-scalar). The result is the least
+significant 64 bits of the carry-less product.
 
 
 [NOTE]

@@ -4,10 +4,6 @@
 Synopsis::
 Vector rotate right by vector/scalar/immediate.
 
-Only the least significant log2(SEW) bits are used for the rotate amount.
-
-
-
 Mnemonic::
 vror.vv vd, vs2, vs1, vm +
 vror.vx vd, vs2, rs1, vm +
@@ -88,10 +84,11 @@ Vector-Scalar/Immediate Arguments::
 Description:: 
 A bitwise right rotation is performed on each element of `vs2`.
 
-The rotate amount value can come from a vector register group `vs1`, a scalar
-integer register `rs1`, or a zero-extended 6-bit immediate.
-Only the low `log2(SEW)` bits of the rotate-amount value are used to control
-the rotate amount.
+The elements in `vs2` are rotated right by the rotate amount specified by either 
+the corresponding elements of `vs1` (vector-vector), integer register `rs1`
+(vector-scalar), or an immediate valie (vector-immediate).
+Only the low log2(`SEW`) bits of the rotate-amount value are used, all other
+bits are ignored.
 
 Operation::
 [source,sail]

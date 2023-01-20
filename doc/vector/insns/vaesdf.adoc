@@ -62,9 +62,8 @@ A final-round AES block cipher decryption is performed.
 The InvShiftRows and InvSubBytes steps are applied to each round state element group from `vd`.
 This is then XOed with the corresponding round key element group in `vs2` (vector-vector
 form) or the scalar element group in `vs2` (vector-scalar form).
-
-// This instruction must always be implemented such that its execution latency does not depend
-// on the data being operated upon.
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
 //
 // The number of element groups to be processed is `vl`/`EGS`.
 // `vl` must be set to the number of `SEW=32` elements to be processed and 

@@ -42,20 +42,16 @@ Arguments::
 |===
 
 Description:: 
-
 A round-0 AES block cipher operation is performed. This operation is used for both encryption and decryption. 
-
-The inputs and outputs to this instruction are comprised of 128-bit element groups.
 
 There is only a `.vs` form of the instruction.
 `Vs2` holds a
 scalar element group that is used
-as the round key for all of the element groups in register group `vd`.
-
-The new round state output of each element group is produced by applying the AddRoundkey
-step to the corresponding inputs.
-
-- AddRoundKey(state,roundkey)
+as the round key for all of the round state element groups.
+The new round state output of each element group is produced by XORing
+the round key with each element group of `vd`.
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
 
 [NOTE]
 ====
@@ -65,10 +61,6 @@ in many implementations.
 This instruction only exists in the `.vs` form because the `.vv` form would be identical to the `vxor.vv vd, vs2, vd` instruction.
 ====
 
-This instruction operates on element groups in the source and destination registers.
-
-// This instruction must always be implemented such that its execution latency does not depend
-// on the data being operated upon.
 //
 // The number of element groups to be processed is `vl`/`EGS`.
 // `vl` must be set to the number of `SEW=32` elements to be processed and 

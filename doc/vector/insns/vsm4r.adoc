@@ -65,31 +65,35 @@ The `.vv` form treats each 128-bit 4-element group of `vs2` as the four round ke
 
 In the case of the `.vs` form of the instruction, the element group 0 of the single register `vs2` holds a single element group that is used as the round key for all of the element groups in register group `vd`.
 
-vd (in) = {x[i-4], X[i-3]. X[i-2], X[i-1]} +
-vs2 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
-vd (out) = {x[i], X[i+1], X[i+2], X[i+3]} +
-
-For example, if i=4 +
-vd (in) = {x[0], X[1], X[2], X[3]} +
-vs2 = {rk[0],rk[1], rk[2], rk[3]} +
-vd (out) = {x[4], X[5], X[6], X[7]} +
-
-A draft of the SM4 standard is available at: 
+NB: The rounds start with i=4 as {X[3],x[2],X[1],X[0]} is the initial data input to the round function
+and rk[0] is the initial round key.
 
 [NOTE]
 ====
 In SM4, encryption and decryption are identical except that decryption consumes the round keys in the reverse order.
 ====
+
+// vd (in) = {x[i-4], X[i-3]. X[i-2], X[i-1]} +
+// vs2 = {rk[i-4],rk[i-3], rk[i-2], rk[i-1]} +
+// vd (out) = {x[i], X[i+1], X[i+2], X[i+3]} +
+
+// For example, if i=4 +
+// vd (in) = {x[0], X[1], X[2], X[3]} +
+// vs2 = {rk[0],rk[1], rk[2], rk[3]} +
+// vd (out) = {x[4], X[5], X[6], X[7]} +
+
+
+
 // XOR = &#8853;
-Each round is produced by the following +
-  B = (X[i-3] XOR X[i-2] XOR X[i-1] XOR rk[i-4]) +
-  S = subBytes(B); 1 s-box per byte +
-  X[i]= X[i-4] XOR S XOR ROL2(S) XOR ROL10(S) XOR ROL18(S) XOR ROL24(S) +
+// Each round is produced by the following +
+//  B = (X[i-3] XOR X[i-2] XOR X[i-1] XOR rk[i-4]) +
+//  S = subBytes(B); 1 s-box per byte +
+//  X[i]= X[i-4] XOR S XOR ROL2(S) XOR ROL10(S) XOR ROL18(S) XOR ROL24(S) +
 
-Each of the 32 rounds consumes the last 4 32-bit outputs with a round key and produces the next 32-bit output.
+// Each of the 32 rounds consumes the last 4 32-bit outputs with a round key and
+// produces the next 32-bit output.
 
-NB: The rounds start with i=4 as {X[3],x[2],X[1],X[0]} is the initial data input to the round function
-and rk[0] is the initial round key.
+
 
 // The number of element groups to be processed is `vl`/`EGS`.
 // `vl` must be set to the number of `SEW=32` elements to be processed and

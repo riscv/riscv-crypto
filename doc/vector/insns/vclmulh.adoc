@@ -53,16 +53,12 @@ Arguments::
 |===
 
 Description:: 
-A carry-less multiply is performed and the high half of the product is returned. This operation is sometimes also referred to as a polynomial multiply.
+Produces the high half of 128-bit carry-less product.
 
-All active elements in the `vs2` vector register group are multiplied by 
-either vector register group `vs1`, or scalar
-integer register `rs1`.
-For the scalar integer register, the operand is zero extended or truncated
-to 64 bits as appropriate.
-The most significant EEW bits of the product are returned.
-Due to the nature of carry-less multiplication, the most significant bit of
-the product is always 0.
+Each 64-bit element in the `vs2` vector register is carry-less multiplied by 
+either each 64-bit element in `vs1` (vector-vector), or the 64-bit value
+from integer register `rs1` (vector-scalar). The result is the most
+significant 64 bits of the carry-less product.
 
 Operation::
 [source,sail]
