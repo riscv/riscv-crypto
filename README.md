@@ -17,7 +17,7 @@
 ## About
 
 This repository is used to develop standardisation proposals for
-scalar cryptographic instruction set extensions for the RISC-V
+scalar and vector cryptographic instruction set extensions for the RISC-V
 architecture.
 
 For a general overview of the extension status and ratification progress,
@@ -38,6 +38,9 @@ please see
   with the [Bitmanip extension](https://github.com/riscv/riscv-bitmanip).
   Hence, we are experimenting with *sharing* opcodes between extensions.
   
+- The Vector Cryptography extension proposals is available as a sub-directory
+  of this repository [vector](https://github.com/riscv/riscv-crypto/tree/master/doc/vector)
+
 - See the [project board](https://github.com/riscv/riscv-crypto/projects/1)
   for a list of on-going  / open issues.
   ["How Can I Help?"](https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
