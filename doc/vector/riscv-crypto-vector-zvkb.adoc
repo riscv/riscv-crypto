@@ -5,18 +5,24 @@ General purpose bit-manipulation instructions which are essential
 for implementing common cryptographic workloads securely & efficiently.
 
 [%autowidth]
-[%header,cols="^2,4"]
+[%header,cols="^2,4,4,4"]
 |===
+|min SEW
+|max SEW
 |Mnemonic
 |Instruction
 
 
-| vclmul.[vv,vx]     | <<insns-vclmul>>
-| vclmulh.[vv,vx]    | <<insns-vclmulh>>
-| vrol.[vv,vx]       | <<insns-vrol>>
-| vror.[vv,vx,vi]    | <<insns-vror>>
-| vbrev8.v           | <<insns-vbrev8>>
-| vrev8.v            | <<insns-vrev8>>
-| vandn.[vv,vx,vi]   | <<insns-vandn>>
+| 64 | 64   | vclmul.[vv,vx]     | <<insns-vclmul>>
+| 64 | 64   | vclmulh.[vv,vx]    | <<insns-vclmulh>>
+| 8  | ELEN | vrol.[vv,vx]       | <<insns-vrol>>
+| 8  | ELEN | vror.[vv,vx,vi]    | <<insns-vror>>
+| 8  | ELEN | vbrev8.v           | <<insns-vbrev8>>
+| 8  | ELEN | vrev8.v            | <<insns-vrev8>>
+| 8  | ELEN | vandn.[vv,vx,vi]   | <<insns-vandn>>
 |===
 
+[NOTE]
+====
+`Zvkb` is defined to work on elements and not elements groups.
+====
