@@ -56,6 +56,6 @@ that typically consume part of a register.
 [NOTE]
 ====
 We recommend that different code be available for `VLEN`=32 and `VLEN`=64, as code written for `VLEN`=32 will
-likely be be too burdensome for `VLEN`=64 implementations.
+likely be too burdensome for `VLEN`=64 implementations.
 ====
 

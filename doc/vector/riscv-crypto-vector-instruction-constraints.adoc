@@ -1,6 +1,6 @@
 [[crypto-vector-instruction-constraints]]
 === Instruction Constraints
-The following is a quick reference for the various constraints of specific Vector Crytpo instructions.
+The following is a quick reference for the various constraints of specific Vector Crypto instructions.
 
 vl and vstart constraints::
 Since `vl` and `vstart` refer to elements, Vector Crypto instructions that use elements groups
@@ -39,8 +39,8 @@ all other `SEW` values are _reserved_.
 
 // | vaes*, vghmac, vsm4*, vsm3*| 32
 | vaes*         | 32
-| Zknha: vsha2* | 32
-| Zknhb: vsha2* | 32 or 64
+| Zvknha: vsha2* | 32
+| Zvknhb: vsha2* | 32 or 64
 | vghmac        | 32
 | vsm3*         | 32
 | vsm4*         | 32

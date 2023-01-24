@@ -22,7 +22,7 @@ These Vector-Scalar crypto instructions also use the `.vs` suffix in their mnemo
 
 [NOTE]
 ====
-We chose to use `vs2` as the scalar operand, and vd as the vector operand, so that we could use the `vs1`
+We chose to use `vs2` as the scalar operand, and `vd` as the vector operand, so that we could use the `vs1`
 specifier as additional encoding bits for these instructions. This allows these instructions to have a
 much smaller encoding footprint, leaving more rooms for other instructions in the future.
 ====
@@ -33,7 +33,7 @@ applied to each element group of register group `vd`.
 [NOTE]
 ====
 Scalar element groups will occupy at most a single register in application processors. However, in implementations where
-VLEN<128, they will occupy 2 (VLEN=64) or 4 (LVEN=32) registers.
+VLEN<128, they will occupy 2 (VLEN=64) or 4 (VLEN=32) registers.
 ====
 
 
