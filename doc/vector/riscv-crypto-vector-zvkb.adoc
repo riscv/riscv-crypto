@@ -4,6 +4,8 @@
 General purpose bit-manipulation instructions which are essential
 for implementing common cryptographic workloads securely & efficiently.
 
+The carry-less multiply instructions `vclmul` and `vclmulh` are only defined for `SEW`=64.
+
 [%autowidth]
 [%header,cols="^2,4"]
 |===
