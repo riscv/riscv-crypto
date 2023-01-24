@@ -1,6 +1,6 @@
 [[crypto-vector-instruction-constraints]]
 === Instruction Constraints
-The following is a quick reference for the various constraints of specific Vector Crytpo instructions.
+The following is a quick reference for the various constraints of specific Vector Crypto instructions.
 
 vl and vstart constraints::
 Since `vl` and `vstart` refer to elements, Vector Crypto instructions that use elements groups
