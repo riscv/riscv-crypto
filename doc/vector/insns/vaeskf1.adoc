@@ -44,7 +44,7 @@ Description::
 A single round of the forward AES-128 KeySchedule is performed.
 
 Within each element group, the next round key is generated word by word from the
-current round key element group in 'vs2' and the immediately previous word of the
+current round key element group in `vs2` and the immediately previous word of the
 round key. The least significant word is generated using the most significant 
 word of the current round key as well as a round constant which is selected by
 the round number. 
