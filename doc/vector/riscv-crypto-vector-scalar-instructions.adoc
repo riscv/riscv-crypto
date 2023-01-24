@@ -33,7 +33,7 @@ applied to each element group of register group `vd`.
 [NOTE]
 ====
 Scalar element groups will occupy at most a single register in application processors. However, in implementations where
-VLEN<128, they will occupy 2 (VLEN=64) or 4 (LVEN=32) registers.
+VLEN<128, they will occupy 2 (VLEN=64) or 4 (VLEN=32) registers.
 ====
 
 
