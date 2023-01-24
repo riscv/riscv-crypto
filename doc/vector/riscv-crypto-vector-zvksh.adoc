@@ -13,7 +13,7 @@ good reference.
 All of these instructions work on 256-bit element groups comprised of
 eight 32-bit elements.
 
-The instructions will most efficient on implementations where `VLEN`>=256.
+The instructions will be most efficient on implementations where `VLEN`>=256.
 They will also provide substantial benefit on implementations where
 `VLEN`=128, but will require an `LMUL`>1 in order to combine elements 
 within a register group to form the full element group.
