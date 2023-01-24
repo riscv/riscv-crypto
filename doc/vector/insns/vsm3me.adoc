@@ -54,22 +54,20 @@ The output words are swapped from little endian to big endian.
 ====
 To align with the SM3 specification, we byte swap the inputs from big-endian to little-endian,
 we perform the operations in little-endian, 
-and then we byte swap the output from little endian to big endian.
+and then we byte swap the output from little endian back to big endian.
 ====
 
-[NOTE]
-====
-For the best performance, it is recommended that implementations have VLEN≥256.
-When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
-specified register groups can be combined to form the full element group.
-====
+// NOTE
+// ====
+// For the best performance, it is recommended that implementations have VLEN≥256.
+// When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
+// specified register groups can be combined to form the full element group.
+// ====
 
 // The number of element groups to be processed is `vl`/`EGS`.
 // `vl` must be set to the number of `SEW=32` elements to be processed and
 // therefore must be a multiple of `EGS=8`. +
 // Likewise, `vstart` must be a multiple of `EGS=8`.
-
-
 
 [NOTE]
 ====

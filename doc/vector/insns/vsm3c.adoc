@@ -46,8 +46,8 @@ Description::
 Two rounds of SM3 compression are performed.
 
 The current state of eight 32-bit words is read in as an element group. Eight 32-bit message words
-are read in, although only four of them are consumed. Based on the round group be being processed
-(as specified in rnds), the next state of eight 32-bit words is produced and written as an element group.
+are read in, although only four of them are used. Based on the round group be being processed
+(as specified in rnds), the next state of eight 32-bit words is generated.
 
 The round number is provided by the 5-bit `rnds` unsigned immediate. Legal values are 0 - 31
 and indicate which group of two rounds are being performed. For example, if rnds=1,
@@ -56,14 +56,14 @@ then rounds 2 and 3 are being performed.
 [NOTE]
 ====
 The round number is used in the rotation of the constant as well to inform the
-behavior which differs between rounds 0-15, and rounds 16-63.
+behavior which differs between rounds 0-15 and rounds 16-63.
 ====
 
 [NOTE]
 ====
-To align with the SM3 specification, we byte swap the inputs from big-endian to little-endian,
-we perform the operations in little-endian, 
-and then we byte swap the output from little endian to big endian.
+To align with the SM3 specification, we internally byte swap the inputs from big-endian to
+little-endian, we perform the operations in little-endian, 
+and then we byte swap the output back to big endian.
 ====
 
 [NOTE]

@@ -86,6 +86,13 @@ interleaving independent hashing operations (i.e., when hashing several files at
 
 [TIP]
 .Note to software developers
+These instructions take in two SEW words _W1_ and _W0_ which are the next two words of the message
+schedule incremented by the appropriate constant, 
+and eight SEW word variables: _a_, _b_, _c_, _d_, _e_, _f_, _g,_ and _h_. The
+output is the new values of _a, b, e_ and _f_ after performing 2 rounds of the hash
+computation. The new values, _c_, _d_, _g_, and _h_, are equal to the input values for _a_, _b_, _e_, _f_ respectively.
+
+[NOTE]
 ====
 Between executions this instruction it is helpful to swap the register _specifiers_ for
 `vd` and `vs2`. This is because the first instruction's `vd` next state output

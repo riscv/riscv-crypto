@@ -19,10 +19,19 @@ endeavored to adhere to Sail syntax, we have taken some liberties for the
 sake of simplicity where we believe that that our intent is clear to the
 reader.
 
+[NOTE]
+====
+Where variables are concatenated, the order shown is the order in a vector register.
+For example, `{a, b, e, f}` would appear in a vector register with
+`a` to the left of the other variables. This could also be viewed as `a` being in the
+higher element index and `f` being in the lower element index. 
+====
+
 For the sake of brevity, our pseudo code does not include the handling of
 masks or tail elements. We follow the _undisturbed_ and _agnostic_ policies
 for masks and tails  as described in the *RISC-V "V" Vector Extension*
-specification.  
+specification. Furthermore, the code does not explicitly handle overlap and SEW
+constraints; these are, however, explicitly stated in the text.
 
 In many cases the pseudo code includes
 calls to supporting functions which are too verbose to include directly

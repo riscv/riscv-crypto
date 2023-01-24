@@ -34,6 +34,9 @@ For SHA-256, implementations with VLEN < 128 require software to use LMUL>1 to c
 For SHA-512, implementations with VLEN < 256 require software to use LMUL>1 to combine
 64-bit elements from register groups to provide all four elements of the element group.
 
+SHA-2 is defined in
+link:https://doi.org/10.6028/NIST.FIPS.180-4[FIPS PUB 180-4 Secure Hash Standard (SHS)]
+
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
 [NOTE]

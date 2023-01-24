@@ -38,7 +38,7 @@ Arguments::
 
 | Vd  | input  | 4*SEW  | 4 | SEW | Message words {W[3],  W[2],  W[1],  W[0]}
 | Vs2 | input  | 4*SEW  | 4 | SEW | Message words {W[11], W[10], W[9],  W[4]}
-| Vs1 | input  | 4*SEW  | 4 | SEW | Message words {W[15], W[14], W[13], W[12]}
+| Vs1 | input  | 4*SEW  | 4 | SEW | Message words {W[15], W[14], -, W[12]}
 | Vd  | output | 4*SEW  | 4 | SEW | Message words {W[19], W[18], W[17], W[16]}
 |===
 
@@ -61,6 +61,39 @@ These words are input in big endian ordering and must be swapped to little
 endian before being fed to this instruction.
 All generated message schedule words are in little endian. 
 ====
+- `SEW`=32: 4 rounds of SHA-256 message schedule expansion are performed (`zvknha` and `zvknhb`)
+- `SEW`=64: 4 rounds of SHA-512 message schedule expansion are performed (`zvkhnb`)
+
+Eleven of the last 16 message schedule `SEW`-sized words are read in from `vd` (oldest), `vs2`
+and `vs1` (most recent). 
+ A subset of the last 16 message-schedule words are consumed and
+the next 4 message-schedule words are produced.
+
+The initial 16 words of the message schedule come directly from the message block; these must
+must be endian swapped by software from RISC-V's native little-endian to SHA-2's big endian format.
+
+[NOTE]
+====
+W~13~ is not used by the instruction.
+====
+
+// Four `SEW` message schedule words are packed into each element group of the
+// source and destination registers. From a vector register point of view, 
+// the message schedule words are packed into the
+// element groups from the left to the right with the most significant word on the left
+// and the least significant word on the right.
+
+// `{W~3~, W~2~, W~1~, W~0~} +
+// {W~7~, W~6~, W~5~, W~4~} +
+// {W~11~, W~10~, W~9~, W~8~} +
+// {W~15~, W~14~, W~13~, W~12~}`
+
+// Since W~5~ through W~8~ are not needed in these calculations, we are able to compact these into
+// three element groups
+//
+// `{W~3~, W~2~, W~1~, W~0~} +
+// {W~11~, W~10~, W~9~, W~4~} +
+// {W~15~, W~14~, W~13~, W~12~}`
 
 [TIP]
 .Note to software developers
@@ -72,40 +105,17 @@ as the 4 mask bits)
 `vmerge.vvm {W~11~, W~10~, W~9~, W~4~}, {W~11~, W~10~, W~9~, W~8~}, {W~7~, W~6~, W~5~, W~4~}, V0`
 ====
 
+// The number of words to be processed is `vl`/`EGS`.
+// `vl` must be set to the number of `SEW` elements to be processed and
+// therefore must be a multiple of `EGS=4`. +
+// Likewise, `vstart` must be a multiple of `EGS=4`
+
 [NOTE]
 ====
 Preventing overlap between `vd` and `vs1` or `vs2` simplifies implementation with `VLEN < EGW`.
 This restriction does not have any coding impact since proper implementation of the algorithm requires
 that `vd`, `vs1` and `vs2` each contain different portions of the message schedule.
 ====
-
-// [NOTE]
-// ====
-// W~13~ is not used by the instruction for producing the next 4 message schedule words.
-// ====
-
-//Four `SEW` message schedule words are packed into each element group of the
-//source and destination registers. From a vector register point of view, 
-//the message schedule words are packed into the
-//element groups from the left to the right with the most significant word on the left
-//and the least significant word on the right.
-
-
-//This instructions takes in 11 of the last 16 words of the message schedule. The last 16
-//words of the message schedule are shown here in element groups.
-
-
-//`{W~3~, W~2~, W~1~, W~0~} +
-//{W~7~, W~6~, W~5~, W~4~} +
-//{W~11~, W~10~, W~9~, W~8~} +
-//{W~15~, W~14~, W~13~, W~12~}`
-
-// Since W~5~ through W~8~ are not needed in these calculations, we are able to compact these into
-// three element groups
-
-// `{W~3~, W~2~, W~1~, W~0~} +
-// {W~11~, W~10~, W~9~, W~4~} +
-// {W~15~, W~14~, W~13~, W~12~}`
 
 // This instruction is not masked. If any element groups are not to be processed, the _vl_
 // must be set accordingly. It is not possible to skip an intermediary element group.
