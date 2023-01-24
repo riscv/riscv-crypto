@@ -5,6 +5,10 @@ Instructions for accelerating
 encryption, decryption and key-schedule
 functions of the AES block cipher.
 
+These instructions accelerate AES standard as defined in
+Federal Information Processing Standards Publication 197
+cite:[NIST]
+
 All of these instructions work on 128-bit element groups comprised of four
 32-bit elements.
 

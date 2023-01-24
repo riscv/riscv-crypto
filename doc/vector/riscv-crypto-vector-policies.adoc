@@ -9,20 +9,20 @@ policies:
   or
   2) supporting a single implementation style which is more performant /
      less expensive;
-  the crypto extension will pick the more constrained but performant
+  the vector crypto extensions will pick the more constrained but performant
   option.
-  This fits a common pattern in other parts of the RISC-V specification,
+  This fits a common pattern in other parts of the RISC-V specifications,
   where recommended (but not required) instruction sequences for performing
   particular tasks are given as an example, such that both hardware and
   software implementers can optimize for only a single use-case.
   
-* The extension will be designed to support _existing_ standardized
+* The extensions will be designed to support _existing_ standardized
   cryptographic constructs well.
   It will not try to support proposed standards, or cryptographic
   constructs which exist only in academia.
   Cryptographic standards which are settled upon concurrently with or after
-  the RISC-V cryptographic extension standardization will be dealt with
-  by future additions to, or versions of, the RISC-V cryptographic
+  the RISC-V vector cryptographic extensions standardization will be dealt with
+  by future RISC-V vector cryptographic
   standard extensions.
   
 * Historically, there has been some discussion

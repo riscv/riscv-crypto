@@ -1,5 +1,5 @@
 [appendix]
-[[crypto_scalar_appx_sail]]
+[[crypto_vector_appx_sail]]
 == Supporting Sail Code
 
 This section contains the supporting Sail code referenced by the
