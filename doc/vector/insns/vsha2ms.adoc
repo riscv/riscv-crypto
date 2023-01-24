@@ -46,36 +46,29 @@ Description::
 - `SEW`=32: Four rounds of SHA-256 message schedule expansion are performed (`zvknha` and `zvknhb`)
 - `SEW`=64: Four rounds of SHA-512 message schedule expansion are performed (`zvkhnb`)
 
-Eleven of the last 16 message-schedule SEW-sized words are processed to produce the 
+Eleven of the last 16 `SEW`-sized message-schedule words from `vd` (oldest), `vs2`,
+and `vs1` (most recent) are processed to produce the
 next 4 message-schedule words.
-
-The most recent 16 input message schedule words need to be packed into element groups
-as shown above in the arguments table. The indicies indicate the relate age with higher
-indicies indicating more recent words.
 
 [TIP]
 .Note to software developers
 ====
-The first 16 words of the message schedule come from the message block.
-These words are input in big endian ordering and must be swapped to little
-endian before being fed to this instruction.
-All generated message schedule words are in little endian. 
+The first 16 SEW-sized words of the message schedule come from the message block
+in big-endian byte order. Since this instruction treats all words as little endian,
+software is required to endian swap these words.
 ====
-- `SEW`=32: 4 rounds of SHA-256 message schedule expansion are performed (`zvknha` and `zvknhb`)
-- `SEW`=64: 4 rounds of SHA-512 message schedule expansion are performed (`zvkhnb`)
 
-Eleven of the last 16 message schedule `SEW`-sized words are read in from `vd` (oldest), `vs2`
-and `vs1` (most recent). 
- A subset of the last 16 message-schedule words are consumed and
-the next 4 message-schedule words are produced.
-
-The initial 16 words of the message schedule come directly from the message block; these must
-must be endian swapped by software from RISC-V's native little-endian to SHA-2's big endian format.
-
-[NOTE]
+[TIP]
+.Note to software developers
 ====
-W~13~ is not used by the instruction.
+Software is required to pack the words into element groups
+as shown above in the arguments table. The indices indicate the relate age with
+lower indices indicating older words.
 ====
+// [NOTE]
+// ====
+// W~13~ is not used by the instruction.
+// ====
 
 // Four `SEW` message schedule words are packed into each element group of the
 // source and destination registers. From a vector register point of view, 
