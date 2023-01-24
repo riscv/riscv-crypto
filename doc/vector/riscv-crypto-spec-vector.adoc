@@ -114,7 +114,7 @@ With the exception of <<zvknh,Zvknhb>>, each of these Vector Crypto Extensions c
 or application ("V") base Vector Extension. <<zvknh,Zvknhb>> requires `SEW`=64 and therefore cannot be implemented
 on a Zve32* base.
 
-While the <<zvkb>> extension can be built on an Zve32x base, the `vclmul[h]` instructions will not be
+While the <<zvkb>> extension can be built on a Zve32* base, the `vclmul[h]` instructions will not be
 supported in such a case as they require `SEW`=64.
 
 See <<crypto-vector-element-groups>> for more details on vector element groups and the drawbacks of
