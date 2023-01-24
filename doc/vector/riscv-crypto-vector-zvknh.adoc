@@ -48,7 +48,7 @@ specified register groups can be combined to form the full element group.
 ====
 
 The number of element groups to be processed is `vl`/`EGS`.
-`vl` must be set to the number of `SEW=32` elements to be processed and
+`vl` must be set to the number of `SEW=32` or `SEW=64` elements to be processed and
 therefore must be a multiple of `EGS=4`. +
 Likewise, `vstart` must be a multiple of `EGS=4`.
 
