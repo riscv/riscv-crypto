@@ -3,16 +3,14 @@
 
 Instructions for accelerating 
 encryption, decryption and key-schedule
-functions of the AES block cipher.
-
-These instructions accelerate AES standard as defined in
+functions of the AES block cipher as defined in
 Federal Information Processing Standards Publication 197
-cite:[NIST]
+cite:[nist:fips:197]
 
 All of these instructions work on 128-bit element groups comprised of four
 32-bit elements.
 
-For the best performance, it is suggested that they be implemented on systems with `VLEN`>=128.
+For the best performance, it is suggested that these instruction be implemented on systems with `VLEN`>=128.
 On systems with `VLEN`<128, element groups may be formed by concatenating 32-bit elements
 from two or four registers by using an LMUL =2 and LMUL=4 respectively.
 

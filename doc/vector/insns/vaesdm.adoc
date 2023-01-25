@@ -63,6 +63,7 @@ The InvShiftRows and InvSubBytes steps are applied to each round state element g
 This is then XORed with the corresponding round key element group in `vs2` (vector-vector
 form) or the scalar element group in `vs2` (vector-scalar form). The result is then applied to the
 InvMixColumns step.
+
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 //

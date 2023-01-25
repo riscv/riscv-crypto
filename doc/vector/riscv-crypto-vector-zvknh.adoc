@@ -1,11 +1,13 @@
 [[zvknh, zvknh[ab]]]
 === `Zvknh[ab]` - NIST Suite: Vector SHA-2 Secure Hash
 
-Instructions for accelerating SHA-2
+Instructions for accelerating SHA-2 as defined in FIPS PUB 180-4 Secure Hash Standard (SHS)
+cite:[nist:fips:180:4]
 
 `SEW` differentiates between SHA-256 (`SEW`=32) and SHA-512 (`SEW`=64).
-For SHA-256, these instructions work on 128-bit element groups comprised of four 32-bit elements.
-For SHA-256, these instructions work on 256-bit element groups comprised of four 64-bit elements.
+
+- SHA-256: these instructions work on 128-bit element groups comprised of four 32-bit elements.
+- SHA-512: these instructions work on 256-bit element groups comprised of four 64-bit elements.
 
 [%autowidth]
 [%header,cols="^2,^2,^2,2"]
@@ -19,22 +21,21 @@ For SHA-256, these instructions work on 256-bit element groups comprised of four
 |64 | 256 | SHA-512 | Zvknhb
 |===
 
-These instructions accelerate the SHA-2 hash standard as defined in
-FIPS PUB 180-4 Secure Hash Standard (SHS)
-cite:[nist:fips:180:4]
-
 // link:https://doi.org/10.6028/NIST.FIPS.180-4[FIPS PUB 180-4 Secure Hash Standard (SHS)])
 
-[NOTE]
-====
-If Zvknhb is implemented, `SEW` is used to differentiate between SHA-256 (SEW=32) and SHA-512 (SEW=64).
-If Zvknha is implemented, only SHA-256 is supported, and SEW must be 32.
-====
+- Zvknhb supports SHA-256 and SHA-512.
+- Zvknha supports only SHA-256.
 
-For SHA-256, implementations with VLEN < 128 require software to use LMUL>1 to combine
+// [NOTE]
+// ====
+// Zvknhb is implemented, `SEW` is used to differentiate between SHA-256 (SEW=32) and SHA-512 (SEW=64).
+// If Zvknha is implemented, only SHA-256 is supported, and SEW must be 32.
+// ====
+
+SHA-256 implementations with VLEN < 128 require LMUL>1 to combine
 32-bit elements from register groups to provide all four elements of the element group.
 
-For SHA-512, implementations with VLEN < 256 require software to use LMUL>1 to combine
+SHA-512 implementations with VLEN < 256 require LMUL>1 to combine
 64-bit elements from register groups to provide all four elements of the element group.
 
 // SHA-2 is defined in
@@ -42,13 +43,13 @@ For SHA-512, implementations with VLEN < 256 require software to use LMUL>1 to c
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
-[NOTE]
-====
-It is recommended that implementations have VLEN≥128 for these instructions.
-Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN≥256.
-When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
-specified register groups can be combined to form the full element group.
-====
+// [NOTE]
+// ====
+// It is recommended that implementations have VLEN≥128 for these instructions.
+// // Furthermore, for the best performance in SHA512, it is recommended that implementations have VLEN≥256.
+// When VLEN<EGW, an appropriate LMUL needs to be used by software so that elements from the 
+// specified register groups can be combined to form the full element group.
+// ====
 
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW` elements to be processed and

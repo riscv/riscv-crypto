@@ -53,9 +53,12 @@ next 4 message-schedule words.
 [TIP]
 .Note to software developers
 ====
-The first 16 SEW-sized words of the message schedule come from the message block
+The first 16 SEW-sized words of the message schedule come from the _message block_
 in big-endian byte order. Since this instruction treats all words as little endian,
 software is required to endian swap these words.
+
+All of the subsequent message schedule words are produced by this instruction and
+therefore do not require an endian swap.
 ====
 
 [TIP]

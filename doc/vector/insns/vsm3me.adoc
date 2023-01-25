@@ -44,17 +44,18 @@ Arguments::
 Description::
 Eight rounds of SM3 message expansion are performed.
 
-The input words are swapped from big endian to little endian.
+T
 The sixteen most recent 32-bit message words are read in as two
-eight-element groups.
-The next eight 32-bit message words are generated and returned in an eight-element group.
-The output words are swapped from little endian to big endian.
+eight-element groups from `vs1` and `vs2`. Each of these words is
+swapped from big endian to little endian.
+The next eight 32-bit message words are generated,
+swapped from little endian to big endian, and are returned in
+an eight-element group.
 
 [NOTE]
 ====
-To align with the SM3 specification, we byte swap the inputs from big-endian to little-endian,
-we perform the operations in little-endian, 
-and then we byte swap the output from little endian back to big endian.
+The endian byte swapping of the input and output words enables us to align with the SM3
+specification without requiring that software perform these swaps.
 ====
 
 // NOTE

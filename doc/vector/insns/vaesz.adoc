@@ -50,6 +50,7 @@ scalar element group that is used
 as the round key for all of the round state element groups.
 The new round state output of each element group is produced by XORing
 the round key with each element group of `vd`.
+
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 

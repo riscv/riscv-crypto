@@ -1,18 +1,18 @@
 [[crypto-vector-element-groups]]
 === Element Groups
 
-Many vector crypto instructions operate on wider operands than instructions in the base vector extension.
+Many vector crypto instructions operate on operands that are wider than elements (which are currently limited
+to 64 bits wide).
 Typically, these operands are 128- and 256-bits wide. In many cases, these operands are comprised of smaller
 operands that are combined (for example, each SHA-2 operand is comprised of 4 words). However, in other cases
-these operands are a single value (for example, AES round instructions, each operand is 128-bit block or
-round key).
+these operands are a single value (for example, in the AES round instructions, each operand is 128-bit block
+or round key).
 
-In order to be compatible with the 32- and 64-bit element widths of the base vector instructions,
-we treat these operands as a vector of one of more _element groups_ as defined in the 
+We treat these operands as a vector of one of more _element groups_ as defined in the 
 link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups]
 specification.
 
-Each vector crypto instruction that operates on elements groups explicitly specifies their three defining
+Each vector crypto instruction that operates on element groups explicitly specifies their three defining
 parameters: EGW, EGS, and EEW.
 
 [%autowidth]
@@ -35,8 +35,8 @@ parameters: EGW, EGS, and EEW.
 [NOTE]
 ====
 - Element Group Width (`EGW`) - total number of bits in an element group
-- Element Group Size (`EGS`) - number of elements in an element group
 - Effective Element Width (`EEW`) - number of bits in each element
+- Element Group Size (`EGS`) - number of elements in an element group
 ====
 
 For all of the vector crypto instructions in this specification, `EEW`=`SEW`.
@@ -50,18 +50,18 @@ typically needed for other instructions when implementing the targeted algorithm
 - A *Vector Element Group* is a vector of one or more element groups.
 - A *Scalar Element Group* is a single element group. 
 
-// Element groups can be formed across registers in implementations where
-// `VLEN`< `EGW` by using an `LMUL`>1.
+Element groups can be formed across registers in implementations where
+`VLEN`< `EGW` by using an `LMUL`>1.
 
 [NOTE]
 ====
 Since the the *vector extension for application processors* requires a minimum of VLEN of 128,
 at most such implementations would require LMUL=2 to form the largest element groups in this specification.
 
-However, implementations with a smaller VLEN, such as embedded designs, need to
-keep in mind that a larger `LMUL` will be required to form the necessary element groups.
-It is important to keep in mind that this reduces the number of register groups available which
-can make it difficult or impossible to write efficient code for the intended cryptographic algorithms.
+However, implementations with a smaller VLEN, such as embedded designs, will requires a larger `LMUL`
+to form the necessary element groups.
+It is important to keep in mind that this reduces the number of register groups available such
+that it may be difficult or impossible to write efficient code for the intended cryptographic algorithms.
 
 For example, an implementation with `VLEN`=32 would need to set `LMUL`=8 to create a
 256-bit element group for `SM3`. This would mean that there would only be 4 register groups,

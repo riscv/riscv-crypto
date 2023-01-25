@@ -4,11 +4,11 @@
 Instructions for accelerating
 functions of the SM3 Hash Function.
 
-The SM3 secure haSH algorithm is specified in _32905-2016: SM3 Cryptographic Hash Algorithm_
-cite[gbt:sm4]
+The SM3 secure hash algorithm is specified in _32905-2016: SM3 Cryptographic Hash Algorithm_
+cite:[gbt:sm4]
 
-There are other various sources available that describe the SM3 secure hash. While not the final
-version of the standard,
+There are other various sources available that describe the SM3 secure hash.
+While not the fina version of the standard,
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]
 is useful and easy to access.
 
@@ -17,14 +17,17 @@ is useful and easy to access.
 All of these instructions work on 256-bit element groups comprised of
 eight 32-bit elements.
 
-The instructions will be most efficient on implementations where `VLEN`>=256.
-They will also provide substantial benefit on implementations where
-`VLEN`=128, but will require an `LMUL`>1 in order to combine elements 
-within a register group to form the full element group.
-Implementations with `VLEN`<128 might not be as efficient and should
-consider the existing
-Scalar Cryptography Extensions, specifically `Zkne` and `Zknd`,
-for accelerated cryptographic operations.
+Implementations with VLEN < 256 require LMUL>1 to combine 32-bit elements from register groups
+to provide all eight elements of the element group.
+
+// The instructions will be most efficient on implementations where `VLEN`≥256.
+// They will also provide substantial benefit on implementations where
+// `VLEN`=128, but will require an `LMUL`>1 in order to combine elements 
+// within a register group to form the full element group.
+// Implementations with `VLEN`<128 might not be as efficient and should
+// consider the existing
+// Scalar Cryptography Extensions, specifically `Zkne` and `Zknd`,
+// for accelerated cryptographic operations.
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 

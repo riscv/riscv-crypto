@@ -94,8 +94,9 @@ after all of the message blocks have been processed.
 
 [NOTE]
 ====
-The `vsha2ch` version of this instruction reads the two message schedule high words from `vs1
-while the `vsha2cl` version only reads the two message schedule low words.
+The `vsha2ch` version of this instruction uses the two most significant message schedule
+words from the element group in `vs1`
+while the `vsha2cl` version uses the two least significant message schedule words.
 Otherwise, these versions of the instruction are identical.
 Having a high and low version of this instruction typically improves performance when 
 interleaving independent hashing operations (i.e., when hashing several files at once).

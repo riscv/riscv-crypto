@@ -8,23 +8,23 @@ Application processors are expected to follow the V-extension and will therefore
 
 
 
-[NOTE]
-====
+// [NOTE]
+// ====
 Since most of the _cryptography-specific_ instructions have an `EGW`=128, nothing special needs to be done
 for these instructions to support implementations with `VLEN`=128.
 
 However, the SHA-512 and SM3 instructions have an `EGW`=256. Implementations with `VLEN` = 128, require that
 `LMUL` is doubled for these instructions in order to create 256-bit elements across a pair of registers.
-Code written with this doubling of `LMUL` will not affect the results returned by implementations with `VLEN` ≥ 128
+Code written with this doubling of `LMUL` will not affect the results returned by implementations with `VLEN` ≥ 256
 because `vl` controls how many element groups are processed. Therefore, we recommend that libraries that implement
 SHA-512 and SM3 employ this doubling of `LMUL` to ensure that the software can run on all implementation
 with `VLEN` ≥ 128.
 
-While the doubling of `LMUL` for these instructions is safe for implementations with `VLEN` ≥ 256, it may be less
+While the doubling of `LMUL` for these instructions is _safe_ for implementations with `VLEN` ≥ 256, it may be less
 optimal as it will result in unnecessary register pressure and might exact a performance penalty in
 some microarchitectures. Therefore, we suggest that in addition to providing portable code for SHA-512 and SM3,
-libraries should also include more optimal code for implementations with `VLEN` ≥ 256.
-====
+libraries should also include more optimal code for these instructions when `VLEN` ≥ 256.
+// ====
 
 [%autowidth]
 [%header,cols="4,4,4,4"]
@@ -38,24 +38,26 @@ libraries should also include more optimal code for implementations with `VLEN` 
 | SM3     | vsm3*   | 32 | vl/4 
 |===
 
-[NOTE]
-====
-We recommend that all library code for application processors be written so that it can be run on any
-implementation with `VLEN` ≥ 128. Such libraries are also encouraged to have versions of code for
-SHA-512 and SM3 optimized for implementations with `VLEN` ≥ 256.
-====
+// [NOTE]
+// ====
+// We recommend that all library code for application processors be written so that it can be run on any
+// implementation with `VLEN` ≥ 128. Such libraries are also encouraged to have versions of code for
+// SHA-512 and SM3 optimized for implementations with `VLEN` ≥ 256.
+// ====
 
 Embedded Processors::
+
 Embedded processors will typically have implementations with `VLEN` < 128. This will require code to be written with
 larger `LMUL` values to enable the element groups to be formed.
 
 The `.vs` instructions require scalar element groups of `EGW`=128. On implementations with `VLEN` < 128, these scalar
 element groups will necessarily be formed across registers. This is different from most scalars in vector instructions
-that typically consume part of a register.
+that typically consume part of a single register.
 
-[NOTE]
-====
+
+// [NOTE]
+// ====
 We recommend that different code be available for `VLEN`=32 and `VLEN`=64, as code written for `VLEN`=32 will
 likely be too burdensome for `VLEN`=64 implementations.
-====
+// ====
 

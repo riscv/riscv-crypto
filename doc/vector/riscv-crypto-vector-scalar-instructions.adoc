@@ -12,9 +12,9 @@ Vector-Scalar operations because a scalar operand is provided from element 0 of
 vector register `vs1`. The vector operand is provided in vector register group `vs2`.
 These reduction operations all use the `.vs` suffix in their mnemonics. Additionally, the reduction operations all produce a scalar result in element 0 of the destination register, `vd`.
 
-For the vector crypto extensions, we have defined Vector-Scalar instructions that are similar to these
+The Vector Crypto Extensions define Vector-Scalar instructions that are similar to these
 Vector Reduction Operations in that they get a scalar operand from a vector register. However, they differ
-from the Reduction Operations in that they get a scalar element group
+in that they get a scalar element group
 (see <<crypto-vector-element-groups>>)
 // link:https://github.com/riscv/riscv-v-spec/blob/master/element_groups.adoc[RISC-V Vector Element Groups])
 from `vs2` and they return _vector_ results to `vd`, which is also a source vector operand.

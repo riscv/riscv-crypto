@@ -45,9 +45,14 @@ Arguments::
 Description::
 Two rounds of SM3 compression are performed.
 
-The current state of eight 32-bit words is read in as an element group. Eight 32-bit message words
-are read in, although only four of them are used. Based on the round group be being processed
-(as specified in rnds), the next state of eight 32-bit words is generated.
+The current state of eight 32-bit words is read in as an element group from `vd`. Eight 32-bit
+message words are read in as an element group from `vs2`, although only four of them are used.
+All of the 32-bit input words are byte-swapped from big endian to little endian.
+These inputs are processed somewhat differently based on the round group (as specified in rnds),
+and the next state is generated as an element group of eight 32-bit words.
+The next state of eight 32-bit words are generated,
+swapped from little endian to big endian, and are returned in
+an eight-element group.
 
 The round number is provided by the 5-bit `rnds` unsigned immediate. Legal values are 0 - 31
 and indicate which group of two rounds are being performed. For example, if rnds=1,
@@ -61,9 +66,8 @@ behavior which differs between rounds 0-15 and rounds 16-63.
 
 [NOTE]
 ====
-To align with the SM3 specification, we internally byte swap the inputs from big-endian to
-little-endian, we perform the operations in little-endian, 
-and then we byte swap the output back to big endian.
+The endian byte swapping of the input and output words enables us to align with the SM3
+specification without requiring that software perform these swaps.
 ====
 
 [NOTE]

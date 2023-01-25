@@ -62,6 +62,7 @@ A final-round encryption function of the AES block cipher is performed.
 The SubBytes and ShiftRows steps are applied to each round state element group from `vd`.
 This is then XORed with the corresponding round key element group in `vs2` (vector-vector
 form) or the scalar element group in `vs2` (vector-scalar form).
+
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 //

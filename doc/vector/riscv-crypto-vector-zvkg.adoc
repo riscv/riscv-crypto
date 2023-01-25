@@ -1,13 +1,13 @@
 [[zvkg,Zvkg]]
 === `Zvkg` - Vector GCM/GMAC
 
-Instruction to enable the efficient implementation GHASH which is used in Galois/Counter Mode (GCM) and
+Instruction to enable the efficient implementation of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
 Galois Message Authentication Code (GMAC).
 
 GHASH~H~ is defined in the
 // link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
  "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
- cite[nist:gcm]
+ cite:[nist:gcm]
 (NIST Specification).
 
 [NOTE]

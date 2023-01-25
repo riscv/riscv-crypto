@@ -1,14 +1,15 @@
 [[zvksed,Zvksed]]
 === `Zvksed` - ShangMi Suite: SM4 Block Cipher
 
-Instructions for accelerating single round 
+Instructions for accelerating 
 encryption, decryption and key-schedule
 functions of the SM4 block cipher.
 
 The SM4 block cipher is specified in _32907-2016: {SM4} Block Cipher Algorithm_
-cite[gbt:sm4]
+cite:[gbt:sm4]
 
-There are various sources available that describe the SM4 block cipher. While not the final version of the standard,
+There are other various sources available that describe the SM4 block cipher.
+While not the final version of the standard,
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]
 is useful and easy to access.
 
@@ -17,9 +18,9 @@ is useful and easy to access.
 All of these instructions work on 128-bit element groups comprised of four
 32-bit elements.
 
-Systems which implement `VLEN<128` should consider the existing
-Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
-for accelerated cryptographic operations.
+// Systems which implement `VLEN<128` should consider the existing
+// Scalar Cryptography Extensions, specifically <<Zkne,Zkne>> and <<Zknd,Zknd>>
+// for accelerated cryptographic operations.
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 

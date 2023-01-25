@@ -21,10 +21,11 @@ reader.
 
 [NOTE]
 ====
-Where variables are concatenated, the order shown is the order in a vector register.
-For example, `{a, b, e, f}` would appear in a vector register with
-`a` to the left of the other variables. This could also be viewed as `a` being in the
-higher element index and `f` being in the lower element index. 
+Where variables are concatenated, the order shown is how they would appear
+in a vector register from left to right.
+For example, an element group specified as `{a, b, e, f}` would appear in a vector
+register with `a` having the highest element index of the group and `f` having the
+lowest index of the group.
 ====
 
 For the sake of brevity, our pseudo code does not include the handling of

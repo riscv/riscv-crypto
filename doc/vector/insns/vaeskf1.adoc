@@ -43,7 +43,8 @@ Arguments::
 Description:: 
 A single round of the forward AES-128 KeySchedule is performed.
 
-Within each element group, the next round key is generated word by word from the
+// Within each element group, 
+The next round key is generated word by word from the
 current round key element group in `vs2` and the immediately previous word of the
 round key. The least significant word is generated using the most significant 
 word of the current round key as well as a round constant which is selected by
@@ -55,6 +56,7 @@ The out-of-range `uimm[3:0]` values of 0 and 11-15 are mapped to in-range
 values by inverting `uimm[3]`. Thus, 0 maps to 8, and 11-15 maps to 3-7.
 The round number is used to specify a round constant which is used in generating
 the first round key word.
+
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 
