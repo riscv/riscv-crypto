@@ -44,7 +44,7 @@ Arguments::
 Description::
 Eight rounds of SM3 message expansion are performed.
 
-T
+
 The sixteen most recent 32-bit message words are read in as two
 eight-element groups from `vs1` and `vs2`. Each of these words is
 swapped from big endian to little endian.
