@@ -62,6 +62,9 @@ residing at the lowest memory address. Since the bits in the bytes are reversed,
 This instruction internally performs bit swaps within bytes to put the bits in the standard ordering
 (e.g., 7,6,5,4,3,2,1,0).
 
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
+
 [Note]
 ====
 We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent

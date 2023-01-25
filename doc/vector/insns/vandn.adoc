@@ -86,6 +86,9 @@ Each bit in each element in `vs2` is inverted and then ANDed with the correspond
 `vs1` (vector-vector), the sign-extended or truncated value in scalar register `rs1` (vector-scalar),
 or a sign-extended 5-bit immediate (vector immediate).
 
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
+
 [NOTE]
 .Note on necessity of instruction
 ====

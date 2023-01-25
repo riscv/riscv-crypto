@@ -60,6 +60,8 @@ either each 64-bit element in `vs1` (vector-vector), or the 64-bit value
 from integer register `rs1` (vector-scalar). The result is the least
 significant 64 bits of the carry-less product.
 
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
 
 [NOTE]
 ====

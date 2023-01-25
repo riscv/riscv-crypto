@@ -6,6 +6,9 @@ for implementing common cryptographic workloads securely & efficiently.
 
 The carry-less multiply instructions `vclmul` and `vclmulh` are only defined for `SEW`=64.
 
+To help avoid side-channel timing attacks, these instructions shall be implemented with
+data-independent timing.
+
 [%autowidth]
 [%header,cols="^2,4"]
 |===
