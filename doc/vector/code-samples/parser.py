@@ -111,9 +111,16 @@ class KATParser:
 
             # we should have everything
             remain = self.fields.copy() - set(values.keys())
-            # XXX - special case GCM decrypt
-            if remain and not ('FAIL' in values and 'PT' in remain):
-                raise ValueError('not all fields found: %r' % repr(remain))
+            # XXX - special case GCM decrypt and SHA empty message
+            if remain:
+                if ('FAIL' in values and 'PT' in remain):
+                    values['PT'] = None
+                else:
+                    raise ValueError('not all fields found: %r' % repr(remain))
+            # Special case for SHA test with empty message.
+            # Replace "00" data with None if Len==0
+            if 'Len' in values and values['Len'] == str(0):
+                values['Msg'] = None
 
             yield values
 
