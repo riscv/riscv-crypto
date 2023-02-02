@@ -178,7 +178,10 @@ include::./riscv-crypto-vector-zvksed.adoc[]
 <<<
 include::./riscv-crypto-vector-zvksh.adoc[]
 <<<
-
+include::./riscv-crypto-vector-zvkn.adoc[]
+<<<
+include::./riscv-crypto-vector-zvks.adoc[]
+<<<
 // ------------------------------------------------------------
 
 [[crypto_vector_insns, reftext="Vector Cryptography Instructions"]]

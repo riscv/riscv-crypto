@@ -1,0 +1,18 @@
+[[zvks,Zvks]]
+=== `Zvks` - ShangMi Algorithm Suite
+
+This extension is shorthand for the following set of other extensions:
+
+[%autowidth]
+[%header,cols="^2,4"]
+|===
+|Included Extension
+|Description
+
+
+| Zvksed  | <Zvksed>
+| Zvksh   | <Zvksh>
+| Zvkb    | <Zvkb>
+|===
+
+NB: While Zvkg is not part of this extension, it is recommended for high performance SM4-GCM

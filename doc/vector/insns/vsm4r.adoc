@@ -1,4 +1,4 @@
-[[insns-vsm4r, SM4 Rounds]]
+[[insns-vsm4r, SM4 Block Cipher Rounds]]
 = vsm4r.[vv,vs]
 
 Synopsis::
