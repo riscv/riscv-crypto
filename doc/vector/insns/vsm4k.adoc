@@ -149,7 +149,7 @@ Operation::
 --
 
 function clause execute (vsm4k(uimm, vs2)) = {
-  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0))  then {
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_SUCCESS
   } else {
@@ -166,7 +166,7 @@ function clause execute (vsm4k(uimm, vs2)) = {
   let rnd : bits(3) = uimm[2:0]; // Lower 3 bits
 
   foreach (i from eg_start to eg_len-1) {
-    let (rk0, rk1, rk2, rk3) : bits(128) = get_velem(vs2, 128, i);
+    let (rk3 @ rk2 @ rk1 @ rk0) : bits(128) = get_velem(vs2, 128, i);
     
     B = rk1 ^ rk2 ^ rk3 ^ ck(4 * rnd);
     S = sm4_subword(B);
@@ -185,7 +185,7 @@ function clause execute (vsm4k(uimm, vs2)) = {
     rk7 = ROUND_KEY(rk3, S);
 
     // Update the destination register.
-   set_velem(vd, EGW=128, i, (rk4, rk5, rk6, rk7));
+   set_velem(vd, EGW=128, i, (rk7 @ rk6 @ rk5 @ rk4));
   }
   RETIRE_SUCCESS
   }

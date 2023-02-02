@@ -127,8 +127,10 @@ Operation::
 --
 function clause execute (VGHMAC(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
-  assert((vl%EGS)<>0)       // vl must be a multiple of EGS
-  assert((vstart%EGS)<>0)   //  vstart must be a multiple of EGS
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+    handle_illegal();  // illegal instruction exception
+    RETIRE_SUCCESS
+  } else {
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
@@ -155,9 +157,7 @@ function clause execute (VGHMAC(vs2, vs1, vd)) = {
     set_velem(vd, EGW=128, i, result);
   }
   RETIRE_SUCCESS
-
-
-
+ }
 }
 --
 

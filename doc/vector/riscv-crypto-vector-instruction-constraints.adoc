@@ -27,6 +27,26 @@ _illegal instruction exception_.
 |===
 // | vaes*, vsha2*, vghmac, vsm4*| 4
 
+LMUL constraints::
+For element-group instructions, LMUL*VLEN must always be at least as large as EGW, otherwise an
+_illegal instruction exception_ is raised, even if vl=0.
+
+Affected instructions:
+[%autowidth]
+[%header,cols="4,4"]
+|===
+| Instructions 
+| EGS
+
+| vaes*   | 4
+| vsha2*  | 4
+| vghmac  | 4
+| vsm3*   | 8 
+| vsm4*   | 4
+
+|===
+
+
 SEW constraints::
 Some Vector Crypto instructions are only defined for a specific `SEW`. In such a case
 all other `SEW` values are _reserved_.

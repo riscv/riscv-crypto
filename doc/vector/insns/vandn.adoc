@@ -1,5 +1,5 @@
 [[insns-vandn, Vector And-Not]]
-= vandn.[vv,vx,vi]
+= vandn.[vv,vx]
 
 Synopsis::
 Bitwise And-Not
@@ -37,20 +37,6 @@ Encoding (Vector-Scalar)::
 ]}
 ....
 
-Encoding (Vector-Immediate)::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 7, name: 'OP-V'},
-{bits: 5, name: 'vd'},
-{bits: 3, name: 'OPIVI'},
-{bits: 5, name: 'imm'},
-{bits: 5, name: 'vs2'},
-{bits: 1, name: 'vm'},
-{bits: 6, name: '000001'},
-]}
-....
-
 Vector-Vector Arguments::
 
 [%autowidth]
@@ -60,12 +46,12 @@ Vector-Vector Arguments::
 |Direction
 |Definition
 
-| Vs1 | input  | Operand A
-| Vs2 | input  | Operand B (to be inverted)
+| Vs1 | input  | Op1  (to be inverted)
+| Vs2 | input  | Op2
 | Vd  | output | Result 
 |===
 
-Vector-Scalar/Immediate Arguments::
+Vector-Scalar Arguments::
 
 [%autowidth]
 [%header,cols="4,2,2"]
@@ -74,17 +60,18 @@ Vector-Scalar/Immediate Arguments::
 |Direction
 |Definition
 
-| Rs1/imm | input  | Operand A
-| Vs2     | input  | Operand B (to be inverted)
+| Rs1     | input  | Op1  (to be inverted)
+| Vs2     | input  | Op2 
 | Vd      | output | Result 
 |===
 
 Description:: 
 A bitwise _and-not_ operation is performed.
 
-Each bit in each element in `vs2` is inverted and then ANDed with the corresponding bit in either
-`vs1` (vector-vector), the sign-extended or truncated value in scalar register `rs1` (vector-scalar),
-or a sign-extended 5-bit immediate (vector immediate).
+Each bit of `Op1` is inverted and logically ANDed with the corresponding bits in `Vs2`.
+In the vector-scalar version, Op1 is the sign-extended or truncated value in scalar
+register `rs1`. 
+In the vector-vector version, Op1 is `vs2`.
 
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
@@ -94,7 +81,13 @@ on the data being operated upon.
 ====
 This instruction is performance-critical to SHA3. Specifically, the Chi step of the FIPS 202 Keccak Permutation. 
 Emulating it via 2 instructions is expected to have significant performance impact.
-The `.vv` form of the instruction is what is needed for SHA3; the `.vx` and `.vi` forms were added for completeness.
+The `.vv` form of the instruction is what is needed for SHA3; the `.vx` form was added for completeness.
+====
+
+[NOTE]
+====
+There is no .vi version of this instruction because the same functionality can be achieved by using an inversion
+of the immediate value with the `vand.vi` instruction.
 ====
 
 Operation::
@@ -103,12 +96,11 @@ Operation::
 function clause execute (VANDN(vs2, vs1, vd, suffix)) = {
   foreach (i from vstart to vl-1) {
     let op1 = match suffix {
-      "vv" => get_velem(vs1, EEW=SEW, i),
-      "vx" => sext_or_truncate_to_sew(X(vs1)),
-      "vi" => sext(vs1)
+      "vv" => get_velem(vs1, SEW, i),
+      "vx" => sext_or_truncate_to_sew(X(vs1))
     };
-    let op2 = get_velem(vs2, EEW=SEW, i);
-    set_velem(vd, EEW=SEW, i, op1 & ~op2);
+    let op2 = get_velem(vs2, SEW, i);
+    set_velem(vd, EEW=SEW, i, !op1 & op2);
   }
   RETIRE_SUCCESS
 }

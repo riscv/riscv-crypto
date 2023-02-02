@@ -81,7 +81,7 @@ Operation::
 [source,sail]
 --
 function clause execute (VSM3ME(vs2, vs1)) = {
-   if( ((vl%EGS)<>0) | ((vstart%EGS)<>0))  then {
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_SUCCESS
   } else {
@@ -111,16 +111,15 @@ function clause execute (VSM3ME(vs2, vs1)) = {
     let w1  = rev8(w[1]);
     let w0  = rev8(w[0]);
 
-    // Arguments are W[i-16], W[i-9], W[i-3], W[i-13], W[i-6].
     // Note that some of the newly computed words are used in later invocations.
-    let w[16] = ZVKSH_W(w0,  w7, w13,  w3, w10);
-    let w[17] = ZVKSH_W(w1,  w8, w14,  w4, w11);
-    let w[18] = ZVKSH_W(w2,  w9, w15,  w5, w12);
-    let w[19] = ZVKSH_W(w3, w10, w16,  w6, w13);
-    let w[20] = ZVKSH_W(w4, w11, w17,  w7, w14);
-    let w[21] = ZVKSH_W(w5, w12, w18,  w8, w15);
-    let w[22] = ZVKSH_W(w6, w13, w19,  w9, w16);
-    let w[23] = ZVKSH_W(w7, w14, w20, w10, w17);
+    let w[16] = ZVKSH_W(w0 @  w7 @  w13 @   w3 @  w10);
+    let w[17] = ZVKSH_W(w1 @  w8 @  w14 @   w4 @  w11);
+    let w[18] = ZVKSH_W(w2 @  w9 @  w15 @   w5 @  w12);
+    let w[19] = ZVKSH_W(w3 @ w10 @  w16 @   w6 @  w13);
+    let w[20] = ZVKSH_W(w4 @ w11 @  w17 @   w7 @  w14);
+    let w[21] = ZVKSH_W(w5 @ w12 @  w18 @   w8 @  w15);
+    let w[22] = ZVKSH_W(w6 @ w13 @  w19 @   w9 @  w16);
+    let w[23] = ZVKSH_W(w7 @ w14 @  w20 @  w10 @  w17);
 
   // Byte swap outputs from little-endian back to big-endian
     let w16 : Bits(32) = rev8(W[16]);
@@ -134,7 +133,7 @@ function clause execute (VSM3ME(vs2, vs1)) = {
 
 
     // Update the destination register.
-    set_velem(vd, 256, i, {w23, w22, w21, w20, w19, w18, w17, w16});
+    set_velem(vd, 256, i, {w23 @ w22 @ w21 @ w20 @ w19 @ w18 @ w17 @ w16});
   }
   RETIRE_SUCCESS
   }

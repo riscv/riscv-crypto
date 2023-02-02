@@ -99,7 +99,7 @@ Operation::
 [source,sail]
 --
 function clause execute (VSM3C(rnds, vs2, vd)) = {
-  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0))  then {
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_SUCCESS
   } else {
@@ -110,9 +110,9 @@ function clause execute (VSM3C(rnds, vs2, vd)) = {
   foreach (i from eg_start to eg_len-1) {
 
   // load state
-  let {Hi, Gi, Fi, Ei, Di, Ci, Bi, Ai} : bits(256) : bits(256) = (get_velem(vd, 256, i));
+  let {Hi @ Gi @ Fi @ Ei @ Di @ Ci @ Bi @ Ai} : bits(256) : bits(256) = (get_velem(vd, 256, i));
   //load message schedule
-  let {u_w7, u_w6, w5i, w4i, u_w3, u_w2, w1i, w0i} : bits(256) = (get_velem(vs2, 256, i));
+  let {u_w7 @ u_w6 @ w5i @ w4i @ u_w3 @ u_w2 @ w1i @ w0i} : bits(256) = (get_velem(vs2, 256, i));
   // u_w inputs are unused
 
 // perform endian swap
@@ -162,7 +162,7 @@ F = E1;
 let E2 = : bits(32) P_0(tt2);
 
 // Update the destination register - swap back to big endian
-let result : bits(256) = {rev8(G1), rev8(G2), rev8(E1), rev8(E2), rev8(C1), rev8(C2), rev8(A1), rev8(A2)};
+let result : bits(256) = {rev8(G1) @ rev8(G2) @ rev8(E1) @ rev8(E2) @ rev8(C1) @ rev8(C2) @ rev8(A1) @ rev8(A2)};
 set_velem(vd, 256, i, result);
       }
 
