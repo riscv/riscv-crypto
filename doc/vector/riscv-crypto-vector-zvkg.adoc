@@ -32,7 +32,8 @@ Likewise, `vstart` must be a multiple of `EGS=4`.
 |EGW
 |Mnemonic
 |Instruction
-| 32 | 128 | vghmac.vv | <<insns-vghmac>>
+| 32 | 128 | vghsh.vv | <<insns-vghsh>>
+| 32 | 128 | vgmul.vv | <<insns-vgmul>>
 
 |===
 

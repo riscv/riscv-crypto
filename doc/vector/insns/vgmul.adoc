@@ -1,11 +1,11 @@
-[[insns-vghmac, Vector GHASH Multiply Accumulate]]
-= vghmac.vv
+[[insns-vgmul, Vector GHASH Multiply]]
+= vgmul.vv
 
 Synopsis::
-Vector Carryless Multiply Accumulate over GHASH Galois-Field
+Vector Multiply over GHASH Galois-Field
 
 Mnemonic::
-vghmac.vv vd, vs2, vs1
+vgmul.vv vd, vs2, vs1
 
 Encoding::
 [wavedrom, , svg]
@@ -14,10 +14,10 @@ Encoding::
 {bits: 7, name: 'OP-P'},
 {bits: 5, name: 'vd'},
 {bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
+{bits: 5, name: '10001'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: '1'},
-{bits: 6, name: '101100'},
+{bits: 6, name: '101000'},
 ]}
 ....
 Reserved Encodings::
@@ -36,24 +36,25 @@ Arguments::
 |Definition
 
 | Vd  | input  | 128  | 4 | 32 | Partial hash (Y~i~)
-| Vs1 | input  | 128  | 4 | 32 | Hash Subkey (H)
-| Vs2 | input  | 128  | 4 | 32 | Block Cipher output (X~i+1~)
+| Vs2 | input  | 128  | 4 | 32 | Hash Subkey (H)
 | Vd  | output | 128  | 4 | 32 | Partial-hash (Y~i+1~)
 |===
 
 Description:: 
 A single "iteration" of the GHASH~H~ algorithm is performed.
 
-This instruction treats all of the inputs and outputs as 128-bit polynomials. 
-It produces the next partial hash (Y~i+1~) by multiplying (over GF(2^128^)) the current partial
-hash (Y~i~) by the Hash Subkey (H) and adding (over GF[2]) this product to the next block of
-cipher text (X~i+1~).
+This instruction treats all of the inputs and outputs as 128-bit polynomials and 
+performs operations over GF[2].
+It produces the next partial hash (Y~i+1~) by adding the current partial
+hash (Y~i~) to the cipher text block (X~i~) and then multiplying (over GF(2^128^))
+this sum by the Hash Subkey (H).
 
 The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
 modulo GHASH's irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1).
 
 The operation can be compactly defined as
-Y~i+1~ = (Y~i~ &#183; H) ^ X~i+1~ `// with Y~0~ = X~0~
+// Y~i+1~ = (Y~i~ &#183; H) ^ X~i~
+Y~i+1~ = ((Y~i~ ^ X~i~) &#183; H)
 
 The NIST specification (see <<zvkg>>) orders the coefficients from left to right x~0~x~1~x~2~...x~127~
 for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^. This can be viewed as a collection of
@@ -72,6 +73,12 @@ with the NIST specification. These reversals are inexpensive to implement as the
 swap bit positions and therefore do not require any logic.
 ====
 
+[NOTE]
+====
+Some code sequences may call for a multiply followed by an add. This can be achieved by using a zeroed out
+register for `vs2` followed by an XOR instruction.
+Some implementations may choose to fuse this instruction with a subsequent XOR and perform  call for the multiply without 
+====
 
 //The next partial hash (Y~i+1~) is produced by multiplying (over GF(2^128^)) the current partial
 //hash (Y~i~) by the Hash Subkey (H) and adding (over GF[2]) this product to the next block of
@@ -125,7 +132,7 @@ swap bit positions and therefore do not require any logic.
 Operation::
 [source,pseudocode]
 --
-function clause execute (VGHMAC(vs2, vs1, vd)) = {
+function clause execute (VGMUL(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
   if( ((vl%EGS)<>0) | ((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
     handle_illegal();  // illegal instruction exception

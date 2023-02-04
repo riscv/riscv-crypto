@@ -1,5 +1,5 @@
-[[zvkns,Zvkns]]
-=== `Zvkns` - NIST Suite: Vector AES Block Cipher
+[[zvkned,Zvkned]]
+=== `Zvkned` - NIST Suite: Vector AES Block Cipher
 
 Instructions for accelerating 
 encryption, decryption and key-schedule
@@ -33,7 +33,7 @@ Likewise, `vstart` must be a multiple of `EGS=4`.
 |Mnemonic
 |Instruction
 
-| 32 | 128 | vaesef.[vv,vs]  | <<insns-vaesef>>
+| 32| 128 | vaesef.[vv,vs]  | <<insns-vaesef>>
 | 32| 128 | vaesem.[vv,vs]  | <<insns-vaesem>>
 | 32| 128 | vaesdf.[vv,vs]  | <<insns-vaesdf>>
 | 32| 128 | vaesdm.[vv,vs]  | <<insns-vaesdm>>

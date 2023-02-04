@@ -35,7 +35,7 @@ Crypto Vector instructions except Zvkb
 | 101001 | | | |            | 101001 |V| | *VAES.vs*   | 101001 | | |             
 | 101010 | | | |            | 101010 |V| | vaesfk2.vi  | 101010 | | |             
 | 101011 | | | |            | 101011 |V| | vsm3c.vi    | 101011 | | |             
-| 101100 | | | |            | 101100 |V| | vghmac      | 101100 | | |             
+| 101100 | | | |            | 101100 |V| | vghsh      | 101100 | | |             
 | 101101 | | | |            | 101101 |V| | vsha2ms     | 101101 | | |             
 | 101110 | | | |            | 101110 |V| | vsha2ch     | 101110 | | |             
 | 101111 | | | |            | 101111 |V| | vsha2cl     | 101111 | | |             
@@ -54,4 +54,5 @@ Crypto Vector instructions except Zvkb
 | 00011 | vaesef
 | 00111 | vaesz
 | 10000 | vsm4r
+| 10001 | vgmul
 |===

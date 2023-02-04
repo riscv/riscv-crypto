@@ -164,7 +164,7 @@ At the time of writing, these discovery mechanisms are still a work in
 progress.
 ====
 
-include::./riscv-crypto-vector-zvkns.adoc[]
+include::./riscv-crypto-vector-zvkned.adoc[]
 <<<
 include::./riscv-crypto-vector-zvknh.adoc[]
 <<< 
@@ -223,7 +223,10 @@ include::insns/vclmul.adoc[leveloffset=+2]
 <<<
 include::insns/vclmulh.adoc[leveloffset=+2]
 <<<
-include::insns/vghmac.adoc[leveloffset=+2]
+// include::insns/vghmac.adoc[leveloffset=+2]
+include::insns/vghsh.adoc[leveloffset=+2]
+<<<
+include::insns/vgmul.adoc[leveloffset=+2]
 <<<
 include::insns/vrev8.adoc[leveloffset=+2]
 <<<

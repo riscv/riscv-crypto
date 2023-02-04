@@ -1,0 +1,129 @@
+[[insns-vghsh, Vector GHASH Add-Multiply]]
+= vghsh.vv
+
+Synopsis::
+Vector Add-Multiply over GHASH Galois-Field
+
+Mnemonic::
+vghsh.vv vd, vs2, vs1
+
+Encoding::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-P'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: '1'},
+{bits: 6, name: '101100'},
+]}
+....
+Reserved Encodings::
+* `SEW` is any value other than 32 
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS
+|SEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | Partial hash (Y~i~)
+| Vs1 | input  | 128  | 4 | 32 | Cipher text (X~i~)
+| Vs2 | input  | 128  | 4 | 32 | Hash Subkey (H)
+| Vd  | output | 128  | 4 | 32 | Partial-hash (Y~i+1~)
+|===
+
+Description:: 
+A single "iteration" of the GHASH~H~ algorithm is performed.
+
+This instruction treats all of the inputs and outputs as 128-bit polynomials and 
+performs operations over GF[2].
+It produces the next partial hash (Y~i+1~) by adding the current partial
+hash (Y~i~) to the cipher text block (X~i~) and then multiplying (over GF(2^128^))
+this sum by the Hash Subkey (H).
+
+The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
+modulo GHASH's irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1).
+
+The operation can be compactly defined as
+// Y~i+1~ = (Y~i~ &#183; H) ^ X~i~
+Y~i+1~ = ((Y~i~ ^ X~i~) &#183; H)
+
+The NIST specification (see <<zvkg>>) orders the coefficients from left to right x~0~x~1~x~2~...x~127~
+for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^. This can be viewed as a collection of
+byte elements in memory with the byte containing the lowest coefficients (i.e., 0,1,2,3,4,5,6,7)
+residing at the lowest memory address. Since the bits in the bytes are reversed, 
+This instruction internally performs bit swaps within bytes to put the bits in the standard ordering
+(e.g., 7,6,5,4,3,2,1,0).
+
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
+
+[Note]
+====
+We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
+with the NIST specification. These reversals are inexpensive to implement as they unconditionally
+swap bit positions and therefore do not require any logic.
+====
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VGHSH(vs2, vs1, vd)) = {
+  // operands are input with bits reversed in each byte
+  if( ((vl%EGS)<>0) | ((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+    handle_illegal();  // illegal instruction exception
+    RETIRE_SUCCESS
+  } else {
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+  
+  foreach (i from eg_start to eg_len-1) {
+    let Y = (get_velem(vd,EGW=128,i));  // current partial-hash
+    let X = get_velem(vs1,EGW=128,i);  // block cipher output
+    let H = brev8(get_velem(vs2,EGW=128,i)); // Hash subkey
+
+    let Z : bits(128) = 0;
+
+    let S = brev8(Y ^ X);
+
+    for (int bit = 0; bit < 128; bit++) {
+      if bit_to_bool(S[bit])
+        Z ^= H
+
+      bool reduce = bit_to_bool(H[127]);
+      H = H << 1; // left shift H by 1
+      if (reduce)
+        H ^= 0x87; // Reduce using x^7 + x^2 + x^1 + 1 polynomial
+    }
+
+   // let sum[127:0] = brev8(Z) ^ X; // bit reverse bytes of product to get back to GCM standard ordering
+
+    let result = brev8(Z); // bit reverse bytes to get back to GCM standard ordering
+    set_velem(vd, EGW=128, i, result);
+  }
+  RETIRE_SUCCESS
+ }
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvkg>>
+| v0.1.0
+| In Development
+|===
