@@ -42,7 +42,7 @@ on the data being operated upon.
 
 [NOTE]
 ====
-This instruction is commonly used for GCM when vghmac is not implemented.
+This instruction is commonly used for GCM when the zvkg extension is not implemented.
 This byte-wise instruction is defined for all SEWs to eliminate the need to change SEW when operating on wider elements.   
 ====
 

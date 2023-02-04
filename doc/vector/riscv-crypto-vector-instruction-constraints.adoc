@@ -9,9 +9,6 @@ Element Group Size (`EGS`).
 Instructions that violate this requirement will raise an
 _illegal instruction exception_.
 
-// * `vaes*`, `vsha2*`, `vghmac`, `vsm4*`: `vl` and `vstart` must be multiple of 4
-// * `vsm3*`: `vl` and `vstart` must be multiple of 8
-
 [%autowidth]
 [%header,cols="4,4"]
 |===
@@ -20,12 +17,11 @@ _illegal instruction exception_.
 
 | vaes*   | 4
 | vsha2*  | 4
-| vghmac  | 4
+| vgh*    | 4
 | vsm3*   | 8 
 | vsm4*   | 4
 
 |===
-// | vaes*, vsha2*, vghmac, vsm4*| 4
 
 LMUL constraints::
 For element-group instructions, LMUL*VLEN must always be at least as large as EGW, otherwise an
@@ -40,7 +36,7 @@ Affected instructions:
 
 | vaes*   | 4
 | vsha2*  | 4
-| vghmac  | 4
+| vgh*    | 4
 | vsm3*   | 8 
 | vsm4*   | 4
 
@@ -57,23 +53,16 @@ all other `SEW` values are _reserved_.
 | Instructions 
 | Required SEW
 
-// | vaes*, vghmac, vsm4*, vsm3*| 32
 | vaes*          | 32
 | Zvknha: vsha2* | 32
 | Zvknhb: vsha2* | 32 or 64
 | vclmul[h]      | 64
-| vghmac         | 32
+| vgh*           | 32
 | vsm3*          | 32
 | vsm4*          | 32
 
 
 |===
-
-// * `vaes*`, `vghmac`, `vsm4*`, `vsm3*`: `SEW` must be equal to 32
-// * `vsha2*`:
-// ** if `Zknha` is implemented: `SEW` must be equal to 32 
-// ** if `Zknhb` is implemented: `SEW` must be either equal to 32 or 64 
-// * `vclmul` and `vclmulh`: `SEW` must be equal to 64
 
 Source/Destination overlap constraints::
 Some Vector Crypto instructions have overlap constraints. Encodings that violate these constraints are _reserved_.
@@ -102,8 +91,3 @@ overlap this `vs2` register group.
 
 |===
 
-// * `vaes*.vs`: the single register `vs2` cannot overlap with the register group `vd`
-// * `vsm4r.vs`: the single register `vs2` cannot overlap with the register group `vd`
-// * `vsha2c[hl].vv` and `vsha2ms.vv`: `vd` cannot overlap with either `vs1` or `vs2`
-// * `vsm3me.vv`: `vd` cannot overlap with  `vs2`
-// * `vsm3c.vi`: `vd` cannot overlap with  `vs2`
