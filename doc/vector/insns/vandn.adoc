@@ -68,10 +68,10 @@ Vector-Scalar Arguments::
 Description:: 
 A bitwise _and-not_ operation is performed.
 
-Each bit of `Op1` is inverted and logically ANDed with the corresponding bits in `Vs2`.
-In the vector-scalar version, Op1 is the sign-extended or truncated value in scalar
+Each bit of `Op1` is inverted and logically ANDed with the corresponding bits in `vs2`.
+In the vector-scalar version, `Op1` is the sign-extended or truncated value in scalar
 register `rs1`. 
-In the vector-vector version, Op1 is `vs2`.
+In the vector-vector version, `Op1` is `vs2`.
 
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
