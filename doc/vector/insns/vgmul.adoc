@@ -5,7 +5,7 @@ Synopsis::
 Vector Multiply over GHASH Galois-Field
 
 Mnemonic::
-vgmul.vv vd, vs2, vs1
+vgmul.vv vd, vs2
 
 Encoding::
 [wavedrom, , svg]
