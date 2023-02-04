@@ -15,4 +15,7 @@ This extension is shorthand for the following set of other extensions:
 | Zvkb   | <Zvkb>
 |===
 
-NB: While Zvkg is not part of this extension, it is recommended for high performance AES-GCM
+[NOTE]
+====
+While Zvkg is not part of this extension, it is recommended for high performance AES-GCM
+====
