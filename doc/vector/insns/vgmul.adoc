@@ -41,7 +41,8 @@ Arguments::
 |===
 
 Description:: 
-A single multiplication of the GHASH~H~ algorithm is performed.
+A GHASH~H~ multiply is performed.
+
 
 This instruction treats all of the inputs and outputs as 128-bit polynomials and 
 performs operations over GF[2].
@@ -64,7 +65,7 @@ This instruction internally performs bit swaps within bytes to put the bits in t
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 
-[Note]
+[NOTE]
 ====
 We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
 with the NIST specification. These reversals are inexpensive to implement as they unconditionally
@@ -74,8 +75,10 @@ swap bit positions and therefore do not require any logic.
 [NOTE]
 ====
 This instruction is identical to `vghsh.vv` with vs1=0.
-It is included to allow implementations to fuse it withSome implementations may choose to fuse this instruction with a subsequent XOR to perform
-a multiply-accumulate which may be used in some GHASH iteration code 
+This instruction is often used in GHASH code. In some cases it is followed
+by an XOR to perform a multiply-add. Implementations may choose to fuse these
+two instructions to improve performance on GHASH code that 
+doesn't use the add-multiply form of the `vghsh.vv` instruction. 
 ====
 
 

@@ -67,7 +67,7 @@ This instruction internally performs bit swaps within bytes to put the bits in t
 This instruction must always be implemented such that its execution latency does not depend
 on the data being operated upon.
 
-[Note]
+[NOTE]
 ====
 We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
 with the NIST specification. These reversals are inexpensive to implement as they unconditionally
