@@ -6,8 +6,7 @@ Bitwise And-Not
 
 Mnemonic::
 vandn.vv vd, vs2, vs1, vm +
-vandn.vx vd, vs2, rs1, vm  +
-vandn.vi vd, vs2, imm, vm
+vandn.vx vd, vs2, rs1, vm
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]

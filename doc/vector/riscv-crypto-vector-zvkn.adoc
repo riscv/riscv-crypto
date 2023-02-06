@@ -10,9 +10,9 @@ This extension is shorthand for the following set of other extensions:
 |Description
 
 
-| Zvkns  | <Zvkns>
-| Zvknhb | <Zvknh>
-| Zvkb   | <Zvkb>
+| Zvkned | <<Zvkned>>
+| Zvknhb | <<Zvknh[ab]>>
+| Zvkb   | <<Zvkb>>
 |===
 
 [NOTE]

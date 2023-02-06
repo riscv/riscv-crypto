@@ -24,7 +24,7 @@ parameters: EGW, EGS, and EEW.
 | EEW
 | EGS
 
-| AES      | <<zvkns>>            | 128 | 32 | 4
+| AES      | <<zvkned>>            | 128 | 32 | 4
 | SHA256   | <<zvknh,zvknh[ab]>>  | 128 | 32 | 4
 | SHA512   | <<zvknh,zvknhb>>     | 256 | 64 | 4
 | GCM      | <<zvkg>>             | 128 | 32 | 4
