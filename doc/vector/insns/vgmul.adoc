@@ -5,7 +5,7 @@ Synopsis::
 Vector Multiply over GHASH Galois-Field
 
 Mnemonic::
-vgmul.vv vd, vs2, vs1
+vgmul.vv vd, vs2
 
 Encoding::
 [wavedrom, , svg]
@@ -41,13 +41,12 @@ Arguments::
 |===
 
 Description:: 
-A single "iteration" of the GHASH~H~ algorithm is performed.
+A single multiplication of the GHASH~H~ algorithm is performed.
 
 This instruction treats all of the inputs and outputs as 128-bit polynomials and 
 performs operations over GF[2].
-It produces the next partial hash (Y~i+1~) by adding the current partial
-hash (Y~i~) to the cipher text block (X~i~) and then multiplying (over GF(2^128^))
-this sum by the Hash Subkey (H).
+It produces (Y~i+1~) by multiplying  (over GF(2^128^)) the current partial
+hash (Y~i~) by the Hash Subkey (H).
 
 The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
 modulo GHASH's irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1).
