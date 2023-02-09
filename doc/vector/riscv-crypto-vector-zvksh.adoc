@@ -8,7 +8,7 @@ The SM3 secure hash algorithm is specified in _32905-2016: SM3 Cryptographic Has
 cite:[gbt:sm4]
 
 There are other various sources available that describe the SM3 secure hash.
-While not the fina version of the standard,
+While not the final version of the standard,
 link:https://www.rfc-editor.org/rfc/rfc8998.html[RFC 8998 ShangMi (SM) Cipher Suites for TLS 1.3]
 is useful and easy to access.
 
