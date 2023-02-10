@@ -60,6 +60,8 @@ aes-gcm-test
 aes-gcm-test.s
 sha-test
 sha-test.s
+sm3-test
+sm3-test.s
 test-vectors
 zvkb-test
 zvkb-test.s

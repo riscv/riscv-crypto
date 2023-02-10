@@ -20,9 +20,12 @@ Specifically:
   resulting program generates a set of random verification data and applies
   the Zvbb routines to that.
 - zvbc-test.c - shows usage of the Zvbc extensions.
+- sm3-test.c - implements the SM4 hashing using the Zvksh extension. The
+  resulting program runs this implementation against test vectors defined in
+  SM3 IETF draft (see [1]).
 - sm4-test.c - implements the SM4 block cypher using the Zvksed extension. The
   resulting program runs this implementation against test vectors defined in
-  SM4 IETF draft (see [1]).
+  SM4 IETF draft (see [2]).
 
 Pre-requisites
 --------------
@@ -32,8 +35,8 @@ be met:
 
 1. `riscv64-linux-gnu` toolchain available in the `PATH`.
 2. Vector Crypto compatible `binutils-gdb` available in the `PATH` overriding
-   the above toolchain (see [2]).
-3. Vector Crypto compatible Spike available in the `PATH` (see [3]).
+   the above toolchain (see [3]).
+3. Vector Crypto compatible Spike available in the `PATH` (see [4]).
 4. The RISC-V Proxy kernel (`riscv-pk`) compiled and available in
    `~/RISC-V/riscv64-linux-gnu/bin/pk` (can be overridden with the `PK` make
    variable).
@@ -67,12 +70,14 @@ make run-tests TARGET=riscv64-unknown-linux-gnu \
 - `aes-cbc-test` - Build the AES-CBC example.
 - `aes-gcm-test` - Build the AES-GCM example.
 - `sha-test` - Build the SHA example.
+- `sm3-test` - Build the SM3 example.
 - `sm4-test` - Build the SM4 example.
 - `zvbb-test` - Build the Zvbb example.
 - `run-tests` - Build and run all examples.
 - `run-aes-cbc` - Build and run the AES-CBC example in Spike.
 - `run-aes-gcm` - Build and run the AES-GCM example in Spike.
 - `run-sha` - Build and run the SHA example in Spike.
+- `run-sm3` - Build and run the SM3 example in Spike.
 - `run-sm4` - Build and run the SM4 example in Spike.
 - `run-zvbb` - Build and run the Zvbb example in Spike.
 
@@ -87,6 +92,7 @@ See Makefile for more details.
 References
 ----------
 
-- [1] https://datatracker.ietf.org/doc/html/draft-ribose-cfrg-sm4-10
-- [2] FIXME: Add the public binutils-gdb repo here.
-- [3] FIXME: Add the public riscv-isa-sim repo here.
+- [1] https://datatracker.ietf.org/doc/html/draft-oscca-cfrg-sm3-00
+- [2] https://datatracker.ietf.org/doc/html/draft-ribose-cfrg-sm4-10
+- [3] https://github.com/rivosinc/binutils-gdb/tree/vector-crypto
+- [4] https://github.com/rivosinc/riscv-isa-sim/tree/vector-crypto

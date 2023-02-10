@@ -1,0 +1,545 @@
+#ifndef _SM3_TEST_VECTORS_
+#define _SM3_TEST_VECTORS_
+
+#include <stdint.h>
+
+/* Byte-swapping of a 32 bit word as a const-expression. */
+#define BSWAP32(x) \
+  ((((uint32_t)((x) >> 24)) & 0xFF) <<  0 | \
+   (((uint32_t)((x) >> 16)) & 0xFF) <<  8 | \
+   (((uint32_t)((x) >>  8)) & 0xFF) << 16 | \
+   (((uint32_t)((x) >>  0)) & 0xFF) << 24)
+
+/*
+ * For the sake of readability, all the words in test vectors will be written
+ * as-if in big endian (MSB on the left). This way it's easier to compare with
+ * text representation of test vectors present in the SM3 IETF draft. However
+ * to preserve the proper byte ordering in the test vector, 32 bit words have
+ * to be byte swapped on little endian machines.
+ */
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define BE32(x) BSWAP32(x)
+#else
+#define BE32(x) x
+#endif
+
+/* Example 1, From GB/T 32905-2016 */
+/* "abc" */
+__attribute__((aligned(4)))
+static const uint32_t gbt32905m01[1] = {BE32(0x61626300)};
+
+static const int gbt32905l01 = 3;
+
+__attribute__((aligned(16)))
+static const uint32_t gbt32905e01[8] = {
+    BE32(0x66c7f0f4), BE32(0x62eeedd9), BE32(0xd1f2d46b), BE32(0xdc10e4e2),
+    BE32(0x4167c487), BE32(0x5cf2f7a2), BE32(0x297da02b), BE32(0x8f4ba8e0)};
+
+/* Example 2, From GB/T 32905-2016 */
+/*
+ * "abcdabcdabcdabcdabcdabcdabcdabcd" +
+ * "abcdabcdabcdabcdabcdabcdabcdabcd"
+ */
+
+__attribute__((aligned(16)))
+static const uint32_t gbt32905m02[16] = {
+    BE32(0x61626364), BE32(0x61626364), BE32(0x61626364), BE32(0x61626364),
+    BE32(0x61626364), BE32(0x61626364), BE32(0x61626364), BE32(0x61626364),
+    BE32(0x61626364), BE32(0x61626364), BE32(0x61626364), BE32(0x61626364),
+    BE32(0x61626364), BE32(0x61626364), BE32(0x61626364), BE32(0x61626364)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt32905e02[8] = {
+    BE32(0xdebe9ff9), BE32(0x2275b8a1), BE32(0x38604889), BE32(0xc18e5a4d),
+    BE32(0x6fdb70e5), BE32(0x387e5765), BE32(0x293dcba3), BE32(0x9c0c5732)};
+
+__attribute__((aligned(16)))
+static const int gbt32905l02 = 64;
+
+/* GB/T 32918.2-2016 A.2 Example 1 */
+/*
+ * "Z_A = H_256(ENTL_A || ID_A || a || b || x_G || y_G || x_A || y_A)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329182m01[53] = {
+    BE32(0x0090414C), BE32(0x49434531), BE32(0x32334059), BE32(0x41484F4F),
+    BE32(0x2E434F4D), BE32(0x787968B4), BE32(0xFA32C3FD), BE32(0x2417842E),
+    BE32(0x73BBFEFF), BE32(0x2F3C848B), BE32(0x6831D7E0), BE32(0xEC65228B),
+    BE32(0x3937E498), BE32(0x63E4C6D3), BE32(0xB23B0C84), BE32(0x9CF84241),
+    BE32(0x484BFE48), BE32(0xF61D59A5), BE32(0xB16BA06E), BE32(0x6E12D1DA),
+    BE32(0x27C5249A), BE32(0x421DEBD6), BE32(0x1B62EAB6), BE32(0x746434EB),
+    BE32(0xC3CC315E), BE32(0x32220B3B), BE32(0xADD50BDC), BE32(0x4C4E6C14),
+    BE32(0x7FEDD43D), BE32(0x0680512B), BE32(0xCBB42C07), BE32(0xD47349D2),
+    BE32(0x153B70C4), BE32(0xE5D7FDFC), BE32(0xBFA36EA1), BE32(0xA85841B9),
+    BE32(0xE46E09A2), BE32(0x0AE4C779), BE32(0x8AA0F119), BE32(0x471BEE11),
+    BE32(0x825BE462), BE32(0x02BB79E2), BE32(0xA5844495), BE32(0xE97C04FF),
+    BE32(0x4DF2548A), BE32(0x7C0240F8), BE32(0x8F1CD4E1), BE32(0x6352A73C),
+    BE32(0x17B7F16F), BE32(0x07353E53), BE32(0xA176D684), BE32(0xA9FE0C6B),
+    BE32(0xB798E857)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329182e01[8] = {
+    BE32(0xF4A38489), BE32(0xE32B45B6), BE32(0xF876E3AC), BE32(0x2168CA39),
+    BE32(0x2362DC8F), BE32(0x23459C1D), BE32(0x1146FC3D), BE32(0xBFB7BC9A)};
+
+static const int gbt329182l01 = 212;
+
+/* GB/T 32918.2-2016 A.2 Example 2 */
+/*
+ * "e = H_256(M)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329182m02[12] = {
+    BE32(0xF4A38489), BE32(0xE32B45B6), BE32(0xF876E3AC), BE32(0x2168CA39),
+    BE32(0x2362DC8F), BE32(0x23459C1D), BE32(0x1146FC3D), BE32(0xBFB7BC9A),
+    BE32(0x6D657373), BE32(0x61676520), BE32(0x64696765), BE32(0x73740000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329182e02[8] = {
+    BE32(0xB524F552), BE32(0xCD82B8B0), BE32(0x28476E00), BE32(0x5C377FB1),
+    BE32(0x9A87E6FC), BE32(0x682D48BB), BE32(0x5D42E3D9), BE32(0xB9EFFE76)};
+
+static const int gbt329182l02 = 46;
+
+/* GB/T 32918.2-2016 A.3 Example 1 */
+/*
+ * "Z_A = H_256(ENTL_A || ID_A || a || b || x_G || y_G || x_A || y_A)
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329182m03[55] = {
+    BE32(0x0090414C), BE32(0x49434531), BE32(0x32334059), BE32(0x41484F4F),
+    BE32(0x2E434F4D), BE32(0x00000000), BE32(0x00000000), BE32(0x00000000),
+    BE32(0x00000000), BE32(0x00000000), BE32(0x00000000), BE32(0x00000000),
+    BE32(0x00000000), BE32(0x0000E78B), BE32(0xCD09746C), BE32(0x202378A7),
+    BE32(0xE72B12BC), BE32(0xE00266B9), BE32(0x627ECB0B), BE32(0x5A25367A),
+    BE32(0xD1AD4CC6), BE32(0x242B00CD), BE32(0xB9CA7F1E), BE32(0x6B0441F6),
+    BE32(0x58343F4B), BE32(0x10297C0E), BE32(0xF9B64910), BE32(0x82400A62),
+    BE32(0xE7A74857), BE32(0x35FADD01), BE32(0x3DE74DA6), BE32(0x5951C4D7),
+    BE32(0x6DC89220), BE32(0xD5F7777A), BE32(0x611B1C38), BE32(0xBAE260B1),
+    BE32(0x75951DC8), BE32(0x060C2B3E), BE32(0x01659616), BE32(0x45281A86),
+    BE32(0x26607B91), BE32(0x7F657D7E), BE32(0x9382F1EA), BE32(0x5CD931F4),
+    BE32(0x0F6627F3), BE32(0x57542653), BE32(0xB2016865), BE32(0x22130D59),
+    BE32(0x0FB8DE63), BE32(0x5D8FCA71), BE32(0x5CC6BF3D), BE32(0x05BEF3F7),
+    BE32(0x5DA5D543), BE32(0x45444816), BE32(0x66120000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329182e03[8] = {
+    BE32(0x26352AF8), BE32(0x2EC19F20), BE32(0x7BBC6F94), BE32(0x74E11E90),
+    BE32(0xCE0F7DDA), BE32(0xCE03B27F), BE32(0x801817E8), BE32(0x97A81FD5)};
+
+static const int gbt329182l03 = 218;
+
+/* GB/T 32918.2-2016 A.3 Example 2 */
+/*
+ * "e = H_256(M)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329182m04[12] = {
+    BE32(0x26352AF8), BE32(0x2EC19F20), BE32(0x7BBC6F94), BE32(0x74E11E90),
+    BE32(0xCE0F7DDA), BE32(0xCE03B27F), BE32(0x801817E8), BE32(0x97A81FD5),
+    BE32(0x6D657373), BE32(0x61676520), BE32(0x64696765), BE32(0x73740000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329182e04[8] = {
+    BE32(0xAD673CBD), BE32(0xA3114171), BE32(0x29A9EAA5), BE32(0xF9AB1AA1),
+    BE32(0x633AD477), BE32(0x18A84DFD), BE32(0x46C17C6F), BE32(0xA0AA3B12)};
+
+static const int gbt329182l04 = 46;
+
+/* GB/T 32918.3-2016 A.2 Example 1 */
+/*
+ * "Z_A = H_256(ENTL_A || ID_A || a || b || x_G || y_G || x_A || y_A)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m01[53] = {
+    BE32(0x0090414C), BE32(0x49434531), BE32(0x32334059), BE32(0x41484F4F),
+    BE32(0x2E434F4D), BE32(0x787968B4), BE32(0xFA32C3FD), BE32(0x2417842E),
+    BE32(0x73BBFEFF), BE32(0x2F3C848B), BE32(0x6831D7E0), BE32(0xEC65228B),
+    BE32(0x3937E498), BE32(0x63E4C6D3), BE32(0xB23B0C84), BE32(0x9CF84241),
+    BE32(0x484BFE48), BE32(0xF61D59A5), BE32(0xB16BA06E), BE32(0x6E12D1DA),
+    BE32(0x27C5249A), BE32(0x421DEBD6), BE32(0x1B62EAB6), BE32(0x746434EB),
+    BE32(0xC3CC315E), BE32(0x32220B3B), BE32(0xADD50BDC), BE32(0x4C4E6C14),
+    BE32(0x7FEDD43D), BE32(0x0680512B), BE32(0xCBB42C07), BE32(0xD47349D2),
+    BE32(0x153B70C4), BE32(0xE5D7FDFC), BE32(0xBFA36EA1), BE32(0xA85841B9),
+    BE32(0xE46E09A2), BE32(0x3099093B), BE32(0xF3C137D8), BE32(0xFCBBCDF4),
+    BE32(0xA2AE50F3), BE32(0xB0F216C3), BE32(0x122D7942), BE32(0x5FE03A45),
+    BE32(0xDBFE1655), BE32(0x3DF79E8D), BE32(0xAC1CF0EC), BE32(0xBAA2F2B4),
+    BE32(0x9D51A4B3), BE32(0x87F2EFAF), BE32(0x48233908), BE32(0x6A27A8E0),
+    BE32(0x5BAED98B)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e01[8] = {
+    BE32(0xE4D1D0C3), BE32(0xCA4C7F11), BE32(0xBC8FF8CB), BE32(0x3F4C02A7),
+    BE32(0x8F108FA0), BE32(0x98E51A66), BE32(0x8487240F), BE32(0x75E20F31)};
+
+static const int gbt329183l01 = 212;
+
+/* GB/T 32918.3-2016 A.2 Example 2 */
+/*
+ * "Z_B = H_256(ENTL_B || ID_B || a || b || x_G || y_G || x_B || y_B)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m02[53] = {
+    BE32(0x00884249), BE32(0x4C4C3435), BE32(0x36405941), BE32(0x484F4F2E),
+    BE32(0x434F4D78), BE32(0x7968B4FA), BE32(0x32C3FD24), BE32(0x17842E73),
+    BE32(0xBBFEFF2F), BE32(0x3C848B68), BE32(0x31D7E0EC), BE32(0x65228B39),
+    BE32(0x37E49863), BE32(0xE4C6D3B2), BE32(0x3B0C849C), BE32(0xF8424148),
+    BE32(0x4BFE48F6), BE32(0x1D59A5B1), BE32(0x6BA06E6E), BE32(0x12D1DA27),
+    BE32(0xC5249A42), BE32(0x1DEBD61B), BE32(0x62EAB674), BE32(0x6434EBC3),
+    BE32(0xCC315E32), BE32(0x220B3BAD), BE32(0xD50BDC4C), BE32(0x4E6C147F),
+    BE32(0xEDD43D06), BE32(0x80512BCB), BE32(0xB42C07D4), BE32(0x7349D215),
+    BE32(0x3B70C4E5), BE32(0xD7FDFCBF), BE32(0xA36EA1A8), BE32(0x5841B9E4),
+    BE32(0x6E09A224), BE32(0x5493D446), BE32(0xC38D8CC0), BE32(0xF1183746),
+    BE32(0x90E7DF63), BE32(0x3A8A4BFB), BE32(0x3329B5EC), BE32(0xE604B2B4),
+    BE32(0xF37F4353), BE32(0xC0869F4B), BE32(0x9E17773D), BE32(0xE68FEC45),
+    BE32(0xE14904E0), BE32(0xDEA45BF6), BE32(0xCECF9918), BE32(0xC85EA047),
+    BE32(0xC60A4C00)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e02[8] = {
+    BE32(0x6B4B6D0E), BE32(0x276691BD), BE32(0x4A11BF72), BE32(0xF4FB501A),
+    BE32(0xE309FDAC), BE32(0xB72FA6CC), BE32(0x336E6656), BE32(0x119ABD67)};
+
+static const int gbt329183l02 = 211;
+
+/* GB/T 32918.3-2016 A.2 Example 3 */
+/*
+ * "Hash(x_V || Z_A || Z_B || x_1 || y_1 || x_2 || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m03[56] = {
+    BE32(0x47C82653), BE32(0x4DC2F6F1), BE32(0xFBF28728), BE32(0xDD658F21),
+    BE32(0xE174F481), BE32(0x79ACEF29), BE32(0x00F8B7F5), BE32(0x66E40905),
+    BE32(0xE4D1D0C3), BE32(0xCA4C7F11), BE32(0xBC8FF8CB), BE32(0x3F4C02A7),
+    BE32(0x8F108FA0), BE32(0x98E51A66), BE32(0x8487240F), BE32(0x75E20F31),
+    BE32(0x6B4B6D0E), BE32(0x276691BD), BE32(0x4A11BF72), BE32(0xF4FB501A),
+    BE32(0xE309FDAC), BE32(0xB72FA6CC), BE32(0x336E6656), BE32(0x119ABD67),
+    BE32(0x6CB56338), BE32(0x16F4DD56), BE32(0x0B1DEC45), BE32(0x8310CBCC),
+    BE32(0x6856C095), BE32(0x05324A6D), BE32(0x23150C40), BE32(0x8F162BF0),
+    BE32(0x0D6FCF62), BE32(0xF1036C0A), BE32(0x1B6DACCF), BE32(0x57399223),
+    BE32(0xA65F7D7B), BE32(0xF2D9637E), BE32(0x5BBBEB85), BE32(0x7961BF1A),
+    BE32(0x1799B2A2), BE32(0xC7782953), BE32(0x00D9A232), BE32(0x5C686129),
+    BE32(0xB8F2B533), BE32(0x7B3DCF45), BE32(0x14E8BBC1), BE32(0x9D900EE5),
+    BE32(0x54C9288C), BE32(0x82733EFD), BE32(0xF7808AE7), BE32(0xF27D0E73),
+    BE32(0x2F7C73A7), BE32(0xD9AC98B7), BE32(0xD8740A91), BE32(0xD0DB3CF4)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e03[8] = {
+    BE32(0xFF49D95B), BE32(0xD45FCE99), BE32(0xED54A8AD), BE32(0x7A709110),
+    BE32(0x9F513944), BE32(0x42916BD1), BE32(0x54D1DE43), BE32(0x79D97647)};
+
+static const int gbt329183l03 = 224;
+
+/* GB/T 32918.3-2016 A.2 Example 4 */
+/*
+ * "S_B = 0x02 || y_V || Hash(x_V || Z_A || Z_B || x_1 || y_1 || x_2 || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m04[17] = {
+    BE32(0x022AF86E), BE32(0xFE732CF1), BE32(0x2AD0E09A), BE32(0x1F2556CC),
+    BE32(0x650D9CCC), BE32(0xE3E24986), BE32(0x6BBB5C68), BE32(0x46A4C4A2),
+    BE32(0x95FF49D9), BE32(0x5BD45FCE), BE32(0x99ED54A8), BE32(0xAD7A7091),
+    BE32(0x109F5139), BE32(0x4442916B), BE32(0xD154D1DE), BE32(0x4379D976),
+    BE32(0x47000000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e04[8] = {
+    BE32(0x284C8F19), BE32(0x8F141B50), BE32(0x2E81250F), BE32(0x1581C7E9),
+    BE32(0xEEB4CA69), BE32(0x90F9E02D), BE32(0xF388B454), BE32(0x71F5BC5C)};
+
+static const int gbt329183l04 = 65;
+
+/* GB/T 32918.3-2016 A.2 Example 5 */
+/*
+ * "S_A = 0x03 || y_V || Hash(x_V || Z_A || Z_B || x_1 || y_1 || x_2 || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m05[17] = {
+    BE32(0x032AF86E), BE32(0xFE732CF1), BE32(0x2AD0E09A), BE32(0x1F2556CC),
+    BE32(0x650D9CCC), BE32(0xE3E24986), BE32(0x6BBB5C68), BE32(0x46A4C4A2),
+    BE32(0x95FF49D9), BE32(0x5BD45FCE), BE32(0x99ED54A8), BE32(0xAD7A7091),
+    BE32(0x109F5139), BE32(0x4442916B), BE32(0xD154D1DE), BE32(0x4379D976),
+    BE32(0x47000000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e05[8] = {
+    BE32(0x23444DAF), BE32(0x8ED75343), BE32(0x66CB901C), BE32(0x84B3BDBB),
+    BE32(0x63504F40), BE32(0x65C1116C), BE32(0x91A4C006), BE32(0x97E6CF7A)};
+
+static const int gbt329183l05 = 65;
+
+/* GB/T 32918.3-2016 A.3 Example 2 */
+/*
+ * "Z_B = H_256(ENTL_B || ID_B || a || b || x_G || y_G || x_B || y_B)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m07[55] = {
+    BE32(0x00884249), BE32(0x4C4C3435), BE32(0x36405941), BE32(0x484F4F2E),
+    BE32(0x434F4D00), BE32(0x00000000), BE32(0x00000000), BE32(0x00000000),
+    BE32(0x00000000), BE32(0x00000000), BE32(0x00000000), BE32(0x00000000),
+    BE32(0x00000000), BE32(0x00E78BCD), BE32(0x09746C20), BE32(0x2378A7E7),
+    BE32(0x2B12BCE0), BE32(0x0266B962), BE32(0x7ECB0B5A), BE32(0x25367AD1),
+    BE32(0xAD4CC624), BE32(0x2B00CDB9), BE32(0xCA7F1E6B), BE32(0x0441F658),
+    BE32(0x343F4B10), BE32(0x297C0EF9), BE32(0xB6491082), BE32(0x400A62E7),
+    BE32(0xA7485735), BE32(0xFADD013D), BE32(0xE74DA659), BE32(0x51C4D76D),
+    BE32(0xC89220D5), BE32(0xF7777A61), BE32(0x1B1C38BA), BE32(0xE260B175),
+    BE32(0x951DC806), BE32(0x0C2B3E00), BE32(0x34297DD8), BE32(0x3AB14D5B),
+    BE32(0x393B6712), BE32(0xF32B2F2E), BE32(0x938D4690), BE32(0xB095424B),
+    BE32(0x89DA880C), BE32(0x52D4A7D9), BE32(0x0199BBF1), BE32(0x1AC95A0E),
+    BE32(0xA34BBD00), BE32(0xCA50B93E), BE32(0xC24ACB68), BE32(0x335D20BA),
+    BE32(0x5DCFE3B3), BE32(0x3BDBD2B6), BE32(0x2D000000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e07[8] = {
+    BE32(0x557BAD30), BE32(0xE183559A), BE32(0xEEC3B225), BE32(0x6E1C7C11),
+    BE32(0xF870D22B), BE32(0x165D015A), BE32(0xCF9465B0), BE32(0x9B87B527)};
+
+static const int gbt329183l07 = 217;
+
+/* GB/T 32918.3-2016 A.3 Example 3 */
+/*
+ * "Hash(x_V || Z_A || Z_B || x_1 || y_1 || x_2 || y_2)"
+*/
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m08[58] = {
+    BE32(0x00DADD08), BE32(0x7406221D), BE32(0x657BC3FA), BE32(0x79FF329B),
+    BE32(0xB022E9CB), BE32(0x7DDFCFCC), BE32(0xFE277BE8), BE32(0xCD4AE9B9),
+    BE32(0x54ECF008), BE32(0x0215977B), BE32(0x2E5D6D61), BE32(0xB98A9944),
+    BE32(0x2F03E880), BE32(0x3DC39E34), BE32(0x9F8DCA56), BE32(0x21A9ACDF),
+    BE32(0x2B557BAD), BE32(0x30E18355), BE32(0x9AEEC3B2), BE32(0x256E1C7C),
+    BE32(0x11F870D2), BE32(0x2B165D01), BE32(0x5ACF9465), BE32(0xB09B87B5),
+    BE32(0x27018107), BE32(0x6543ED19), BE32(0x058C38B3), BE32(0x13D73992),
+    BE32(0x1D46B800), BE32(0x94D961A1), BE32(0x3673D4A5), BE32(0xCF8C7159),
+    BE32(0xE30401D8), BE32(0xCFFF7CA2), BE32(0x7A01A2E8), BE32(0x8C186737),
+    BE32(0x48FDE9A7), BE32(0x4C1F9B45), BE32(0x646ECA09), BE32(0x97293C15),
+    BE32(0xC34DD800), BE32(0x2A4832B4), BE32(0xDCD399BA), BE32(0xAB3FFFE7),
+    BE32(0xDD6CE6ED), BE32(0x68CC43FF), BE32(0xA5F2623B), BE32(0x9BD04E46),
+    BE32(0x8D322A2A), BE32(0x0016599B), BE32(0xB52ED9EA), BE32(0xFAD01CFA),
+    BE32(0x453CF305), BE32(0x2ED60184), BE32(0xD2EECFD4), BE32(0x2B52DB74),
+    BE32(0x110B984C), BE32(0x23000000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e08[8] = {
+    BE32(0xE05FE287), BE32(0xB73B0CE6), BE32(0x639524CD), BE32(0x86694311),
+    BE32(0x562914F4), BE32(0xF6A34241), BE32(0x01D885F8), BE32(0x8B05369C)};
+
+static const int gbt329183l08 = 229;
+
+/* GB/T 32918.3-2016 A.3 Example 4 */
+/*
+ * "S_B = 0x02 || y_V || Hash(x_V || Z_A || Z_B || x_1 || y_1 || x_2 || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m09[17] = {
+    BE32(0x0201F046), BE32(0x4B1E8168), BE32(0x4E5ED6EF), BE32(0x281B5562),
+    BE32(0x4EF46CAA), BE32(0x3B2D3748), BE32(0x4372D916), BE32(0x10B69825),
+    BE32(0x2CC9E05F), BE32(0xE287B73B), BE32(0x0CE66395), BE32(0x24CD8669),
+    BE32(0x43115629), BE32(0x14F4F6A3), BE32(0x424101D8), BE32(0x85F88B05),
+    BE32(0x369C0000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e09[8] = {
+    BE32(0x4EB47D28), BE32(0xAD3906D6), BE32(0x244D01E0), BE32(0xF6AEC73B),
+    BE32(0x0B51DE15), BE32(0x74C13798), BE32(0x184E4833), BE32(0xDBAE295A)};
+
+static const int gbt329183l09 = 66;
+
+/* GB/T 32918.3-2016 A.3 Example 5 */
+/*
+ * "S_A = 0x03 || y_V || Hash(x_V || Z_A || Z_B || x_1 || y_1 || x_2 || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329183m10[17] = {
+    BE32(0x0301F046), BE32(0x4B1E8168), BE32(0x4E5ED6EF), BE32(0x281B5562),
+    BE32(0x4EF46CAA), BE32(0x3B2D3748), BE32(0x4372D916), BE32(0x10B69825),
+    BE32(0x2CC9E05F), BE32(0xE287B73B), BE32(0x0CE66395), BE32(0x24CD8669),
+    BE32(0x43115629), BE32(0x14F4F6A3), BE32(0x424101D8), BE32(0x85F88B05),
+    BE32(0x369C0000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329183e10[8] = {
+    BE32(0x588AA670), BE32(0x64F24DC2), BE32(0x7CCAA1FA), BE32(0xB7E27DFF),
+    BE32(0x811D500A), BE32(0xD7EF2FB8), BE32(0xF69DDF48), BE32(0xCC0FECB7)};
+
+static const int gbt329183l10 = 66;
+
+/* GB/T 32918.4-2016 A.2 Example 1 */
+/*
+ * "C_3 = Hash(x_2 || M || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329184m01[17] = {
+    BE32(0x57E7B636), BE32(0x23FAE5F0), BE32(0x8CDA468E), BE32(0x872A20AF),
+    BE32(0xA03DED41), BE32(0xBF140377), BE32(0x656E6372), BE32(0x79707469),
+    BE32(0x6F6E2073), BE32(0x74616E64), BE32(0x6172640E), BE32(0x040DC83A),
+    BE32(0xF31A6799), BE32(0x1F2B01EB), BE32(0xF9EFD888), BE32(0x1F0A0493),
+    BE32(0x00060300)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329184e01[8] = {
+    BE32(0x6AFB3BCE), BE32(0xBD76F82B), BE32(0x252CE5EB), BE32(0x25B57996),
+    BE32(0x86902B8C), BE32(0xF2FD8753), BE32(0x6E55EF76), BE32(0x03B09E7C)};
+
+static const int gbt329184l01 = 67;
+
+/* GB/T 32918.4-2016 A.2 Example 2 */
+/*
+ * "C_3 = Hash(x_2 || M || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329184m02[21] = {
+    BE32(0x64D20D27), BE32(0xD0632957), BE32(0xF8028C1E), BE32(0x024F6B02),
+    BE32(0xEDF23102), BE32(0xA566C932), BE32(0xAE8BD613), BE32(0xA8E865FE),
+    BE32(0x656E6372), BE32(0x79707469), BE32(0x6F6E2073), BE32(0x74616E64),
+    BE32(0x61726458), BE32(0xD225ECA7), BE32(0x84AE300A), BE32(0x81A2D482),
+    BE32(0x81A828E1), BE32(0xCEDF11C4), BE32(0x21909984), BE32(0x02653750),
+    BE32(0x77BF7800)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329184e02[8] = {
+    BE32(0x9C3D7360), BE32(0xC30156FA), BE32(0xB7C80A02), BE32(0x76712DA9),
+    BE32(0xD8094A63), BE32(0x4B766D3A), BE32(0x285E0748), BE32(0x0653426D)};
+
+static const int gbt329184l02 = 83;
+
+/* GB/T 32918.4-2016 A.3 Example 1 */
+/*
+ * "C_3 = Hash(x_2 || M || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329184m03[18] = {
+    BE32(0x01C6271B), BE32(0x31F6BE39), BE32(0x6A4166C0), BE32(0x616CF4A8),
+    BE32(0xACDA5BEF), BE32(0x4DCBF2DD), BE32(0x42656E63), BE32(0x72797074),
+    BE32(0x696F6E20), BE32(0x7374616E), BE32(0x64617264), BE32(0x0147AF35),
+    BE32(0xDFA1BFE2), BE32(0xF161521B), BE32(0xCF59BAB8), BE32(0x3564868D),
+    BE32(0x92958817), BE32(0x35000000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329184e03[8] = {
+    BE32(0xF0A41F6F), BE32(0x48AC723C), BE32(0xECFC4B76), BE32(0x7299A5E2),
+    BE32(0x5C064167), BE32(0x9FBD2D4D), BE32(0x20E9FFD5), BE32(0xB9F0DAB8)};
+
+static const int gbt329184l03 = 69;
+
+/* GB/T 32918.4-2016 A.3 Example 2 */
+/*
+ * "C_3 = Hash(x_2 || M || y_2)"
+ */
+__attribute__((aligned(16)))
+static const uint32_t gbt329184m04[22] = {
+    BE32(0x0083E628), BE32(0xCF701EE3), BE32(0x141E8873), BE32(0xFE55936A),
+    BE32(0xDF24963F), BE32(0x5DC9C648), BE32(0x0566C80F), BE32(0x8A1D8CC5),
+    BE32(0x1B656E63), BE32(0x72797074), BE32(0x696F6E20), BE32(0x7374616E),
+    BE32(0x64617264), BE32(0x01524C64), BE32(0x7F0C0412), BE32(0xDEFD468B),
+    BE32(0xDA3AE0E5), BE32(0xA80FCC8F), BE32(0x5C990FEE), BE32(0x11602929),
+    BE32(0x232DCD9F), BE32(0x36000000)};
+
+__attribute__((aligned(16)))
+static const uint32_t gbt329184e04[8] = {
+    BE32(0x73A48625), BE32(0xD3758FA3), BE32(0x7B3EAB80), BE32(0xE9CFCABA),
+    BE32(0x665E3199), BE32(0xEA15A1FA), BE32(0x8189D96F), BE32(0x579125E4)};
+
+static const int gbt329184l04 = 85;
+
+static struct sm3_test_vector sm3_test_vectors[] = {
+
+    {
+        .message = gbt32905m01,
+        .expected = gbt32905e01,
+        .message_len = gbt32905l01,
+    },
+    {
+        .message = gbt32905m02,
+        .expected = gbt32905e02,
+        .message_len = gbt32905l02,
+    },
+    {
+        .message = gbt329182m01,
+        .expected = gbt329182e01,
+        .message_len = gbt329182l01,
+    },
+    {
+        .message = gbt329182m02,
+        .expected = gbt329182e02,
+        .message_len = gbt329182l02,
+    },
+    {
+        .message = gbt329182m03,
+        .expected = gbt329182e03,
+        .message_len = gbt329182l03,
+    },
+    {
+        .message = gbt329182m04,
+        .expected = gbt329182e04,
+        .message_len = gbt329182l04,
+    },
+    {
+        .message = gbt329183m01,
+        .expected = gbt329183e01,
+        .message_len = gbt329183l01,
+    },
+    {
+        .message = gbt329183m02,
+        .expected = gbt329183e02,
+        .message_len = gbt329183l02,
+    },
+    {
+        .message = gbt329183m03,
+        .expected = gbt329183e03,
+        .message_len = gbt329183l03,
+    },
+    {
+        .message = gbt329183m04,
+        .expected = gbt329183e04,
+        .message_len = gbt329183l04,
+    },
+    {
+        .message = gbt329183m05,
+        .expected = gbt329183e05,
+        .message_len = gbt329183l05,
+    },
+    {
+        .message = gbt329183m07,
+        .expected = gbt329183e07,
+        .message_len = gbt329183l07,
+    },
+    {
+        .message = gbt329183m08,
+        .expected = gbt329183e08,
+        .message_len = gbt329183l08,
+    },
+    {
+        .message = gbt329183m09,
+        .expected = gbt329183e09,
+        .message_len = gbt329183l09,
+    },
+    {
+        .message = gbt329183m10,
+        .expected = gbt329183e10,
+        .message_len = gbt329183l10,
+    },
+    {
+        .message = gbt329184m01,
+        .expected = gbt329184e01,
+        .message_len = gbt329184l01,
+    },
+    {
+        .message = gbt329184m02,
+        .expected = gbt329184e02,
+        .message_len = gbt329184l02,
+    },
+    {
+        .message = gbt329184m03,
+        .expected = gbt329184e03,
+        .message_len = gbt329184l03,
+    },
+    {
+        .message = gbt329184m04,
+        .expected = gbt329184e04,
+        .message_len = gbt329184l04,
+    },
+
+};
+
+#endif
