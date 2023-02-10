@@ -1,4 +1,24 @@
 #!/usr/bin/python3
+# SPDX-FileCopyrightText: Copyright (c) 2022 by Rivos Inc.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+#
+# DISCLAIMER OF WARRANTY:
+#  This code is not intended for use in real cryptographic applications,
+#  has not been reviewed, even less audited by cryptography or security
+#  experts, etc.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY EXPRESS
+#  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+#  IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+#  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+#  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+#  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+#  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+#  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 
 import argparse
 import array
@@ -46,13 +66,13 @@ class GenTestCase:
             self.columns = ['Msg', 'MD']
             self.staticParameters = ['MD']
             self.dynamicParameters = ['Msg']
-            self.testStructName = "sha256_test"
+            self.testStructName = "sha_test"
             self.testFileNames = [os.path.join(katdir, "shabytetestvectors", "SHA256*.rsp")]
         elif cipherType == CipherTypes.sha512:
             self.columns = ['Msg', 'MD']
             self.staticParameters = ['MD']
             self.dynamicParameters = ['Msg']
-            self.testStructName = "sha512_test"
+            self.testStructName = "sha_test"
             self.testFileNames = [os.path.join(katdir, "shabytetestvectors", "SHA512*.rsp")]
         else:
             raise ValueError("Unsupported cipher type: " + cipherType)
@@ -155,13 +175,6 @@ class GenTestCase:
             self.testStruct.append("    .encrypt = true,\n")
         else:
             self.testStruct.append("    .encrypt = false,\n")
-
-        if self.cipherType == CipherTypes.gcm:
-            if 'FAIL' in data.keys():
-                self.testStruct.append("    .expect_fail = true\n")
-            else:
-                self.testStruct.append("    .expect_fail = false\n")
-
 
     def writeTestFile(self, testName):
         fp = open(os.path.join(outdir, testName + ".h"), "w")
