@@ -13,12 +13,13 @@ Specifically:
 - aes-cbc-test.c - implements the AES-CBC with a 128 or 256 bit key using the
   Zvkns extension. The resulting program runs this implementation against NIST
   Known Answer Tests.
-- aes-gcm-test.c - implements the AES-GCM with a 128 or 256 bit key using Zvkns
-  and Zvbb extensions. The resulting program runs this implementation against
-  NIST Known Answer Tests.
+- aes-gcm-test.c - implements the AES-GCM with a 128 or 256 bit key using Zvkns,
+  Zvkg, Zvbb, and Zvbc extensions. The resulting program runs
+  this implementation against NIST Known Answer Tests.
 - zvbb-test.c - shows proper usage of instructions in the Zvbb extension. The
   resulting program generates a set of random verification data and applies
   the Zvbb routines to that.
+- zvbc-test.c - shows usage of the Zvbc extensions.
 - sm4-test.c - implements the SM4 block cypher using the Zvksed extension. The
   resulting program runs this implementation against test vectors defined in
   SM4 IETF draft (see [1]).

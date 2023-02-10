@@ -22,7 +22,7 @@ AS?=$(TARGET)-as
 CC?=$(TARGET)-gcc
 LD?=$(TARGET)-gcc
 
-MARCH_EXT_FLAGS=_zvbb_zvbc_zvkned
+MARCH_EXT_FLAGS=_zvbb_zvbc_zvkg_zvkned
 CFLAGS?=-march=rv64gcv$(MARCH_EXT_FLAGS)
 CFLAGS+=-Wall
 LDFLAGS+=-static
@@ -68,7 +68,9 @@ ASM_OBJECTS=\
 	zvb-ghash.o \
 	zvbb.o \
 	zvbc.o \
+	zvkg.o \
 	zvkned.o \
+	zvknh.o \
 
 default: aes-cbc-test aes-gcm-test zvbb-test zvbc-test
 
@@ -90,7 +92,7 @@ $(ASM_OBJECTS): %.o: %.s
 aes-cbc-test: aes-cbc-test.o zvkned.o log.o vlen-bits.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
-aes-gcm-test: aes-gcm-test.o zvb-ghash.o zvkned.o log.o vlen-bits.o
+aes-gcm-test: aes-gcm-test.o zvb-ghash.o zvkg.o zvkned.o log.o vlen-bits.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
 zvbb-test: zvbb-test.o zvbb.o log.o vlen-bits.o
