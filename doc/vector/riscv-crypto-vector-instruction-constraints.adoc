@@ -24,21 +24,22 @@ _illegal instruction exception_.
 |===
 
 LMUL constraints::
-For element-group instructions, LMUL*VLEN must always be at least as large as EGW, otherwise an
-_illegal instruction exception_ is raised, even if vl=0.
+For element-group instructions, `LMUL`*`VLEN` must always be at least as large as `EGW`, otherwise an
+_illegal instruction exception_ is raised, even if `vl`=0.
 
-Affected instructions:
 [%autowidth]
-[%header,cols="4,4"]
+[%header,cols="4,2,2"]
 |===
-| Instructions 
-| EGS
+| Instructions
+| SEW 
+| EGW
 
-| vaes*   | 4
-| vsha2*  | 4
-| vgh*    | 4
-| vsm3*   | 8 
-| vsm4*   | 4
+| vaes*   | 32 | 128
+| vsha2*  | 32 | 128
+| vsha2*  | 64 | 256
+| vgh*    | 32 | 128
+| vsm3*   | 32 | 256 
+| vsm4*   | 32 | 128
 
 |===
 
