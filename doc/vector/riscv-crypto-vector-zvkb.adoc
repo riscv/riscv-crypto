@@ -22,6 +22,6 @@ data-independent timing.
 | vror.[vv,vx,vi]    | <<insns-vror>>
 | vbrev8.v           | <<insns-vbrev8>>
 | vrev8.v            | <<insns-vrev8>>
-| vandn.[vv,vx,vi]   | <<insns-vandn>>
+| vandn.[vv,vx]   | <<insns-vandn>>
 |===
 
