@@ -90,8 +90,8 @@ the corresponding elements of `vs1` (vector-vector), integer register `rs1`
 Only the low log2(`SEW`) bits of the rotate-amount value are used, all other
 bits are ignored.
 
-This instruction must always be implemented such that its execution latency does not depend
-on the data being operated upon.
+// This instruction must always be implemented such that its execution latency does not depend
+// on the data being operated upon.
 
 Operation::
 [source,sail]

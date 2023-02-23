@@ -1,0 +1,187 @@
+[[zvkt,Zvkt]]
+=== `Zvkt` - Vector Data-Independent Execution Latency
+
+The Zvkt extension requires all implemented instructions from the following list to be
+executed with data-independent execution latency as defined in the 
+link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
+
+The data-independent execution latency (DIEL) applies to all _data operands_ of an instruction, even those that are not a
+part of the body or that are inactove. However, DIEL does not apply to other values such as vl, vtype, and the mask.
+In some cases --- which are explicitly specified in the lists below --- operands that are used as control rather than data
+and are exempt from DIEL.
+
+[NOTE]
+====
+It is important that the _values_ of elements that are not in the body are that are masked off do not affect the execution
+latency of the instruction. Sometime such elements contain data that also needs to be protected.
+====
+
+==== All <<Zvkb>> instructions:
+- vclmul.v[vx]
+- vclmulh.v[vx]
+- vrol.v[vx]
+- vror.v[vxi]
+- vbrev8.v
+- rev8.v
+- vandn.v[vx]
+
+==== The `vslideup` and `vslidedown` Instructions
+The in `rs1` and `uimm` are used to specify the slide amount and are exempt from DIEL.
+
+- vslideup.v[xi]
+- vslidedown.v[xi]
+
+=== The `vcompress` and `vrgather` instructions
+The values in `vs1` are used for control and are exempt from DIEL.
+
+- vcompress.vm
+- vrgather.vv
+- vrgatherei16.vv
+
+=== All othe instructions (to be grouped)
+
+=== Add
+- vadd	vi	Add
+- vadd	vv	Add
+- vadd	vx	Add
+- vrsub	vi	Add
+- vrsub	vx	Add
+- vsub	vv	Add
+- vsub	vx	Add
+- vwadd	vv	Add
+- vwadd	vx	Add
+- vwadd	wv	Add
+- vwadd	wx	Add
+- vwaddu	vv	Add
+- vwaddu	vx	Add
+- vwaddu	wv	Add
+- vwaddu	wx	Add
+- vwsub	vv	Add
+- vwsub	vx	Add
+- vwsub	wv	Add
+- vwsub	wx	Add
+- vwsubu	vv	Add
+- vwsubu	vx	Add
+- vwsubu	wv	Add
+- vwsubu	wx	Add
+- vadc	vim	Add-carry
+- vadc	vvm	Add-carry
+- vadc	vxm	Add-carry
+- vmadc	vi	Add-carry
+- vmadc	vim	Add-carry
+- vmadc	vv	Add-carry
+- vmadc	vvm	Add-carry
+- vmadc	vx	Add-carry
+- vmadc	vxm	Add-carry
+- vmsbc	vv	Add-carry
+- vmsbc	vvm	Add-carry
+- vmsbc	vx	Add-carry
+- vmsbc	vxm	Add-carry
+- vsbc	vvm	Add-carry
+- vsbc	vxm	Add-carry
+- vmseq	vi	Compare
+- vmseq	vv	Compare
+- vmseq	vx	Compare
+- vmsgt	vi	Compare
+- vmsgt	vx	Compare
+- vmsgtu	vi	Compare
+- vmsgtu	vx	Compare
+- vmsle	vi	Compare
+- vmsle	vv	Compare
+- vmsle	vx	Compare
+- vmsleu	vi	Compare
+- vmsleu	vv	Compare
+- vmsleu	vx	Compare
+- vmslt	vv	Compare
+- vmslt	vx	Compare
+- vmsltu	vv	Compare
+- vmsltu	vx	Compare
+- vmsne	vi	Compare
+- vmsne	vv	Compare
+- vmsne	vx	Compare
+- vmv	s	Copy
+- vmv	v	Copy
+- vmv	x	Copy
+- vid	v	Index
+- vand	vi	Logical
+- vmand	mm	Logical
+- vmandn	mm	Logical
+- vmnand	mm	Logical
+- vmnor	mm	Logical
+- vmor	mm	Logical
+- vmorn	mm	Logical
+- vmxnor	mm	Logical
+- vmxor	mm	Logical
+- vor	vi	Logical
+- vxor	vi	Logical
+- vmacc	vv	Madd
+- vmacc	vx	Madd
+- vmadd	vv	Madd
+- vmadd	vx	Madd
+- vnmsac	vv	Madd
+- vnmsac	vx	Madd
+- vnmsub	vv	Madd
+- vnmsub	vx	Madd
+- vwmacc	vv	Madd
+- vwmacc	vx	Madd
+- vwmaccsu	vv	Madd
+- vwmaccsu	vx	Madd
+- vwmaccu	vv	Madd
+- vwmaccu	vx	Madd
+- vwmaccus	vx	Madd
+- vmax	vv	Min/Max
+- vmax	vx	Min/Max
+- vmaxu	vv	Min/Max
+- vmaxu	vx	Min/Max
+- vmin	vv	Min/Max
+- vmin	vx	Min/Max
+- vminu	vv	Min/Max
+- vminu	vx	Min/Max
+- vmul	vv	Mult
+- vmul	vx	Mult
+- vmulh	vv	Mult
+- vmulh	vx	Mult
+- vmulhsu	vv	Mult
+- vmulhsu	vx	Mult
+- vmulhu	vv	Mult
+- vmulhu	vx	Mult
+- vwmul	vv	Mult
+- vwmul	vx	Mult
+- vwmulsu	vv	Mult
+- vwmulsu	vx	Mult
+- vwmulu	vv	Mult
+- vwmulu	vx	Mult
+- vmerge	vim	Permute
+- vmerge	vxm	Permute
+- vmv	v	Permute
+- vrgather	vi	Permute
+- vredand	vs	Reduce Logical
+- vredor	vs	Reduce Logical
+- vredxor	vs	Reduce Logical
+- vredsum	vs	Reduce Sum
+- vmerge	vvm	Select
+- vnsra	wi	Shift
+- vnsra	wv	Shift
+- vnsra	wx	Shift
+- vnsrl	wi	Shift
+- vnsrl	wv	Shift
+- vnsrl	wx	Shift
+- vsll	vi	Shift
+- vsll	vv	Shift
+- vsll	vx	Shift
+- vsra	vi	Shift
+- vsra	vv	Shift
+- vsra	vx	Shift
+- vsrl	vi	Shift
+- vsrl	vv	Shift
+- vsrl	vx	Shift
+- vslide1down	vx	Slide
+- vslide1up	vx	Slide
+- vmv	v	Splat
+- vrgather	vx	Splat
+- vsext	vf2	Widen-extend
+- vsext	vf4	Widen-extend
+- vsext	vf8	Widen-extend
+- vzext	vf2	Widen-extend
+- vzext	vf4	Widen-extend
+- vzext	vf8	Widen-extend

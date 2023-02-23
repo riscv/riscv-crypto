@@ -72,8 +72,8 @@ In the vector-scalar version, `Op1` is the sign-extended or truncated value in s
 register `rs1`. 
 In the vector-vector version, `Op1` is `vs1`.
 
-This instruction must always be implemented such that its execution latency does not depend
-on the data being operated upon.
+// This instruction must always be implemented such that its execution latency does not depend
+// on the data being operated upon.
 
 [NOTE]
 .Note on necessity of instruction

@@ -140,19 +140,20 @@ small `VLEN` values..
 // 2 - When XLEN=32, scalar inputs are limited to zero/sign-extended 32-bit values.
 
 
-// All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
-// <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvkb>>) shall be executed with
-All instructions defined in this Vector Crypto specification shall be executed with
+All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., <<zvkns>>,
+<<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvkb>>) shall be executed with
 data-independent execution latency as defined in the 
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 It is important to note that the Vector Crypto extensions are independent of the
 implementation of the `Zkt` extension and do not require that `Zkt` is implemented.
+
+This specification includes a <<Zvkt>> extension that, when implemented, requires certain vector instructions
+(including <<zvkb>>) to be executed with data-independent execution latency.
 // That is, the latency of an instruction's execution shall not vary based on the values
 // of its _data_. To be clear, _data_ refers to an instruction's operands and does not include 
 // other parameters of vector execution such as those specified in `vtype` and `vl`.
 // This behavior is the same as described as described in the `Zkt` extension for
-// scalar instructions. 
-
+// scalar instructions.
 
 
 Detection of individual cryptography extensions uses the
@@ -178,6 +179,8 @@ include::./riscv-crypto-vector-zvksed.adoc[]
 <<<
 include::./riscv-crypto-vector-zvksh.adoc[]
 <<<
+include::./riscv-crypto-vector-zvkt.adoc[]
+<<<    
 include::./riscv-crypto-vector-zvkn.adoc[]
 <<<
 include::./riscv-crypto-vector-zvks.adoc[]
