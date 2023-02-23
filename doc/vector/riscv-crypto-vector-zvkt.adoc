@@ -26,7 +26,7 @@ latency of the instruction. Sometime such elements contain data that also needs 
 - vandn.v[vx]
 
 ==== The `vslideup` and `vslidedown` Instructions
-The in `rs1` and `uimm` are used to specify the slide amount and are exempt from DIEL.
+The values in `rs1` and `uimm` are used to specify the slide amount and are exempt from DIEL.
 
 - vslideup.v[xi]
 - vslidedown.v[xi]
