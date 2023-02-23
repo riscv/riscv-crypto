@@ -38,7 +38,7 @@ The values in `vs1` are used for control and are exempt from DIEL.
 - vrgather.vv
 - vrgatherei16.vv
 
-=== All othe instructions (to be grouped)
+=== All other instructions (to be grouped)
 
 === Add
 - vadd	vi	Add
