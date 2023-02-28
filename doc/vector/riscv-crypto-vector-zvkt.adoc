@@ -16,13 +16,14 @@ It is important that the _values_ of elements that are not in the body are that 
 latency of the instruction. Sometime such elements contain data that also needs to be protected.
 ====
 
+
+
 ==== All <<Zvkb>> instructions:
-- vclmul.v[vx]
-- vclmulh.v[vx]
+- vclmul[h].v[vx]
 - vrol.v[vx]
 - vror.v[vxi]
 - vbrev8.v
-- rev8.v
+- vrev8.v
 - vandn.v[vx]
 
 ==== The `vslideup` and `vslidedown` Instructions
@@ -30,158 +31,101 @@ The values in `rs1` and `uimm` are used to specify the slide amount and are exem
 
 - vslideup.v[xi]
 - vslidedown.v[xi]
+- vslide1down.vx
+- vslide1up.vx
 
 === The `vcompress` and `vrgather` instructions
-The values in `vs1` are used for control and are exempt from DIEL.
+The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 
 - vcompress.vm
-- vrgather.vv
+- vrgather.v[ivx]
 - vrgatherei16.vv
+- vmerge.v[ivx]
 
-=== All other instructions (to be grouped)
+=== Add/Sub
+- vadd.v[xiv]
+- vrsub.v[xiv]
+- vwadd[u].v[xv]
+- vwadd[u].w[xv]
+- vwsub[u].v[xv]
+- vwsub[u].w[xv]
 
-=== Add
-- vadd	vi	Add
-- vadd	vv	Add
-- vadd	vx	Add
-- vrsub	vi	Add
-- vrsub	vx	Add
-- vsub	vv	Add
-- vsub	vx	Add
-- vwadd	vv	Add
-- vwadd	vx	Add
-- vwadd	wv	Add
-- vwadd	wx	Add
-- vwaddu	vv	Add
-- vwaddu	vx	Add
-- vwaddu	wv	Add
-- vwaddu	wx	Add
-- vwsub	vv	Add
-- vwsub	vx	Add
-- vwsub	wv	Add
-- vwsub	wx	Add
-- vwsubu	vv	Add
-- vwsubu	vx	Add
-- vwsubu	wv	Add
-- vwsubu	wx	Add
-- vadc	vim	Add-carry
-- vadc	vvm	Add-carry
-- vadc	vxm	Add-carry
-- vmadc	vi	Add-carry
-- vmadc	vim	Add-carry
-- vmadc	vv	Add-carry
-- vmadc	vvm	Add-carry
-- vmadc	vx	Add-carry
-- vmadc	vxm	Add-carry
-- vmsbc	vv	Add-carry
-- vmsbc	vvm	Add-carry
-- vmsbc	vx	Add-carry
-- vmsbc	vxm	Add-carry
-- vsbc	vvm	Add-carry
-- vsbc	vxm	Add-carry
-- vmseq	vi	Compare
-- vmseq	vv	Compare
-- vmseq	vx	Compare
-- vmsgt	vi	Compare
-- vmsgt	vx	Compare
-- vmsgtu	vi	Compare
-- vmsgtu	vx	Compare
-- vmsle	vi	Compare
-- vmsle	vv	Compare
-- vmsle	vx	Compare
-- vmsleu	vi	Compare
-- vmsleu	vv	Compare
-- vmsleu	vx	Compare
-- vmslt	vv	Compare
-- vmslt	vx	Compare
-- vmsltu	vv	Compare
-- vmsltu	vx	Compare
-- vmsne	vi	Compare
-- vmsne	vv	Compare
-- vmsne	vx	Compare
-- vmv	s	Copy
-- vmv	v	Copy
-- vmv	x	Copy
-- vid	v	Index
-- vand	vi	Logical
-- vmand	mm	Logical
-- vmandn	mm	Logical
-- vmnand	mm	Logical
-- vmnor	mm	Logical
-- vmor	mm	Logical
-- vmorn	mm	Logical
-- vmxnor	mm	Logical
-- vmxor	mm	Logical
-- vor	vi	Logical
-- vxor	vi	Logical
-- vmacc	vv	Madd
-- vmacc	vx	Madd
-- vmadd	vv	Madd
-- vmadd	vx	Madd
-- vnmsac	vv	Madd
-- vnmsac	vx	Madd
-- vnmsub	vv	Madd
-- vnmsub	vx	Madd
-- vwmacc	vv	Madd
-- vwmacc	vx	Madd
-- vwmaccsu	vv	Madd
-- vwmaccsu	vx	Madd
-- vwmaccu	vv	Madd
-- vwmaccu	vx	Madd
-- vwmaccus	vx	Madd
-- vmax	vv	Min/Max
-- vmax	vx	Min/Max
-- vmaxu	vv	Min/Max
-- vmaxu	vx	Min/Max
-- vmin	vv	Min/Max
-- vmin	vx	Min/Max
-- vminu	vv	Min/Max
-- vminu	vx	Min/Max
-- vmul	vv	Mult
-- vmul	vx	Mult
-- vmulh	vv	Mult
-- vmulh	vx	Mult
-- vmulhsu	vv	Mult
-- vmulhsu	vx	Mult
-- vmulhu	vv	Mult
-- vmulhu	vx	Mult
-- vwmul	vv	Mult
-- vwmul	vx	Mult
-- vwmulsu	vv	Mult
-- vwmulsu	vx	Mult
-- vwmulu	vv	Mult
-- vwmulu	vx	Mult
-- vmerge	vim	Permute
-- vmerge	vxm	Permute
-- vmv	v	Permute
-- vrgather	vi	Permute
-- vredand	vs	Reduce Logical
-- vredor	vs	Reduce Logical
-- vredxor	vs	Reduce Logical
-- vredsum	vs	Reduce Sum
-- vmerge	vvm	Select
-- vnsra	wi	Shift
-- vnsra	wv	Shift
-- vnsra	wx	Shift
-- vnsrl	wi	Shift
-- vnsrl	wv	Shift
-- vnsrl	wx	Shift
-- vsll	vi	Shift
-- vsll	vv	Shift
-- vsll	vx	Shift
-- vsra	vi	Shift
-- vsra	vv	Shift
-- vsra	vx	Shift
-- vsrl	vi	Shift
-- vsrl	vv	Shift
-- vsrl	vx	Shift
-- vslide1down	vx	Slide
-- vslide1up	vx	Slide
-- vmv	v	Splat
-- vrgather	vx	Splat
-- vsext	vf2	Widen-extend
-- vsext	vf4	Widen-extend
-- vsext	vf8	Widen-extend
-- vzext	vf2	Widen-extend
-- vzext	vf4	Widen-extend
-- vzext	vf8	Widen-extend
+=== Add with-carry
+- vadc.v[ivx]
+- vmadc.v[ivx][m]
+- vmsbc.v[vx][m]
+- vsbc.v[vx]m
+
+=== Compare
+- vmseq.v[ivx]
+- vmsgt[u].v[ix]
+- vmsle[u].v[ivx]
+- vmslt[u].v[vx]
+- vmsne.v[ivx]
+
+=== Copy
+- vmv.[svx]
+- vmv.v	Permute?
+- vmv.v	Splat?
+- vid.v	Index
+
+=== Logical
+- vand.vi
+- vor.vi
+- vxor.vi
+- vm[n]and[n].mm
+- vmandn.mm
+- vm[n]or.mm
+- vmorn.mm
+- vmx[n]or.mm
+
+=== Madd
+- vmacc.v[vx]
+- vmadd.v[vx]
+- vnmsac.v[vx]
+- vnmsub.v[vx]
+- vwmacc.v[vx]
+- vwmacc[s]u.v[vx]
+- vwmaccus.vx
+
+=== Min/Max
+- vmax[u].v[xv]
+- vmin[u].v[xv]
+
+=== Mult
+- vmul[h].v[xv]
+- vmulh[s]u.v[xv]
+- vwmul.v[xv]
+- vwmul[s]u.v[xv]
+
+=== Reduce-logical
+- vredand.vs
+- vredor.vs
+- vredxor.vs
+- vredsum.vs
+
+=== Shift
+- vnsr[al].w[xiv]
+- vsll.v[xiv]
+- vsr[al].v[xiv]
+
+=== Widen-extend
+- vsext.vf[248]
+- vzext	vf[248]
+
+[NOTE]
+====
+ The following instructions are not affected by Zvkt:
+ 
+- Storage operations
+- Floating-point
+- Averaging
+- Compress
+- mask: bit count, lowest active, sum, set before first, set including first, set only first, 
+- divide, remainder
+- clip
+- reduction (except for logical)
+- saturating
+- set vtype
+- scalaing
+====
