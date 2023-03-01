@@ -34,7 +34,7 @@ The values in `rs1` and `uimm` are used to specify the slide amount and are exem
 - vslide1down.vx
 - vslide1up.vx
 
-=== The `vcompress` and `vrgather` instructions
+==== The `vcompress` and `vrgather` instructions
 The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 
 - vcompress.vm
@@ -42,7 +42,7 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vrgatherei16.vv
 - vmerge.v[ivx]
 
-=== Add/Sub
+==== Add/Sub
 - vadd.v[xiv]
 - vrsub.v[xiv]
 - vwadd[u].v[xv]
@@ -50,26 +50,26 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vwsub[u].v[xv]
 - vwsub[u].w[xv]
 
-=== Add with-carry
+==== Add with-carry
 - vadc.v[ivx]
 - vmadc.v[ivx][m]
 - vmsbc.v[vx][m]
 - vsbc.v[vx]m
 
-=== Compare
+==== Compare
 - vmseq.v[ivx]
 - vmsgt[u].v[ix]
 - vmsle[u].v[ivx]
 - vmslt[u].v[vx]
 - vmsne.v[ivx]
 
-=== Copy
+==== Copy
 - vmv.[svx]
 - vmv.v	Permute?
 - vmv.v	Splat?
 - vid.v	Index
 
-=== Logical
+==== Logical
 - vand.vi
 - vor.vi
 - vxor.vi
@@ -79,7 +79,7 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vmorn.mm
 - vmx[n]or.mm
 
-=== Madd
+==== Madd
 - vmacc.v[vx]
 - vmadd.v[vx]
 - vnmsac.v[vx]
@@ -88,28 +88,28 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vwmacc[s]u.v[vx]
 - vwmaccus.vx
 
-=== Min/Max
+==== Min/Max
 - vmax[u].v[xv]
 - vmin[u].v[xv]
 
-=== Mult
+==== Mult
 - vmul[h].v[xv]
 - vmulh[s]u.v[xv]
 - vwmul.v[xv]
 - vwmul[s]u.v[xv]
 
-=== Reduce-logical
+==== Reduce-logical
 - vredand.vs
 - vredor.vs
 - vredxor.vs
 - vredsum.vs
 
-=== Shift
+==== Shift
 - vnsr[al].w[xiv]
 - vsll.v[xiv]
 - vsr[al].v[xiv]
 
-=== Widen-extend
+==== Widen-extend
 - vsext.vf[248]
 - vzext	vf[248]
 
