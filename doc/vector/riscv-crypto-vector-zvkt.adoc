@@ -34,10 +34,6 @@ latency of the instruction. Sometime such elements contain data that also needs 
 - vadc.v[ivx]m
 - vmadc.v[ivx][m]
 - vmsbc.v[vx]m
-- vmsbc.v[vx]m
-- vmsbc.v[vx]m
-- vmsbc.v[vx]m
-- vsbc.v[vx]m
 - vsbc.v[vx]m
 
 ==== compare and set
