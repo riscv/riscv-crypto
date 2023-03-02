@@ -6,7 +6,7 @@ executed with data-independent execution latency as defined in the
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 
 The data-independent execution latency (DIEL) applies to all _data operands_ of an instruction, even those that are not a
-part of the body or that are inactive. However, DIEL does not apply to other values such as vl, vtype, and the mask.
+part of the body or that are inactive. However, DIEL does not apply to other values such as vl, vtype, and the mask (as specified by vm).
 In some cases --- which are explicitly specified in the lists below --- operands that are used as control rather than data
 and are exempt from DIEL.
 
@@ -15,8 +15,6 @@ and are exempt from DIEL.
 It is important that the _values_ of elements that are not in the body are that are masked off do not affect the execution
 latency of the instruction. Sometime such elements contain data that also needs to be protected.
 ====
-
-
 
 ==== All <<Zvkb>> instructions:
 - vclmul[h].v[vx]
@@ -40,37 +38,33 @@ latency of the instruction. Sometime such elements contain data that also needs 
 - vmsbc.v[vx]m
 - vmsbc.v[vx]m
 - vsbc.v[vx]m
--vsbc.v[vx]m
+- vsbc.v[vx]m
 
-==== Compare and set
+==== compare and set
 - vmseq.v[vxi]
 - vmsgt[u].v[xi]
 - vmsle[u].v[xi]
 - vmslt[u].v[xi]
 - vmsne.v[ivx]
 
-==== Copy
+==== copy
 - vmv.s.x
 - vmv.v.[ivxs]
 - vmv[1248]r.v
 
-==== Extend
+==== extend
 - vsext.vf[248]
 - vzext.vf[248]
 
-==== Logical
+==== logical
 - vand.v[ivx]
 - vm[n]or.mm
 - vmand[n].mm
 - vmnand.mm
-- vmornn.mm
+- vmorn.mm
 - vmx[n]or.mm
 - vor.v[ivx]
 - vxor.v[ivx]
-
-==== min/max
-- vmax[u].v[vx]
-- vmin[u].v[vx]
 
 ==== multiply
 - vmul[h].v[vx]
@@ -95,6 +89,8 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vrgatherei16.vv
 
 ==== shift
+The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
+
 - vnsr[al].w[ivx]
 - vsll.v[ivx]
 - vsr[al].v[ivx]
@@ -107,19 +103,45 @@ The values in `rs1` and `uimm` are used to specify the slide amount and are exem
 
 [NOTE]
 ====
- The following instructions are not affected by Zvkt:
+The following instructions are not affected by Zvkt:
  
-- Storage operations
-- Floating-point operations
-- Averaging
-- Compress
-** vcompress.vm
-- mask: bit count, lowest active, sum, set before first, set including first, set only first, id
-- divide, remainder
+- *All storage operations*
+- *All floating-point operations*
+- add/sub saturate
+* vsadd[u].v[ivx]
+* vssub[u].v[vx]
 - clip
 * vnclip[u].w[ivx]
-- reduction (except for logical)
-- saturating
-- set vtype
-- scaling
+- compress
+* vcompress.vm
+- divide
+* vdiv[u].v[vx]
+* vrem[u].v[vx]
+- average
+* vaadd[u].v[vx]
+* vasub[u].v[vx]
+- mask Op
+* vcpop.m
+* vfirst.m
+* vid.v
+* viota.m
+* vms[bio]f.m
+- min/max
+* vmax[u].v[vx]
+* vmin[u].v[vx]
+- Multiply-saturate
+* vsmul.v[vx]
+- reduce
+* vredsum.vs
+* vwredsum[u].vs
+* vred[and|or|xor].vs
+* vred[min|max][u].vs
+- shift round
+* vssra.v[ivx]
+* vssrl.v[ivx]
+- vset
+* vsetivli
+* vsetvl[i]
 ====
+
+
