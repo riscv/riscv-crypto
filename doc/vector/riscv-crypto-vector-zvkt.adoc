@@ -112,7 +112,7 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 
 [NOTE]
 ====
- The following instructions are not affected by Zvkt:
+The following instructions are not affected by Zvkt:
  
 - Storage operations
 - Floating-point
@@ -124,5 +124,5 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - reduction (except for logical)
 - saturating
 - set vtype
-- scalaing
+- scaling
 ====
