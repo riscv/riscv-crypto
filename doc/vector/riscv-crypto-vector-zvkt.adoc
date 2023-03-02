@@ -43,12 +43,12 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vmerge.v[ivx]
 
 ==== Add/Sub
-- vadd.v[xiv]
-- vrsub.v[xiv]
-- vwadd[u].v[xv]
-- vwadd[u].w[xv]
-- vwsub[u].v[xv]
-- vwsub[u].w[xv]
+- vadd.v[ivx]
+- vrsub.v[ivx]
+- vwadd[u].v[vx]
+- vwadd[u].w[vx]
+- vwsub[u].v[vx]
+- vwsub[u].w[vx]
 
 ==== Add with-carry
 - vadc.v[ivx]
@@ -64,16 +64,13 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vmsne.v[ivx]
 
 ==== Copy
-- vmv.[svx]
-- vmv.v	Permute?
-- vmv.v	Splat?
-- vid.v	Index
+- vmv.[ivx]
 
 ==== Logical
 - vand.vi
 - vor.vi
 - vxor.vi
-- vm[n]and[n].mm
+- vm[n]and.mm
 - vmandn.mm
 - vm[n]or.mm
 - vmorn.mm
@@ -121,7 +118,7 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - Floating-point
 - Averaging
 - Compress
-- mask: bit count, lowest active, sum, set before first, set including first, set only first, 
+- mask: bit count, lowest active, sum, set before first, set including first, set only first, id
 - divide, remainder
 - clip
 - reduction (except for logical)
