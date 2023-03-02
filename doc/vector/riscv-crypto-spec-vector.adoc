@@ -2,8 +2,8 @@
 = RISC-V Cryptography Extensions Volume II: Vector Instructions
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  28 February, 2023
-:revnumber: v0.4.0
+:revdate:  02 March, 2023
+:revnumber: v0.4.1
 // :revremark: This document is in development. Some changes should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
