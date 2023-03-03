@@ -30,6 +30,7 @@ latency of the instruction. Sometimes such elements contain data that also needs
 - vadd.v[ivx]
 - vsub.v[vx]
 - vwadd[u].[vw][vx]
+- vwsub[u].[vw][vx]
 
 ==== add/sub with carry
 - vadc.v[ivx]m
