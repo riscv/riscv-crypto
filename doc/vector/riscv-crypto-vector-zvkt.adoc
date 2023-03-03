@@ -6,14 +6,15 @@ executed with data-independent execution latency as defined in the
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 
 The data-independent execution latency (DIEL) applies to all _data operands_ of an instruction, even those that are not a
-part of the body or that are inactive. However, DIEL does not apply to other values such as vl, vtype, and the mask (as specified by vm).
+part of the body or that are inactive. However, DIEL does not apply to other values such as vl, vtype,
+and the mask (as specified by vm).
 In some cases --- which are explicitly specified in the lists below --- operands that are used as control rather than data
 are exempt from DIEL.
 
 [NOTE]
 ====
-It is important that the _values_ of elements that are not in the body are that are masked off do not affect the execution
-latency of the instruction. Sometime such elements contain data that also needs to be protected.
+It is important that the _values_ of elements that are not in the body or that are masked off do not affect the execution
+latency of the instruction. Sometimes such elements contain data that also needs to be protected.
 ====
 
 ==== All <<Zvkb>> instructions:
@@ -85,14 +86,14 @@ The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 - vrgatherei16.vv
 
 ==== shift
-The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
+The values in `vs1`, `rs1`, `imm` are used for control (i.e., shift amount) and are exempt from DIEL.
 
 - vnsr[al].w[ivx]
 - vsll.v[ivx]
 - vsr[al].v[ivx]
 
 ==== slide
-The values in `rs1` and `uimm` are used to specify the slide amount and are exempt from DIEL.
+The values in `rs1` and `uimm` are used for control (i.e., slide amount) and are exempt from DIEL.
 
 - vslide[up|down].v[ix]
 - vslide1[up|down].vx
