@@ -8,7 +8,7 @@ link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Sca
 The data-independent execution latency (DIEL) applies to all _data operands_ of an instruction, even those that are not a
 part of the body or that are inactive. However, DIEL does not apply to other values such as vl, vtype, and the mask (as specified by vm).
 In some cases --- which are explicitly specified in the lists below --- operands that are used as control rather than data
-and are exempt from DIEL.
+are exempt from DIEL.
 
 [NOTE]
 ====
