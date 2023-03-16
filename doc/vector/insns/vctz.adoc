@@ -1,0 +1,70 @@
+[[insns-vctz, Vector Count Trailing Zeros]]
+= vclz.v
+
+Synopsis::
+Vector Count Trailing Zeros
+
+Mnemonic::
+vctz.v vd, vs2, vm
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: '01101'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: '010010'},
+]}
+....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2"]
+|===
+|Register
+|Direction
+|Definition
+
+| Vs2 | input  | Input elements
+| Vd  | output | Count of leading zero bits
+|===
+
+Description::
+A trailing zero count is performed on each element.
+
+// The result for zero-valued inputs is the value SEW.
+
+Operation::
+[source,sail]
+--
+function clause execute (VCTZ(vs2)) = {
+
+  foreach (i from vstart to vl-1) {
+    let input = get_velem(vs2, SEW, i);
+    for (j = 0; j < SEW;  j++)
+      if [input[j]] == 0b1 then break;
+    set_velem(vd, SEW, i, j)
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvbb>>
+| v0.1.0
+| In Development
+|===
+
+
+

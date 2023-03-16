@@ -17,13 +17,20 @@ It is important that the _values_ of elements that are not in the body or that a
 latency of the instruction. Sometimes such elements contain data that also needs to be protected.
 ====
 
-==== All <<Zvkb>> instructions:
-- vclmul[h].v[vx]
+==== All <<Zvbb>> instructions:
+- vandn.v[vx]
+- vclz.v
+- vcpop.v
+- vctz.v
+- vrev.v
+- vrev8.v
+- vrevb.v
 - vrol.v[vx]
 - vror.v[vxi]
-- vbrev8.v
-- vrev8.v
-- vandn.v[vx]
+- vwsll.[vv,vx,vi]
+
+==== All <<Zvbc>> instructions
+- vclmul[h].v[vx]
 
 ==== add/sub
 - v[r]sub.v[vx]
@@ -79,15 +86,17 @@ latency of the instruction. Sometimes such elements contain data that also needs
 - vwmacc[s]u.v[vx]
 - vwmaccus.vx
 
+==== Integer Merge
+- vmerge.v[ivx]m
+
 ==== permute
 The values in `vs1`, `rs1`, `imm` are used for control and are exempt from DIEL.
 
-- vmerge.v[ivx]m
 - vrgather.v[ivx]
 - vrgatherei16.vv
 
 ==== shift
-The values in `vs1`, `rs1`, `imm` are used for control (i.e., shift amount) and are exempt from DIEL.
+// The values in `vs1`, `rs1`, `imm` are used for control (i.e., shift amount) and are exempt from DIEL.
 
 - vnsr[al].w[ivx]
 - vsll.v[ivx]

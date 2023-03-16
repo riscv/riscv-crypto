@@ -1,13 +1,13 @@
-[[insns-vror, Vector Rotate Right]]
+[[insns-vwsll, Vector Widening Shift Left Logical]]
 = vror.[vv,vx,vi]
 
 Synopsis::
-Vector rotate right by vector/scalar/immediate.
+Vector widening logical shift left by vector/scalar/immediate.
 
 Mnemonic::
-vror.vv vd, vs2, vs1, vm +
-vror.vx vd, vs2, rs1, vm +
-vror.vi vd, vs2, uimm, vm
+vwsll.vv vd, vs2, vs1, vm +
+vwsll.vx vd, vs2, rs1, vm +
+vwsll.vi vd, vs2, uimm, vm
 
 Encoding (Vector-Vector)::
 [wavedrom, , svg]
@@ -19,7 +19,7 @@ Encoding (Vector-Vector)::
 {bits: 5, name: 'vs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
-{bits: 6, name: '010100'},
+{bits: 6, name: '110101'},
 ]}
 ....
 
@@ -33,7 +33,7 @@ Encoding (Vector-Scalar)::
 {bits: 5, name: 'rs1'},
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
-{bits: 6, name: '010100'},
+{bits: 6, name: '110101'},
 ]}
 ....
 
@@ -48,7 +48,7 @@ Encoding (Vector-Immediate)::
 {bits: 5, name: 'vs2'},
 {bits: 1, name: 'vm'},
 {bits: 1, name: 'i5'},
-{bits: 5, name: '01010'},
+{bits: 5, name: '110101'},
 ]}
 ....
 
@@ -61,63 +61,61 @@ Vector-Vector Arguments::
 |Direction
 |Definition
 
-| Vs1 | input  | Rotate amount
+| Vs1 | input  | Shift amount
 | Vs2 | input  | Data
-| Vd  | output | Rotated data 
+| Vd  | output | Shifted data 
 |===
 
 Vector-Scalar/Immediate Arguments::
 
 [%autowidth]
-[%header,cols="4,2,2"]
+[%header,cols="4,2,2,2"]
 |===
 |Register
 |Direction
+|EEW
 |Definition
 
-| Rs1/imm | input  | Rotate amount
-| Vs2     | input  | Data
-| Vd      | output | Rotated data
+| Rs1/imm | input  | SEW   | Shift amount
+| Vs2     | input  | SEW   | Data
+| Vd      | output | 2*SEW | Shifted data
 |===
 
 
 Description:: 
-A bitwise right rotation is performed on each element of `vs2`.
+A widening logical shift left is performed on each element of `vs2`.
 
-The elements in `vs2` are rotated right by the rotate amount specified by either 
+The elements in `vs2` are shifted left by the shift amount specified by either 
 the corresponding elements of `vs1` (vector-vector), integer register `rs1`
 (vector-scalar), or an immediate valie (vector-immediate).
-Only the low log2(`SEW`) bits of the rotate-amount value are used, all other
+Only the low log2(2*`SEW`) bits of the rotate-amount value are used, all other
 bits are ignored.
-
-// This instruction must always be implemented such that its execution latency does not depend
-// on the data being operated upon.
 
 Operation::
 [source,sail]
 --
-function clause execute (VROR_VV(vs2, vs1, vd)) = {
+function clause execute (VWSLL_VV(vs2, vs1, vd)) = {
   foreach (i from vstart to vl - 1) {
-    set_velem(vd, EEW=SEW, i,
-      get_velem(vs2, i) >>> (get_velem(vs1, i) & (SEW-1))
+    set_velem(vd, EEW=2*SEW, i,
+      get_velem(vs2, i) << (get_velem(vs1, i) & (SEW-1))
     )
   }
   RETIRE_SUCCESS
 }
 
-function clause execute (VROR_VX(vs2, rs1, vd)) = {
+function clause execute (VWSLL_VX(vs2, rs1, vd)) = {
   foreach (i from vstart to vl - 1) {
-    set_velem(vd, EEW=SEW, i, 
-      get_velem(vs2, i) >>> (X(rs1) & (SEW-1))
+    set_velem(vd, EEW=2*SEW, i, 
+      get_velem(vs2, i) << (X(rs1) & (SEW-1))
     )
   }
   RETIRE_SUCCESS
 }
 
-function clause execute (VROR_VI(vs2, imm[5:0], vd)) = {
+function clause execute (VWSLL_VI(vs2, imm[5:0], vd)) = {
   foreach (i from vstart to vl - 1) {
-    set_velem(vd, EEW=SEW, i, 
-      get_velem(vs2, i) >>> (imm[5:0] & (SEW-1))
+    set_velem(vd, EEW=2*SEW, i, 
+      get_velem(vs2, i) << (imm[5:0] & (SEW-1))
     )
   }
   RETIRE_SUCCESS

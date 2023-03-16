@@ -1,0 +1,69 @@
+[[insns-vrev, Vector Reverse Bits in Elements]]
+= vrev.v
+
+Synopsis::
+Vector Reverse Bits in Elements
+
+Mnemonic::
+vrev.v vd, vs2, vm
+
+Encoding (Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: '01001'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: '010010'},
+]}
+....
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2"]
+|===
+|Register
+|Direction
+|Definition
+
+| Vs2 | input  | Input elements
+| Vd  | output | Elements with bits reversed
+|===
+
+Description::
+A bit reversal is performed on the bits of each element.
+
+Operation::
+[source,sail]
+--
+function clause execute (VREV(vs2)) = {
+
+  foreach (i from vstart to vl-1) {
+    let input = get_velem(vs2, SEW, i);
+    let output : bits(SEW) = 0;
+    foreach (i from 0 to SEW-1)
+      let output[SEW-1-i] = input[i];
+    set_velem(vd, SEW, i, output)
+  }
+  RETIRE_SUCCESS
+}
+--
+
+Included in::
+[%header,cols="4,2,2"]
+|===
+|Extension
+|Minimum version
+|Lifecycle state
+
+| <<zvbb>>
+| v0.1.0
+| In Development
+|===
+
+
+

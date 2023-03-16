@@ -106,7 +106,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkb>>
+| <<zvbc>>
 | v0.1.0
 | In Development
 |===

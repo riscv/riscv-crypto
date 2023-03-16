@@ -1,11 +1,11 @@
-[[insns-vbrev8, Vector Reverse Bits in Bytes]]
-= vbrev8.v
+[[insns-vrevb, Vector Reverse Bits in Bytes]]
+= vrevb.v
 
 Synopsis::
 Vector Reverse Bits in Bytes
 
 Mnemonic::
-vbrev8.v vd, vs2, vm
+vrevb.v vd, vs2, vm
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -49,7 +49,7 @@ This byte-wise instruction is defined for all SEWs to eliminate the need to chan
 Operation::
 [source,sail]
 --
-function clause execute (VBREV8(vs2)) = {
+function clause execute (VREVB(vs2)) = {
 
   foreach (i from vstart to vl-1) {
     let input = get_velem(vs2, SEW, i);
@@ -69,7 +69,7 @@ Included in::
 |Minimum version
 |Lifecycle state
 
-| <<zvkb>>
+| <<zvbb>>
 | v0.1.0
 | In Development
 |===
