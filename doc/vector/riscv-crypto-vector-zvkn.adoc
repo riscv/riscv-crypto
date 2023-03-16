@@ -10,10 +10,11 @@ This extension is shorthand for the following set of other extensions:
 |Description
 
 
-| Zvkned | <<Zvkned>>
-| Zvknhb | <<Zvknh[ab]>>
-| Zvkb   | <<Zvkb>>
-| Zvkt   | <<Zvkt>>
+| Zvkned  | <<Zvkned>>
+| Zvknhb  | <<Zvknh[ab]>>
+| Zvbb    | <<Zvbb>>
+| Zvbc    | <<Zvbc>>
+| Zvkt    | <<Zvkt>>
 |===
 
 [NOTE]
