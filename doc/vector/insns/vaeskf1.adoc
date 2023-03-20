@@ -83,7 +83,7 @@ Operation::
 function clause execute (VAESESKF1(rnd, vd, vs2)) = {
   if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
     handle_illegal();  // illegal instruction exception
-    RETIRE_SUCCESS
+    RETIRE_FAIL
   } else {
 
  // project out-of-range immediates onto in-range values

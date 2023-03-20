@@ -143,7 +143,7 @@ Operation::
 function clause execute (VSHA2c(vs2, vs1, vd)) = {
   if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
     handle_illegal();  // illegal instruction exception
-    RETIRE_SUCCESS
+    RETIRE_FAIL
   } else {
 
   eg_len = (vl/EGS)
