@@ -1,5 +1,5 @@
 [[insns-vwsll, Vector Widening Shift Left Logical]]
-= vror.[vv,vx,vi]
+= vwsll.[vv,vx,vi]
 
 Synopsis::
 Vector widening logical shift left by vector/scalar/immediate.
