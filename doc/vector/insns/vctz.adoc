@@ -1,5 +1,5 @@
 [[insns-vctz, Vector Count Trailing Zeros]]
-= vclz.v
+= vctz.v
 
 Synopsis::
 Vector Count Trailing Zeros
