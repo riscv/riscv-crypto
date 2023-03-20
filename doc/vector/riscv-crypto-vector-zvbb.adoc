@@ -11,7 +11,7 @@ for implementing common cryptographic workloads securely & efficiently.
 |Instruction
 
 | vandn.[vv,vx]      | <<insns-vandn>>
-| vbrev8.v           | <<insns-vbrev8>>
+| vrevb.v            | <<insns-vrevb>>
 
 | vclz.v             | <<insns-vclz>>
 | vctz.v             | <<insns-vctz>>
