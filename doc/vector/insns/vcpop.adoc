@@ -1,5 +1,5 @@
 [[insns-vcpop, Vector Population Count]]
-= vclz.v
+= vcpop.v
 
 Synopsis::
 Count the number of bits set in each element
