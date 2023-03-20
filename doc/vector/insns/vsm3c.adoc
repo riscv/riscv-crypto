@@ -99,7 +99,7 @@ Operation::
 [source,sail]
 --
 function clause execute (VSM3C(rnds, vs2, vd)) = {
-  if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+  if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_FAIL
   } else {

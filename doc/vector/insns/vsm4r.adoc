@@ -91,7 +91,7 @@ Operation::
 [source,pseudocode]
 --
 function clause execute (VSM4R(vd, vs2)) = {
-  if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+  if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_FAIL
   } else {

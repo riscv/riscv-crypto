@@ -82,7 +82,7 @@ Operation::
 --
 function clause execute (VGMUL(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
-  if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+  if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_FAIL
   } else {

@@ -5,10 +5,9 @@ The following is a quick reference for the various constraints of specific Vecto
 vl and vstart constraints::
 Since `vl` and `vstart` refer to elements, Vector Crypto instructions that use elements groups
 (See <<crypto-vector-element-groups>>) require that these values are an integer multiple of the
-Element Group Size (`EGS`). 
-Instructions that violate the `vl` requirement are _reserved_.
-Instructions that violate the `vstart` requirement raise an
-_illegal instruction exception_.
+Element Group Size (`EGS`).
+
+- Instructions that violate the `vl` or `vstart` requirements are _reserved_.
 
 [%autowidth]
 [%header,cols="4,4"]

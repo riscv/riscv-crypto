@@ -206,7 +206,9 @@ include::insns/vaesz.adoc[leveloffset=+2]
 <<<
 include::insns/vandn.adoc[leveloffset=+2]
 <<<
-include::insns/vrevb.adoc[leveloffset=+2]
+include::insns/vbrev.adoc[leveloffset=+2]
+<<<
+include::insns/vbrev8.adoc[leveloffset=+2]
 <<<
 include::insns/vclmul.adoc[leveloffset=+2]
 <<<
@@ -221,8 +223,6 @@ include::insns/vctz.adoc[leveloffset=+2]
 include::insns/vghsh.adoc[leveloffset=+2]
 <<<
 include::insns/vgmul.adoc[leveloffset=+2]
-<<<
-include::insns/vrev.adoc[leveloffset=+2]
 <<<
 include::insns/vrev8.adoc[leveloffset=+2]
 <<<

@@ -72,7 +72,7 @@ Operation::
 [source,sail]
 --
 function clause execute (VAESDF(vs2, vd, suffix)) = {
-  if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+  if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_FAIL
   } else {

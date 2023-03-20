@@ -149,7 +149,7 @@ Operation::
 --
 
 function clause execute (vsm4k(uimm, vs2)) = {
-  if(((vstart%EGS)<>0) | (LMUL*VLEN < EGW))  then {
+  if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_FAIL
   } else {

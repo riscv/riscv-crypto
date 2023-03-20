@@ -5,21 +5,18 @@ General purpose bit-manipulation instructions which are essential
 for implementing common cryptographic workloads securely & efficiently.
 
 [%autowidth]
-[%header,cols="^2,4"]
+[%header,cols="2,4"]
 |===
 |Mnemonic
 |Instruction
 
 | vandn.[vv,vx]      | <<insns-vandn>>
+| vbrev.v            | <<insns-vbrev>>
 | vbrev8.v           | <<insns-vbrev8>>
-
+| vrev8.v            | <<insns-vrev8>>
 | vclz.v             | <<insns-vclz>>
 | vctz.v             | <<insns-vctz>>
 | vcpop.v            | <<insns-vcpop>>
-
-| vrev.v             | <<insns-vrev>>
-
-| vrev8.v            | <<insns-vrev8>>
 | vrol.[vv,vx]       | <<insns-vrol>>
 | vror.[vv,vx,vi]    | <<insns-vror>>
 | vwsll.[vv,vx,vi]   | <<insns-vwsll>>

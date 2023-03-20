@@ -1,11 +1,11 @@
-[[insns-vrev, Vector Reverse Bits in Elements]]
-= vrev.v
+[[insns-vbrev, Vector Reverse Bits in Elements]]
+= vbrev.v
 
 Synopsis::
 Vector Reverse Bits in Elements
 
 Mnemonic::
-vrev.v vd, vs2, vm
+vbrev.v vd, vs2, vm
 
 Encoding (Vector)::
 [wavedrom, , svg]
@@ -40,7 +40,7 @@ A bit reversal is performed on the bits of each element.
 Operation::
 [source,sail]
 --
-function clause execute (VREV(vs2)) = {
+function clause execute (VBREV(vs2)) = {
 
   foreach (i from vstart to vl-1) {
     let input = get_velem(vs2, SEW, i);
