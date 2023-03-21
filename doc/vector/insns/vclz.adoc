@@ -48,8 +48,7 @@ function clause execute (VCLZ(vs2)) = {
     let input = get_velem(vs2, SEW, i);
     for (j = (SEW - 1); j >= 0;  j--)
       if [input[j]] == 0b1 then break;
-    if (j==-1) then j = SEW;
-    set_velem(vd, SEW, i, j)
+    set_velem(vd, SEW, i, SEW - 1 - j)
   }
   RETIRE_SUCCESS
 }
