@@ -106,8 +106,6 @@ function clause execute (VGHSH(vs2, vs1, vd)) = {
         H ^= 0x87; // Reduce using x^7 + x^2 + x^1 + 1 polynomial
     }
 
-   // let sum[127:0] = brev8(Z) ^ X; // bit reverse bytes of product to get back to GCM standard ordering
-
     let result = brev8(Z); // bit reverse bytes to get back to GCM standard ordering
     set_velem(vd, EGW=128, i, result);
   }
