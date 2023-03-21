@@ -4,6 +4,8 @@
 Instructions to enable the efficient implementation of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
 Galois Message Authentication Code (GMAC).
 
+All of these instructions work on 128-bit element groups comprised of four 32-bit elements.
+
 GHASH~H~ is defined in the
 // link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
  "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
