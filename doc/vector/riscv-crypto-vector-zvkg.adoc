@@ -1,8 +1,10 @@
 [[zvkg,Zvkg]]
 === `Zvkg` - Vector GCM/GMAC
 
-Instruction to enable the efficient implementation of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
+Instructions to enable the efficient implementation of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
 Galois Message Authentication Code (GMAC).
+
+All of these instructions work on 128-bit element groups comprised of four 32-bit elements.
 
 GHASH~H~ is defined in the
 // link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
@@ -17,7 +19,7 @@ provide authentication.
 GMAC is used to provide authentication of a message without encryption.
 ====
 
-To help avoid side-channel timing attacks, this instruction shall be implemented with data-independent timing.
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW=32` elements to be processed and
