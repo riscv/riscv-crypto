@@ -21,7 +21,7 @@ Vector instructions with *Zvkb (in bold)*
 5+| funct6                  4+| funct6                 4+| funct6
 
 | 000000 |V|X|I| vadd       | 000000 |V| | vredsum     | 000000 |V|F| vfadd
-| 000001 |V|X|I| *vandn*    | 000001 |V| | vredand     | 000001 |V| | vfredusum
+| 000001 |V|X| | *vandn*    | 000001 |V| | vredand     | 000001 |V| | vfredusum
 | 000010 |V|X| | vsub       | 000010 |V| | vredor      | 000010 |V|F| vfsub
 | 000011 | |X|I| vrsub      | 000011 |V| | vredxor     | 000011 |V| | vfredosum
 | 000100 |V|X| | vminu      | 000100 |V| | vredminu    | 000100 |V|F| vfmin
@@ -95,7 +95,7 @@ Vector instructions with *Zvkb (in bold)*
 | 110010 | | | |            | 110010 |V|X| vwsubu      | 110010 |V|F| vfwsub
 | 110011 | | | |            | 110011 |V|X| vwsub       | 110011 |V| | vfwredosum
 | 110100 | | | |            | 110100 |V|X| vwaddu.w    | 110100 |V|F| vfwadd.w
-| 110101 | | | |            | 110101 |V|X| vwadd.w     | 110101 | | |
+| 110101 |V|X|I| vwsll      | 110101 |V|X| vwadd.w     | 110101 | | |
 | 110110 | | | |            | 110110 |V|X| vwsubu.w    | 110110 |V|F| vfwsub.w
 | 110111 | | | |            | 110111 |V|X| vwsub.w     | 110111 | | |
 | 111000 | | | |            | 111000 |V|X| vwmulu      | 111000 |V|F| vfwmul
@@ -124,4 +124,9 @@ Vector instructions with *Zvkb (in bold)*
 | 00111 | vsext.vf2
 | 01000 | *vbrev8*
 | 01001 | *vrev8*
+| 01010 | *vbrev*
+| 01100 | *vclz*
+| 01101 | *vctz*
+| 01110 | *vcpop*
+
 |===

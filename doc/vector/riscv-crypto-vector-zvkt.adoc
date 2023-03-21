@@ -22,9 +22,9 @@ latency of the instruction. Sometimes such elements contain data that also needs
 - vclz.v
 - vcpop.v
 - vctz.v
-- vrev.v
+- vbrev.v
+- vbrev8.v
 - vrev8.v
-- vrevb.v
 - vrol.v[vx]
 - vror.v[vxi]
 - vwsll.[vv,vx,vi]
