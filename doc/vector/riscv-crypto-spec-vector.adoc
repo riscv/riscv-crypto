@@ -2,8 +2,8 @@
 = RISC-V Cryptography Extensions Volume II: Vector Instructions
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate:  21 March, 2023
-:revnumber: v0.4.5
+:revdate:  22 March, 2023
+:revnumber: v0.4.6
 // :revremark: This document is in development. Some changes should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
@@ -122,7 +122,7 @@ on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 // small `VLEN` values.
 
 
-All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those specified 
+All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those 
 in <<zvkned>>, <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvbb>> or <<zvbc>>) shall
 be executed with data-independent execution latency as defined in the 
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
