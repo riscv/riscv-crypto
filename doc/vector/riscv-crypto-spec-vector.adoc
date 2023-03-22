@@ -253,7 +253,7 @@ bibliography::../riscv-crypto-spec.bib[ieee]
 [[Encodings]]
 == Encodings
 include::./riscv-crypto-vector-inst-table.adoc[]
-include::./riscv-crypto-vector-inst-table-zvbb.adoc[]
+include::./riscv-crypto-vector-inst-table-zvbb-zvbc.adoc[]
 
 
 include::./riscv-crypto-vector-appx-sail.adoc[]

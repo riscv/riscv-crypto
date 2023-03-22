@@ -1,9 +1,9 @@
 [appendix]
-[[crypto_vector_instructions_Zvkb]]
-=== Crypto Vector Bitmanip Instructions
+[[crypto_vector_instructions_Zvbb_Zvbc]]
+=== Crypto Vector Bitmanip and Caryless Multiply Instructions
 
 OP-V (0x57)
-Vector instructions with *Zvkb (in bold)*
+*Zvbb* and *Zvbc* Vector instructions *in bold*
 //[%auto-width]
 [%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===
@@ -94,8 +94,8 @@ Vector instructions with *Zvkb (in bold)*
 | 110001 |V| | | vwredsum   | 110001 |V|X| vwadd       | 110001 |V| | vfwredusum
 | 110010 | | | |            | 110010 |V|X| vwsubu      | 110010 |V|F| vfwsub
 | 110011 | | | |            | 110011 |V|X| vwsub       | 110011 |V| | vfwredosum
-| 110100 | | | |            | 110100 |V|X| vwaddu.w    | 110100 |V|F| vfwadd.w
-| 110101 |V|X|I| vwsll      | 110101 |V|X| vwadd.w     | 110101 | | |
+| 110100 | | |I| *vwsll*    | 110100 |V|X| vwaddu.w    | 110100 |V|F| vfwadd.w
+| 110101 |V|X|I| *vwsll*    | 110101 |V|X| vwadd.w     | 110101 | | |
 | 110110 | | | |            | 110110 |V|X| vwsubu.w    | 110110 |V|F| vfwsub.w
 | 110111 | | | |            | 110111 |V|X| vwsub.w     | 110111 | | |
 | 111000 | | | |            | 111000 |V|X| vwmulu      | 111000 |V|F| vfwmul

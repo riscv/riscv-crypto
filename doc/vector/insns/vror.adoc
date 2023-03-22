@@ -86,7 +86,7 @@ A bitwise right rotation is performed on each element of `vs2`.
 
 The elements in `vs2` are rotated right by the rotate amount specified by either 
 the corresponding elements of `vs1` (vector-vector), integer register `rs1`
-(vector-scalar), or an immediate valie (vector-immediate).
+(vector-scalar), or an immediate value (vector-immediate).
 Only the low log2(`SEW`) bits of the rotate-amount value are used, all other
 bits are ignored.
 
