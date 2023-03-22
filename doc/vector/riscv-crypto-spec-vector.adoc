@@ -110,8 +110,11 @@ include::./riscv-crypto-vector-software-portability.adoc[]
 The section introduces all of the  extensions in the Vector Cryptography
 Instruction Set Extension Specification.
 
-The <<zvknh,Zvknhb>> and <<zvbc>> Vector Crypto Extensions require a Zve64x base,
+The <<zvknh,Zvknhb>> and <<zvbc>> Vector Crypto Extensions
+--and accordingly the composite extensions <<Zvkn>> and <<Zvks>>--
+require a Zve64x base,
 or application ("V") base Vector Extension.
+
 All of the other Vector Crypto Extensions can be built
 on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 // `SEW`=64 and therefore cannot be implemented on a Zve32* base.
