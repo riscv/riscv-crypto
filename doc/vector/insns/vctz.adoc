@@ -50,6 +50,7 @@ function clause execute (VCTZ(vs2)) = {
       if [input[j]] == 0b1 then break;
     set_velem(vd, SEW, i, j)
   }
+  vstart = 0
   RETIRE_SUCCESS
 }
 --

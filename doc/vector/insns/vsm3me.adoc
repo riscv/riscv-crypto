@@ -135,6 +135,7 @@ function clause execute (VSM3ME(vs2, vs1)) = {
     // Update the destination register.
     set_velem(vd, 256, i, {w23 @ w22 @ w21 @ w20 @ w19 @ w18 @ w17 @ w16});
   }
+  vstart = 0
   RETIRE_SUCCESS
   }
 }

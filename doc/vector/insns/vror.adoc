@@ -102,6 +102,7 @@ function clause execute (VROR_VV(vs2, vs1, vd)) = {
       get_velem(vs2, i) >>> (get_velem(vs1, i) & (SEW-1))
     )
   }
+  vstart = 0
   RETIRE_SUCCESS
 }
 
@@ -111,6 +112,7 @@ function clause execute (VROR_VX(vs2, rs1, vd)) = {
       get_velem(vs2, i) >>> (X(rs1) & (SEW-1))
     )
   }
+  vstart = 0
   RETIRE_SUCCESS
 }
 
@@ -120,6 +122,7 @@ function clause execute (VROR_VI(vs2, imm[5:0], vd)) = {
       get_velem(vs2, i) >>> (imm[5:0] & (SEW-1))
     )
   }
+  vstart = 0
   RETIRE_SUCCESS
 }
 --

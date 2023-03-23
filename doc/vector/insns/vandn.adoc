@@ -101,6 +101,7 @@ function clause execute (VANDN(vs2, vs1, vd, suffix)) = {
     let op2 = get_velem(vs2, SEW, i);
     set_velem(vd, EEW=SEW, i, ~op1 & op2);
   }
+  vstart = 0
   RETIRE_SUCCESS
 }
 

@@ -166,6 +166,7 @@ let result : bits(256) = {rev8(G1) @ rev8(G2) @ rev8(E1) @ rev8(E2) @ rev8(C1) @
 set_velem(vd, 256, i, result);
       }
 
+vstart = 0
 RETIRE_SUCCESS
   }
 }

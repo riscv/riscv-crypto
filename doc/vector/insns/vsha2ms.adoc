@@ -155,6 +155,7 @@ function clause execute (VSHA2ms(vs2, vs1, vd)) = {
 
     set_velem(vd, EGW, i, {W[19] @ W[18] @ W[17] @ W[16]});
   }
+  vstart = 0
   RETIRE_SUCCESS
   }
 }

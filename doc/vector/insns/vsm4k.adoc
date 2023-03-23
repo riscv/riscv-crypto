@@ -187,6 +187,7 @@ function clause execute (vsm4k(uimm, vs2)) = {
     // Update the destination register.
    set_velem(vd, EGW=128, i, (rk7 @ rk6 @ rk5 @ rk4));
   }
+  vstart = 0
   RETIRE_SUCCESS
   }
 }

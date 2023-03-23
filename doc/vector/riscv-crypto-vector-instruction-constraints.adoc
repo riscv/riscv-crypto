@@ -92,3 +92,6 @@ overlap this `vs2` register group.
 
 |===
 
+vstart reset constraints::
+All vector instructions are defined to begin execution with the element number given in the vstart CSR,
+leaving earlier elements in the destination vector undisturbed, and to reset the vstart CSR to zero at the end of execution.
