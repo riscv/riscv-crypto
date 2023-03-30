@@ -54,3 +54,5 @@ dkms.conf
 # Miscelleanous
 __pycache__
 cscope.out
+zvkb-test
+zvkb-test.s

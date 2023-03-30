@@ -14,11 +14,11 @@ Specifically:
   Zvkns extension. The resulting program runs this implementation against NIST
   Known Answer Tests.
 - aes-gcm-test.c - implements the AES-GCM with a 128 or 256 bit key using Zvkns
-  and Zvkb extensions. The resulting program runs this implementation against
+  and Zvbb extensions. The resulting program runs this implementation against
   NIST Known Answer Tests.
-- zvkb-test.c - shows proper usage of instructions in the Zvkb extension. The
+- zvbb-test.c - shows proper usage of instructions in the Zvbb extension. The
   resulting program generates a set of random verification data and applies
-  the Zvkb routines to that.
+  the Zvbb routines to that.
 - sm4-test.c - implements the SM4 block cypher using the Zvksed extension. The
   resulting program runs this implementation against test vectors defined in
   SM4 IETF draft (see [1]).
@@ -67,13 +67,13 @@ make run-tests TARGET=riscv64-unknown-linux-gnu \
 - `aes-gcm-test` - Build the AES-GCM example.
 - `sha-test` - Build the SHA example.
 - `sm4-test` - Build the SM4 example.
-- `zvkb-test` - Build the Zvkb example.
+- `zvbb-test` - Build the Zvbb example.
 - `run-tests` - Build and run all examples.
 - `run-aes-cbc` - Build and run the AES-CBC example in Spike.
 - `run-aes-gcm` - Build and run the AES-GCM example in Spike.
 - `run-sha` - Build and run the SHA example in Spike.
 - `run-sm4` - Build and run the SM4 example in Spike.
-- `run-zvkb` - Build and run the Zvkb example in Spike.
+- `run-zvbb` - Build and run the Zvbb example in Spike.
 
 ### Make variables
 
