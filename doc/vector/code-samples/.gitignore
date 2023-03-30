@@ -62,6 +62,8 @@ sha-test
 sha-test.s
 sm3-test
 sm3-test.s
+sm4-test
+sm4-test.s
 test-vectors
 zvkb-test
 zvkb-test.s
