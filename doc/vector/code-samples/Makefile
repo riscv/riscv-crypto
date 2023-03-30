@@ -22,7 +22,7 @@ AS?=$(TARGET)-as
 CC?=$(TARGET)-gcc
 LD?=$(TARGET)-gcc
 
-MARCH_EXT_FLAGS=_zvbb
+MARCH_EXT_FLAGS=_zvbb_zvbc
 CFLAGS?=-march=rv64gcv$(MARCH_EXT_FLAGS)
 CFLAGS+=-Wall
 LDFLAGS+=-static
@@ -34,13 +34,15 @@ COMMON_SPIKE_FLAGS?=--isa=rv64gcv$(MARCH_EXT_FLAGS)
 TEST_VECTORS_DIR=test-vectors
 
 C_OBJECTS=\
-	zkb-test.o \
+	zvbb-test.o \
+	zvbc-test.o \
 
 ASM_OBJECTS=\
 	vlen-bits.o \
 	zvbb.o \
+	zvbc.o \
 
-default: zvbb-test
+default: zvbb-test zvbc-test
 
 $(C_OBJECTS): %.o: %.c test-vectors
 	$(CC) -c $(CFLAGS) -o $@ $<
@@ -51,14 +53,23 @@ $(ASM_OBJECTS): %.o: %.s
 zvbb-test: zvbb-test.o zvbb.o log.o vlen-bits.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
+zvbc-test: zvbc-test.o zvbc.o log.o vlen-bits.o
+	$(LD) $(LDFLAGS) -o $@ $^
+
 .PHONY: run-zvbb
 run-zvbb: zvbb-test
 	for VLEN in 64 128 256 512; do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
+.PHONY: run-zvbc
+run-zvbc: zvbc-test
+	for VLEN in 64 128 256 512; do \
+	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
+	done
+
 .PHONY: run-tests
-run-tests: run-zvbb
+run-tests: run-zvbb run-zvbc
 
 .PHONY: clean
 clean:
