@@ -1,0 +1,21 @@
+[[zvkng,Zvkng]]
+=== `Zvkng` - NIST Algorithm Suite with GCM
+
+This extension is shorthand for the following set of other extensions:
+
+[%autowidth]
+[%header,cols="^2,4"]
+|===
+|Included Extension
+|Description
+
+
+| Zvkn  | <<Zvkn>>
+| Zvkg  | <<Zvkg>>
+|===
+
+[NOTE]
+====
+This extension combines the NIST Algorithm Suite with the
+GCM/GMAC extension to enable high-performace AES-GCM.
+====
