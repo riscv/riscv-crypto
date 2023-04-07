@@ -3,7 +3,7 @@
 :description: The vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
 :revdate:  06 April, 2023
-:revnumber: v0.5.0
+:revnumber: v0.5.1
 // :revremark: This document is in development. Some changes should be expected.
 :url-riscv: http://riscv.org
 :doctype: book
