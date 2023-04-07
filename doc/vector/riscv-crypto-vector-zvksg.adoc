@@ -16,6 +16,6 @@ This extension is shorthand for the following set of other extensions:
 
 [NOTE]
 ====
-This extension combines the ShangMi Algorithm Algorithm Suite with the
+This extension combines the ShangMi Algorithm Suite with the
 GCM/GMAC extension to enable high-performace SM4-GCM.
 ====
