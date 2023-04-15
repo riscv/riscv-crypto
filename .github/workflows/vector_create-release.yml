@@ -8,16 +8,16 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version, e.g. X.Y.Z:'
+        description: "Release version, e.g. X.Y.Z:"
         required: true
         type: string
       prerelease:
-        description: 'Tag as a pre-release?'
+        description: "Tag as a pre-release?"
         required: false
         type: boolean
         default: true
       draft:
-        description: 'Create release as a draft?'
+        description: "Create release as a draft?"
         required: false
         type: boolean
         default: false
@@ -29,15 +29,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Download Artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: ${{ needs.build.outputs.pdf-name }}
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ${{ needs.build.outputs.pdf-name }}
-        tag_name: v${{ github.event.inputs.version }}
-        name: Release ${{ github.event.inputs.version }}
-        draft: ${{ github.event.inputs.draft }}
-        prerelease: ${{ github.event.inputs.prerelease }}
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.build.outputs.pdf-name }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ needs.build.outputs.pdf-name }}
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          draft: ${{ github.event.inputs.draft }}
+          prerelease: ${{ github.event.inputs.prerelease }}
