@@ -11,7 +11,7 @@ This extension is shorthand for the following set of other extensions:
 
 
 | Zvkned  | <<Zvkned>>
-| Zvknhb  | <<Zvknh>>
+| Zvknhb  | <<zvknh,Zvknhb>>
 | Zvbb    | <<Zvbb>>
 | Zvbc    | <<Zvbc>>
 | Zvkt    | <<Zvkt>>
