@@ -60,19 +60,16 @@ either each 64-bit element in `vs1` (vector-vector), or the 64-bit value
 from integer register `rs1` (vector-scalar). The result is the least
 significant 64 bits of the carry-less product.
 
-// This instruction must always be implemented such that its execution latency does not depend
-// on the data being operated upon.
-
 [NOTE]
 ====
-The 64-bit carryless multiply is used for implementing GCM in the absence of the `zvkg` extension.
+The 64-bit carryless multiply instructions can be used for implementing GCM in the absence of the `zvkg` extension.
 We do not make these instructions exclusive as the 64-bit carryless multiply is readily derived from the
 instructions in the `zvkg` extension and can have utility in other areas.
 Likewise, we treat other SEW values as reserved so as not to preclude
-future extensions from using this opcode with different element widths as may be used in generating CRCs, for example.
+future extensions from using this opcode with different element widths.
+For example, a future extension might define an `SEW`=32 version of this instruction to enable `Zve32*` implementations to have
+vector carryless multiplication instructions.
 ====
-
-
 
 Operation::
 [source,sail]
