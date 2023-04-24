@@ -76,7 +76,7 @@ behavior to be fully defined for all values of `uimm[4:0]` with minimal extra lo
 Operation::
 [source,Sail]
 --
-function clause execute (VAESESKF2(rnd, vd, vs2)) = {
+function clause execute (VAESKF2(rnd, vd, vs2)) = {
   if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
     RETIRE_FAIL

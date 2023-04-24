@@ -90,7 +90,7 @@ function clause execute (VAESEM(vs2, vd, suffix)) = {
     let rkey  : bits(128) = get_velem(vs2, EGW=128, keyelem);
     let sb    : bits(128) = aes_subbytes_fwd(state);
     let sr    : bits(128) = aes_shift_rows_fwd(sb);
-    let mix   : bits(128) = aes_fwd_mixcolumns_fwd(sr);
+    let mix   : bits(128) = aes_mixcolumns_fwd(sr);
     let ark   : bits(128) = mix ^ rkey;
     set_velem(vd, EGW=128, i, ark);
   }
