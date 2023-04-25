@@ -114,7 +114,7 @@ function clause execute (VWSLL_VX(vs2, rs1, vd)) = {
 function clause execute (VWSLL_VI(vs2, uimm[4:0], vd)) = {
   foreach (i from vstart to vl - 1) {
     set_velem(vd, EEW=2*SEW, i, 
-      get_velem(vs2, i) << (imm[4:0] & ((2*SEW)-1))
+      get_velem(vs2, i) << (uimm[4:0] & ((2*SEW)-1))
     )
   }
   RETIRE_SUCCESS
