@@ -69,6 +69,13 @@ swap bit positions and therefore do not require any logic.
 
 [NOTE]
 ====
+Since the same multiplicand will typically be used repeatedly on a given message,
+a future extension might define a vector-scalar version of this instruction where
+`vs2` is the scalar element group. This would help reduce register pressure when `LMUL` > 1. 
+====
+
+[NOTE]
+====
 This instruction is identical to `vghsh.vv` with vs1=0.
 This instruction is often used in GHASH code. In some cases it is followed
 by an XOR to perform a multiply-add. Implementations may choose to fuse these

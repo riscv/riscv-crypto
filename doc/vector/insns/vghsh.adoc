@@ -76,7 +76,7 @@ swap bit positions and therefore do not require any logic.
 
 [NOTE]
 ====
-Since we expect the same hash key `H` to be used for many of the iterations of `vgsh.v` for a given message,
+Since the same hash subkey `H` will typically be used repeatedly on a given message,
 a future extension might define a vector-scalar version of this instruction where
 `vs2` is the scalar element group. This would help reduce register pressure when `LMUL` > 1. 
 ====
