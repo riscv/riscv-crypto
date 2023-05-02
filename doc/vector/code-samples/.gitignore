@@ -58,6 +58,8 @@ aes-cbc-test
 aes-cbc-test.s
 aes-gcm-test
 aes-gcm-test.s
+sha-test
+sha-test.s
 test-vectors
 zvkb-test
 zvkb-test.s
