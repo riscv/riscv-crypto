@@ -13,11 +13,11 @@ This extension is shorthand for the following set of other extensions:
 | Zvkned  | <<Zvkned>>
 | Zvknhb  | <<zvknh,Zvknhb>>
 | Zvbb    | <<Zvbb>>
-| Zvbc    | <<Zvbc>>
+// | Zvbc    | <<Zvbc>>
 | Zvkt    | <<Zvkt>>
 |===
 
 [NOTE]
 ====
-While Zvkg is not part of this extension, it is recommended for high performance AES-GCM
+While Zvkg and Zvbc are not part of this extension, it is recommended that at least one of them is implemented with this extension to enable efficient AES-GCM.
 ====

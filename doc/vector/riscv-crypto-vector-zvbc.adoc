@@ -2,7 +2,7 @@
 === `Zvbc` - Vector Carryless Multiplication
 
 General purpose carryless multiplication instructions which are commonly used in cryptography
-and hashing (e.g., CRC).
+and hashing (e.g., Elliptic curve cryptography, GHASH, CRC).
 
 These instructions are only defined for `SEW`=64.
 
