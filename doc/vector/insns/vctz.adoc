@@ -31,7 +31,7 @@ Arguments::
 |Definition
 
 | Vs2 | input  | Input elements
-| Vd  | output | Count of leading zero bits
+| Vd  | output | Count of trailing zero bits
 |===
 
 Description::
