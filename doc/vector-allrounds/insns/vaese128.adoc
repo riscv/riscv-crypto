@@ -56,7 +56,7 @@ Description::
 This instruction implements the entire AES-128 block cipher encryption
 function. It internally generates each of the round keys and performs each of the rounds.
 
-It treats each `EGW=128` element group of `vd` as the plaintext
+It treats each `EGW=128` element group of `vs2` as the plaintext
 and `EGW=128` element group of `vs1` as the 128-bit encryption key.
 
 The result (i.e. the ciphertext) is written to `EGW=128` element groups of `vd`.
