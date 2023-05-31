@@ -157,9 +157,13 @@ include::./riscv-crypto-vector-zvksh.adoc[]
 <<<
 include::./riscv-crypto-vector-zvkn.adoc[]
 <<<
+include::./riscv-crypto-vector-zvknc.adoc[]
+<<<
 include::./riscv-crypto-vector-zvkng.adoc[]
 <<<
 include::./riscv-crypto-vector-zvks.adoc[]
+<<<
+include::./riscv-crypto-vector-zvksc.adoc[]
 <<<
 include::./riscv-crypto-vector-zvksg.adoc[]
 <<<

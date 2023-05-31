@@ -1,0 +1,21 @@
+[[zvksc,Zvksc]]
+=== `Zvksc` - ShangMi Algorithm Suite with carryless multiplication
+
+This extension is shorthand for the following set of other extensions:
+
+[%autowidth]
+[%header,cols="^2,4"]
+|===
+|Included Extension
+|Description
+
+
+| Zvks  | <<Zvks>>
+| Zvbc  | <<Zvbc>>
+|===
+
+[NOTE]
+====
+This extension combines the ShangMi Algorithm Suite with the
+vector carryless multiply extension to enable SM4-GCM.
+====
