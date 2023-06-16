@@ -84,7 +84,8 @@ Vector-Scalar/Immediate Arguments::
 Description:: 
 A widening logical shift left is performed on each element of `vs2`.
 
-The elements in `vs2` are shifted left by the shift amount specified by either 
+The elements in `vs2` are zero-extended to `2 * SEW` bits before being shifted left
+by the shift amount specified by either 
 the corresponding elements of `vs1` (vector-vector), integer register `rs1`
 (vector-scalar), or an immediate value (vector-immediate).
 Only the low log2(2*`SEW`) bits of the shift-amount value are used, all other
