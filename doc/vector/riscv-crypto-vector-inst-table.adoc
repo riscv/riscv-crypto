@@ -3,7 +3,7 @@
 === Crypto Vector Cryptographic Instructions
 
 OP-P (0x77)
-Crypto Vector instructions except Zvkb
+Crypto Vector instructions except Zvbb and Zvbc
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 [cols="4,1,1,1,1,4,1,1,1,4,1,1,1"]
