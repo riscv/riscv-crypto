@@ -46,7 +46,8 @@ zvb_ghash_init:
     li t1, 63
     la t2, polymod
 
-    vsetivli x0, 2, e64, m1, ta, ma
+    # Mask undisturbed for the vor/vxor.
+    vsetivli x0, 2, e64, m1, ta, mu
 
     vlse64.v v1, (a0), t0
     vle64.v v2, (t2)
@@ -106,7 +107,7 @@ zvb_ghash:
     add a0, a0, 8
     li t4, -8
 
-    vsetivli x0, 2, e64, m1, ta, ma
+    vsetivli x0, 2, e64, m1, ta, mu
 
     vlse64.v v5, (a0), t4
     vrev8.v v5, v5
