@@ -208,7 +208,7 @@ encoding forms of these instructions.
 
 ====	RVM (Multiply)
 
-Multiplication is included; division and remaindering excluded.
+Multiplication is included; division and remainder excluded.
 
 [%header,cols="^1,^1,4,8"]
 |===
