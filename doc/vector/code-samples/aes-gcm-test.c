@@ -426,15 +426,18 @@ run_test_zvb(const struct aes_gcm_test* test, int keylen)
     }
 
     for (int i = 0; i < test->ctlen / 16; i++) {
-        if (!test->encrypt)
+        if (!test->encrypt) {
             ghash(&Y, (uint128 *)(&xordata[16 * i]), &H);
+        }
 
         encrypt_block(&buf[16 * i], &counter_block, &key);
-        for (int j = 0; j < 16; j++)
+        for (int j = 0; j < 16; j++) {
             buf[16 * i + j] ^= xordata[16 * i + j];
+        }
 
-        if (test->encrypt)
+        if (test->encrypt) {
             ghash(&Y, (uint128 *)(&buf[16 * i]), &H);
+        }
 
         increment_counter_block(&counter_block);
     }
@@ -449,8 +452,9 @@ run_test_zvb(const struct aes_gcm_test* test, int keylen)
 
         // buf shall have enough space to fit the extra bytes.
         encrypt_block(&buf[test->ctlen - rem], &counter_block, &key);
-        for (int i = 0; i < rem; i++)
+        for (int i = 0; i < rem; i++) {
             buf[test->ctlen - rem + i] ^= xordata[test->ctlen - rem + i];
+        }
 
         if (test->encrypt) {
             bzero(&temp, sizeof(temp));
