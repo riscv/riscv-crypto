@@ -80,6 +80,7 @@ C_OBJECTS=\
 	zkb-test.o \
 	zvbb-test.o \
 	zvbc-test.o \
+	zvkg-test.o \
 
 ASM_OBJECTS=\
 	vlen-bits.o \
@@ -92,7 +93,7 @@ ASM_OBJECTS=\
         zvksed.o \
         zvksh.o \
 
-default: aes-cbc-test aes-gcm-test sha-test sm3-test sm4-test zvbb-test zvbc-test
+default: aes-cbc-test aes-gcm-test sha-test sm3-test sm4-test zvbb-test zvbc-test zvkg-test
 
 .PHONY: test-vectors
 test-vectors: $(SUBDIR_CBC_VECTORS) $(SUBDIR_GCM_VECTORS) $(SUBDIR_SHA_VECTORS)
@@ -131,6 +132,9 @@ zvbb-test: zvbb-test.o zvbb.o log.o vlen-bits.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
 zvbc-test: zvbc-test.o zvbc.o log.o vlen-bits.o
+	$(LD) $(LDFLAGS) -o $@ $^
+
+zvkg-test: zvkg-test.o zvkg.o log.o vlen-bits.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
 # TODO: add VLEN=32, VLEN=64 runs.
@@ -177,8 +181,14 @@ run-zvbc: zvbc-test
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
+.PHONY: run-zvkg
+run-zvkg: zvkg-test
+	for VLEN in 64 128 256 512; do \
+	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
+	done
+
 .PHONY: run-tests
-run-tests: run-aes-cbc run-aes-gcm run-sha run-sm3 run-sm4 run-zvbb run-zvbc
+run-tests: run-aes-cbc run-aes-gcm run-sha run-sm3 run-sm4 run-zvbb run-zvbc run-zvkg
 
 .PHONY: clean
 clean:
