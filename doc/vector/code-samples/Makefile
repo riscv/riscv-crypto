@@ -32,6 +32,18 @@ LDFLAGS+=-static
 # with different values of VLEN.
 COMMON_SPIKE_FLAGS?=--isa=rv64gcv$(MARCH_EXT_FLAGS)
 
+# List of VLEN values being tested.
+# All code samples support values >=128, some support VLEN=64.
+#
+# Each value requires a separate Spike invocation. Overriding
+# the list is an easy way to reduce run time if only specific
+# values are of interest.
+#
+# TODO: ideally we'd have logic supporting VLEN=32, which also
+# implies ELEN=32 (i.e., rv32). The code was developed for rv64,
+# hence VLEN=32 runs are not valid.
+TESTED_VLENS?=64 128 256 512
+
 TEST_VECTORS_DIR=test-vectors
 
 CBC_VECTORS=\
@@ -137,53 +149,61 @@ zvbc-test: zvbc-test.o zvbc.o log.o vlen-bits.o
 zvkg-test: zvkg-test.o zvkg.o log.o vlen-bits.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
-# TODO: add VLEN=32, VLEN=64 runs.
 .PHONY: run-aes-cbc
 run-aes-cbc: aes-cbc-test
-	for VLEN in 128 256 512; do \
+	for VLEN in $(TESTED_VLENS); do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
-# TODO: add VLEN=64 runs.
+# TODO: add logic supporting VLEN=64 runs.
 .PHONY: run-aes-gcm
 run-aes-gcm: aes-gcm-test
-	for VLEN in 128 256 512; do \
-	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
+	for VLEN in $(TESTED_VLENS); do \
+	    if [[ $${VLEN} == 64 ]]; then \
+	        echo "*** Skipping $< test with VLEN=$${VLEN}"; \
+	    else \
+	        $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
+	    fi \
 	done
 
 .PHONY: run-sha
 run-sha: sha-test
-	for VLEN in 64 128 256 512; do \
+	for VLEN in $(TESTED_VLENS); do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
 .PHONY: run-sm3
 run-sm3: sm3-test
-	for VLEN in 64 128 256 512; do \
+	for VLEN in $(TESTED_VLENS); do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
+# TODO: add logic supporting VLEN=64 runs.
 .PHONY: run-sm4
 run-sm4: sm4-test
-	for VLEN in 128 256 512; do \
-	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
+	for VLEN in $(TESTED_VLENS); do \
+	    if [[ $${VLEN} == 64 ]]; then \
+	        echo "*** Skipping $< test with VLEN=$${VLEN}"; \
+	    else \
+	        $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
+	    fi \
 	done
 
 .PHONY: run-zvbb
 run-zvbb: zvbb-test
-	for VLEN in 64 128 256 512; do \
+	for VLEN in $(TESTED_VLENS); do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
 .PHONY: run-zvbc
 run-zvbc: zvbc-test
-	for VLEN in 64 128 256 512; do \
+	for VLEN in $(TESTED_VLENS); do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 
 .PHONY: run-zvkg
 run-zvkg: zvkg-test
-	for VLEN in 64 128 256 512; do \
+	for VLEN in $(TESTED_VLENS); do \
 	    $(SPIKE) --varch=vlen:$${VLEN},elen:64 $(COMMON_SPIKE_FLAGS) $(PK) $< || exit 1; \
 	done
 

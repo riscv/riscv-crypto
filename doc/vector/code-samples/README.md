@@ -90,6 +90,10 @@ make run-tests TARGET=riscv64-unknown-linux-gnu \
 - `TARGET` - Target triplet to use. By default riscv64-linux-gnu.
 - `PK` - Location of the riscv-pk binary. By default it's
   `~/RISC-V/$(TARGET)/bin/pk`.
+- `TESTED_VLENS` - Space separated list of VLEN values being tested
+   against. All algorithms support VLEN>=128, most support VLEN=64.
+   Tests that do not support VLEN=64 will be skipped if that value
+   is present in the list.
 
 See Makefile for more details.
 
