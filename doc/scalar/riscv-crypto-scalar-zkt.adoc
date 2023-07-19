@@ -238,6 +238,9 @@ Same criteria as in RVI. Organised by quadrants.
 | &#10003; | &#10003; | c.nop      | <<insns-c_nop>>
 | &#10003; | &#10003; | c.addi     | <<insns-c_addi>>
 | &#10003; | &#10003; | c.addiw    | <<insns-c_addiw>>
+| &#10003; | &#10003; | c.addi16sp | <<insns-c_addi16sp>>
+| &#10003; | &#10003; | c.add4spn  | <<insns-c_add4spn>>
+| &#10003; | &#10003; | c.li       | <<insns-c_li>>
 | &#10003; | &#10003; | c.lui      | <<insns-c_lui>>
 | &#10003; | &#10003; | c.srli     | <<insns-c_srli>>
 | &#10003; | &#10003; | c.srai     | <<insns-c_srai>>
