@@ -146,13 +146,4 @@ function clause execute (VSM3ME(vs2, vs1)) = {
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvksh>>
-| v0.1.0
-| In Development
-|===
+<<zvks>>, <<zvksc>>, <<zvksg>>, <<zvksh>>

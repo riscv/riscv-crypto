@@ -100,13 +100,4 @@ function clause execute (VAESDM(vs2, vd, suffix)) = {
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvkned>>
-| v0.1.0
-| In Development
-|===
+<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>, <<zvknh>>

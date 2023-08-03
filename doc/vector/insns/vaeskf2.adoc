@@ -107,13 +107,4 @@ function clause execute (VAESKF2(rnd, vd, vs2)) = {
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvkned>>
-| v0.1.0
-| In Development
-|===
+<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>, <<zvknh>>

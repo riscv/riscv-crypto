@@ -1,0 +1,33 @@
+[[zvkb,Zvkb]]
+=== `Zvkb` - Vector Cryptography Bit-manipulation 
+
+Vector bit-manipulation instructions that are essential
+for implementing common cryptographic workloads securely &
+efficiently.
+
+[NOTE]
+====
+This Zvkb extension is a proper subset of the Zvbb extension.
+Zvkb allows for vector crypto implementations without incuring
+the the cost of implementing the additional bitmanip instructions
+in the Zvbb extension: vbrev.v, vclz, vctz.v, vcpop.v, and vwsll.[vv,vx,vi].
+====
+
+[%autowidth]
+[%header,cols="2,4"]
+|===
+|Mnemonic
+|Instruction
+
+| vandn.[vv,vx]      | <<insns-vandn>>
+// | vbrev.v            | <<insns-vbrev>>
+| vbrev8.v           | <<insns-vbrev8>>
+| vrev8.v            | <<insns-vrev8>>
+// | vclz.v             | <<insns-vclz>>
+// | vctz.v             | <<insns-vctz>>
+// | vcpop.v            | <<insns-vcpop>>
+| vrol.[vv,vx]       | <<insns-vrol>>
+| vror.[vv,vx,vi]    | <<insns-vror>>
+// | vwsll.[vv,vx,vi]   | <<insns-vwsll>>
+|===
+

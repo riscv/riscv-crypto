@@ -211,13 +211,4 @@ let ck : list(bits(32)) = [|
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvksed>>
-| v0.1.0
-| In Development
-|===
+<<zvks>>, <<zvksc>>, <<zvksg>>, <<zvksed>>

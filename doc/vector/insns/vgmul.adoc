@@ -122,13 +122,4 @@ function clause execute (VGMUL(vs2, vs1, vd)) = {
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvkg>>
-| v0.1.0
-| In Development
-|===
+<<zvkg>>, <<zvkng>>, <<zvksg>>

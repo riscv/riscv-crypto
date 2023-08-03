@@ -1,9 +1,9 @@
 [appendix]
 [[crypto_vector_instructions_Zvbb_Zvbc]]
-=== Crypto Vector Bitmanip and Caryless Multiply Instructions
+=== Vector Bitmanip and Caryless Multiply Instructions
 
 OP-V (0x57)
-*Zvbb* and *Zvbc* Vector instructions *in bold*
+*Zvbb*, *Zvkb*, and *Zvbc* Vector instructions *in bold*
 //[%auto-width]
 [%autowidth,cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 |===

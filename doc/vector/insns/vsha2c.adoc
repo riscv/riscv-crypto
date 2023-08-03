@@ -207,16 +207,4 @@ function ROTR(x,n) = (x >> n) | (x << SEW - n)
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvknh, zvknh[ab]>>
-| v0.1.0
-| In Development
-|===
-
-
-
+<<zvknh, zvknh[ab]>>, <<zvkn>>, <<zvkng>>

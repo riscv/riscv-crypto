@@ -126,14 +126,14 @@ on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 
 
 All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those 
-in <<zvkned>>, <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvbb>> or <<zvbc>>) shall
+in <<zvkned>>, <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksg>> and <<zvksh>> but _not_ <<zvbb>>,<<zvkb>>, or <<zvbc>>) shall
 be executed with data-independent execution latency as defined in the 
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 It is important to note that the Vector Crypto instructions are independent of the
 implementation of the `Zkt` extension and do not require that `Zkt` is implemented.
 
 This specification includes a <<Zvkt>> extension that, when implemented, requires certain vector instructions
-(including <<zvbb>> and <<zvbc>>) to be executed with data-independent execution latency.
+(including <<zvbb>>, <<zvkb>>, and <<zvbc>>) to be executed with data-independent execution latency.
 
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.
@@ -147,6 +147,8 @@ progress.
 include::./riscv-crypto-vector-zvbb.adoc[]
 <<<
 include::./riscv-crypto-vector-zvbc.adoc[]
+<<<
+include::./riscv-crypto-vector-zvkb.adoc[]
 <<<
 include::./riscv-crypto-vector-zvkg.adoc[]
 <<<

@@ -55,16 +55,4 @@ function clause execute (VCTZ(vs2)) = {
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvbb>>
-| v0.1.0
-| In Development
-|===
-
-
-
+<<zvbb>>

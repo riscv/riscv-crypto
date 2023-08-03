@@ -12,7 +12,8 @@ This extension is shorthand for the following set of other extensions:
 
 | Zvkned  | <<Zvkned>>
 | Zvknhb  | <<zvknh,Zvknhb>>
-| Zvbb    | <<Zvbb>>
+// | Zvbb    | <<Zvbb>>
+| Zvkb    | <<Zvkb>>
 // | Zvbc    | <<Zvbc>>
 | Zvkt    | <<Zvkt>>
 |===

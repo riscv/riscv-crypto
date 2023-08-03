@@ -187,13 +187,4 @@ function P_0(X) = ((X) ^ ROL32((X),  9) ^ ROL32((X), 17))
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvksh>>
-| v0.1.0
-| In Development
-|===
+<<zvks>>, <<zvksc>>, <<zvksg>>, <<zvksh>>

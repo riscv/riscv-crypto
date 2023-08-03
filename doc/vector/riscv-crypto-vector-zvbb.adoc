@@ -1,8 +1,12 @@
 [[zvbb,Zvbb]]
-=== `Zvbb` - Vector Bit-manipulation used in Cryptography
+=== `Zvbb` - Vector Basic Bit-manipulation
 
-General purpose bit-manipulation instructions which are essential
-for implementing common cryptographic workloads securely & efficiently.
+Vector basic bit-manipulation instructions.
+
+[NOTE]
+====
+This extension is a superset of the <<Zvkb>> extension.
+====
 
 [%autowidth]
 [%header,cols="2,4"]

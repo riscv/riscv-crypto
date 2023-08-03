@@ -125,17 +125,4 @@ function clause execute (VROR_VI(vs2, imm[5:0], vd)) = {
 --
 
 Included in::
-[%header,cols="4,2,2"]
-|===
-|Extension
-|Minimum version
-|Lifecycle state
-
-| <<zvbb>>
-| v0.1.0
-| In Development
-|===
-
-
-
-
+<<zvbb>>, <<zvkb>>
