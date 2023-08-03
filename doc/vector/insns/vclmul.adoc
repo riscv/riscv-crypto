@@ -98,4 +98,4 @@ function clmul(x, y, width) = {
 --
 
 Included in::
-<<zvbc>>, <<zvkc>>, <<zvksc>>
+<<zvbc>>, <<zvknc>>, <<zvksc>>
