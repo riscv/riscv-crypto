@@ -92,4 +92,4 @@ function clause execute (VAESZ(vs2, vd) = {
 --
 
 Included in::
-<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>, <<zvknh>>
+<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>
