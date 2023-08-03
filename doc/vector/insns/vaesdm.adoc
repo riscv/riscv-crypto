@@ -68,8 +68,8 @@ This instruction must always be implemented such that its execution latency does
 on the data being operated upon.
 //
 // The number of element groups to be processed is `vl`/`EGS`.
-// `vl` must be set to the number of `SEW=32` elements to be processed and 
-// therefore must be a multiple of `EGS=4`. + 
+// `vl` must be set to the number of `SEW=32` elements to be processed and
+// therefore must be a multiple of `EGS=4`. +
 // Likewise, `vstart` must be a multiple of `EGS=4`.
 
 Operation::
@@ -83,7 +83,7 @@ function clause execute (VAESDM(vs2, vd, suffix)) = {
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
-  
+
   foreach (i from eg_start to eg_len-1) {
     let keyelem = if suffix == "vv" then i else 0;
     let state : bits(128) = get_velem(vd, EGW=128, i);
@@ -100,4 +100,4 @@ function clause execute (VAESDM(vs2, vd, suffix)) = {
 --
 
 Included in::
-<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>, <<zvknh>>
+<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>

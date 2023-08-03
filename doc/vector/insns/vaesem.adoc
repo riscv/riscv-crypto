@@ -100,4 +100,4 @@ function clause execute (VAESEM(vs2, vd, suffix)) = {
 --
 
 Included in::
-<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>, <<zvknh>>
+<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>

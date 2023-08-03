@@ -107,4 +107,4 @@ function clause execute (VAESKF2(rnd, vd, vs2)) = {
 --
 
 Included in::
-<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>, <<zvknh>>
+<<zvkn>>, <<zvknc>>, <<zvkned>>, <<zvkng>>
