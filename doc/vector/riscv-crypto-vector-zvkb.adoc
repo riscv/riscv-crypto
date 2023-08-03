@@ -20,7 +20,7 @@ in the Zvbb extension: vbrev.v, vclz, vctz.v, vcpop.v, and vwsll.[vv,vx,vi].
 |Instruction
 
 | vandn.[vv,vx]      | <<insns-vandn>>
-| vbrev.v            | <<insns-vbrev>>
+// | vbrev.v            | <<insns-vbrev>>
 | vbrev8.v           | <<insns-vbrev8>>
 | vrev8.v            | <<insns-vrev8>>
 // | vclz.v             | <<insns-vclz>>
