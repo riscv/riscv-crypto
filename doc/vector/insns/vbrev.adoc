@@ -54,4 +54,4 @@ function clause execute (VBREV(vs2)) = {
 --
 
 Included in::
-<<zvbb>>, <<zvkb>>
+<<zvbb>>
