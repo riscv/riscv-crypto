@@ -125,9 +125,9 @@ on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 // small `VLEN` values.
 
 
-All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those 
-in <<zvkned>>, <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksg>> and <<zvksh>> but _not_ <<zvbb>>,<<zvkb>>, or <<zvbc>>) shall
-be executed with data-independent execution latency as defined in the 
+All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those
+in <<zvkned>>, <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvbb>>,<<zvkb>>, or <<zvbc>>) shall
+be executed with data-independent execution latency as defined in the
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 It is important to note that the Vector Crypto instructions are independent of the
 implementation of the `Zkt` extension and do not require that `Zkt` is implemented.
