@@ -63,5 +63,4 @@ function clause execute (VREV8(vs2)) = {
 --
 
 Included in::
-<<zvbb>>
-<<zvbb>>
+<<zvbb>>, <<zvkb>>
