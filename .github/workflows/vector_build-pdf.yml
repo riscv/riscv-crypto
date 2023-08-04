@@ -1,79 +1,74 @@
-# This workflow installs dependencies for PDF generation, generates the PDF,
-# and uploads the PDF as an artifact.
+name: Create Crypto Vector Specification Document
 
-name: Build Vector Document PDF
-
+# The workflow is triggered by pull request, push to main, and manual dispatch.
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version, e.g. X.Y.Z:'
+        required: true
+        type: string
+      revision_mark: 
+          description: 'Set revision mark as Draft, Release Candidate, Stable or Ratified:'
+          required: true
+          type: string
+          default: 'Draft'
+      prerelease:
+        description: 'Tag as a pre-release?'
+        required: false
+        type: boolean
+        default: true
+      draft:
+        description: 'Create release as a draft?'
+        required: false
+        type: boolean
+        default: false
+  pull_request:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
-  workflow_call:
-    outputs:
-      name:
-        description: "The base name of the pdf file (without .pdf extensions)"
-        value: ${{ jobs.build.outputs.name }}
-      pdf-name:
-        description: "The name of the pdf file (with .pdf extensions)"
-        value: ${{ jobs.build.outputs.pdf-name }}
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      NAME: riscv-crypto-spec-vector
-      APT_PACKAGES_FILE: ${{ github.workspace }}/dependencies/apt_packages.txt
-      BUNDLE_GEMFILE: ${{ github.workspace }}/dependencies/Gemfile
-      BUNDLE_BIN: ${{ github.workspace }}/bin
-      NPM_PACKAGE_FOLDER: ${{ github.workspace }}/dependencies
-    outputs:
-      name: ${{ steps.step1.outputs.name }}
-      pdf-name: ${{ steps.step2.outputs.pdf-name }}
     steps:
-      - name: Set output.name
-        id: step1
-        run: echo "name=$NAME" >> $GITHUB_OUTPUT
-      - name: Set output.pdf-name
-        id: step2
-        run: echo "pdf-name=$NAME.pdf" >> $GITHUB_OUTPUT
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          submodules: "true"
-      - name: Install Ubuntu packages
-        run: |
-          sudo apt-get update
-          grep -vE '^#' ${APT_PACKAGES_FILE} | xargs sudo apt-get install --yes --no-install-recommends
-      # Ruby for asciidoctor
-      - name: Setup Ruby and Gemfile content
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2.0"
-          bundler-cache: true
-      # Node.js for wavedrom
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16"
-      - name: Install Node.js dependencies
-        run: npm install ${NPM_PACKAGE_FOLDER}
-      - name: Generate PDF
-        run: |
-          PATH=${PATH}:${BUNDLE_BIN}:$(npm bin):$(pwd) \
-          make -C doc/vector
-      - name: Archive PDF result
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.NAME }}.pdf
-          path: doc/vector/${{ env.NAME }}.pdf
-          retention-days: 7
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    # Step 2: Pull the latest RISC-V Docs container image
+    - name: Pull Container
+      run: docker pull riscvintl/riscv-docs-base-container-image:latest
+
+    # Step 3: Build Vector Spec PDFs
+    - name: Build Crypto Vector Files
+      run: cd ./doc/vector && make
+      env:
+        VERSION: v${{ github.event.inputs.version }}
+        REVMARK: ${{ github.event.inputs.revision_mark }}
+
+    # Step 4: Upload the built vector PDF file
+    - name: Upload Crypto Vector Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build Artifacts
+        path: ${{ github.workspace }}/doc/vector/*.pdf
+        retention-days: 30
+      
+    # Create Release
+    - name: Create Crypto Vector Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ github.workspace }}/doc/vector/*.pdf
+        tag_name: v${{ github.event.inputs.version }}
+        name: Release ${{ github.event.inputs.version }}
+        draft: ${{ github.event.inputs.draft }}
+        prerelease: ${{ github.event.inputs.prerelease }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
+      if: github.event_name == 'workflow_dispatch' 
+      # This condition ensures this step only runs for workflow_dispatch events.
