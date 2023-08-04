@@ -15,7 +15,7 @@
 	url = https://github.com/ben-marshall/riscv-bitmanip.git
 [submodule "extern/sail-riscv"]
 	path = extern/sail-riscv
-	url = git@github.com:ben-marshall/sail-riscv
+	url = https://github.com/riscv/sail-riscv.git
 [submodule "extern/riscv-isa-sim"]
 	path = extern/riscv-isa-sim
 	url = git@github.com:riscv/riscv-isa-sim
