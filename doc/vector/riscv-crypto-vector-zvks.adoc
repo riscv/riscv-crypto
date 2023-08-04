@@ -13,7 +13,7 @@ This extension is shorthand for the following set of other extensions:
 | Zvksed  | <<Zvksed>>
 | Zvksh   | <<Zvksh>>
 // | Zvbb    | <<Zvbb>>
-| Zvkb    | <<Zvbb>>
+| Zvkb    | <<Zvkb>>
 // | Zvbc    | <<Zvbc>>
 | Zvkt    | <<Zvkt>>
 |===

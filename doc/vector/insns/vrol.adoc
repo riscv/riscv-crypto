@@ -106,4 +106,5 @@ function clause execute (VROL_VX(vs2, rs1, vd)) = {
 --
 
 Included in::
-<<zvbb>>, <<zvkb>>
+<<zvbb>>, <<zvkb>>, <<zvkn>>, <<zvknc>>, <<Zvkng>>, <<zvks>>
+<<Zvksc>>, <<Zvksg>>

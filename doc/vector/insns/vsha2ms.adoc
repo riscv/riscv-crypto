@@ -179,4 +179,4 @@ function SHR (x,n) = x >> n
 --
 
 Included in::
-<<zvknh, zvknh[ab]>>, <<zvkn>>, <<zvkng>>
+ <<zvkn>>, <<zvknc>>, <<zvkng>>, <<zvknh, zvknh[ab]>>

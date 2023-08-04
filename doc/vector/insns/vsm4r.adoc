@@ -151,4 +151,4 @@ function sm4_round(X, S) = \
 --
 
 Included in::
-<<zvks>>, <<zvksc>>, <<zvksg>>, <<zvksed>>
+<<zvks>>, <<zvksc>>, <<zvksed>>, <<zvksg>>

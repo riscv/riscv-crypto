@@ -107,4 +107,6 @@ function clause execute (VANDN(vs2, vs1, vd, suffix)) = {
 --
 
 Included in::
-<<zvbb>>, <<zvkb>>
+<<zvbb>>, <<zvkb>>, <<zvkn>>, <<zvknc>>, <<Zvkng>>, <<zvks>>
+<<Zvksc>>, <<Zvksg>>
+

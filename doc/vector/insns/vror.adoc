@@ -125,4 +125,5 @@ function clause execute (VROR_VI(vs2, imm[5:0], vd)) = {
 --
 
 Included in::
-<<zvbb>>, <<zvkb>>
+<<zvbb>>, <<zvkb>>, <<zvkn>>, <<zvknc>>, <<Zvkng>>, <<zvks>>
+<<Zvksc>>, <<Zvksg>>

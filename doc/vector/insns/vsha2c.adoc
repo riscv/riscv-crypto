@@ -207,4 +207,4 @@ function ROTR(x,n) = (x >> n) | (x << SEW - n)
 --
 
 Included in::
-<<zvknh, zvknh[ab]>>, <<zvkn>>, <<zvkng>>
+<<zvkn>>, <<zvknc>>, <<zvkng>>, <<zvknh, zvknh[ab]>>

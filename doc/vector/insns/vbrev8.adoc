@@ -63,4 +63,5 @@ function clause execute (VBREV8(vs2)) = {
 --
 
 Included in::
-<<zvbb>>, <<zvkb>>
+<<zvbb>>, <<zvkb>>, <<zvkn>>, <<zvknc>>, <<Zvkng>>, <<zvks>>
+<<Zvksc>>, <<Zvksg>>
