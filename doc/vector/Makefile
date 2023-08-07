@@ -12,9 +12,6 @@
 # This Makefile is designed to automate the process of building and packaging 
 # the Doc Template for RISC-V Extensions.
 
-DATE ?= '20 June 2023'
-VERSION ?= v1.0.0-rc1
-REVMARK ?= RC1
 DOCKER_RUN := docker run --rm -v ${PWD}:/build -w /build \
 riscvintl/riscv-docs-base-container-image:latest
 HEADER_SOURCE := riscv-crypto-spec-vector.adoc
@@ -24,9 +21,6 @@ ASCIIDOCTOR_PDF := asciidoctor-pdf
 OPTIONS := --trace \
            -a compress \
            -a mathematical-format=svg \
-           -a revnumber=${VERSION} \
-           -a revremark=${REVMARK} \
-           -a revdate=${DATE} \
            -a pdf-fontsdir=resources/fonts \
            -a pdf-style=resources/themes/risc-v_spec-pdf.yml \
            -a toc \
