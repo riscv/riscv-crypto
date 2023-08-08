@@ -3,26 +3,6 @@ name: Create Crypto Vector Specification Document
 # The workflow is triggered by pull request, push to main, and manual dispatch.
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version, e.g. X.Y.Z:'
-        required: true
-        type: string
-      revision_mark: 
-          description: 'Set revision mark as Draft, Release Candidate, Stable or Ratified:'
-          required: true
-          type: string
-          default: 'Draft'
-      prerelease:
-        description: 'Tag as a pre-release?'
-        required: false
-        type: boolean
-        default: true
-      draft:
-        description: 'Create release as a draft?'
-        required: false
-        type: boolean
-        default: false
   pull_request:
   push:
     branches:
