@@ -75,7 +75,7 @@ for more information.
 
 Contributors to this specification (in alphabetical order)
 include: +
-Alan Baum,
+Allen Baum,
 Barna Ibrahim,
 Barry Spinney,
 Ben Marshall,
