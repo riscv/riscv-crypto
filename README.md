@@ -5,14 +5,15 @@
 
 ---
 
-- [About](#About)
-- [Specification](#Specification)
-- [Formal Model](#Formal-Model)
-- [Toolchain](#Toolchain)
-- [Spike](#Spike)
-- [Architectural Tests](#Architectural-Tests)
-- [Benchmarks](#Benchmarks)
-- [Verilog RTL](#Verilog-RTL-Prototypes)
+- [RISC-V Cryptography Extension](#risc-v-cryptography-extension)
+  - [About](#about)
+  - [Specification](#specification)
+  - [Formal Model](#formal-model)
+  - [Toolchain](#toolchain)
+  - [Spike](#spike)
+  - [Architectural Tests](#architectural-tests)
+  - [Benchmarks](#benchmarks)
+  - [Verilog RTL Prototypes](#verilog-rtl-prototypes)
 
 ## About
 
@@ -21,8 +22,7 @@ scalar and vector cryptographic instruction set extensions for the RISC-V
 architecture.
 
 For a general overview of the extension status and ratification progress,
-please see 
-[our page on the RISC-V Wiki](https://wiki.riscv.org/x/MVcF).
+please see [our page on the RISC-V Wiki](https://wiki.riscv.org/x/MVcF).
 
 - **Note:** See the
    [dev/next-release](https://github.com/riscv/riscv-crypto/tree/dev/next-release)
