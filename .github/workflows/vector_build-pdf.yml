@@ -4,6 +4,10 @@ name: Create Specification Document
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Release version, e.g. X.Y.Z:'
+        required: true
+        type: string
       prerelease:
         description: 'Tag as a pre-release?'
         required: false
@@ -18,7 +22,6 @@ on:
   push:
     branches:
       - main
-      - master
 
 jobs:
   build:
