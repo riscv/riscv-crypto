@@ -1,8 +1,19 @@
-name: Create Crypto Vector Specification Document
+name: Create Specification Document
 
 # The workflow is triggered by pull request, push to main, and manual dispatch.
 on:
   workflow_dispatch:
+    inputs:
+      prerelease:
+        description: 'Tag as a pre-release?'
+        required: false
+        type: boolean
+        default: true
+      draft:
+        description: 'Create release as a draft?'
+        required: false
+        type: boolean
+        default: false
   pull_request:
   push:
     branches:
