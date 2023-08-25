@@ -73,6 +73,8 @@ make run-tests TARGET=riscv64-unknown-linux-gnu \
 - `sm3-test` - Build the SM3 example.
 - `sm4-test` - Build the SM4 example.
 - `zvbb-test` - Build the Zvbb example.
+- `zvbc-test` - Build the Zvbc example.
+- `zvkg-test` - Build the Zvkg example.
 - `run-tests` - Build and run all examples.
 - `run-aes-cbc` - Build and run the AES-CBC example in Spike.
 - `run-aes-gcm` - Build and run the AES-GCM example in Spike.
@@ -80,12 +82,18 @@ make run-tests TARGET=riscv64-unknown-linux-gnu \
 - `run-sm3` - Build and run the SM3 example in Spike.
 - `run-sm4` - Build and run the SM4 example in Spike.
 - `run-zvbb` - Build and run the Zvbb example in Spike.
+- `run-zvbc` - Build and run the Zvbc example in Spike.
+- `run-zvkg` - Build and run the Zvkg example in Spike.
 
 ### Make variables
 
 - `TARGET` - Target triplet to use. By default riscv64-linux-gnu.
 - `PK` - Location of the riscv-pk binary. By default it's
   `~/RISC-V/$(TARGET)/bin/pk`.
+- `TESTED_VLENS` - Space separated list of VLEN values being tested
+   against. All algorithms support VLEN>=128, most support VLEN=64.
+   Tests that do not support VLEN=64 will be skipped if that value
+   is present in the list.
 
 See Makefile for more details.
 
