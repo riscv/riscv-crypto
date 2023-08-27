@@ -1,23 +1,14 @@
-[[zvkg,Zvkg]]
-=== `Zvkg` - Vector GCM/GMAC
+[[zvkgs,Zvkgs]]
+=== `Zvkgs` - Vector-Scalar GCM/GMAC
 
-Instructions to enable the efficient implementation of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
+`Zvkgs` depends on `Zvkg`, it extends the existing `vghsh.vv` and `vgmul.vv` instructions with new vector-scalar variants: `vghsh.vs` and `vgmul.vs`.
+
+Instructions to enable the efficient implementation of parallel versions of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
 Galois Message Authentication Code (GMAC).
 
+The instructions inherit the same constraints (element group size, data independent execution timing and `vl`/`vstart` multiple constraints).
+
 All of these instructions work on 128-bit element groups comprised of four 32-bit elements.
-
-GHASH~H~ is defined in the
-// link:https://csrc.nist.gov/publications/detail/sp/800-38d/final[NIST Special Publication 800-38D]
- "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
- cite:[nist:gcm]
-(NIST Specification).
-
-[NOTE]
-====
-GCM is used in conjunction with block ciphers (e.g., AES and SM4) to encrypt a message and
-provide authentication.
-GMAC is used to provide authentication of a message without encryption.
-====
 
 To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
@@ -34,8 +25,8 @@ Likewise, `vstart` must be a multiple of `EGS=4`.
 |EGW
 |Mnemonic
 |Instruction
-| 32 | 128 | vghsh.vv | <<insns-vghsh>>
-| 32 | 128 | vgmul.vv | <<insns-vgmul>>
+| 32 | 128 | vghsh.vs | <<insns-vghsh-vs>>
+| 32 | 128 | vgmul.vs | <<insns-vgmul-vs>>
 
 |===
 

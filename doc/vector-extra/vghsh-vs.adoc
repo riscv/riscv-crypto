@@ -1,26 +1,12 @@
-[[insns-vghsh, Vector GHASH Add-Multiply]]
-= vghsh.[vv,vs]
+[[insns-vghsh-vs, Vector-Scalar GHASH Add-Multiply]]
+= vghsh.vs
 
 Synopsis::
-Vector Add-Multiply over GHASH Galois-Field
+Vector-Scalar Add-Multiply over GHASH Galois-Field
 
 Mnemonic::
-vghsh.vv vd, vs2, vs1 +
-vghsh.vs vd, rs2, vs1
+vghsh.vs vd, vs2, vs1
 
-Encoding (Vector-Vector)::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 7, name: 'OP-P'},
-{bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2'},
-{bits: 1, name: '1'},
-{bits: 6, name: '101100'},
-]}
-....
 
 // This might be the first instruction with 3 operands and .vs
 // need to find an encoding
@@ -40,7 +26,6 @@ Encoding (Vector-Scalar)::
 
 Reserved Encodings::
 * `SEW` is any value other than 32
-* `vghsh.vs` encoding (except if `Zvkgb` is enabled)
 
 Arguments::
 
@@ -66,10 +51,12 @@ A single "iteration" of the GHASH~H~ algorithm is performed.
 
 The previous partial hashes are read as 4-element groups from 'vd',
 the cipher texts are read as 4-element groups from `vs1`
- and the hash subkeys are read from either the corresponding 4-element group
-in `vs2` (vector-vector form) or the scalar element group in `vs2`
-(vector-scalar form, `Zvkgb` only). The resulting partial hashes are writen as 4-element groups into `vd`.
+ and the hash subkeys are read from the scalar element group in `vs2`
+The resulting partial hashes are writen as 4-element groups into `vd`.
 
+
+// The following is copied from vghsh.vv and could be omitted
+// (replaced with a link to the original specification)
 
 This instruction treats all of the input and output element groups as 128-bit polynomials and
 performs operations over GF[2].
@@ -105,7 +92,7 @@ swap bit positions and therefore do not require any logic.
 Operation::
 [source,pseudocode]
 --
-function clause execute (VGHSH(vs2, vs1, vd, suffix)) = {
+function clause execute (VGHSHVS(vs2, vs1, vd)) = {
   // operands are input with bits reversed in each byte
   if(LMUL*VLEN < EGW)  then {
     handle_illegal();  // illegal instruction exception
@@ -115,11 +102,13 @@ function clause execute (VGHSH(vs2, vs1, vd, suffix)) = {
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
 
+  // H is component to all element groups
+  let helem = 0;
+  let H = brev8(get_velem(vs2, EGW=128, helem)); // Hash subkey
+
   foreach (i from eg_start to eg_len-1) {
-    let helem = if suffix == "vv" then i else 0;
-    let Y = (get_velem(vd,EGW=128,i));  // current partial-hash
+    let Y = get_velem(vd,EGW=128,i);  // current partial-hash
     let X = get_velem(vs1,EGW=128,i);  // block cipher output
-    let H = brev8(get_velem(vs2, EGW=128, helem)); // Hash subkey
 
     let Z : bits(128) = 0;
 
@@ -144,4 +133,4 @@ function clause execute (VGHSH(vs2, vs1, vd, suffix)) = {
 --
 
 Included in::
-<<zvkg>>, <<zvkgb>>, <<zvkng>>, <<zvksg>>
+<<zvkgs>>
