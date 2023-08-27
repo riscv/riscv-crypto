@@ -36,8 +36,7 @@ Encoding (Vector-Scalar)::
 ]}
 ....
 Reserved Encodings::
-* `SEW` is any value other than 64 (`Zvbc`)
-* `SEW` is any value other than 32 or 64 (`Zvbcb`)
+* `SEW` is any value other than 64
 
 Arguments::
 
@@ -56,16 +55,20 @@ Arguments::
 Description::
 Produces the low half of 128-bit carry-less product.
 
-Each SEW-bit element in the `vs2` vector register is carry-less multiplied by
-either each SEW-bit element in `vs1` (vector-vector), or the SEW-bit value
+Each 64-bit element in the `vs2` vector register is carry-less multiplied by 
+either each 64-bit element in `vs1` (vector-vector), or the 64-bit value
 from integer register `rs1` (vector-scalar). The result is the least
-significant SEW bits of the carry-less product.
+significant 64 bits of the carry-less product.
 
 [NOTE]
 ====
 The 64-bit carryless multiply instructions can be used for implementing GCM in the absence of the `zvkg` extension.
 We do not make these instructions exclusive as the 64-bit carryless multiply is readily derived from the
 instructions in the `zvkg` extension and can have utility in other areas.
+Likewise, we treat other SEW values as reserved so as not to preclude
+future extensions from using this opcode with different element widths.
+For example, a future extension might define an `SEW`=32 version of this instruction to enable `Zve32*` implementations to have
+vector carryless multiplication instructions.
 ====
 
 Operation::
@@ -76,10 +79,10 @@ Operation::
 function clause execute (VCLMUL(vs2, vs1, vd, suffix)) = {
 
   foreach (i from vstart to vl-1) {
-    let op1 : bits (SEW) = if suffix =="vv" then get_velem(vs1, i)
+    let op1 : bits (64) = if suffix =="vv" then get_velem(vs1,i)
                           else zext_or_truncate_to_sew(X(vs1));
-    let op2 : bits (SEW) = get_velem(vs2, i);
-    let product : bits (SEW) = clmul(op1, op2, SEW);
+    let op2 : bits (64) = get_velem(vs2,i);
+    let product : bits (64) = clmul(op1,op2,SEW);
     set_velem(vd, i, product);
   }
   RETIRE_SUCCESS
@@ -95,4 +98,4 @@ function clmul(x, y, width) = {
 --
 
 Included in::
-<<zvbc>>, <<zvknc>>, <<zvksc>>, <<zvbcb>>
+<<zvbc>>, <<zvknc>>, <<zvksc>>
