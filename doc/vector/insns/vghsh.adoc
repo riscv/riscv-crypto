@@ -1,14 +1,13 @@
 [[insns-vghsh, Vector GHASH Add-Multiply]]
-= vghsh.[vv,vs]
+= vghsh.vv
 
 Synopsis::
 Vector Add-Multiply over GHASH Galois-Field
 
 Mnemonic::
-vghsh.vv vd, vs2, vs1 +
-vghsh.vs vd, vs2, vs1
+vghsh.vv vd, vs2, vs1
 
-Encoding (Vector-Vector)::
+Encoding::
 [wavedrom, , svg]
 ....
 {reg:[
@@ -21,25 +20,8 @@ Encoding (Vector-Vector)::
 {bits: 6, name: '101100'},
 ]}
 ....
-
-// This might be the first instruction with 3 operands and .vs
-// need to find an encoding
-Encoding (Vector-Scalar)::
-[wavedrom, , svg]
-....
-{reg:[
-{bits: 7, name: 'OP-P'},
-{bits: 5, name: 'vd'},
-{bits: 3, name: 'OPMVV'},
-{bits: 5, name: 'vs1'},
-{bits: 5, name: 'vs2'},
-{bits: 1, name: '1'},
-{bits: 6, name: '101100'},
-]}
-....
-
 Reserved Encodings::
-* `SEW` is any value other than 32
+* `SEW` is any value other than 32 
 
 Arguments::
 
@@ -59,10 +41,10 @@ Arguments::
 | Vd  | output | 128  | 4 | 32 | Partial-hash (Y~i+1~)
 |===
 
-Description::
+Description:: 
 A single "iteration" of the GHASH~H~ algorithm is performed.
 
-This instruction treats all of the inputs and outputs as 128-bit polynomials and
+This instruction treats all of the inputs and outputs as 128-bit polynomials and 
 performs operations over GF[2].
 It produces the next partial hash (Y~i+1~) by adding the current partial
 hash (Y~i~) to the cipher text block (X~i~) and then multiplying (over GF(2^128^))
@@ -78,7 +60,7 @@ Y~i+1~ = ((Y~i~ ^ X~i~) &#183; H)
 The NIST specification (see <<zvkg>>) orders the coefficients from left to right x~0~x~1~x~2~...x~127~
 for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^. This can be viewed as a collection of
 byte elements in memory with the byte containing the lowest coefficients (i.e., 0,1,2,3,4,5,6,7)
-residing at the lowest memory address. Since the bits in the bytes are reversed,
+residing at the lowest memory address. Since the bits in the bytes are reversed, 
 This instruction internally performs bit swaps within bytes to put the bits in the standard ordering
 (e.g., 7,6,5,4,3,2,1,0).
 
@@ -96,7 +78,7 @@ swap bit positions and therefore do not require any logic.
 ====
 Since the same hash subkey `H` will typically be used repeatedly on a given message,
 a future extension might define a vector-scalar version of this instruction where
-`vs2` is the scalar element group. This would help reduce register pressure when `LMUL` > 1.
+`vs2` is the scalar element group. This would help reduce register pressure when `LMUL` > 1. 
 ====
 
 Operation::
@@ -111,12 +93,11 @@ function clause execute (VGHSH(vs2, vs1, vd)) = {
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
-
+  
   foreach (i from eg_start to eg_len-1) {
-    let helem = if suffix == "vv" then i else 0;
     let Y = (get_velem(vd,EGW=128,i));  // current partial-hash
     let X = get_velem(vs1,EGW=128,i);  // block cipher output
-    let H = brev8(get_velem(vs2, EGW=128, helem)); // Hash subkey
+    let H = brev8(get_velem(vs2,EGW=128,i)); // Hash subkey
 
     let Z : bits(128) = 0;
 
@@ -141,4 +122,4 @@ function clause execute (VGHSH(vs2, vs1, vd)) = {
 --
 
 Included in::
-<<zvkg>>, <<zvkgb>>, <<zvkng>>, <<zvksg>>
+<<zvkg>>, <<zvkng>>, <<zvksg>>
