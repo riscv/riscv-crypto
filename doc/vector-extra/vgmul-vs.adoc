@@ -1,0 +1,144 @@
+[[insns-vgmul, Vector GHASH Multiply]]
+= vgmul.vv
+
+Synopsis::
+Vector Multiply over GHASH Galois-Field
+
+Mnemonic::
+vgmul.vv vd, vs2
+
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-P'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: '10001'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: '1'},
+{bits: 6, name: '101000'},
+]}
+....
+
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-P'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: '10001'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: '1'},
+{bits: 6, name: '101001'},
+]}
+....
+
+Reserved Encodings::
+* `SEW` is any value other than 32
+* `vgmul.vs` encoding (except if `Zvkgb` is enabled)
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2,2,2,2"]
+|===
+|Register
+|Direction
+|EGW
+|EGS
+|SEW
+|Definition
+
+| Vd  | input  | 128  | 4 | 32 | Multiplier
+| Vs2 | input  | 128  | 4 | 32 | Multiplicand
+| Vd  | output | 128  | 4 | 32 | Product
+|===
+
+Description::
+A GHASH~H~ multiply is performed.
+
+The multipliers are read as 4-element groups from 'vd',
+ the multiplicands subkeys are read from either the corresponding 4-element group
+in `vs2` (vector-vector form) or the scalar element group in `vs2`
+(vector-scalar form, `Zvkgb` only). The resulting products are written as 4-element groups into `vd`.
+
+This instruction treats all of the inputs and outputs as 128-bit polynomials and 
+performs operations over GF[2].
+It produces the product over GF(2^128^) of the two 128-bit inputs.
+
+The multiplication over GF(2^128^) is a carryless multiply of two 128-bit polynomials
+modulo GHASH's irreducible polynomial (x^128^ + x^7^ + x^2^ + x + 1).
+
+The NIST specification (see <<zvkg>>) orders the coefficients from left to right x~0~x~1~x~2~...x~127~
+for a polynomial x~0~ + x~1~u +x~2~ u^2^ + ... + x~127~u^127^. This can be viewed as a collection of
+byte elements in memory with the byte containing the lowest coefficients (i.e., 0,1,2,3,4,5,6,7)
+residing at the lowest memory address. Since the bits in the bytes are reversed, 
+This instruction internally performs bit swaps within bytes to put the bits in the standard ordering
+(e.g., 7,6,5,4,3,2,1,0).
+
+This instruction must always be implemented such that its execution latency does not depend
+on the data being operated upon.
+
+[NOTE]
+====
+We are bit-reversing the bytes of inputs and outputs so that the intermediate values are consistent
+with the NIST specification. These reversals are inexpensive to implement as they unconditionally
+swap bit positions and therefore do not require any logic.
+====
+
+
+[NOTE]
+====
+The instruction `vgmul.vv` is identical to `vghsh.vv` with vs1=0.
+This instruction is often used in GHASH code. In some cases it is followed
+by an XOR to perform a multiply-add. Implementations may choose to fuse these
+two instructions to improve performance on GHASH code that
+doesn't use the add-multiply form of the `vghsh.vv` instruction.
+
+Similarly, the instruction `vgmul.vs` is identical to `vghsh.vs` with vs1=0.
+====
+
+
+Operation::
+[source,pseudocode]
+--
+function clause execute (VGMUL(vs2, vs1, vd, suffix)) = {
+  // operands are input with bits reversed in each byte
+  if(LMUL*VLEN < EGW)  then {
+    handle_illegal();  // illegal instruction exception
+    RETIRE_FAIL
+  } else {
+
+  eg_len = (vl/EGS)
+  eg_start = (vstart/EGS)
+
+  foreach (i from eg_start to eg_len-1) {
+    let helem = if suffix == "vv" then i else 0;
+    let Y = brev8(get_velem(vd,EGW=128,i));  // Multiplier
+    let H = brev8(get_velem(vs2,EGW=128, helem)); // Multiplicand
+    let Z : bits(128) = 0;
+
+    for (int bit = 0; bit < 128; bit++) {
+      if bit_to_bool(Y[bit])
+        Z ^= H
+
+      bool reduce = bit_to_bool(H[127]);
+      H = H << 1; // left shift H by 1
+      if (reduce)
+        H ^= 0x87; // Reduce using x^7 + x^2 + x^1 + 1 polynomial
+    }
+
+
+    let result = brev8(Z);
+    set_velem(vd, EGW=128, i, result);
+  }
+  RETIRE_SUCCESS
+ }
+}
+--
+
+Included in::
+<<zvkg>>, <<zvkgb>>, <<zvkng>>, <<zvksg>>
