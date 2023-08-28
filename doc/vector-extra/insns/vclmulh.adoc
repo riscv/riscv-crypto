@@ -1,0 +1,98 @@
+[[insns-vclmulh, Vector Carry-less Multiply Return High Half]]
+= vclmulh.[vv,vx]
+
+Synopsis::
+Vector Carry-less Multiply by vector or scalar - returning high half of product.
+
+Mnemonic::
+vclmulh.vv vd, vs2, vs1, vm +
+vclmulh.vx vd, vs2, rs1, vm
+
+Encoding (Vector-Vector)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVV'},
+{bits: 5, name: 'vs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: '001101'},
+]}
+....
+
+Encoding (Vector-Scalar)::
+[wavedrom, , svg]
+....
+{reg:[
+{bits: 7, name: 'OP-V'},
+{bits: 5, name: 'vd'},
+{bits: 3, name: 'OPMVX'},
+{bits: 5, name: 'rs1'},
+{bits: 5, name: 'vs2'},
+{bits: 1, name: 'vm'},
+{bits: 6, name: '001101'},
+]}
+....
+Reserved Encodings::
+* `SEW` is any value other than 64 (`Zvbcb`)
+* `SEW` is any value other than 32 or 64 (`Zvbcb`)
+
+Arguments::
+
+[%autowidth]
+[%header,cols="4,2,2"]
+|===
+|Register
+|Direction
+|Definition
+
+| Vs1 | input  | multiplier
+| Vs2 | input  | multiplicand
+| Vd  | output | carry-less product high
+|===
+
+[NOTE]
+====
+`vclmulh` instruction was initially defined in `Zvbc`, this page describes how the specification is extended in `Zvbc32e` to support `SEW=32 bits`.
+====
+
+Description::
+Produces the high half of 128-bit carry-less product.
+
+Each SEW-bit element in the `vs2` vector register is carry-less multiplied by
+either each SEW-bit element in `vs1` (vector-vector), or the SEW-bit value
+from integer register `rs1` (vector-scalar). The result is the most
+significant SEW bits of the carry-less product.
+
+// This instruction must always be implemented such that its execution latency does not depend
+// on the data being operated upon.
+
+Operation::
+[source,sail]
+--
+function clause execute (VCLMULH(vs2, vs1, vd, suffix)) = {
+
+  foreach (i from vstart to vl-1) {
+    let op1 : bits (SEW) = if suffix =="vv" then get_velem(vs1,i)
+                          else zext_or_truncate_to_sew(X(vs1));
+    let op2 : bits (SEW) = get_velem(vs2, i);
+    let product : bits (SEW) = clmulh(op1, op2, SEW);
+    set_velem(vd, i, product);
+  }
+  RETIRE_SUCCESS
+}
+
+function clmulh(x, y, width) = {
+  let result : bits(width) = 0;
+  foreach (i from 1 to (width - 1)) {
+    if y[i] == 1 then result = result ^ (x >> (width - i));
+  }
+  result
+}
+
+--
+
+Included in::
+<<zvbc>>, <<zvbcb>>, <<zvknc>>, <<zvksc>>
