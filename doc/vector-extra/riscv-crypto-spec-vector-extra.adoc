@@ -46,14 +46,12 @@ endif::[]
 [colophon]
 = Colophon
 
-This document describes the Vector Cryptography extensions to the 
+This document describes the Vector Cryptography Extra extensions to the
 RISC-V Instruction Set Architecture.
 
-This document is _frozen_.
-Change is extremely unlikely. A high threshold will be used, and a
-change will only occur because of some truly critical issue being
-identified during the public review cycle. Any other desired or needed
-changes can be the subject of a follow-on new extension.
+This document is _Discussion Document_.
+Assume everything can change.
+This document is not complete yet and was created only for the purpose of conversation outside of the document.
 For more information, see link:http://riscv.org/spec-state[here].
 
 [NOTE]
@@ -66,7 +64,7 @@ link:http://creativecommons.org/licenses/by/4.0/[Creative Commons Attribution 4.
 ====
 include::git-commit.adoc[]
 
-See link:https://github.com/riscv/riscv-crypto[github.com/riscv/riscv-crypto]
+See link:https://github.com/riscv/riscv-crypto/doc/vector-extra[github.com/riscv/riscv-crypto/doc/vector-extra]
 for more information.
 ====
 
@@ -75,14 +73,9 @@ for more information.
 
 Contributors to this specification (in alphabetical order)
 include: +
-Alan Baum,
-Barna Ibrahim,
-Barry Spinney,
-Ben Marshall,
-Derek Atkins,
-link:mailto:kdockser@tenstorrent.com[Ken Dockser] (Editor),
+Ken Dockser,
 Markku-Juhani O. Saarinen,
-Nicolas Brunie, 
+Nicolas Brunie,
 Richard Newell
 
 We are all very grateful to the many other people who have
@@ -91,34 +84,22 @@ feedback and questions.
 
 // ------------------------------------------------------------
 
-include::riscv-crypto-vector-introduction.adoc[]
-include::riscv-crypto-vector-audience.adoc[]
-include::riscv-crypto-vector-sail-specifications.adoc[]
-include::riscv-crypto-vector-policies.adoc[]
+include::riscv-crypto-vector-extra-introduction.adoc[]
 
 // ------------------------------------------------------------
 
-include::./riscv-crypto-vector-element-groups.adoc[]
-include::./riscv-crypto-vector-instruction-constraints.adoc[]
-include::./riscv-crypto-vector-scalar-instructions.adoc[]
-include::./riscv-crypto-vector-software-portability.adoc[]
 <<<
-    
 // ------------------------------------------------------------
 
 
 [[crypto_vector_extensions]]
 == Extensions Overview
 
-The section introduces all of the  extensions in the Vector Cryptography
+The section introduces all of the extensions in the Vector Cryptography Extra
 Instruction Set Extension Specification.
 
-The <<zvknh,Zvknhb>> and <<zvbc>> Vector Crypto Extensions
---and accordingly the composite extensions <<Zvkn>> and <<Zvks>>--
-require a Zve64x base,
-or application ("V") base Vector Extension.
 
-All of the other Vector Crypto Extensions can be built
+All the Vector Crypto Extra Extensions can be built
 on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 
 // See <<crypto-vector-element-groups>> for more details on vector element groups and the drawbacks of
@@ -126,14 +107,14 @@ on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 
 
 All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those
-in <<zvkned>>, <<zvknh,Zvknh[ab]>>, <<Zvkg>>, <<Zvksed>> and <<zvksh>> but _not_ <<zvbb>>,<<zvkb>>, or <<zvbc>>) shall
+in <<Zvkgs>>, but _not_ <<zvbc32e>>) shall
 be executed with data-independent execution latency as defined in the
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 It is important to note that the Vector Crypto instructions are independent of the
 implementation of the `Zkt` extension and do not require that `Zkt` is implemented.
 
-This specification includes a <<Zvkt>> extension that, when implemented, requires certain vector instructions
-(including <<zvbb>>, <<zvkb>>, and <<zvbc>>) to be executed with data-independent execution latency.
+//This specification includes a <<Zvkt>> extension that, when implemented, requires certain vector instructions
+//(including <<zvbb>>, <<zvkb>>, and <<zvbc>>) to be executed with data-independent execution latency.
 
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.
@@ -144,98 +125,26 @@ At the time of writing, these discovery mechanisms are still a work in
 progress.
 ====
 
-include::./riscv-crypto-vector-zvbb.adoc[]
+include::./riscv-crypto-vector-extra-zvbc32e.adoc[]
 <<<
-include::./riscv-crypto-vector-zvbc.adoc[]
-<<<
-include::./riscv-crypto-vector-zvkb.adoc[]
-<<<
-include::./riscv-crypto-vector-zvkg.adoc[]
-<<<
-include::./riscv-crypto-vector-zvkned.adoc[]
-<<<
-include::./riscv-crypto-vector-zvknh.adoc[]
-<<< 
-include::./riscv-crypto-vector-zvksed.adoc[]
-<<<
-include::./riscv-crypto-vector-zvksh.adoc[]
-<<<
-include::./riscv-crypto-vector-zvkn.adoc[]
-<<<
-include::./riscv-crypto-vector-zvknc.adoc[]
-<<<
-include::./riscv-crypto-vector-zvkng.adoc[]
-<<<
-include::./riscv-crypto-vector-zvks.adoc[]
-<<<
-include::./riscv-crypto-vector-zvksc.adoc[]
-<<<
-include::./riscv-crypto-vector-zvksg.adoc[]
-<<<
-include::./riscv-crypto-vector-zvkt.adoc[]
+include::./riscv-crypto-vector-zvkgs.adoc[]
 <<<
 
 
 
 // ------------------------------------------------------------
 
-[[crypto_vector_insns, reftext="Vector Cryptography Instructions"]]
+[[crypto_vector_extra_insns, reftext="Vector Cryptography Extra Instructions"]]
 == Instructions
 
 
-include::insns/vaesdf.adoc[leveloffset=+2]
+include::insns/vclmul-32e.adoc[leveloffset=+2]
 <<<
-include::insns/vaesdm.adoc[leveloffset=+2]
-<<<   
-include::insns/vaesef.adoc[leveloffset=+2]
+include::insns/vclmulh-32e.adoc[leveloffset=+2]
 <<<
-include::insns/vaesem.adoc[leveloffset=+2]
+include::insns/vghsh-vs.adoc[leveloffset=+2]
 <<<
-include::insns/vaeskf1.adoc[leveloffset=+2]
-<<<
-include::insns/vaeskf2.adoc[leveloffset=+2]
-<<<
-include::insns/vaesz.adoc[leveloffset=+2]
-<<<
-include::insns/vandn.adoc[leveloffset=+2]
-<<<
-include::insns/vbrev.adoc[leveloffset=+2]
-<<<
-include::insns/vbrev8.adoc[leveloffset=+2]
-<<<
-include::insns/vclmul.adoc[leveloffset=+2]
-<<<
-include::insns/vclmulh.adoc[leveloffset=+2]
-<<<
-include::insns/vclz.adoc[leveloffset=+2]
-<<<
-include::insns/vcpop.adoc[leveloffset=+2]
-<<<
-include::insns/vctz.adoc[leveloffset=+2]
-<<<
-include::insns/vghsh.adoc[leveloffset=+2]
-<<<
-include::insns/vgmul.adoc[leveloffset=+2]
-<<<
-include::insns/vrev8.adoc[leveloffset=+2]
-<<<
-include::insns/vrol.adoc[leveloffset=+2]
-<<<
-include::insns/vror.adoc[leveloffset=+2]
-<<<
-include::insns/vsha2c.adoc[leveloffset=+2]
-<<<
-include::insns/vsha2ms.adoc[leveloffset=+2]
-<<<
-include::insns/vsm3c.adoc[leveloffset=+2]
-<<<
-include::insns/vsm3me.adoc[leveloffset=+2]
-<<<
-include::insns/vsm4k.adoc[leveloffset=+2]
-<<<
-include::insns/vsm4r.adoc[leveloffset=+2]
-<<<
-include::insns/vwsll.adoc[leveloffset=+2]
+include::insns/vgmul-vs.adoc[leveloffset=+2]
 <<<
 
 [[bibliography]]
@@ -245,8 +154,6 @@ bibliography::../riscv-crypto-spec.bib[ieee]
 
 [[Encodings]]
 == Encodings
-include::./riscv-crypto-vector-inst-table.adoc[]
-include::./riscv-crypto-vector-inst-table-zvbb-zvbc.adoc[]
+include::./riscv-crypto-vector-extra-inst-table.adoc[]
 
 
-include::./riscv-crypto-vector-appx-sail.adoc[]
