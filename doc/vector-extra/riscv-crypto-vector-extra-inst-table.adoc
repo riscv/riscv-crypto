@@ -1,0 +1,60 @@
+[appendix]
+[[crypto_vector_instructions]]
+=== Crypto Vector Cryptographic Instructions
+
+OP-P (0x77)
+Crypto Vector instructions, including Zvkgs, except Zvbb and Zvbc
+The new/modified encoding are in bold and underlined.
+
+// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[cols="4,1,1,1,1,4,1,1,1,4,1,1,1"]
+|===
+5+^|Integer 4+^|Integer 4+^| FP
+
+| funct3 | | | |            | funct3 | | |             | funct3 | | |
+| OPIVV  |V| | |            | OPMVV  |V| |             | OPFVV  |V| |
+| OPIVX  | |X| |            | OPMVX  | |X|             | OPFVF  | |F|
+| OPIVI  | | |I|            |        | | |             |        | | |
+|===
+
+// [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
+[cols="6,1,1,1,1,6,1,1,6,6,1,1,1"]
+
+// TODO to be updated with vghsh.vs and vgmul.vs encoding
+|===
+5+^| funct6                  4+^| funct6                 4+^| funct6
+
+|100000  | | | |            | 100000 |V| | vsm3me       | 100000 | | |
+| 100001 | | | |            | 100001 |V| | vsm4k.vi     | 100001 | | |
+| 100010 | | | |            | 100010 |V| | vaesfk1.vi   | 100010 | | |
+| 100011 | | | |            | 100011 | | | __**vghsh.vs**__ | 100011 | | |
+| 100100 | | | |            | 100100 | | |              | 100100 | | |
+| 100101 | | | |            | 100101 | | |              | 100101 | | |
+| 100110 | | | |            | 100110 | | |              | 100110 | | |
+| 100111 | | | |            | 100111 | | |              | 100111 | | |
+|        | | | |            |        | | |              |        | | |
+| 101000 | | | |            | 101000 |V| | VAES.vv    | 101000 | | |
+| 101001 | | | |            | 101001 |V| | *VAES.vs*    | 101001 | | |
+| 101010 | | | |            | 101010 |V| | vaesfk2.vi   | 101010 | | |
+| 101011 | | | |            | 101011 |V| | vsm3c.vi     | 101011 | | |
+| 101100 | | | |            | 101100 |V| | vghsh        | 101100 | | |
+| 101101 | | | |            | 101101 |V| | vsha2ms      | 101101 | | |
+| 101110 | | | |            | 101110 |V| | vsha2ch      | 101110 | | |
+| 101111 | | | |            | 101111 |V| | vsha2cl      | 101111 | | |
+|===
+
+<<<
+
+.VAES.vv and VAES.vs encoding space
+[cols="2,14"]
+|===
+|vs1|
+
+| 00000 | vaesdm
+| 00001 | vaesdf
+| 00010 | vaesem
+| 00011 | vaesef
+| 00111 | vaesz
+| 10000 | vsm4r
+| 10001 | __**vgmul**__
+|===
