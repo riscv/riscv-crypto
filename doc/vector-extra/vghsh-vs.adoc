@@ -51,7 +51,7 @@ A single "iteration" of the GHASH~H~ algorithm is performed.
 
 The previous partial hashes are read as 4-element groups from 'vd',
 the cipher texts are read as 4-element groups from `vs1`
- and the hash subkeys are read from the scalar element group in `vs2`
+ and the hash subkeys are read from the scalar element group in `vs2`.
 The resulting partial hashes are writen as 4-element groups into `vd`.
 
 
