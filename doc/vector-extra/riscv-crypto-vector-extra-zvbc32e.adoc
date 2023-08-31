@@ -1,18 +1,23 @@
 [[zvbc,Zvbc]]
-=== `Zvbc` - Vector Carryless Multiplication
+=== `Zvbc32e` - Vector Carryless Multiplication
 
 General purpose carryless multiplication instructions which are commonly used in cryptography
 and hashing (e.g., Elliptic curve cryptography, GHASH, CRC).
 
-These instructions are only defined for `SEW`=64.
+These instructions are only defined for `SEW`=32.
+Zvbc32e can be supported when `ELEN >=32`.
+
+
+Note:: The extension `Zvbc32e` is independent from `Zvbc` where the same instructions are defined for `SEW=64`.
+       When `ELEN>=64` both extensions can be combined to have `vclmul.v[vx]` and `vclmulh.v[vx]` defined for both `SEW=32` and `SEW=64`.
 
 [%autowidth]
 [%header,cols="^2,4"]
 |===
 |Mnemonic
 |Instruction
-| vclmul.[vv,vx]     | <<insns-vclmul>>
-| vclmulh.[vv,vx]    | <<insns-vclmulh>>
+| vclmul.[vv,vx]     | <<insns-vclmul-32e>>
+| vclmulh.[vv,vx]    | <<insns-vclmulh-32e>>
 
 |===
 
