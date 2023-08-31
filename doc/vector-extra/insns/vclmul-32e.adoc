@@ -69,9 +69,9 @@ significant SEW bits of the carry-less product.
 
 [NOTE]
 ====
-The 64-bit carryless multiply instructions can be used for implementing GCM in the absence of the `zvkg` extension.
-We do not make these instructions exclusive as the 64-bit carryless multiply is readily derived from the
-instructions in the `zvkg` extension and can have utility in other areas.
+The 32-bit carryless multiply instructions can be used for implementing GCM in the absence of the `zvkg` extension.
+In particular for implementation with `ELEN=32` where `Zvkg` cannot be implemented.
+It can also be used to speed-up CRC evaluation.
 ====
 
 Operation::
