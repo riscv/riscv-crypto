@@ -36,8 +36,9 @@ Encoding (Vector-Scalar)::
 ]}
 ....
 Reserved Encodings::
-* `SEW` is any value other than 64 (`Zvbcb`)
-* `SEW` is any value other than 32 or 64 (`Zvbcb`)
+* `SEW` is any value other than 64 (`Zvbc` only)
+* `SEW` is any value other than 32 (`Zvbc32e` only)
+* `SEW` is any value other than 32 or 64 (`Zvbc32e` and `Zvbc`)
 
 Arguments::
 
@@ -95,4 +96,4 @@ function clmulh(x, y, width) = {
 --
 
 Included in::
-<<zvbc>>, <<zvbcb>>, <<zvknc>>, <<zvksc>>
+<<zvbc32e>>
