@@ -127,7 +127,7 @@ progress.
 
 include::./riscv-crypto-vector-extra-zvbc32e.adoc[]
 <<<
-include::./riscv-crypto-vector-zvkgs.adoc[]
+include::./riscv-crypto-vector-extra-zvkgs.adoc[]
 <<<
 
 
