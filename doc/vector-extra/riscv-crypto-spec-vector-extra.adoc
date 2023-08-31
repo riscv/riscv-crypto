@@ -1,10 +1,10 @@
 [[riscv-doc-template]]
-= RISC-V Cryptography Extensions Volume II: Vector Instructions
-:description: The vector cryptography extensions for the RISC-V ISA.
+= RISC-V Cryptography Extensions Volume III: Extra Vector Instructions
+:description: The vector extra cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate: 08 August 2023
-:revnumber: v1.0.0
-:revremark: RC2
+:revdate: 31 August 2023
+:revnumber: v0.0.1
+:revremark:
 :url-riscv: http://riscv.org
 :doctype: book
 //:doctype: report
