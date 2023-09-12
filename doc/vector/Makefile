@@ -43,7 +43,7 @@ $(SPEC_COMMIT):
 
 build: cp_bib $(SPEC_COMMIT)
 	@echo "Checking if Docker is available..."
-	@if command -v docker &> /dev/null ; then \
+	@if command -v docker >/dev/null 2>&1 ; then \
 		echo "Docker is available, building inside Docker container..."; \
 		$(MAKE) build-container; \
 	else \
