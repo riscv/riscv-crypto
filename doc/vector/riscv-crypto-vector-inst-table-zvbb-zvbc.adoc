@@ -1,6 +1,6 @@
 [appendix]
 [[crypto_vector_instructions_Zvbb_Zvbc]]
-=== Vector Bitmanip and Caryless Multiply Instructions
+=== Vector Bitmanip and Carryless Multiply Instructions
 
 OP-V (0x57)
 *Zvbb*, *Zvkb*, and *Zvbc* Vector instructions *in bold*
