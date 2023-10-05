@@ -33,7 +33,7 @@
 
 .data
 .balign 16  # Only 4 is needed, 16 is just nice.
-// Note that those values are stored in native endianness.
+# Note that those values are stored in native endianness.
 SHA256_ROUND_CONSTANTS:
     .word 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5  # 0-3
     .word 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5  # 4-7
@@ -53,7 +53,7 @@ SHA256_ROUND_CONSTANTS:
     .word 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2  # 60-63
 
 .balign 4  # Only 8 is needed, 32 is just nice.
-// Note that those values are stored in native endianness.
+# Note that those values are stored in native endianness.
 SHA512_ROUND_CONSTANTS:
     .dword 0x428a2f98d728ae22, 0x7137449123ef65cd, 0xb5c0fbcfec4d3b2f, 0xe9b5dba58189dbbc  # 0-3
     .dword 0x3956c25bf348b538, 0x59f111f1b605d019, 0x923f82a4af194f9b, 0xab1c5ed5da6d8118  # 4-7
