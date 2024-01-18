@@ -49,9 +49,9 @@ Arguments::
 |Direction
 |Definition
 
-| Vs1/Rs1 | input  |  multiplier
-| Vs2 | input  |  multiplicand
-| Vd  | output | carry-less product low
+| `vs1`/`rs1` | input  | multiplier
+| `vs2`       | input  | multiplicand
+| `vd`        | output | lower part of carry-less 
 |===
 
 [NOTE]
@@ -60,7 +60,7 @@ Arguments::
 ====
 
 Description::
-Produces the low half of 128-bit carry-less product.
+Produces the low half of `2*SEW`-bit carry-less product.
 
 Each SEW-bit element in the `vs2` vector register is carry-less multiplied by
 either each SEW-bit element in `vs1` (vector-vector), or the SEW-bit value
