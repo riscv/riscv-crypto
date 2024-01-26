@@ -363,7 +363,7 @@ function sha512_16_rounds   (ws       , ms       , rnd) = {
  * ------------------------------------------------------------
  */
 
-/* TOOD: VSHA2_WS raise invalid opcode if SEW=256 and rnd >= 64 */
+/* TODO: VSHA2_WS raise invalid opcode if SEW=256 and rnd >= 64 */
 function clause execute (       VSHA2_WS (vt,rnd,vs2)) = {
     let r : int = 0;
     if(vGetSEW() == 256) then {

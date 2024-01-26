@@ -16,8 +16,7 @@ CONFIG     ?=rv64-zscrypto
 
 include common.mk
 
-#
-# Make sure the header files are coppied over.
+# Make sure the header files are copied over.
 $(foreach HEADER,$(HEADERS_IN),$(eval $(call add_header_target,$(HEADER))))
 
 headers: $(HEADERS_OUT)

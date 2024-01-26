@@ -397,7 +397,7 @@ two _pseudo-instructions_ to access them:
    This is the only architecturally defined bit.
 
 ** Tests must determine if `mnoise` is implemented first, before
-   checking any other behaviour, and accomodate this case in the
+   checking any other behaviour, and accommodate this case in the
    test signature.
 
 * Accesses to `mnoise` in any privilege mode other than machine mode
@@ -408,7 +408,7 @@ have different behaviour after post-silicon-validation. This is because
 it is designed as a validation / certification interface to check that
 the noise source is functioning correctly.
 Once the noise source is validated, the interface _may be disabled
-permenantly_. Tests must account for this in their signature generation.
+permanently_. Tests must account for this in their signature generation.
 
 === CSR `mentropy`
 

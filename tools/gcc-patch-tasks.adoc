@@ -129,6 +129,6 @@ We do not expect the compiler to use the complex algorithm specific
 instructions.
 
 NOTE: It _might_ be possible to write a matching pattern for the
-SHA2 and SM3 instructions, but this is not necessary for inital
+SHA2 and SM3 instructions, but this is not necessary for initial
 support.
 

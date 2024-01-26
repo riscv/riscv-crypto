@@ -5,7 +5,7 @@
 
 ---
 
-# Relevent Github issues:
+# Relevant Github issues:
 
 A dynamically updated list can be found 
 [here](https://github.com/riscv/riscv-crypto/issues?q=is%3Aissue+is%3Aopen+label%3ASAIL).

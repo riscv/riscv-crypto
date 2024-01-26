@@ -827,7 +827,7 @@ mechanism.
 The behavior of other input and output bits is largely left to the vendor
 (as they depend on the technical details of the physical entropy source),
 as is the address of the custom `mnoise` CSR. Other contents and behavior of the
-CSR only can be intepreted in the context of `mvendorid`, `marchid`, and
+CSR only can be interpreted in the context of `mvendorid`, `marchid`, and
 `mimpid` CSR identifiers.
 
 When not implemented (e.g., in virtual machines), `mnoise` can permanently

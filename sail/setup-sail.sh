@@ -20,7 +20,7 @@ sudo apt-get install build-essential git m4 libgmp-dev z3 opam
 opam init
 
 #
-# Get the corect versions of OCaml
+# Get the correct versions of OCaml
 opam switch create ocaml-base-compiler.4.06.1
 eval $(opam env)
 
