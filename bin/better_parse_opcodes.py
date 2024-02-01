@@ -100,7 +100,7 @@ class Field(Bitfield):
 
 class Instruction(object):
     """
-    Describes a single instruciton in terms of its operands and fields.
+    Describes a single instruction in terms of its operands and fields.
     """
     
     def __init__(self, mnemonic, operands, encoding_fields, constraints):
@@ -191,7 +191,7 @@ class Instruction(object):
 
 class EncodingParser(object):
     """
-    Responsible for parseing the instruction opcode definition files.
+    Responsible for parsing the instruction opcode definition files.
     """
 
     known_operands = {
@@ -332,7 +332,7 @@ def cmd_check_encodings(instrs):
     Check if any of the encodings collide.
     Returns true if the checks pass, False otherwise.
     """
-    print("Instrucitons parsed: %d" % len(instrs))
+    print("Instructions parsed: %d" % len(instrs))
     collisions = []
 
     checked = set([])
@@ -466,8 +466,8 @@ def cmd_binutils(instrs):
 
 def make_sail_encdec_pattern(i):
     """
-    Returns a list of strings, represnting the SAIL encdec clause
-    pattern which will decode to the supplied instruciton.
+    Returns a list of strings, representing the SAIL encdec clause
+    pattern which will decode to the supplied instruction.
     """
     tp = []
     for f in i.fields:
@@ -567,7 +567,7 @@ def build_arg_parser():
     sub_textable.set_defaults(func=cmd_tex_table)
     sub_textable.add_argument("input_files",nargs="+",type=argparse.FileType("r"))
     
-    sub_texcmds = subs.add_parser("tex-cmds",help="Print the latex for the encoding table row of each instruciton, wrapped up as a single command.")
+    sub_texcmds = subs.add_parser("tex-cmds",help="Print the latex for the encoding table row of each instruction, wrapped up as a single command.")
     sub_texcmds.set_defaults(func=cmd_tex_cmds)
     sub_texcmds.add_argument("input_files",nargs="+",type=argparse.FileType("r"))
     

@@ -75,7 +75,7 @@ assign in_bytes[1]  = rs2[15: 8];
 assign in_bytes[2]  = rs2[23:16];
 assign in_bytes[3]  = rs2[31:24];
 
-// SBox inverse only relevent for AES. SM4 has only forward SBox.
+// SBox inverse only relevant for AES. SM4 has only forward SBox.
 wire        sbox_dec= SAES_DEC_EN ? op_saes32_decs || op_saes32_decsm   :
                                     1'b0                                ;
 

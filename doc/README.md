@@ -10,7 +10,7 @@ This directory contains the official draft specification, in
 The specification is split into two components: Scalar+Entropy Source and
 Vector.
 
-To install the relevent tools for building a PDF document from the
+To install the relevant tools for building a PDF document from the
 AsciiDoc source, follow the instructions 
 [here](https://github.com/riscv/docs-templates)
 

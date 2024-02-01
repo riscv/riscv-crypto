@@ -3,7 +3,7 @@
 #define __AES_COMMON_S__
 
 //
-// Rotate value in RS1 right by IMM. Use TMP as scratch regiser.
+// Rotate value in RS1 right by IMM. Use TMP as scratch register.
 // RD may equal RS1. TMP may not equal RD or RS1.
 .macro ROR32I RD, TMP, RS1, IMM
     srli    \TMP, \RS1, \IMM

@@ -78,7 +78,7 @@ uint64_t sbox_4bit(uint64_t sbox, uint64_t in) {
                       xperm4(sbox_h, in_l ^ msk);
     uint64_t rd     = (((uint64_t)rd_h) << 32)    |  // Return values in
                       rd_l;                          // a0, a1
-    return   rd     ;                                // +1 instruciton
+    return   rd     ;                                // +1 instruction
     // 9 instructions for entire function.
 }
 

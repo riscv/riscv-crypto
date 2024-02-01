@@ -60,7 +60,7 @@ function crypto_test_vaes_256_keystep_fwd () = {
 
 
 /* 
- * Make sure we can calulate the correct final round key for AES 128
+ * Make sure we can calculate the correct final round key for AES 128
  */
 val      crypto_test_vaes_128_get_final_round_key : unit -> bool effect{escape}
 function crypto_test_vaes_128_get_final_round_key() = {
@@ -71,7 +71,7 @@ function crypto_test_vaes_128_get_final_round_key() = {
 }
 
 /* 
- * Make sure we can calulate the correct final round key for AES 256
+ * Make sure we can calculate the correct final round key for AES 256
  */
 val      crypto_test_vaes_256_get_final_round_key : unit -> bool effect{escape}
 function crypto_test_vaes_256_get_final_round_key() = {
