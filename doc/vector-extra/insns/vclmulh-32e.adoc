@@ -51,7 +51,7 @@ Arguments::
 
 | `vs1`/`rs1` | input  | multiplier
 | `vs2`       | input  | multiplicand
-| `vd`        | output | upper part of carry-less 
+| `vd`        | output | upper part of carry-less multiply 
 |===
 
 [NOTE]

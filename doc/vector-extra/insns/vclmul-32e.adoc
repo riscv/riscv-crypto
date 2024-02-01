@@ -51,7 +51,7 @@ Arguments::
 
 | `vs1`/`rs1` | input  | multiplier
 | `vs2`       | input  | multiplicand
-| `vd`        | output | lower part of carry-less 
+| `vd`        | output | lower part of carry-less multiply 
 |===
 
 [NOTE]
@@ -70,7 +70,7 @@ significant SEW bits of the carry-less product.
 [NOTE]
 ====
 The 32-bit carryless multiply instructions can be used for implementing GCM in the absence of the `zvkg` extension.
-In particular for implementation with `ELEN=32` where `Zvkg` cannot be implemented.
+In particular for implementation with `ELEN=32` where `Zvkg` cannot be implemented. 
 It can also be used to speed-up CRC evaluation.
 ====
 

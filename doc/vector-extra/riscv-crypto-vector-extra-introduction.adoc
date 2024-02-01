@@ -3,8 +3,8 @@
 
 This document describes the proposed _vector_ _extra_ cryptography
 extensions for RISC-V.
-Those extensions extends the _vector_ cryptography extensions for RISC-V,
-providing extra feature not mandatory for a high performace implementation but which
+Those extensions extend the _vector_ cryptography extensions for RISC-V,
+providing extra features not mandatory for a high performace implementation but which
 can help further improve the efficiency of the algorithms that use them.
 All instructions proposed here are based on the Vector registers.
 

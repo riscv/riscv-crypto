@@ -16,8 +16,8 @@ Note:: The extension `Zvbc32e` is independent from `Zvbc` which defines the same
 |===
 |Mnemonic
 |Instruction
-| vclmul.[vv,vx]     | <<insns-vclmul-32e>>
-| vclmulh.[vv,vx]    | <<insns-vclmulh-32e>>
+| `vclmul.[vv,vx]`     | <<insns-vclmul-32e>>
+| `vclmulh.[vv,vx]`    | <<insns-vclmulh-32e>>
 
 |===
 
