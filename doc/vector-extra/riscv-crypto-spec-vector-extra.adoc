@@ -1,9 +1,9 @@
 [[riscv-doc-template]]
-= RISC-V Cryptography Extensions Volume III: Extra Vector Instructions
-:description: The vector extra cryptography extensions for the RISC-V ISA.
+= RISC-V Cryptography Extensions Volume III: Additional Vector Instructions
+:description: The addtional vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate: 1 February 2024
-:revnumber: v0.0.3
+:revdate: 6 February 2024
+:revnumber: v0.0.4
 :revremark:
 :url-riscv: http://riscv.org
 :doctype: book
@@ -46,7 +46,7 @@ endif::[]
 [colophon]
 = Colophon
 
-This document describes the Vector Cryptography Extra extensions to the
+This document describes additional Vector Cryptography extensions to the
 RISC-V Instruction Set Architecture.
 
 This document is _Discussion Document_.
@@ -73,6 +73,7 @@ for more information.
 
 Contributors to this specification (in alphabetical order)
 include: +
+Eric Biggers,
 Ken Dockser,
 Markku-Juhani O. Saarinen,
 Nicolas Brunie,
@@ -95,26 +96,28 @@ include::riscv-crypto-vector-extra-introduction.adoc[]
 [[crypto_vector_extensions]]
 == Extensions Overview
 
-The section introduces all of the extensions in the Vector Cryptography Extra
+The section introduces all of the extensions in the Additional Vector Cryptography 
 Instruction Set Extension Specification.
 
 
-All the Vector Crypto Extra Extensions can be built
+All the Additional Vector Crypto Extensions can be built
 on _any_ embedded (Zve*) or application ("V") base Vector Extension.
 
 // See <<crypto-vector-element-groups>> for more details on vector element groups and the drawbacks of
 // small `VLEN` values.
 
 
-All _cryptography-specific_ instructions defined in this Vector Crypto specification (i.e., those
-in <<Zvkgs>>, but _not_ <<zvbc32e>>) shall
-be executed with data-independent execution latency as defined in the
+As the instructions defined in this specification might be used to implement cryptographic primitives
+ they may be implemented with data-independent execution latencies as
+defined in the
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
-It is important to note that the Vector Crypto instructions are independent of the
-implementation of the `Zkt` extension and do not require that `Zkt` is implemented.
 
-//This specification includes a <<Zvkt>> extension that, when implemented, requires certain vector instructions
-//(including <<zvbb>>, <<zvkb>>, and <<zvbc>>) to be executed with data-independent execution latency.
+If `Zvkt` is implemented, all the instructions from `Zvbc32e` (`vclmul[h].[vv,vx]`) 
+shall be executed with data-independent execution latency as
+
+Whether `Zvkt` is implemented or not, all instructions from `Zvkgs` (`vgmul.vs`, `vghsh.vs`)
+shall be executed with data-independent execution latency.
+
 
 Detection of individual cryptography extensions uses the
 unified software-based RISC-V discovery method.
@@ -134,7 +137,7 @@ include::./riscv-crypto-vector-extra-zvkgs.adoc[]
 
 // ------------------------------------------------------------
 
-[[crypto_vector_extra_insns, reftext="Vector Cryptography Extra Instructions"]]
+[[crypto_vector_extra_insns, reftext="Additional Vector Cryptography Instructions"]]
 == Instructions
 
 

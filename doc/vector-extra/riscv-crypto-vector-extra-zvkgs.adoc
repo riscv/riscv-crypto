@@ -1,16 +1,20 @@
 [[zvkgs,Zvkgs]]
 === `Zvkgs` - Vector-Scalar GCM/GMAC
 
-`Zvkgs` depends on `Zvkg`, it extends the existing `vghsh.vv` and `vgmul.vv` instructions with new vector-scalar variants: `vghsh.vs` and `vgmul.vs`.
-
 Instructions to enable the efficient implementation of parallel versions of GHASH~H~ which is used in Galois/Counter Mode (GCM) and
 Galois Message Authentication Code (GMAC).
 
-The instructions inherit the same constraints as the ones mandated for `Zvkg` instructions: (element group size, data independent execution timing and `vl`/`vstart` multiple constraints).
+`Zvkgs` depends on `Zvkg`. It extends the existing `vghsh.vv` and `vgmul.vv` instructions with new vector-scalar variants: `vghsh.vs` and `vgmul.vs`.
 
-All of these instructions work on 128-bit element groups comprised of four 32-bit elements, in element group parlance `EGS=4`, `EGW=128` and the instructions are only defined for `SEW=32`.
+The instructions inherit the constraints defined in `Zvkg`:
 
-To help avoid side-channel timing attacks, these instructions shall always be implemented with data-independent timing.
+- element group size (EGS) is 4
+- data independent execution timing
+- `vl`/`vstart` must be multiples of EGS=4multiple constraints
+
+All of these instructions work on 128-bit element groups comprised of four 32-bit elements.
+
+To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
 
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW=32` elements to be processed and
@@ -25,8 +29,8 @@ Likewise, `vstart` must be a multiple of `EGS=4`.
 |EGW
 |Mnemonic
 |Instruction
-| 32 | 128 | `vghsh.vs` | <<insns-vghsh-vs>>
-| 32 | 128 | `vgmul.vs` | <<insns-vgmul-vs>>
+| 32 | 128 | vghsh.vs | <<insns-vghsh-vs>>
+| 32 | 128 | vgmul.vs | <<insns-vgmul-vs>>
 
 |===
 
