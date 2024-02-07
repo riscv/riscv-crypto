@@ -3,7 +3,7 @@
 === Additional Vector Cryptographic Instructions
 
 OP-P (0x77)
-Additional Vector Crypto instructions, including Zvkgs, except Zvbb and Zvbc
+Vector Crypto instructions, including `Zvkgs`, except `Zvbb` and `Zvbc`.
 The new/modified encoding are in bold and underlined.
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]

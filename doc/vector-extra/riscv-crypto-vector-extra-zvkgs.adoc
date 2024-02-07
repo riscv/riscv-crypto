@@ -10,11 +10,11 @@ The instructions inherit the constraints defined in `Zvkg`:
 
 - element group size (EGS) is 4
 - data independent execution timing
-- `vl`/`vstart` must be multiples of EGS=4multiple constraints
+- `vl`/`vstart` must be multiples of EGS=4
 
-All of these instructions work on 128-bit element groups comprised of four 32-bit elements.
+All of these instructions work on 128-bit element groups comprised of four 32-bit elements, in element group parlance `EGS=4`, `EGW=128` and the instructions are only defined for `SEW=32`.
 
-To help avoid side-channel timing attacks, these instructions shall be implemented with data-independent timing.
+To help avoid side-channel timing attacks, these instructions shall always be implemented with data-independent timing.
 
 The number of element groups to be processed is `vl`/`EGS`.
 `vl` must be set to the number of `SEW=32` elements to be processed and
@@ -29,8 +29,8 @@ Likewise, `vstart` must be a multiple of `EGS=4`.
 |EGW
 |Mnemonic
 |Instruction
-| 32 | 128 | vghsh.vs | <<insns-vghsh-vs>>
-| 32 | 128 | vgmul.vs | <<insns-vgmul-vs>>
+| 32 | 128 | `vghsh.vs` | <<insns-vghsh-vs>>
+| 32 | 128 | `vgmul.vs` | <<insns-vgmul-vs>>
 
 |===
 

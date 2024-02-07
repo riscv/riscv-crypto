@@ -113,7 +113,7 @@ defined in the
 link:https://github.com/riscv/riscv-crypto/releases/tag/v1.0.1-scalar[RISC-V Scalar Cryptography Extensions specification].
 
 If `Zvkt` is implemented, all the instructions from `Zvbc32e` (`vclmul[h].[vv,vx]`) 
-shall be executed with data-independent execution latency as
+shall be executed with data-independent execution latency.
 
 Whether `Zvkt` is implemented or not, all instructions from `Zvkgs` (`vgmul.vs`, `vghsh.vs`)
 shall be executed with data-independent execution latency.
