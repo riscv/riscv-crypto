@@ -3,6 +3,15 @@
 
 *RISC-V cryptography extensions standardisation work.*
 
+**NOTE:** 2024-Feb-16 (mjos): Since both scalar cryptography and vector
+cryptography extensions have been ratified, the documentation here is being
+[merged into the unprivileged specifications](https://github.com/riscv/riscv-crypto/issues/384#issue-2137468599).
+This repository will be eventually archived after the process is done.
+
+The only remaining work item in this repository is related to the
+[Zvbc32e/Zvkgs fast track extension](https://github.com/riscv/riscv-crypto/pull/362).
+There is no other active development.
+
 ---
 
 - [RISC-V Cryptography Extension](#risc-v-cryptography-extension)
