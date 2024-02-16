@@ -17,7 +17,7 @@ Element Group Size (`EGS`).
 
 | vaes*   | 4
 | vsha2*  | 4
-| vgh*    | 4
+| vg*     | 4
 | vsm3*   | 8 
 | vsm4*   | 4
 
@@ -37,7 +37,7 @@ _illegal instruction exception_ is raised, even if `vl`=0.
 | vaes*   | 32 | 128
 | vsha2*  | 32 | 128
 | vsha2*  | 64 | 256
-| vgh*    | 32 | 128
+| vg*     | 32 | 128
 | vsm3*   | 32 | 256 
 | vsm4*   | 32 | 128
 
@@ -58,7 +58,7 @@ all other `SEW` values are _reserved_.
 | Zvknha: vsha2* | 32
 | Zvknhb: vsha2* | 32 or 64
 | vclmul[h]      | 64
-| vgh*           | 32
+| vg*            | 32
 | vsm3*          | 32
 | vsm4*          | 32
 
