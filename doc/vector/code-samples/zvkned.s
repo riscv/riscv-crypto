@@ -194,7 +194,7 @@ zvkned_aes256_expand_key:
     addi a1, a1, 16
 
     # v4 and v8 contain the evolving key state during expansion,
-    # alternating holding key[i] and key[i-1] as inputs to vaesfk.
+    # alternating holding key[i] and key[i-1] as inputs to vaeskf.
 
     # For the initial 2 4-words, we copy the input key.
     # Round 0 expanded key, w[0, 3] (== input key LO).
@@ -1509,7 +1509,7 @@ zvkned_aes256_encode_vv_lmul1:
     # Now that we have the first keys in v10/v11, we can iterate
     # to get all subsequent keys
 
-    # vaesfk generates w[4*(round+1) .. 4*(round+1)+3] in vd
+    # vaeskf generates w[4*(round+1) .. 4*(round+1)+3] in vd
     # from w[4*round .. 4*round+3]  in vs2,
     # and  w[4*(round-1) .. 4*(round-1)+3] in vd.
     vmv.v.v v12, v10
