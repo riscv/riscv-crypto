@@ -102,5 +102,5 @@ References
 
 - [1] https://datatracker.ietf.org/doc/html/draft-oscca-cfrg-sm3-00
 - [2] https://datatracker.ietf.org/doc/html/draft-ribose-cfrg-sm4-10
-- [3] https://github.com/rivosinc/binutils-gdb/tree/vector-crypto
-- [4] https://github.com/rivosinc/riscv-isa-sim/tree/vector-crypto
+- [3] https://github.com/rivosinc/binutils-gdb/tree/zvk-vector-crypto
+- [4] https://github.com/rivosinc/riscv-isa-sim/tree/zvk-vector-crypto
