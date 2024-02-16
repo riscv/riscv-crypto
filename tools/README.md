@@ -41,17 +41,20 @@ After first checking out the `riscv-crypto` repository:
     This will clone GCC, Binutils, Newlib, the RISC-V Proxy kernel (PK)
     and the RISC-V ISA Simulator (Spike).
 
-    It will then checkout known good commits on a new branch
-    called `riscv-crypto`.
-
 - For each component in the tool-chain, execute the associated
   patch application, 
   configuration, 
-  and 
+  and/or 
   compilation (plus installation)
   script in turn:
 
-  - `gcc`/`binutils`
+  - `binutils`
+
+    ```sh
+    ${REPO_HOME}/tools/binutils-apply.sh
+    ```
+    
+  - `gcc`
 
     ```sh
     ${REPO_HOME}/tools/toolchain-conf.sh
@@ -61,7 +64,6 @@ After first checking out the `riscv-crypto` repository:
   - `pk` (the RISC-V proxy kernel):
 
     ```sh
-    ${REPO_HOME}/tools/pk-apply.sh
     ${REPO_HOME}/tools/pk-conf.sh
     ${REPO_HOME}/tools/pk-build.sh
     ``` 
@@ -69,7 +71,6 @@ After first checking out the `riscv-crypto` repository:
   - `spike`:
 
     ```sh
-    ${REPO_HOME}/tools/spike-apply.sh
     ${REPO_HOME}/tools/spike-conf.sh
     ${REPO_HOME}/tools/spike-build.sh
     ``` 
@@ -81,7 +82,7 @@ After first checking out the `riscv-crypto` repository:
 
    - The architecture the compiler will target is specified
      in `${REPO_HOME}/tools/share.sh` as
-     `TARGET_ARCH, `ARCH_STRING` and `ABI_STRING`.
+     `TARGET_ARCH`, `ARCH_STRING` and `ABI_STRING`.
 
 - To re-build a repository from scratch, first run the relevant
   `${REPO_HOME}/tools/conf-*.sh` script before running the corresponding
@@ -94,11 +95,8 @@ This section describes the development flow for the `riscv-crypto`
 toolchain and simulator patches.
 
 - Assuming a fresh checkout of the `riscv-crypto` repository,
-  run the [Getting Started](#Getting-Started) steps described above so that
-  you have a working baseline toolchain installation.
-
-  - Running these steps will apply the patches to `binutils`, `gcc` and
-    `spike` from the corresponding `tools/patch-*.patch` file.
+  run the steps described above so that you have a working baseline
+  toolchain installation.
 
 - There are three classes of tool script used to manage the patches:
 
