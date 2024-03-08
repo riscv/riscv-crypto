@@ -37,15 +37,15 @@ Arguments::
 |SEW
 |Definition
 
-| Vd  | input  | 128  | 4 | 32 | Multiplier
-| Vs2 | input  | 128  | 4 | 32 | Multiplicand
-| Vd  | output | 128  | 4 | 32 | Product
+| `vd`  | input  | 128  | 4 | 32 | Multiplier
+| `vs2` | input  | 128  | 4 | 32 | Multiplicand
+| `vd`  | output | 128  | 4 | 32 | Product
 |===
 
 Description::
 A GHASH~H~ multiply is performed.
 
-The multipliers are read as 4-element groups from 'vd',
+The multipliers are read as 4-element groups from `vd`,
  the multiplicands subkeys are read from the scalar element group in `vs2`.
 The resulting products are written as 4-element groups into `vd`.
 
@@ -98,7 +98,7 @@ function clause execute (VGMUL(vs2, vs1, vd, suffix)) = {
 
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
-  // H multiplicand is constant for all loop iterations
+  // H multiplicand is common for all loop iterations
   let helem = 0;
   let H = brev8(get_velem(vs2,EGW=128, helem)); // Multiplicand
 

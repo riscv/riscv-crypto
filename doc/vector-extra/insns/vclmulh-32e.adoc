@@ -1,4 +1,4 @@
-[[insns-vclmulh, Vector Carry-less Multiply Return High Half]]
+[[insns-vclmulh-32e, Vector Carry-less Multiply Return High Half]]
 = vclmulh.[vv,vx]
 
 Synopsis::
@@ -56,7 +56,7 @@ Arguments::
 
 [NOTE]
 ====
-`vclmulh` instruction was initially defined in `Zvbc`, this page describes how the specification is extended in `Zvbc32e` to support `SEW=32 bits`.
+`vclmulh` instruction was initially defined in `Zvbc`, this page describes how the specification is extended in `Zvbc32e` to support `SEW=32` bits.
 ====
 
 Description::
@@ -96,4 +96,4 @@ function clmulh(x, y, width) = {
 --
 
 Included in::
-<<zvbc32e>>
+<<zvbc32e>>, Zvbc

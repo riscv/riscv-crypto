@@ -4,7 +4,8 @@
 This document describes the proposed _additional_ _vector_ cryptography
 extensions for RISC-V.
 Those extensions extend the _vector_ cryptography extensions for RISC-V,
-providing additional features not mandatory for a high performace implementation but which
-can help further improve the efficiency some algorithms (e.g. CRC, AES-GCM).
+providing additional features.
+Those extensions aim at either enabling some use cases (e.g. carry-less multiply on 32-bit vector implementations)
+or enabling more efficient implementations of some algorithms (e.g. CRC, AES-GCM).
 All instructions proposed here are based on the Vector registers.
 

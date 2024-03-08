@@ -1,10 +1,10 @@
 [appendix]
-[[crypto_vector_instructions]]
+[[crypto_vector_instructions_Zvkgs]]
 === Additional Vector Cryptographic Instructions
 
 OP-P (0x77)
 Vector Crypto instructions, including `Zvkgs`, except `Zvbb` and `Zvbc`.
-The new/modified encoding are in bold and underlined.
+The new/modified encodings are in bold.
 
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 [cols="4,1,1,1,1,4,1,1,1,4,1,1,1"]
@@ -20,7 +20,6 @@ The new/modified encoding are in bold and underlined.
 // [cols="4,1,1,1,8,4,1,1,8,4,1,1,8"]
 [cols="6,1,1,1,1,6,1,1,6,6,1,1,1"]
 
-// TODO to be updated with vghsh.vs and vgmul.vs encoding
 |===
 5+^| funct6                  4+^| funct6                 4+^| funct6
 

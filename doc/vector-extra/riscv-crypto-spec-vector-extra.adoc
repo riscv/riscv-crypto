@@ -2,8 +2,8 @@
 = RISC-V Cryptography Extensions Volume III: Additional Vector Instructions
 :description: The addtional vector cryptography extensions for the RISC-V ISA.
 :company: RISC-V.org
-:revdate: 6 February 2024
-:revnumber: v0.0.4
+:revdate: March 7th 2024
+:revnumber: v0.0.5
 :revremark:
 :url-riscv: http://riscv.org
 :doctype: book
@@ -75,6 +75,7 @@ Contributors to this specification (in alphabetical order)
 include: +
 Eric Biggers,
 Ken Dockser,
+Liana Koleva,
 Markku-Juhani O. Saarinen,
 Nicolas Brunie,
 Richard Newell
@@ -102,6 +103,7 @@ Instruction Set Extension Specification.
 
 All the Additional Vector Crypto Extensions can be built
 on _any_ embedded (Zve*) or application ("V") base Vector Extension.
+In particular `Zvbc32e` allows `Zve32*` implementations to support vector carry-less multiplication.
 
 // See <<crypto-vector-element-groups>> for more details on vector element groups and the drawbacks of
 // small `VLEN` values.
@@ -157,6 +159,8 @@ bibliography::../riscv-crypto-spec.bib[ieee]
 
 [[Encodings]]
 == Encodings
+include::./riscv-crypto-vector-extra-inst-table-zvbc32e.adoc[]
+
 include::./riscv-crypto-vector-extra-inst-table.adoc[]
 
 

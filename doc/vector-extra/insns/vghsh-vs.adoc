@@ -39,17 +39,17 @@ Arguments::
 |SEW
 |Definition
 
-| Vd  | input  | 128  | 4 | 32 | Partial hash (Y~i~)
-| Vs1 | input  | 128  | 4 | 32 | Cipher text (X~i~)
-| Vs2 | input  | 128  | 4 | 32 | Hash Subkey (H)
-| Vd  | output | 128  | 4 | 32 | Partial-hash (Y~i+1~)
+| `vd`  | input  | 128  | 4 | 32 | Partial hash (Y~i~)
+| `vs1` | input  | 128  | 4 | 32 | Cipher text (X~i~)
+| `vs2` | input  | 128  | 4 | 32 | Hash Subkey (H)
+| `vd`  | output | 128  | 4 | 32 | Partial-hash (Y~i+1~)
 |===
 
 Description::
 A single "iteration" of the GHASH~H~ algorithm is performed.
 
 
-The previous partial hashes are read as 4-element groups from 'vd',
+The previous partial hashes are read as 4-element groups from `vd`,
 the cipher texts are read as 4-element groups from `vs1`
  and the hash subkeys are read from the scalar element group in `vs2`.
 The resulting partial hashes are writen as 4-element groups into `vd`.
@@ -102,7 +102,7 @@ function clause execute (VGHSHVS(vs2, vs1, vd)) = {
   eg_len = (vl/EGS)
   eg_start = (vstart/EGS)
 
-  // H is component to all element groups
+  // H is common to all element groups
   let helem = 0;
   let H = brev8(get_velem(vs2, EGW=128, helem)); // Hash subkey
 
