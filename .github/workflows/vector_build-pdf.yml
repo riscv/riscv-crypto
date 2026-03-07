@@ -30,7 +30,7 @@ jobs:
     steps:
     # Step 1: Checkout the repository
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
       with:
         submodules: 'recursive'
 
@@ -47,7 +47,7 @@ jobs:
 
     # Step 4: Upload the built vector PDF file
     - name: Upload Crypto Vector Build Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v6
       with:
         name: Build Artifacts
         path: ${{ github.workspace }}/doc/vector/*.pdf
@@ -55,7 +55,7 @@ jobs:
       
     # Create Release
     - name: Create Crypto Vector Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ github.workspace }}/doc/vector/*.pdf
         tag_name: v${{ github.event.inputs.version }}
