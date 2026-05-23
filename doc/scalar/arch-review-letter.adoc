@@ -14,7 +14,7 @@ The release may be downloaded from
 https://github.com/riscv/riscv-crypto/releases/tag/v0.9.3-scalar
 
 We acknowledge that some prelimianary feedback from the architectural
-reviewers has already been recieved, specifically around changing
+reviewers has already been received, specifically around changing
 zero extension to sign extension for some of the instructions.
 This change has _not yet_ been made in the submitted version of the spec.
 We anticipate making the change later, along with any other recommendations
